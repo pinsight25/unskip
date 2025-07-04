@@ -18,8 +18,8 @@ export default {
 			}
 		},
 		fontFamily: {
-			inter: ['Inter', 'sans-serif'],
-			sans: ['Inter', 'sans-serif'],
+			poppins: ['Poppins', 'sans-serif'],
+			sans: ['Poppins', 'sans-serif'],
 		},
 		extend: {
 			colors: {
@@ -37,6 +37,7 @@ export default {
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))',
+					light: 'hsl(var(--secondary-light))',
 					dark: 'hsl(var(--secondary-dark))'
 				},
 				destructive: {
@@ -55,6 +56,10 @@ export default {
 				success: {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
+				},
+				trust: {
+					DEFAULT: 'hsl(var(--trust))',
+					foreground: 'hsl(var(--trust-foreground))'
 				},
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
@@ -87,15 +92,16 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',
-				'gradient-card': 'var(--gradient-card)',
-				'gradient-premium': 'var(--gradient-premium)',
-				'gradient-glass': 'var(--gradient-glass)'
+				'gradient-coral': 'var(--gradient-coral)',
+				'gradient-teal': 'var(--gradient-teal)',
+				'gradient-purple': 'var(--gradient-purple)',
+				'gradient-card': 'var(--gradient-card)'
 			},
 			boxShadow: {
-				'glass': 'var(--shadow-glass)',
+				'soft': 'var(--shadow-soft)',
 				'card': 'var(--shadow-card)',
-				'premium': 'var(--shadow-premium)',
-				'glow': 'var(--shadow-glow)'
+				'float': 'var(--shadow-float)',
+				'trust': 'var(--shadow-trust)'
 			},
 			animation: {
 				'float': 'float 6s ease-in-out infinite',

@@ -1,75 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* CarVibe Modern Design System - Premium & Professional */
+/* CarVibe Vibrant Design System - Friendly & Trustworthy */
 
 @layer base {
   :root {
-    /* Base Colors - Clean & Modern */
-    --background: 0 0% 100%;
-    --foreground: 215 25% 15%;
+    /* Base Colors - Light & Airy */
+    --background: 0 0% 97%;           /* #f7f8fa */
+    --foreground: 213 20% 18%;        /* #2d3436 soft black */
 
     /* Card System */
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card: 0 0% 100%;                /* Pure white */
+    --card-foreground: 213 20% 18%;
 
     /* Popover System */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 213 20% 18%;
 
-    /* CarVibe Premium Color Palette */
-    --primary: 214 88% 35%;        /* Deep Blue #1e40af */
+    /* CarVibe Vibrant Color Palette */
+    --primary: 14 100% 57%;           /* Vibrant coral #ff5722 */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 217 91% 60%;   /* Electric Blue #3b82f6 */
-    --primary-dark: 222 84% 5%;     /* Sleek Black #0f172a */
+    --primary-light: 14 100% 67%;     /* Lighter coral */
+    --primary-dark: 14 100% 47%;      /* Darker coral */
 
-    /* Modern Secondary Colors */
-    --secondary: 210 40% 98%;       /* Light Gray #f8fafc */
-    --secondary-foreground: 215 25% 15%;
-    --secondary-dark: 215 25% 27%;  /* Medium Gray */
+    /* Fresh Secondary Colors */
+    --secondary: 193 100% 42%;        /* Fresh teal #00b4d8 */
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 154 100% 52%;  /* Mint #06ffa5 */
+    --secondary-dark: 193 100% 32%;
 
     /* Muted Tones */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 13% 46%;
+    --muted: 210 14% 96%;            /* Light gray */
+    --muted-foreground: 213 12% 52%;
 
     /* Accent Colors */
-    --accent: 160 84% 39%;          /* Emerald Green #10b981 */
+    --accent: 258 90% 58%;           /* Warm purple #7c3aed */
     --accent-foreground: 0 0% 100%;
-    --accent-light: 158 64% 52%;    /* Light Green */
+    --accent-light: 258 90% 68%;
 
     /* Status Colors */
-    --success: 160 84% 39%;         /* Emerald #10b981 */
+    --success: 175 100% 41%;         /* Mint green #00d2d3 */
     --success-foreground: 0 0% 100%;
     
-    --warning: 25 95% 53%;          /* Orange #f97316 */
-    --warning-foreground: 0 0% 100%;
+    --trust: 223 100% 46%;           /* Royal blue #0984e3 */
+    --trust-foreground: 0 0% 100%;
+    
+    --warning: 45 100% 50%;          /* Sunny yellow */
+    --warning-foreground: 213 20% 18%;
 
-    --destructive: 0 84% 60%;       /* Red */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     /* Border & Input */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 214 88% 35%;
+    --border: 210 14% 89%;
+    --input: 210 14% 89%;
+    --ring: 14 100% 57%;
 
-    /* Design Tokens - Modern Effects */
-    --gradient-hero: linear-gradient(135deg, hsl(222 84% 5%), hsl(214 88% 35%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 98%));
-    --gradient-premium: linear-gradient(135deg, hsl(214 88% 35%), hsl(217 91% 60%));
-    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+    /* Design Tokens - Vibrant & Friendly */
+    --gradient-hero: linear-gradient(135deg, hsl(14 100% 97%), hsl(193 100% 95%));
+    --gradient-coral: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
+    --gradient-teal: linear-gradient(135deg, hsl(193 100% 42%), hsl(154 100% 52%));
+    --gradient-purple: linear-gradient(135deg, hsl(258 90% 58%), hsl(258 90% 68%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 14% 98%));
     
-    /* Modern Shadows */
-    --shadow-glass: 0 8px 32px 0 hsl(214 88% 35% / 0.12);
-    --shadow-card: 0 4px 6px -1px hsl(214 88% 35% / 0.1), 0 2px 4px -1px hsl(214 88% 35% / 0.06);
-    --shadow-premium: 0 20px 25px -5px hsl(214 88% 35% / 0.15), 0 10px 10px -5px hsl(214 88% 35% / 0.1);
-    --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
+    /* Friendly Shadows */
+    --shadow-soft: 0 4px 20px 0 hsl(14 100% 57% / 0.08);
+    --shadow-card: 0 8px 32px 0 hsl(14 100% 57% / 0.12);
+    --shadow-float: 0 12px 40px 0 hsl(14 100% 57% / 0.15);
+    --shadow-trust: 0 4px 20px 0 hsl(223 100% 46% / 0.2);
     
-    --radius: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
+    --radius: 1rem;
+    --radius-lg: 1.5rem;
+    --radius-xl: 2rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -125,46 +130,60 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter antialiased;
+    @apply bg-background text-foreground font-poppins antialiased;
   }
 
-  /* Modern Typography */
+  /* Friendly Typography */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
 
-  /* Glass Morphism Base */
-  .glass {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(0 0% 100% / 0.2);
+  /* Vibrant Components */
+  .coral-gradient {
+    background: var(--gradient-coral);
   }
 
-  /* Premium Animations */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  .teal-gradient {
+    background: var(--gradient-teal);
   }
 
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
+  .purple-gradient {
+    background: var(--gradient-purple);
   }
 
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out;
+  /* Friendly Animations */
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s ease-in-out infinite;
   }
 
-  /* Premium Effects */
-  .premium-gradient {
-    background: var(--gradient-premium);
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
   }
 
-  .hero-gradient {
-    background: var(--gradient-hero);
+  .animate-pulse-soft {
+    animation: pulseSoft 2s ease-in-out infinite;
   }
 
-  .glass-card {
-    background: hsl(0 0% 100% / 0.9);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(0 0% 100% / 0.2);
+  /* Playful Cards */
+  .card-vibrant {
+    background: var(--gradient-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-float {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-float:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-float);
+  }
+
+  /* Trust Elements */
+  .trust-badge {
+    background: hsl(var(--trust));
+    color: hsl(var(--trust-foreground));
+    box-shadow: var(--shadow-trust);
   }
 }
