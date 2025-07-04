@@ -55,7 +55,7 @@ const HeroBanner = () => {
   ];
 
   return (
-    <div className="px-4 py-4 md:py-6">
+    <div className="container mx-auto px-4 py-6">
       <div className="max-w-7xl mx-auto">
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
@@ -72,7 +72,7 @@ const HeroBanner = () => {
             bulletActiveClass: 'swiper-pagination-bullet-active !bg-white !w-6'
           }}
           loop={true}
-          className="rounded-3xl overflow-hidden shadow-2xl"
+          className="rounded-2xl overflow-hidden shadow-xl"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -80,21 +80,21 @@ const HeroBanner = () => {
             const Icon = banner.icon;
             return (
               <SwiperSlide key={banner.id}>
-                <div className={`relative h-40 md:h-56 bg-gradient-to-br ${banner.bgColor} overflow-hidden cursor-pointer group`}>
+                <div className={`relative h-48 md:h-60 bg-gradient-to-br ${banner.bgColor} overflow-hidden cursor-pointer group`}>
                   {/* Modern Background Pattern */}
                   <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-6 right-6 w-28 h-28 md:w-36 md:h-36 rounded-full border-2 border-white/30 animate-pulse"></div>
-                    <div className="absolute bottom-6 right-16 w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-white/20"></div>
+                    <div className="absolute top-8 right-8 w-28 h-28 md:w-36 md:h-36 rounded-full border-2 border-white/30 animate-pulse"></div>
+                    <div className="absolute bottom-8 right-16 w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-white/20"></div>
                     <div className="absolute top-1/2 right-8 w-12 h-12 rounded-full bg-white/10"></div>
                   </div>
 
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
-                  {/* Content */}
+                  {/* Content with proper spacing */}
                   <div className="relative h-full flex items-center justify-between p-6 md:p-8">
                     <div className="flex-1 text-white">
-                      <div className="flex items-center gap-2 mb-3">
+                      <div className="flex items-center gap-2 mb-4">
                         <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                           <Icon className="h-4 w-4" />
                         </div>
@@ -106,12 +106,12 @@ const HeroBanner = () => {
                       <p className="text-lg md:text-2xl font-semibold mb-3 opacity-90">
                         {banner.subtitle}
                       </p>
-                      <p className="text-xs md:text-sm opacity-80 mb-5 hidden md:block">
+                      <p className="text-xs md:text-sm opacity-80 mb-6 hidden md:block">
                         {banner.description}
                       </p>
                       <Button 
                         size="lg"
-                        className="bg-white text-gray-900 hover:bg-white/90 font-bold group-hover:scale-105 transition-all duration-300 rounded-2xl h-12 px-6 shadow-lg hover:shadow-xl"
+                        className="bg-white text-gray-900 hover:bg-white/90 font-bold group-hover:scale-105 transition-all duration-300 rounded-xl h-12 px-6 shadow-lg hover:shadow-xl"
                       >
                         {banner.cta}
                         <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
