@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
@@ -5,8 +6,8 @@ import { Car } from '@/types/car';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { OfferModal } from '@/components/modals/OfferModal';
-import { OTPModal } from '@/components/modals/OTPModal';
+import OfferModal from '@/components/modals/OfferModal';
+import OTPModal from '@/components/modals/OTPModal';
 import { Calendar, Fuel, MapPin, MessageCircle, RotateCcw, Settings, Star, Users, Shield, Award, DollarSign, CalendarDays } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useToast } from '@/hooks/use-toast';
@@ -159,9 +160,9 @@ const CarDetail = () => {
               <h1 className="text-2xl font-bold mb-2">{car.title}</h1>
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-3xl font-bold text-primary">{formatPrice(car.price)}</span>
-                {car.rentalRate && (
+                {car.rentPrice && (
                   <span className="text-sm text-gray-500">
-                    or ₹{car.rentalRate.toLocaleString()}/day
+                    or ₹{car.rentPrice.daily.toLocaleString()}/day
                   </span>
                 )}
               </div>
@@ -181,7 +182,7 @@ const CarDetail = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
-                  <span>{car.seats} Seats</span>
+                  <span>5 Seats</span>
                 </div>
               </div>
 
