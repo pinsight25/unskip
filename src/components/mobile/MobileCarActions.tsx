@@ -45,7 +45,10 @@ const MobileCarActions = ({
       <div className="grid grid-cols-2 gap-2">
         <Button 
           variant="outline" 
-          onClick={onChat}
+          onClick={(e) => {
+            e.stopPropagation();
+            onChat();
+          }}
           className="h-10 text-sm font-medium"
           disabled={offerStatus === 'pending' || offerStatus === 'rejected'}
         >
@@ -54,7 +57,10 @@ const MobileCarActions = ({
         </Button>
         <Button 
           variant="outline" 
-          onClick={onTestDrive}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTestDrive();
+          }}
           className="h-10 text-sm font-medium"
         >
           <Calendar className="h-4 w-4 mr-2" />
