@@ -49,8 +49,8 @@ export const mockCars: Car[] = [
     year: 2019,
     price: 650000,
     images: [
-      'https://images.unsplash.com/photo-1549924231-f129b911e442?w=800',
-      'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800'
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800',
+      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'
     ],
     mileage: 28000,
     fuelType: 'Diesel',
