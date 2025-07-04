@@ -318,7 +318,7 @@ const SellCar = () => {
   return (
     <ResponsiveLayout showFooter={false}>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 max-w-2xl pb-32 md:pb-8">
+        <div className="container mx-auto px-4 max-w-2xl pb-44 md:pb-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -335,8 +335,8 @@ const SellCar = () => {
             </CardContent>
           </Card>
 
-          {/* Navigation Buttons - FIXED FOR MOBILE */}
-          <div className="flex justify-between mt-6 mb-8">
+          {/* Navigation Buttons - COMPLETE FIX FOR MOBILE */}
+          <div className="flex justify-between mt-6 mb-12">
             <Button 
               variant="outline" 
               onClick={handlePrevious}
