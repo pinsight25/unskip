@@ -98,13 +98,13 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Slide Indicators */}
+          {/* Slide Indicators - FIXED SIZE */}
           <div className="flex justify-center space-x-2 mt-6">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
                   index === currentSlide ? 'bg-white' : 'bg-white/40'
                 }`}
               />

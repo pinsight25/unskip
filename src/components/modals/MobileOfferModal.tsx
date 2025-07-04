@@ -232,8 +232,8 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
           </div>
         </div>
 
-        {/* Fixed Footer */}
-        <div className="fixed bottom-0 left-0 right-0 p-6 border-t bg-white z-50 space-y-4 rounded-t-3xl shadow-2xl">
+        {/* Fixed Footer - ADJUSTED FOR BOTTOM NAV */}
+        <div className="fixed bottom-20 left-0 right-0 p-6 border-t bg-white z-50 space-y-4 rounded-t-3xl shadow-2xl">
           <Button 
             onClick={handleSubmit}
             disabled={!isFormValid() || isSubmitting}

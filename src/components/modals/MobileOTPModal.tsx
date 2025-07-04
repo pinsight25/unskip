@@ -72,7 +72,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
 
   if (isVerified) {
     return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog open={isOpen}>
         <DialogContent className="sm:max-w-full sm:h-full sm:max-h-screen p-0 gap-0">
           <div className="flex flex-col items-center justify-center h-full p-8 text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
@@ -87,9 +87,9 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen}>
       <DialogContent className="sm:max-w-full sm:h-full sm:max-h-screen p-0 gap-0">
-        {/* Header */}
+        {/* Header - SINGLE CLOSE BUTTON */}
         <DialogHeader className="p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
