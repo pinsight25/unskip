@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, MapPin, Car, Users, Building2, Sparkles, TrendingUp, Shield, Star } from 'lucide-react';
+import { Search, MapPin, Car, Users, Building2, Star, Shield, TrendingUp } from 'lucide-react';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
@@ -20,12 +21,11 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   const [activeType, setActiveType] = useState<'all' | 'dealer' | 'individual'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [animatedCounts, setAnimatedCounts] = useState({ cars: 0, customers: 0, dealers: 0 });
-  const [offerCount, setOfferCount] = useState(247);
   
   const filterTypes = [
     { key: 'all' as const, label: 'All Cars', icon: Car, count: '2.3k+' },
     { key: 'dealer' as const, label: 'Dealers Only', icon: Building2, count: '850+' },
-    { key: 'individual' as const, label: 'Private Sellers', icon: Users, count: '1.5k+' }
+    { key: 'individual' as const, label: 'Owner Cars', icon: Users, count: '1.5k+' }
   ];
 
   const handleTypeChange = (type: 'all' | 'dealer' | 'individual') => {
@@ -87,95 +87,88 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
     const statsElement = document.getElementById('stats-section');
     if (statsElement) observer.observe(statsElement);
 
-    const offerTimer = setInterval(() => {
-      setOfferCount(prev => prev + Math.floor(Math.random() * 3));
-    }, 30000);
-
     return () => {
       observer.disconnect();
-      clearInterval(offerTimer);
     };
   }, []);
 
   return (
-    <div className="relative">
-      {/* Softer Animated Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/60 via-secondary/50 to-accent/40" />
-      <div className="absolute inset-0 bg-gradient-to-br from-black/5 via-transparent to-black/5" />
-
-      <div className="relative z-10 py-12 lg:py-16 px-4">
-        <div className="container mx-auto text-center space-y-10">
-          {/* Enhanced Hero Text */}
-          <div className="space-y-6 animate-slide-up max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-white/90 text-sm font-medium border border-white/30">
-              <Sparkles className="h-4 w-4" />
-              Find Your Perfect Car
+    <div className="bg-white py-6 lg:py-8">
+      <div className="container mx-auto px-4">
+        <div className="space-y-6 max-w-4xl mx-auto">
+          {/* Search Section */}
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1 relative group">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Search by make, model, or location..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 text-base border-2 border-border focus:border-primary bg-white shadow-sm rounded-lg"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
+              <Button 
+                onClick={handleSearch}
+                size="lg"
+                className="bg-primary px-6 h-12 text-base font-medium hover:bg-primary/90 text-white rounded-lg"
+              >
+                Search
+              </Button>
             </div>
-            
-            <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-              Smart Car Shopping
-            </h1>
-            
-            <p className="text-lg text-white/90 max-w-2xl mx-auto font-medium">
-              Connect with verified sellers • Fair pricing • Quality guaranteed
-            </p>
 
-            {/* Live Activity Counter */}
-            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md rounded-full px-4 py-2 text-white/90 text-sm font-medium border border-white/20">
-              <TrendingUp className="h-4 w-4 text-green-300" />
-              {offerCount} offers made today • 5 cars sold today
-            </div>
-          </div>
-
-          {/* Enhanced Search Card */}
-          <Card className="max-w-4xl mx-auto bg-white shadow-2xl border-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                {/* Large Prominent Search */}
-                <div className="flex gap-4">
-                  <div className="flex-1 relative group">
-                    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      placeholder="Search by make, model, or location..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-14 h-14 text-base border-2 border-border focus:border-primary bg-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
-                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleSearch}
-                    size="lg"
-                    className="premium-gradient px-8 h-14 text-base font-semibold hover:shadow-glow transition-all duration-300 text-white border-0 rounded-lg"
-                  >
-                    Search Cars
-                  </Button>
+            {/* Popular Locations */}
+            <div className="overflow-x-auto">
+              <div className="flex items-center gap-3 min-w-max">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium whitespace-nowrap">
+                  <MapPin className="h-4 w-4" />
+                  <span>Popular:</span>
                 </div>
-
-                {/* Enhanced Popular Locations */}
-                <div className="flex items-center gap-4 flex-wrap justify-center">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                    <MapPin className="h-4 w-4" />
-                    <span>Popular areas:</span>
-                  </div>
+                <div className="flex gap-2">
                   {['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR'].map((location) => (
                     <Badge 
                       key={location}
-                      className="cursor-pointer bg-white text-gray-800 border-2 border-gray-200 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 px-4 py-2 font-semibold rounded-full hover:scale-105 shadow-sm hover:shadow-md"
+                      className="cursor-pointer bg-white text-gray-700 border border-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 px-3 py-1.5 font-medium rounded-lg hover:shadow-sm whitespace-nowrap"
                       onClick={() => handleLocationClick(location)}
                     >
-                      <MapPin className="h-3 w-3 mr-1" />
                       {location}
                     </Badge>
                   ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Filter Tabs - Now Horizontal */}
-          <div className="max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 inline-flex gap-2 border border-white/20">
+          {/* Statistics Row */}
+          <div id="stats-section" className="overflow-x-auto">
+            <div className="flex gap-6 min-w-max justify-center">
+              {[
+                { icon: Car, value: animatedCounts.cars, suffix: '+', label: 'Cars', color: 'text-primary' },
+                { icon: Shield, value: animatedCounts.customers, suffix: '+', label: 'Customers', color: 'text-success' },
+                { icon: Star, value: animatedCounts.dealers, suffix: '+', label: 'Dealers', color: 'text-accent' }
+              ].map((metric, index) => {
+                const Icon = metric.icon;
+                return (
+                  <div key={index} className="text-center space-y-2 min-w-[100px]">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto bg-gray-50">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-foreground">
+                        {metric.value.toLocaleString()}{metric.suffix}
+                      </h3>
+                      <p className="text-sm text-muted-foreground font-medium">{metric.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="border-b border-gray-200">
+            <div className="flex space-x-8 overflow-x-auto">
               {filterTypes.map((filter) => {
                 const Icon = filter.icon;
                 const isActive = activeType === filter.key;
@@ -183,45 +176,21 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                   <button
                     key={filter.key}
                     onClick={() => handleTypeChange(filter.key)}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                    className={`flex items-center gap-2 pb-3 px-1 font-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
                       isActive 
-                        ? 'bg-white text-primary shadow-lg' 
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                        ? 'text-primary border-primary' 
+                        : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{filter.label}</span>
-                    <Badge variant="outline" className={`text-xs ${isActive ? 'border-primary/30' : 'border-white/30'}`}>
+                    <Badge variant="outline" className={`text-xs ${isActive ? 'border-primary/30 text-primary/70' : 'border-gray-300 text-gray-500'}`}>
                       {filter.count}
                     </Badge>
                   </button>
                 );
               })}
             </div>
-          </div>
-
-          {/* Enhanced Statistics */}
-          <div id="stats-section" className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.6s' }}>
-            {[
-              { icon: Car, value: animatedCounts.cars, suffix: '+', label: 'Verified Cars', color: 'text-primary' },
-              { icon: Shield, value: animatedCounts.customers, suffix: '+', label: 'Happy Customers', color: 'text-success' },
-              { icon: Star, value: animatedCounts.dealers, suffix: '+', label: 'Trusted Dealers', color: 'text-accent' }
-            ].map((metric, index) => {
-              const Icon = metric.icon;
-              return (
-                <div key={index} className="text-center space-y-4 group">
-                  <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto bg-white/20 backdrop-blur-md border border-white/30 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-10 w-10 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-5xl font-black text-white tracking-tight">
-                      {metric.value.toLocaleString()}{metric.suffix}
-                    </h3>
-                    <p className="text-white/90 font-semibold text-lg">{metric.label}</p>
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
       </div>

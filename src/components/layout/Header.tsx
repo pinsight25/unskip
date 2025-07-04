@@ -41,18 +41,18 @@ const Header = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-white/96 backdrop-blur-md shadow-card border-b border-border' 
-        : 'bg-transparent'
+        ? 'bg-white shadow-sm border-b border-gray-100' 
+        : 'bg-white'
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-14 md:h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 md:space-x-3 group">
-            <div className="h-8 w-8 md:h-12 md:w-12 premium-gradient rounded-lg md:rounded-xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
-              <Car className="h-4 w-4 md:h-6 md:w-6 text-white" />
+            <div className="h-8 w-8 md:h-10 md:w-10 bg-primary rounded-lg flex items-center justify-center">
+              <Car className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
+              <span className="text-lg md:text-xl font-bold text-primary">CarVibe</span>
               <span className="text-xs text-muted-foreground -mt-1 font-medium hidden sm:block">Good Vibes, Fair Deals</span>
             </div>
           </Link>
@@ -69,7 +69,7 @@ const Header = () => {
               >
                 {item.label}
                 {isActive(item.path) && (
-                  <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-premium rounded-full" />
+                  <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-primary rounded-full" />
                 )}
               </Link>
             ))}
@@ -100,14 +100,14 @@ const Header = () => {
               <Avatar className="h-9 w-9 border-2 border-primary/20">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  <User className="h-4 w-4" />
+                  <UserClassName="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">Sign In</span>
             </div>
             
             {/* Desktop Post Car Button */}
-            <Button size="sm" className="hidden md:inline-flex bg-primary hover:bg-primary/90 font-bold px-8 text-white">
+            <Button size="sm" className="hidden md:inline-flex bg-primary hover:bg-primary/90 font-medium px-6 text-white">
               Post Your Car
             </Button>
 
@@ -127,7 +127,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border py-4 bg-white/96 backdrop-blur-md animate-slide-up">
+          <div className="md:hidden border-t border-border py-4 bg-white">
             <nav className="flex flex-col space-y-4">
               {/* Mobile Stats */}
               <div className="flex flex-col space-y-2 pb-4 border-b border-border">

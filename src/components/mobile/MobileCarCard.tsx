@@ -59,7 +59,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-card overflow-hidden mb-4 mx-4">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden mb-4 mx-4">
       {/* Image Gallery */}
       <div className="relative aspect-[4/3]">
         <Link to={`/car/${car.id}`}>
@@ -75,13 +75,13 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full backdrop-blur-sm"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full backdrop-blur-sm"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -90,7 +90,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
 
         {/* Image indicators */}
         {car.images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
             {car.images.map((_, index) => (
               <div
                 key={index}
@@ -105,19 +105,19 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
         {/* Top badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {car.featured && (
-            <Badge className="bg-amber-500/90 text-white text-xs px-2 py-1">
+            <Badge className="bg-amber-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
               ⭐ Featured
             </Badge>
           )}
           {car.verified && (
-            <Badge className="bg-green-500/90 text-white text-xs px-2 py-1">
+            <Badge className="bg-green-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
               <Shield className="h-3 w-3 mr-1" />
               Verified
             </Badge>
           )}
           {car.isRentAvailable && (
-            <Badge className="bg-blue-500/90 text-white text-xs px-2 py-1">
-              Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
+            <Badge className="bg-blue-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
+              Also for Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
             </Badge>
           )}
         </div>
@@ -127,7 +127,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
           <Button 
             size="sm" 
             variant="secondary" 
-            className={`h-10 w-10 p-0 shadow-lg rounded-full ${
+            className={`h-9 w-9 p-0 shadow-lg rounded-full backdrop-blur-sm ${
               isSaved ? 'bg-red-50 hover:bg-red-100' : 'bg-white/90 hover:bg-white'
             }`}
             onClick={handleSave}
@@ -139,7 +139,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
           <Button 
             size="sm" 
             variant="secondary" 
-            className="h-10 w-10 p-0 shadow-lg rounded-full bg-white/90 hover:bg-white"
+            className="h-9 w-9 p-0 shadow-lg rounded-full bg-white/90 hover:bg-white backdrop-blur-sm"
             onClick={handleShare}
           >
             <Share2 className="h-4 w-4 text-gray-600" />
@@ -152,7 +152,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
         {/* Title and Price */}
         <div>
           <Link to={`/car/${car.id}`}>
-            <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2">
+            <h3 className="font-bold text-xl leading-tight mb-2 line-clamp-2 hover:text-primary transition-colors">
               {car.title}
             </h3>
           </Link>
@@ -160,36 +160,30 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
             <p className="text-2xl font-black text-primary">
               {formatPrice(car.price)}
             </p>
-            {car.isRentAvailable && car.rentPrice && (
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Rent from</p>
-                <p className="text-sm font-bold text-secondary">₹{car.rentPrice.daily.toLocaleString('en-IN')}/day</p>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Key Details */}
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-gray-600">
             <Calendar className="h-4 w-4 mr-2 text-primary" />
             <span className="font-medium">{car.year}</span>
           </div>
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-gray-600">
             <Settings className="h-4 w-4 mr-2 text-primary" />
             <span className="font-medium">{car.transmission}</span>
           </div>
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-gray-600">
             <Fuel className="h-4 w-4 mr-2 text-primary" />
             <span className="font-medium">{car.fuelType}</span>
           </div>
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-gray-600">
             <span className="font-medium">{car.mileage.toLocaleString('en-IN')} km</span>
           </div>
         </div>
 
         {/* Location */}
-        <div className="flex items-center text-muted-foreground">
+        <div className="flex items-center text-gray-600">
           <MapPin className="h-4 w-4 mr-2 text-primary" />
           <span className="font-medium">{car.location}</span>
         </div>
@@ -202,7 +196,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
             </span>
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-1">
               <p className="text-sm font-semibold">{car.seller.name}</p>
               {car.seller.verified && (
                 <Badge className="bg-success/10 text-success border-success/20 text-xs px-2 py-0.5">
@@ -212,11 +206,13 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
               )}
             </div>
             {car.seller.rating > 0 && (
-              <div className="flex items-center text-xs text-amber-500 mt-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-3 w-3 ${i < car.seller.rating ? 'fill-current' : ''}`} />
-                ))}
-                <span className="font-medium ml-1 text-foreground">{car.seller.rating}.0</span>
+              <div className="flex items-center text-xs">
+                <div className="flex items-center text-amber-500 mr-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`h-3 w-3 ${i < car.seller.rating ? 'fill-current' : ''}`} />
+                  ))}
+                </div>
+                <span className="font-medium text-gray-600">{car.seller.rating}.0</span>
               </div>
             )}
           </div>
@@ -225,7 +221,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
         {/* Action Buttons */}
         <div className="space-y-3 pt-2">
           <Button 
-            className="w-full h-12 premium-gradient font-semibold text-white text-base"
+            className="w-full h-12 bg-primary hover:bg-primary/90 font-semibold text-white text-base"
             onClick={onMakeOffer}
           >
             <DollarSign className="h-5 w-5 mr-2" />
@@ -234,7 +230,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
           <div className="grid grid-cols-2 gap-3">
             <Button 
               variant="outline" 
-              className="h-11 font-medium"
+              className="h-11 font-medium border-gray-300 hover:bg-gray-50"
               onClick={onChat}
             >
               <MessageCircle className="h-4 w-4 mr-2" />
@@ -242,7 +238,7 @@ const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTe
             </Button>
             <Button 
               variant="outline" 
-              className="h-11 font-medium"
+              className="h-11 font-medium border-gray-300 hover:bg-gray-50"
               onClick={onTestDrive}
             >
               <CalendarDays className="h-4 w-4 mr-2" />
