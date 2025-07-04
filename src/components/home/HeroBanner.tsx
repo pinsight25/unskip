@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Car, TrendingUp, Shield, Award, ChevronRight } from 'lucide-react';
+import { Car, TrendingUp, Shield, Award, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const HeroBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -47,6 +47,14 @@ const HeroBanner = () => {
     return () => clearInterval(timer);
   }, [banners.length]);
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % banners.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
   const currentBanner = banners[currentSlide];
   const Icon = currentBanner.icon;
 
@@ -59,6 +67,21 @@ const HeroBanner = () => {
             <div className="absolute top-4 right-4 w-32 h-32 rounded-full border-2 border-white/20"></div>
             <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white/20"></div>
           </div>
+          
+          {/* Navigation Arrows - FUNCTIONAL */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+          >
+            <ChevronLeft className="h-4 w-4 text-white" />
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+          >
+            <ChevronRight className="h-4 w-4 text-white" />
+          </button>
           
           {/* Content */}
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -98,14 +121,14 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Slide Indicators - FIXED SIZE */}
+          {/* Slide Indicators - PROPER MOBILE SIZE */}
           <div className="flex justify-center space-x-2 mt-6">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
-                  index === currentSlide ? 'bg-white' : 'bg-white/40'
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentSlide ? 'bg-white scale-125' : 'bg-white/40'
                 }`}
               />
             ))}
