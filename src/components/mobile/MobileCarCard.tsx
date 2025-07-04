@@ -16,6 +16,7 @@ import {
   Shield,
   Award
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface MobileCarCardProps {
   car: any;
@@ -29,6 +30,7 @@ interface MobileCarCardProps {
 const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const formatPrice = (price: number) => {
     return `₹${price.toLocaleString()}`;
@@ -48,6 +50,26 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
 
   const handleCardClick = () => {
     navigate(`/car/${car.id}`);
+  };
+
+  const handleChat = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast({
+      title: "Chat Started",
+      description: `Starting chat with ${car.seller.name} about ${car.title}`,
+    });
+    // Add actual chat functionality here
+    console.log('Chat initiated for car:', car.id);
+  };
+
+  const handleTestDrive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast({
+      title: "Test Drive Request",
+      description: `Test drive request sent for ${car.title}`,
+    });
+    // Add actual test drive booking functionality here
+    console.log('Test drive requested for car:', car.id);
   };
 
   return (
@@ -192,10 +214,7 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
           <div className="grid grid-cols-2 gap-2">
             <Button 
               variant="outline" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onChat();
-              }}
+              onClick={handleChat}
               className="h-10 text-sm font-medium"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
@@ -203,10 +222,7 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
             </Button>
             <Button 
               variant="outline" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onTestDrive();
-              }}
+              onClick={handleTestDrive}
               className="h-10 text-sm font-medium"
             >
               <Calendar className="h-4 w-4 mr-2" />

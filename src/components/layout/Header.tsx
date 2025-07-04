@@ -78,7 +78,7 @@ const Header = () => {
           </nav>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex items-center space-x-1 md:space-x-4">
             {/* Desktop Stats */}
             <div className="hidden md:flex items-center space-x-4">
               <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20">
@@ -92,9 +92,9 @@ const Header = () => {
               </Badge>
             </div>
 
-            {/* Mobile Notification */}
-            <Button variant="ghost" size="sm" className="md:hidden p-2">
-              <Bell className="h-5 w-5" />
+            {/* Mobile Notification - Fixed spacing */}
+            <Button variant="ghost" size="sm" className="md:hidden p-1.5 h-8 w-8">
+              <Bell className="h-4 w-4" />
             </Button>
             
             {/* Desktop Profile */}
@@ -115,15 +115,15 @@ const Header = () => {
               </Button>
             </Link>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Fixed spacing */}
             <button
-              className="md:hidden p-2 rounded-lg hover:bg-secondary/50 transition-colors"
+              className="md:hidden p-1.5 h-8 w-8 rounded-lg hover:bg-secondary/50 transition-colors flex items-center justify-center"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-4 w-4" />
               )}
             </button>
           </div>
