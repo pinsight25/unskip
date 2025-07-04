@@ -4,9 +4,15 @@ import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import SearchFilters from '@/components/home/SearchFilters';
 import CarCard from '@/components/car/CarCard';
+import MobileCarCard from '@/components/mobile/MobileCarCard';
+import MobileFilters from '@/components/mobile/MobileFilters';
+import OfferModal from '@/components/modals/OfferModal';
+import OTPModal from '@/components/modals/OTPModal';
+import MobileOfferModal from '@/components/modals/MobileOfferModal';
+import MobileOTPModal from '@/components/modals/MobileOTPModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Filter, Car as CarIcon, Heart } from 'lucide-react';
+import { Filter, Car as CarIcon, Heart, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SearchFiltersType {
@@ -26,19 +32,34 @@ const Home = () => {
     priceRange: [0, 5000000],
     location: ''
   });
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleFilterChange = (filters: SearchFiltersType) => {
     setCurrentFilters(filters);
     
     let filtered = cars;
     
-    // Apply type filter
     if (filters.type !== 'all') {
       filtered = filtered.filter(car => car.seller.type === filters.type);
     }
     
-    // Apply search query
     if (filters.query) {
       const query = filters.query.toLowerCase();
       filtered = filtered.filter(car => 
@@ -51,13 +72,6 @@ const Home = () => {
     
     setFilteredCars(filtered);
   };
-
-  const sortOptions = [
-    { label: 'Price: Low to High', value: 'price_asc' },
-    { label: 'Price: High to Low', value: 'price_desc' },
-    { label: 'Year: Newest First', value: 'year_desc' },
-    { label: 'Mileage: Low to High', value: 'mileage_asc' }
-  ];
 
   const handleSort = (sortValue: string) => {
     const sorted = [...filteredCars].sort((a, b) => {
@@ -96,6 +110,35 @@ const Home = () => {
     });
   };
 
+  const handleMakeOffer = (car: Car) => {
+    setSelectedCar(car);
+    if (!isVerified) {
+      setShowOTPModal(true);
+    } else {
+      setShowOfferModal(true);
+    }
+  };
+
+  const handleOTPSuccess = () => {
+    setIsVerified(true);
+    setShowOfferModal(true);
+  };
+
+  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    console.log('Offer submitted:', offer);
+  };
+
+  const handlePullToRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "Updated!",
+        description: "Car listings have been refreshed.",
+      });
+    }, 1000);
+  };
+
   // Sort by featured and verified first by default
   useEffect(() => {
     const sorted = [...cars].sort((a, b) => {
@@ -110,17 +153,40 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Hero Section */}
-      <section className="pt-16">
+      <section className="pt-14 md:pt-16">
         <SearchFilters onFilterChange={handleFilterChange} />
       </section>
 
+      {/* Mobile Filters */}
+      <MobileFilters 
+        activeType={currentFilters.type}
+        onTypeChange={(type) => setCurrentFilters(prev => ({ ...prev, type }))}
+        onFilterChange={handleFilterChange}
+      />
+
       {/* Results Section */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-6 md:py-12 px-0 md:px-4 bg-white">
         <div className="container mx-auto">
-          {/* Results Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          {/* Pull to Refresh (Mobile) */}
+          {isMobile && (
+            <div className="flex justify-center mb-4 px-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handlePullToRefresh}
+                disabled={isRefreshing}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Refreshing...' : 'Pull to refresh'}
+              </Button>
+            </div>
+          )}
+
+          {/* Results Header - Desktop Only */}
+          <div className="hidden md:flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-4">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
@@ -154,11 +220,10 @@ const Home = () => {
                 className="border border-border rounded-md px-3 py-2 text-sm bg-background hover:bg-muted/50 transition-colors"
               >
                 <option value="">Sort by</option>
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="year_desc">Year: Newest First</option>
+                <option value="mileage_asc">Mileage: Low to High</option>
               </select>
               
               <Button variant="outline" size="sm">
@@ -168,45 +233,47 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Active Filters */}
-          {(currentFilters.query || currentFilters.type !== 'all') && (
-            <div className="flex items-center gap-2 mb-6 flex-wrap">
-              <span className="text-sm text-muted-foreground">Active filters:</span>
-              {currentFilters.query && (
-                <Badge variant="secondary">
-                  Search: {currentFilters.query}
+          {/* Mobile Results Counter */}
+          <div className="md:hidden px-4 mb-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-foreground">
+                {filteredCars.length} Cars
+              </h2>
+              {savedCars.length > 0 && (
+                <Badge variant="outline" className="text-red-500 border-red-200 bg-red-50">
+                  <Heart className="h-3 w-3 mr-1 fill-current" />
+                  {savedCars.length} saved
                 </Badge>
               )}
-              {currentFilters.type !== 'all' && (
-                <Badge variant="secondary">
-                  {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
-                </Badge>
-              )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => handleFilterChange({ query: '', type: 'all', priceRange: [0, 5000000], location: '' })}
-                className="text-xs"
-              >
-                Clear all
-              </Button>
             </div>
-          )}
+          </div>
 
           {/* Car Grid */}
           {filteredCars.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:px-4">
               {filteredCars.map((car) => (
-                <CarCard 
-                  key={car.id} 
-                  car={car} 
-                  onSave={handleSaveCar}
-                  isSaved={savedCars.includes(car.id)}
-                />
+                isMobile ? (
+                  <MobileCarCard 
+                    key={car.id} 
+                    car={car} 
+                    onSave={handleSaveCar}
+                    isSaved={savedCars.includes(car.id)}
+                    onMakeOffer={() => handleMakeOffer(car)}
+                    onChat={() => console.log('Chat with seller')}
+                    onTestDrive={() => console.log('Schedule test drive')}
+                  />
+                ) : (
+                  <CarCard 
+                    key={car.id} 
+                    car={car} 
+                    onSave={handleSaveCar}
+                    isSaved={savedCars.includes(car.id)}
+                  />
+                )
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
+            <div className="text-center py-16 px-4">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Filter className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -223,8 +290,8 @@ const Home = () => {
             </div>
           )}
 
-          {/* Load More */}
-          {filteredCars.length > 0 && (
+          {/* Load More - Desktop Only */}
+          {filteredCars.length > 0 && !isMobile && (
             <div className="text-center mt-12">
               <Button variant="outline" size="lg">
                 Load More Cars
@@ -233,6 +300,45 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Modals */}
+      {selectedCar && (
+        <>
+          {isMobile ? (
+            <>
+              <MobileOfferModal
+                isOpen={showOfferModal}
+                onClose={() => setShowOfferModal(false)}
+                car={selectedCar}
+                onSubmit={handleOfferSubmit}
+              />
+              <MobileOTPModal
+                isOpen={showOTPModal}
+                onClose={() => setShowOTPModal(false)}
+                onSuccess={handleOTPSuccess}
+                phoneNumber="+91 98765 43210"
+                purpose="make an offer"
+              />
+            </>
+          ) : (
+            <>
+              <OfferModal
+                isOpen={showOfferModal}
+                onClose={() => setShowOfferModal(false)}
+                car={selectedCar}
+                onSubmit={handleOfferSubmit}
+              />
+              <OTPModal
+                isOpen={showOTPModal}
+                onClose={() => setShowOTPModal(false)}
+                onSuccess={handleOTPSuccess}
+                phoneNumber="+91 98765 43210"
+                purpose="make an offer"
+              />
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };

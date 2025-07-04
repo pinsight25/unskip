@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Car, Search, Menu, X, Shield, User, TrendingUp } from 'lucide-react';
+import { Car, Bell, Menu, X, Shield, User, TrendingUp } from 'lucide-react';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,10 +28,9 @@ const Header = () => {
 
     window.addEventListener('scroll', handleScroll);
     
-    // Simulate live car sales counter
     const salesTimer = setInterval(() => {
       setCarsSoldToday(prev => prev + (Math.random() > 0.7 ? 1 : 0));
-    }, 120000); // Update every 2 minutes
+    }, 120000);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -46,14 +45,14 @@ const Header = () => {
         : 'bg-transparent'
     }`}>
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Enhanced Logo with New Tagline */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="h-12 w-12 premium-gradient rounded-xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
-              <Car className="h-6 w-6 text-white" />
+        <div className="flex h-14 md:h-16 items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2 md:space-x-3 group">
+            <div className="h-8 w-8 md:h-12 md:w-12 premium-gradient rounded-lg md:rounded-xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
+              <Car className="h-4 w-4 md:h-6 md:w-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
+              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
               <span className="text-xs text-muted-foreground -mt-1 font-medium hidden sm:block">Good Vibes, Fair Deals</span>
             </div>
           </Link>
@@ -76,21 +75,28 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Enhanced CTA & Profile Section */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Live Sales Counter */}
-            <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500/20 transition-colors">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              {carsSoldToday} cars sold today
-            </Badge>
+          {/* Right Section */}
+          <div className="flex items-center space-x-2 md:space-x-4">
+            {/* Desktop Stats */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {carsSoldToday} cars sold today
+              </Badge>
 
-            <Badge variant="secondary" className="bg-success/10 text-success border-success/20 hover:bg-success/20 transition-colors">
-              <Shield className="h-3 w-3 mr-1" />
-              Trusted Platform
-            </Badge>
+              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">
+                <Shield className="h-3 w-3 mr-1" />
+                Trusted Platform
+              </Badge>
+            </div>
+
+            {/* Mobile Notification */}
+            <Button variant="ghost" size="sm" className="md:hidden p-2">
+              <Bell className="h-5 w-5" />
+            </Button>
             
-            {/* Profile Avatar */}
-            <div className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
+            {/* Desktop Profile */}
+            <div className="hidden md:flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
               <Avatar className="h-9 w-9 border-2 border-primary/20">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-primary/10 text-primary">
@@ -100,42 +106,31 @@ const Header = () => {
               <span className="text-sm font-medium">Sign In</span>
             </div>
             
-            {/* Static Post Car Button */}
-            <Button size="sm" className="premium-gradient hover:shadow-glow transition-all duration-300 font-bold px-8 text-white border-0">
+            {/* Desktop Post Car Button */}
+            <Button size="sm" className="hidden md:inline-flex bg-primary hover:bg-primary/90 font-bold px-8 text-white">
               Post Your Car
             </Button>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2 rounded-lg hover:bg-secondary/50 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-secondary/50 transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-border py-4 bg-white/96 backdrop-blur-md animate-slide-up">
+          <div className="md:hidden border-t border-border py-4 bg-white/96 backdrop-blur-md animate-slide-up">
             <nav className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive(item.path) ? 'text-primary' : 'text-foreground/80 hover:text-primary'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="flex flex-col space-y-3 pt-4 border-t border-border">
+              {/* Mobile Stats */}
+              <div className="flex flex-col space-y-2 pb-4 border-b border-border">
                 <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 self-start">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   {carsSoldToday} cars sold today
@@ -144,10 +139,29 @@ const Header = () => {
                   <Shield className="h-3 w-3 mr-1" />
                   Trusted Platform
                 </Badge>
-                <Button variant="outline" size="sm" className="w-full">
+              </div>
+
+              {/* Mobile Nav Items */}
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`text-base font-medium transition-colors py-2 ${
+                    isActive(item.path) ? 'text-primary' : 'text-foreground/80 hover:text-primary'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              
+              {/* Mobile Actions */}
+              <div className="flex flex-col space-y-3 pt-4 border-t border-border">
+                <Button variant="outline" size="sm" className="w-full justify-start">
+                  <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
-                <Button size="sm" className="w-full premium-gradient font-semibold">
+                <Button size="sm" className="w-full bg-primary font-semibold">
                   Post Your Car
                 </Button>
               </div>

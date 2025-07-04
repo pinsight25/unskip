@@ -2,6 +2,7 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
+import BottomNavigation from '@/components/mobile/BottomNavigation';
 import Home from '@/pages/Home';
 
 const Index = () => {
@@ -13,6 +14,7 @@ const Index = () => {
       </main>
       <Footer />
       <WhatsAppWidget />
+      <BottomNavigation />
     </div>
   );
 };
