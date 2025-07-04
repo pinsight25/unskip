@@ -1,0 +1,203 @@
+import { useState, useEffect } from 'react';
+import { mockCars } from '@/data/mockData';
+import { Car } from '@/types/car';
+import SearchFilters from '@/components/home/SearchFilters';
+import CarCard from '@/components/car/CarCard';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Filter } from 'lucide-react';
+
+interface SearchFiltersType {
+  query: string;
+  type: 'all' | 'dealer' | 'individual';
+  priceRange: [number, number];
+  location: string;
+}
+
+const Home = () => {
+  const [cars, setCars] = useState<Car[]>(mockCars);
+  const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
+  const [currentFilters, setCurrentFilters] = useState<SearchFiltersType>({
+    query: '',
+    type: 'all',
+    priceRange: [0, 5000000],
+    location: ''
+  });
+
+  const handleFilterChange = (filters: SearchFiltersType) => {
+    setCurrentFilters(filters);
+    
+    let filtered = cars;
+    
+    // Apply type filter
+    if (filters.type !== 'all') {
+      filtered = filtered.filter(car => car.seller.type === filters.type);
+    }
+    
+    // Apply search query
+    if (filters.query) {
+      const query = filters.query.toLowerCase();
+      filtered = filtered.filter(car => 
+        car.title.toLowerCase().includes(query) ||
+        car.brand.toLowerCase().includes(query) ||
+        car.model.toLowerCase().includes(query) ||
+        car.location.toLowerCase().includes(query)
+      );
+    }
+    
+    setFilteredCars(filtered);
+  };
+
+  const sortOptions = [
+    { label: 'Price: Low to High', value: 'price_asc' },
+    { label: 'Price: High to Low', value: 'price_desc' },
+    { label: 'Year: Newest First', value: 'year_desc' },
+    { label: 'Mileage: Low to High', value: 'mileage_asc' }
+  ];
+
+  const handleSort = (sortValue: string) => {
+    const sorted = [...filteredCars].sort((a, b) => {
+      switch (sortValue) {
+        case 'price_asc':
+          return a.price - b.price;
+        case 'price_desc':
+          return b.price - a.price;
+        case 'year_desc':
+          return b.year - a.year;
+        case 'mileage_asc':
+          return a.mileage - b.mileage;
+        default:
+          return 0;
+      }
+    });
+    setFilteredCars(sorted);
+  };
+
+  // Sort by featured and verified first by default
+  useEffect(() => {
+    const sorted = [...cars].sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      if (a.verified && !b.verified) return -1;
+      if (!a.verified && b.verified) return 1;
+      return 0;
+    });
+    setCars(sorted);
+    setFilteredCars(sorted);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-background to-muted/30">
+        <div className="container mx-auto">
+          <SearchFilters onFilterChange={handleFilterChange} />
+        </div>
+      </section>
+
+      {/* Results Section */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto">
+          {/* Results Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-bold">
+                {filteredCars.length} Cars Available
+                {currentFilters.type !== 'all' && (
+                  <span className="text-primary ml-2">
+                    • {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
+                  </span>
+                )}
+              </h2>
+              {currentFilters.query && (
+                <p className="text-muted-foreground">
+                  Showing results for "{currentFilters.query}"
+                </p>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <select 
+                onChange={(e) => handleSort(e.target.value)}
+                className="border border-border rounded-md px-3 py-2 text-sm bg-background"
+              >
+                <option value="">Sort by</option>
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                More Filters
+              </Button>
+            </div>
+          </div>
+
+          {/* Active Filters */}
+          {(currentFilters.query || currentFilters.type !== 'all') && (
+            <div className="flex items-center gap-2 mb-6 flex-wrap">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {currentFilters.query && (
+                <Badge variant="secondary">
+                  Search: {currentFilters.query}
+                </Badge>
+              )}
+              {currentFilters.type !== 'all' && (
+                <Badge variant="secondary">
+                  {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
+                </Badge>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFilterChange({ query: '', type: 'all', priceRange: [0, 5000000], location: '' })}
+                className="text-xs"
+              >
+                Clear all
+              </Button>
+            </div>
+          )}
+
+          {/* Car Grid */}
+          {filteredCars.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredCars.map((car) => (
+                <CarCard key={car.id} car={car} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Filter className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">No cars found</h3>
+              <p className="text-muted-foreground mb-4">
+                Try adjusting your search or filters to find more cars.
+              </p>
+              <Button 
+                variant="outline"
+                onClick={() => handleFilterChange({ query: '', type: 'all', priceRange: [0, 5000000], location: '' })}
+              >
+                Clear Filters
+              </Button>
+            </div>
+          )}
+
+          {/* Load More */}
+          {filteredCars.length > 0 && (
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg">
+                Load More Cars
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Home;
