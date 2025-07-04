@@ -48,21 +48,23 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
 
   return (
     <div className="relative">
-      {/* Modern Hero Background */}
-      <div className="absolute inset-0 hero-gradient opacity-95" />
-      <div className="absolute inset-0 bg-black/20" />
+      {/* Vibrant Hero Background */}
+      <div className="absolute inset-0 hero-gradient" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/5" />
       
-      {/* Floating Elements */}
-      <div className="absolute top-10 left-10 w-20 h-20 bg-primary-light/20 rounded-full blur-xl animate-float" />
-      <div className="absolute top-32 right-20 w-32 h-32 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
-      <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-primary/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+      {/* Dynamic Floating Elements */}
+      <div className="absolute top-10 left-10 w-24 h-24 bg-white/20 rounded-full blur-xl animate-float" />
+      <div className="absolute top-32 right-20 w-40 h-40 bg-white/15 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-white/25 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+      <div className="absolute top-1/2 left-8 w-16 h-16 bg-white/30 rounded-full blur-lg animate-float" style={{ animationDelay: '1.5s' }} />
+      <div className="absolute bottom-32 right-16 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '3.5s' }} />
       
-      {/* Car Silhouettes */}
-      <div className="absolute top-16 right-8 opacity-10 animate-float" style={{ animationDelay: '1s' }}>
-        <img src={carSilhouettes} alt="" className="w-48 h-24 object-contain" />
+      {/* Enhanced Car Silhouettes */}
+      <div className="absolute top-16 right-8 opacity-30 animate-float" style={{ animationDelay: '1s' }}>
+        <img src={carSilhouettes} alt="" className="w-52 h-26 object-contain filter brightness-0 invert" />
       </div>
-      <div className="absolute bottom-16 left-8 opacity-10 animate-float" style={{ animationDelay: '3s' }}>
-        <img src={carSilhouettes} alt="" className="w-40 h-20 object-contain transform scale-x-[-1]" />
+      <div className="absolute bottom-16 left-8 opacity-25 animate-float" style={{ animationDelay: '3s' }}>
+        <img src={carSilhouettes} alt="" className="w-44 h-22 object-contain transform scale-x-[-1] filter brightness-0 invert" />
       </div>
 
       <div className="relative z-10 py-20 lg:py-32 px-4">
@@ -87,8 +89,8 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </p>
           </div>
 
-          {/* Modern Search Card */}
-          <Card className="max-w-4xl mx-auto glass-card shadow-premium animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          {/* Enhanced Search Card */}
+          <Card className="max-w-4xl mx-auto bg-white/90 backdrop-blur-lg border-2 border-white/50 shadow-premium animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <CardContent className="p-6 lg:p-8">
               <div className="space-y-6">
                 {/* Main Search */}
@@ -99,15 +101,16 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                       placeholder="Search by brand, model, or location..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-12 text-lg border-2 border-border focus:border-primary bg-white/80 backdrop-blur-sm"
+                      className="pl-12 h-14 text-lg border-2 border-border focus:border-primary bg-white shadow-sm hover:shadow-md transition-all duration-300"
                       onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     />
                   </div>
                   <Button 
                     onClick={handleSearch}
-                    className="premium-gradient px-8 h-12 text-lg font-semibold hover:shadow-glow transition-all duration-300"
+                    size="lg"
+                    className="gradient-vibrant px-8 h-14 text-lg font-semibold hover:shadow-glow transition-all duration-300 text-white border-0"
                   >
-                    Search
+                    Search Cars
                   </Button>
                 </div>
 

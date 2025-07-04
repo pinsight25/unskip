@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 
 const Footer = () => {
   return (
-    <footer className="bg-primary-dark text-white relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-foreground via-foreground/95 to-foreground/90 text-white relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-48 h-48 bg-primary-light rounded-full blur-3xl" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-primary rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-48 h-48 bg-secondary rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-accent rounded-full blur-2xl" />
       </div>
 
       <div className="relative z-10">
