@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Car, Search, Menu, X, Shield } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Car, Search, Menu, X, Shield, User } from 'lucide-react';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,14 +36,14 @@ const Header = () => {
         : 'bg-transparent'
     }`}>
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+        <div className="flex h-14 items-center justify-between">
+          {/* Enhanced Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="h-12 w-12 premium-gradient rounded-2xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
-              <Car className="h-6 w-6 text-white" />
+            <div className="h-10 w-10 premium-gradient rounded-xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
+              <Car className="h-5 w-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
               <span className="text-xs text-muted-foreground -mt-1 font-medium">Good Vibes, Fair Deals</span>
             </div>
           </Link>
@@ -64,17 +66,28 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Trust Badge & CTA */}
+          {/* Enhanced CTA & Profile */}
           <div className="hidden md:flex items-center space-x-4">
             <Badge variant="secondary" className="bg-success/10 text-success border-success/20 hover:bg-success/20 transition-colors">
               <Shield className="h-3 w-3 mr-1" />
               Trusted Platform
             </Badge>
-            <Button variant="outline" size="sm" className="hover:bg-secondary/50 transition-all duration-300">
-              Sign In
-            </Button>
-            <Button size="sm" className="premium-gradient hover:shadow-glow transition-all duration-300 font-medium">
-              Post Your Car
+            
+            {/* Profile Avatar */}
+            <div className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="" />
+                <AvatarFallback className="bg-secondary">
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">Sign In</span>
+            </div>
+            
+            {/* Enhanced Post Car Button */}
+            <Button size="sm" className="premium-gradient hover:shadow-glow transition-all duration-300 font-semibold px-6 text-white border-0 relative overflow-hidden group">
+              <span className="relative z-10">Post Your Car</span>
+              <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
             </Button>
           </div>
 
@@ -115,7 +128,7 @@ const Header = () => {
                 <Button variant="outline" size="sm" className="w-full">
                   Sign In
                 </Button>
-                <Button size="sm" className="w-full premium-gradient font-medium">
+                <Button size="sm" className="w-full premium-gradient font-semibold">
                   Post Your Car
                 </Button>
               </div>

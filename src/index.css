@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -137,7 +138,7 @@
     @apply bg-background text-foreground font-poppins antialiased;
   }
 
-  /* Friendly Typography */
+  /* Enhanced Typography */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
@@ -173,7 +174,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  /* Friendly Animations */
+  /* Enhanced Animations */
   @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
     50% { transform: translateY(-20px) rotate(2deg); }
@@ -190,6 +191,27 @@
     }
   }
 
+  @keyframes gradientShift {
+    0% { 
+      background-position: 0% 50%; 
+    }
+    50% { 
+      background-position: 100% 50%; 
+    }
+    100% { 
+      background-position: 0% 50%; 
+    }
+  }
+
+  @keyframes bounceGentle {
+    0%, 100% { 
+      transform: translateY(0px); 
+    }
+    50% { 
+      transform: translateY(-5px); 
+    }
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -202,15 +224,12 @@
     animation: bounceGentle 2s ease-in-out infinite;
   }
 
-  .animate-wiggle {
-    animation: wiggle 1s ease-in-out infinite;
+  .animate-gradient-shift {
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
   }
 
-  .animate-pulse-soft {
-    animation: pulseSoft 2s ease-in-out infinite;
-  }
-
-  /* Playful Cards */
+  /* Enhanced Cards */
   .card-vibrant {
     background: var(--gradient-card);
     border-radius: var(--radius-lg);
@@ -240,5 +259,13 @@
 
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  /* Utility Classes */
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 }

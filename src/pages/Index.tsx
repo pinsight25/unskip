@@ -1,5 +1,7 @@
+
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
 import Home from '@/pages/Home';
 
 const Index = () => {
@@ -10,6 +12,7 @@ const Index = () => {
         <Home />
       </main>
       <Footer />
+      <WhatsAppWidget />
     </div>
   );
 };
