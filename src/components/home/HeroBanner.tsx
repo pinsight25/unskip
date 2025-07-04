@@ -55,7 +55,7 @@ const HeroBanner = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-4">
       <div className="max-w-7xl mx-auto">
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
@@ -72,7 +72,7 @@ const HeroBanner = () => {
             bulletActiveClass: 'swiper-pagination-bullet-active !bg-white !w-6'
           }}
           loop={true}
-          className="rounded-2xl overflow-hidden shadow-xl"
+          className="rounded-2xl overflow-hidden shadow-lg"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -80,55 +80,55 @@ const HeroBanner = () => {
             const Icon = banner.icon;
             return (
               <SwiperSlide key={banner.id}>
-                <div className={`relative h-48 md:h-60 bg-gradient-to-br ${banner.bgColor} overflow-hidden cursor-pointer group`}>
+                <div className={`relative h-32 md:h-40 bg-gradient-to-br ${banner.bgColor} overflow-hidden cursor-pointer group`}>
                   {/* Modern Background Pattern */}
                   <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-8 right-8 w-28 h-28 md:w-36 md:h-36 rounded-full border-2 border-white/30 animate-pulse"></div>
-                    <div className="absolute bottom-8 right-16 w-20 h-20 md:w-24 md:w-24 rounded-full border-2 border-white/20"></div>
-                    <div className="absolute top-1/2 right-8 w-12 h-12 rounded-full bg-white/10"></div>
+                    <div className="absolute top-4 right-4 w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-white/30 animate-pulse"></div>
+                    <div className="absolute bottom-4 right-8 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white/20"></div>
+                    <div className="absolute top-1/2 right-4 w-6 h-6 rounded-full bg-white/10"></div>
                   </div>
 
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
-                  {/* Content with proper spacing - FIXED PADDING */}
-                  <div className="relative h-full flex items-center justify-between p-8 md:p-12">
+                  {/* Content with proper spacing */}
+                  <div className="relative h-full flex items-center justify-between p-4 md:p-6">
                     <div className="flex-1 text-white">
-                      {/* Exclusive Offer Badge - FIXED TOP MARGIN */}
-                      <div className="flex items-center gap-2 mb-6 mt-2">
-                        <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                          <Icon className="h-4 w-4" />
+                      {/* Exclusive Offer Badge with proper top margin */}
+                      <div className="flex items-center gap-2 mb-3 mt-1">
+                        <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                          <Icon className="h-3 w-3" />
                         </div>
-                        <span className="text-xs md:text-sm font-semibold opacity-90">Exclusive Offer</span>
+                        <span className="text-xs font-semibold opacity-90">Exclusive Offer</span>
                       </div>
                       
                       {/* Main Content */}
-                      <h2 className="text-2xl md:text-4xl font-bold mb-2 leading-tight">
+                      <h2 className="text-lg md:text-2xl font-bold mb-1 leading-tight">
                         {banner.title}
                       </h2>
-                      <p className="text-lg md:text-2xl font-semibold mb-3 opacity-90">
+                      <p className="text-sm md:text-lg font-semibold mb-2 opacity-90">
                         {banner.subtitle}
                       </p>
-                      <p className="text-xs md:text-sm opacity-80 mb-8 hidden md:block">
+                      <p className="text-xs opacity-80 mb-3 hidden md:block">
                         {banner.description}
                       </p>
                       
-                      {/* CTA Button - FIXED BOTTOM PADDING */}
-                      <div className="pb-4">
+                      {/* CTA Button with proper bottom padding */}
+                      <div className="pb-1">
                         <Button 
-                          size="lg"
-                          className="bg-white text-gray-900 hover:bg-white/90 font-bold group-hover:scale-105 transition-all duration-300 rounded-xl h-12 px-6 shadow-lg hover:shadow-xl"
+                          size="sm"
+                          className="bg-white text-gray-900 hover:bg-white/90 font-bold group-hover:scale-105 transition-all duration-300 rounded-lg h-8 px-4 shadow-lg hover:shadow-xl text-xs"
                         >
                           {banner.cta}
-                          <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </div>
                     </div>
 
                     {/* Icon Display */}
-                    <div className="hidden md:flex items-center justify-center w-40 lg:w-56 pr-4">
-                      <div className="w-28 h-28 lg:w-36 lg:h-36 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-2xl">
-                        <Icon className="h-14 w-14 lg:h-18 lg:w-18 text-white" />
+                    <div className="hidden md:flex items-center justify-center w-24 lg:w-32 pr-2">
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-2xl">
+                        <Icon className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
                       </div>
                     </div>
                   </div>

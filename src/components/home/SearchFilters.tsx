@@ -55,9 +55,9 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   };
 
   return (
-    <div className="bg-white py-6">
+    <div className="bg-white py-4">
       <div className="container mx-auto px-4">
-        <div className="space-y-6 max-w-4xl mx-auto">
+        <div className="space-y-4 max-w-4xl mx-auto">
           {/* Search Section */}
           <div className="flex gap-3 md:gap-4">
             <div className="flex-1 relative">
@@ -79,12 +79,12 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </Button>
           </div>
 
-          {/* Popular Locations - REDESIGNED NO SCROLL */}
-          <div className="space-y-4">
+          {/* Popular Locations - Modern Chips Design */}
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                 <MapPin className="h-4 w-4" />
-                <span>Popular Locations:</span>
+                <span>Popular Areas in Chennai:</span>
               </div>
               {selectedLocation && (
                 <Button
@@ -99,31 +99,30 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
               )}
             </div>
             
-            {/* Modern Grid Layout - NO HORIZONTAL SCROLL */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-2">
+            {/* Modern Chips Layout - No Scroll Issues */}
+            <div className="flex flex-wrap gap-2">
               {popularLocations.map((location) => {
                 const isSelected = selectedLocation === location;
                 return (
-                  <Button
+                  <button
                     key={location}
-                    variant="ghost"
-                    size="sm"
                     onClick={() => handleLocationClick(location)}
-                    className={`h-auto py-3 px-3 text-sm font-medium rounded-xl transition-all duration-200 min-h-[44px] border-2 ${
+                    className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 min-h-[44px] ${
                       isSelected 
-                        ? 'bg-primary text-white border-primary shadow-lg scale-105 hover:bg-primary/90' 
-                        : 'bg-white text-gray-700 border-gray-200 hover:bg-primary/5 hover:text-primary hover:border-primary/30 hover:shadow-md'
+                        ? 'bg-primary text-white shadow-md hover:bg-primary/90' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30'
                     }`}
                   >
                     {location}
-                  </Button>
+                    {isSelected && <X className="h-3 w-3 ml-1" />}
+                  </button>
                 );
               })}
             </div>
 
             {/* Selected Location Indicator */}
             {selectedLocation && (
-              <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/20">
+              <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 px-4 py-2 rounded-lg border border-primary/20">
                 <MapPin className="h-4 w-4" />
                 <span>Showing cars in: <strong>{selectedLocation}</strong></span>
               </div>
