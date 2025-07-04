@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Car } from '@/types/car';
 import { PricingAlert } from '@/types/car';
 import { AlertTriangle, DollarSign, TrendingDown, CheckCircle, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface OfferModalProps {
   isOpen: boolean;
@@ -22,6 +24,8 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
   const [pricingAlert, setPricingAlert] = useState<PricingAlert | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const calculatePricingAlert = (offerAmount: number): PricingAlert => {
     const askingPrice = car.price;
@@ -36,51 +40,67 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
     } else if (percentageDiff >= 20) {
       return {
         type: 'warning',
-        message: 'This offer is quite low compared to the asking price. Consider increasing your offer for better chances.',
+        message: `Seller typically expects ₹${formatPrice(Math.floor(askingPrice * 0.8))} - ₹${formatPrice(askingPrice)}`,
         percentageDiff
       };
     } else {
       return {
         type: 'fair',
-        message: 'This looks like a reasonable offer!',
+        message: '✅ Great offer!',
         percentageDiff
       };
     }
   };
 
   const handleOfferAmountChange = (value: string) => {
-    setOfferAmount(value);
-    const numericValue = parseInt(value.replace(/,/g, ''));
+    // Remove all non-digit characters
+    const numericValue = value.replace(/\D/g, '');
     
-    if (numericValue && numericValue > 0) {
-      const alert = calculatePricingAlert(numericValue);
+    if (numericValue) {
+      // Format with thousand separators
+      const formatted = parseInt(numericValue).toLocaleString('en-IN');
+      setOfferAmount(formatted);
+      
+      const alert = calculatePricingAlert(parseInt(numericValue));
       setPricingAlert(alert);
     } else {
+      setOfferAmount('');
       setPricingAlert(null);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const numericAmount = parseInt(offerAmount.replace(/,/g, ''));
     
     if (pricingAlert?.type === 'blocked') {
       return;
     }
 
-    onSubmit({
-      amount: numericAmount,
-      message,
-      buyerName,
-      buyerPhone
-    });
+    setIsSubmitting(true);
     
-    // Reset form
-    setOfferAmount('');
-    setMessage('');
-    setBuyerName('');
-    setBuyerPhone('');
-    setPricingAlert(null);
-    onClose();
+    // Simulate API call
+    setTimeout(() => {
+      onSubmit({
+        amount: numericAmount,
+        message,
+        buyerName,
+        buyerPhone
+      });
+      
+      toast({
+        title: "Offer Submitted Successfully!",
+        description: "Your offer has been sent to the seller. They will contact you if interested.",
+      });
+      
+      // Reset form
+      setOfferAmount('');
+      setMessage('');
+      setBuyerName('');
+      setBuyerPhone('');
+      setPricingAlert(null);
+      setIsSubmitting(false);
+      onClose();
+    }, 1000);
   };
 
   const formatPrice = (price: number) => {
@@ -154,12 +174,8 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
               <Input
                 placeholder="Enter your offer amount"
                 value={offerAmount}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  const formatted = value ? parseInt(value).toLocaleString('en-IN') : '';
-                  handleOfferAmountChange(formatted);
-                }}
-                className="pl-8"
+                onChange={(e) => handleOfferAmountChange(e.target.value)}
+                className="pl-8 text-lg font-semibold"
               />
             </div>
           </div>
@@ -170,21 +186,21 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
               pricingAlert.type === 'blocked' 
                 ? 'border-destructive bg-destructive/5' 
                 : pricingAlert.type === 'warning'
-                ? 'border-warning bg-warning/5'
-                : 'border-success bg-success/5'
+                ? 'border-orange-500 bg-orange-50'
+                : 'border-green-500 bg-green-50'
             }`}>
               <div className="flex items-start space-x-2">
                 {pricingAlert.type === 'blocked' && <X className="h-4 w-4 text-destructive mt-0.5" />}
-                {pricingAlert.type === 'warning' && <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />}
-                {pricingAlert.type === 'fair' && <CheckCircle className="h-4 w-4 text-success mt-0.5" />}
+                {pricingAlert.type === 'warning' && <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5" />}
+                {pricingAlert.type === 'fair' && <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />}
                 <div className="flex-1">
                   <AlertDescription className={`${
                     pricingAlert.type === 'blocked' 
                       ? 'text-destructive' 
                       : pricingAlert.type === 'warning'
-                      ? 'text-warning-foreground'
-                      : 'text-success-foreground'
-                  }`}>
+                      ? 'text-orange-800'
+                      : 'text-green-800'
+                  } font-medium`}>
                     {pricingAlert.message}
                   </AlertDescription>
                   {pricingAlert.percentageDiff > 0 && (
@@ -210,15 +226,15 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
 
           {/* Actions */}
           <div className="flex space-x-3">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+            <Button variant="outline" onClick={onClose} className="flex-1" disabled={isSubmitting}>
               Cancel
             </Button>
             <Button 
               onClick={handleSubmit}
-              disabled={!isFormValid()}
+              disabled={!isFormValid() || isSubmitting}
               className="flex-1 bg-gradient-primary"
             >
-              Submit Offer
+              {isSubmitting ? 'Sending...' : 'Send Offer'}
             </Button>
           </div>
 

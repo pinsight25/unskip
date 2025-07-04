@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -24,9 +23,9 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   const [offerCount, setOfferCount] = useState(247);
   
   const filterTypes = [
-    { key: 'all' as const, label: 'Browse Everything', icon: Car, count: '2.3k+', description: 'All available cars' },
-    { key: 'dealer' as const, label: 'Verified Dealers', icon: Building2, count: '850+', description: 'Professional sellers' },
-    { key: 'individual' as const, label: 'Direct from Owners', icon: Users, count: '1.5k+', description: 'Individual owners' }
+    { key: 'all' as const, label: 'All Cars', icon: Car, count: '2.3k+' },
+    { key: 'dealer' as const, label: 'Dealers Only', icon: Building2, count: '850+' },
+    { key: 'individual' as const, label: 'Private Sellers', icon: Users, count: '1.5k+' }
   ];
 
   const handleTypeChange = (type: 'all' | 'dealer' | 'individual') => {
@@ -48,7 +47,16 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
     });
   };
 
-  // Animated counting effect
+  const handleLocationClick = (location: string) => {
+    setSearchQuery(location);
+    onFilterChange({
+      query: location,
+      type: activeType,
+      priceRange: [0, 5000000],
+      location: ''
+    });
+  };
+
   useEffect(() => {
     const animateCount = (target: number, key: 'cars' | 'customers' | 'dealers') => {
       let start = 0;
@@ -79,7 +87,6 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
     const statsElement = document.getElementById('stats-section');
     if (statsElement) observer.observe(statsElement);
 
-    // Simulate real-time offer counter
     const offerTimer = setInterval(() => {
       setOfferCount(prev => prev + Math.floor(Math.random() * 3));
     }, 30000);
@@ -93,12 +100,12 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   return (
     <div className="relative">
       {/* Softer Animated Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-secondary/70 to-accent/60 animate-gradient-shift" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/60 via-secondary/50 to-accent/40" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/5 via-transparent to-black/5" />
 
       <div className="relative z-10 py-12 lg:py-16 px-4">
         <div className="container mx-auto text-center space-y-10">
-          {/* Enhanced Hero Text with Trust Elements */}
+          {/* Enhanced Hero Text */}
           <div className="space-y-6 animate-slide-up max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-white/90 text-sm font-medium border border-white/30">
               <Sparkles className="h-4 w-4" />
@@ -120,7 +127,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </div>
           </div>
 
-          {/* Enhanced Search Card with Better Prominence */}
+          {/* Enhanced Search Card */}
           <Card className="max-w-4xl mx-auto bg-white shadow-2xl border-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <CardContent className="p-6">
               <div className="space-y-6">
@@ -145,7 +152,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                   </Button>
                 </div>
 
-                {/* Enhanced Popular Locations with Better Visibility */}
+                {/* Enhanced Popular Locations */}
                 <div className="flex items-center gap-4 flex-wrap justify-center">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                     <MapPin className="h-4 w-4" />
@@ -154,8 +161,8 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                   {['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR'].map((location) => (
                     <Badge 
                       key={location}
-                      className="cursor-pointer bg-white text-gray-800 border-2 border-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 px-4 py-2 font-semibold rounded-full hover:scale-105 shadow-md hover:shadow-lg"
-                      onClick={() => setSearchQuery(location)}
+                      className="cursor-pointer bg-white text-gray-800 border-2 border-gray-200 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 px-4 py-2 font-semibold rounded-full hover:scale-105 shadow-sm hover:shadow-md"
+                      onClick={() => handleLocationClick(location)}
                     >
                       <MapPin className="h-3 w-3 mr-1" />
                       {location}
@@ -166,41 +173,34 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </CardContent>
           </Card>
 
-          {/* Enhanced Filter Type Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            {filterTypes.map((filter) => {
-              const Icon = filter.icon;
-              const isActive = activeType === filter.key;
-              return (
-                <Card
-                  key={filter.key}
-                  className={`cursor-pointer transition-all duration-300 hover:shadow-xl group hover:-translate-y-2 ${
-                    isActive 
-                      ? 'bg-white shadow-xl ring-2 ring-primary scale-105' 
-                      : 'bg-white hover:shadow-lg'
-                  }`}
-                  onClick={() => handleTypeChange(filter.key)}
-                >
-                  <CardContent className="p-6 text-center space-y-4">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto transition-all duration-300 ${
-                      isActive ? 'premium-gradient text-white shadow-lg' : 'bg-secondary/20 text-primary group-hover:bg-primary group-hover:text-white'
-                    }`}>
-                      <Icon className="h-7 w-7" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="font-bold text-lg text-foreground">{filter.label}</h3>
-                      <p className="text-sm text-muted-foreground">{filter.description}</p>
-                    </div>
-                    <Badge variant="outline" className="font-semibold text-primary border-primary/30">
+          {/* Filter Tabs - Now Horizontal */}
+          <div className="max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 inline-flex gap-2 border border-white/20">
+              {filterTypes.map((filter) => {
+                const Icon = filter.icon;
+                const isActive = activeType === filter.key;
+                return (
+                  <button
+                    key={filter.key}
+                    onClick={() => handleTypeChange(filter.key)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-white text-primary shadow-lg' 
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{filter.label}</span>
+                    <Badge variant="outline" className={`text-xs ${isActive ? 'border-primary/30' : 'border-white/30'}`}>
                       {filter.count}
                     </Badge>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Enhanced Statistics with Better Impact */}
+          {/* Enhanced Statistics */}
           <div id="stats-section" className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.6s' }}>
             {[
               { icon: Car, value: animatedCounts.cars, suffix: '+', label: 'Verified Cars', color: 'text-primary' },

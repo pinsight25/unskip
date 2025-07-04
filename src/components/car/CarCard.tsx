@@ -7,16 +7,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import OfferModal from '@/components/modals/OfferModal';
 import OTPModal from '@/components/modals/OTPModal';
-import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, Gauge, DollarSign, Clock } from 'lucide-react';
+import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, Gauge, DollarSign, Clock, CalendarDays } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface CarCardProps {
   car: Car;
+  onSave?: (carId: string) => void;
+  isSaved?: boolean;
 }
 
-const CarCard = ({ car }: CarCardProps) => {
+const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [offerMade, setOfferMade] = useState(false);
+  const { toast } = useToast();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -34,6 +41,28 @@ const CarCard = ({ car }: CarCardProps) => {
     }
   };
 
+  const handleChat = () => {
+    if (!offerMade) {
+      toast({
+        title: "Make an Offer First",
+        description: "Please make an offer before starting a chat with the seller.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setShowChatModal(true);
+  };
+
+  const handleTestDrive = () => {
+    setShowTestDriveModal(true);
+  };
+
+  const handleSave = () => {
+    if (onSave) {
+      onSave(car.id);
+    }
+  };
+
   const handleOTPSuccess = () => {
     setIsVerified(true);
     setShowOfferModal(true);
@@ -41,46 +70,57 @@ const CarCard = ({ car }: CarCardProps) => {
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
-    // Handle offer submission logic here
+    setOfferMade(true);
   };
 
   return (
     <>
-      <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white border-0 overflow-hidden hover:scale-[1.02] shadow-lg">
+      <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white border-0 overflow-hidden hover:scale-[1.02] shadow-lg">
         <CardContent className="p-0">
           {/* Image Section */}
           <div className="relative aspect-[4/3] overflow-hidden">
-            <img
-              src={car.images[0]}
-              alt={car.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            />
+            <Link to={`/car/${car.id}`}>
+              <img
+                src={car.images[0]}
+                alt={car.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer"
+              />
+            </Link>
             
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             {/* Save Heart Icon */}
             <div className="absolute top-4 right-4">
-              <Button size="sm" variant="secondary" className="h-10 w-10 p-0 bg-white/90 hover:bg-white shadow-lg rounded-full group-hover:scale-110 transition-all duration-300">
-                <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className={`h-10 w-10 p-0 shadow-lg rounded-full group-hover:scale-110 transition-all duration-300 ${
+                  isSaved ? 'bg-red-50 hover:bg-red-100' : 'bg-white/90 hover:bg-white'
+                }`}
+                onClick={handleSave}
+              >
+                <Heart className={`h-4 w-4 transition-colors ${
+                  isSaved ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-500'
+                }`} />
               </Button>
             </div>
             
             {/* Modern Badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {car.featured && (
-                <Badge className="bg-accent/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+                <Badge className="bg-amber-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
                   ⭐ Featured
                 </Badge>
               )}
               {car.verified && (
-                <Badge className="bg-success/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+                <Badge className="bg-green-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
                   <Shield className="h-3 w-3 mr-1" />
                   Verified
                 </Badge>
               )}
               {car.isRentAvailable && (
-                <Badge className="bg-primary/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+                <Badge className="bg-blue-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
                   Also for Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
                 </Badge>
               )}
@@ -173,19 +213,17 @@ const CarCard = ({ car }: CarCardProps) => {
                     {car.seller.verified && (
                       <Badge className="bg-success/10 text-success border-success/20 text-xs px-2 py-0.5 rounded-full">
                         <Shield className="h-3 w-3 mr-1" />
-                        Verified Seller
+                        Verified
                       </Badge>
                     )}
                   </div>
                   <div className="flex items-center text-xs text-muted-foreground gap-3">
                     {car.seller.rating > 0 && (
-                      <div className="flex items-center text-accent">
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        <span className="font-medium ml-1">{car.seller.rating}</span>
+                      <div className="flex items-center text-amber-500">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`h-3 w-3 ${i < car.seller.rating ? 'fill-current' : ''}`} />
+                        ))}
+                        <span className="font-medium ml-1 text-foreground">{car.seller.rating}.0</span>
                       </div>
                     )}
                     <div className="flex items-center text-green-600">
@@ -208,11 +246,22 @@ const CarCard = ({ car }: CarCardProps) => {
                 Make an Offer
               </Button>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" size="sm" className="font-medium hover:bg-primary hover:text-white transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="font-medium hover:bg-primary hover:text-white transition-all duration-300"
+                  onClick={handleChat}
+                >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Chat
                 </Button>
-                <Button variant="outline" size="sm" className="font-medium hover:bg-secondary hover:text-white transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="font-medium hover:bg-secondary hover:text-white transition-all duration-300"
+                  onClick={handleTestDrive}
+                >
+                  <CalendarDays className="h-4 w-4 mr-2" />
                   Test Drive
                 </Button>
               </div>

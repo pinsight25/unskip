@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
@@ -5,7 +6,8 @@ import SearchFilters from '@/components/home/SearchFilters';
 import CarCard from '@/components/car/CarCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Filter, Car as CarIcon } from 'lucide-react';
+import { Filter, Car as CarIcon, Heart } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface SearchFiltersType {
   query: string;
@@ -17,12 +19,14 @@ interface SearchFiltersType {
 const Home = () => {
   const [cars, setCars] = useState<Car[]>(mockCars);
   const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
+  const [savedCars, setSavedCars] = useState<string[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFiltersType>({
     query: '',
     type: 'all',
     priceRange: [0, 5000000],
     location: ''
   });
+  const { toast } = useToast();
 
   const handleFilterChange = (filters: SearchFiltersType) => {
     setCurrentFilters(filters);
@@ -73,6 +77,25 @@ const Home = () => {
     setFilteredCars(sorted);
   };
 
+  const handleSaveCar = (carId: string) => {
+    setSavedCars(prev => {
+      const isAlreadySaved = prev.includes(carId);
+      if (isAlreadySaved) {
+        toast({
+          title: "Car removed from wishlist",
+          description: "Car has been removed from your saved cars.",
+        });
+        return prev.filter(id => id !== carId);
+      } else {
+        toast({
+          title: "Car saved to wishlist",
+          description: "Car has been added to your saved cars.",
+        });
+        return [...prev, carId];
+      }
+    });
+  };
+
   // Sort by featured and verified first by default
   useEffect(() => {
     const sorted = [...cars].sort((a, b) => {
@@ -111,6 +134,12 @@ const Home = () => {
                     {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
                   </Badge>
                 )}
+                {savedCars.length > 0 && (
+                  <Badge variant="outline" className="text-red-500 border-red-200 bg-red-50">
+                    <Heart className="h-3 w-3 mr-1 fill-current" />
+                    {savedCars.length} saved
+                  </Badge>
+                )}
               </div>
               {currentFilters.query && (
                 <p className="text-muted-foreground">
@@ -122,7 +151,7 @@ const Home = () => {
             <div className="flex items-center gap-3">
               <select 
                 onChange={(e) => handleSort(e.target.value)}
-                className="border border-border rounded-md px-3 py-2 text-sm bg-background"
+                className="border border-border rounded-md px-3 py-2 text-sm bg-background hover:bg-muted/50 transition-colors"
               >
                 <option value="">Sort by</option>
                 {sortOptions.map((option) => (
@@ -168,7 +197,12 @@ const Home = () => {
           {filteredCars.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredCars.map((car) => (
-                <CarCard key={car.id} car={car} />
+                <CarCard 
+                  key={car.id} 
+                  car={car} 
+                  onSave={handleSaveCar}
+                  isSaved={savedCars.includes(car.id)}
+                />
               ))}
             </div>
           ) : (
