@@ -120,19 +120,6 @@ const HeroBanner = () => {
               </div>
             </div>
           </div>
-          
-          {/* Slide Indicators - ULTRA MINIMAL SIZE */}
-          <div className="flex justify-center space-x-2 mt-6">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-1 h-1 rounded-full transition-all duration-200 ${
-                  index === currentSlide ? 'bg-white scale-150' : 'bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </div>
