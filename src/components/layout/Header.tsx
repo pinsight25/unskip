@@ -4,12 +4,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Car, Bell, Menu, X, Shield, User, TrendingUp } from 'lucide-react';
+import { Car, Bell, Menu, X, Shield, User, TrendingUp, MessageCircle } from 'lucide-react';
+import { mockChats } from '@/data/chatMockData';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [carsSoldToday, setCarsSoldToday] = useState(5);
+  const [unreadChats, setUnreadChats] = useState(0);
   const location = useLocation();
 
   const navItems = [
@@ -31,6 +33,10 @@ const Header = () => {
     const salesTimer = setInterval(() => {
       setCarsSoldToday(prev => prev + (Math.random() > 0.7 ? 1 : 0));
     }, 120000);
+
+    // Calculate unread chats
+    const totalUnread = mockChats.reduce((sum, chat) => sum + chat.unreadCount, 0);
+    setUnreadChats(totalUnread);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -91,6 +97,18 @@ const Header = () => {
                 Trusted Platform
               </Badge>
             </div>
+
+            {/* Chat Icon - Desktop */}
+            <Link to="/chats" className="hidden md:flex relative">
+              <Button variant="ghost" size="sm" className="p-2">
+                <MessageCircle className="h-5 w-5" />
+                {unreadChats > 0 && (
+                  <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                    {unreadChats}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
 
             {/* Mobile Notification - Fixed spacing */}
             <Button variant="ghost" size="sm" className="md:hidden p-1.5 h-8 w-8">
@@ -161,6 +179,17 @@ const Header = () => {
               
               {/* Mobile Actions */}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border">
+                <Link to="/chats" onClick={closeMobileMenu}>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    My Chats
+                    {unreadChats > 0 && (
+                      <Badge className="ml-auto bg-red-500 text-white text-xs">
+                        {unreadChats}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
                 <Link to="/profile" onClick={closeMobileMenu}>
                   <Button variant="outline" size="sm" className="w-full justify-start">
                     <User className="h-4 w-4 mr-2" />

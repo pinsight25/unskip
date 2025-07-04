@@ -29,6 +29,7 @@ interface MobileCarCardProps {
 
 const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -54,12 +55,27 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
 
   const handleChat = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toast({
-      title: "Chat Started",
-      description: `Starting chat with ${car.seller.name} about ${car.title}`,
-    });
-    // Add actual chat functionality here
-    console.log('Chat initiated for car:', car.id);
+    
+    if (offerStatus === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'pending') {
+      toast({
+        title: "Waiting for seller response",
+        description: "Please wait for the seller to respond to your offer before chatting.",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'accepted') {
+      navigate('/chat/1');
+    }
   };
 
   const handleTestDrive = (e: React.MouseEvent) => {
@@ -70,6 +86,21 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
     });
     // Add actual test drive booking functionality here
     console.log('Test drive requested for car:', car.id);
+  };
+
+  const getChatButtonText = () => {
+    switch (offerStatus) {
+      case 'none':
+        return 'Chat';
+      case 'pending':
+        return 'Pending';
+      case 'accepted':
+        return 'Chat';
+      case 'rejected':
+        return 'Rejected';
+      default:
+        return 'Chat';
+    }
   };
 
   return (
@@ -216,9 +247,10 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
               variant="outline" 
               onClick={handleChat}
               className="h-10 text-sm font-medium"
+              disabled={offerStatus === 'pending' || offerStatus === 'rejected'}
             >
               <MessageCircle className="h-4 w-4 mr-2" />
-              Chat
+              {getChatButtonText()}
             </Button>
             <Button 
               variant="outline" 

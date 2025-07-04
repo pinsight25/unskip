@@ -11,6 +11,8 @@ import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Saved from "./pages/Saved";
 import Dealers from "./pages/Dealers";
+import Chats from "./pages/Chats";
+import ChatDetail from "./pages/ChatDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/dealers" element={<Dealers />} />
+          <Route path="/chats" element={<Chats />} />
+          <Route path="/chat/:id" element={<ChatDetail />} />
           <Route path="/car/:id" element={<CarDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

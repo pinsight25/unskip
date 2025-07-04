@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import OfferModal from '@/components/modals/OfferModal';
 import OTPModal from '@/components/modals/OTPModal';
+import TestDriveModal from '@/components/modals/TestDriveModal';
 import { Calendar, Fuel, MapPin, MessageCircle, RotateCcw, Settings, Star, Users, Shield, Award, DollarSign, CalendarDays } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useToast } from '@/hooks/use-toast';
@@ -14,12 +16,15 @@ import { formatIndianPrice } from '@/utils/priceFormatter';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const car: Car | undefined = mockCars.find((car) => car.id === id);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [offerMade, setOfferMade] = useState(false);
+  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
   const { toast } = useToast();
 
   if (!car) {
@@ -70,9 +75,66 @@ const CarDetail = () => {
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
     setOfferMade(true);
+    setOfferStatus('pending');
+    
+    // Simulate offer acceptance after 3 seconds
+    setTimeout(() => {
+      setOfferStatus('accepted');
+      toast({
+        title: "Offer Accepted! 🎉",
+        description: "Great news! The seller has accepted your offer. You can now chat with them.",
+      });
+    }, 3000);
+
     toast({
       title: "Offer submitted!",
       description: "Your offer has been sent to the seller.",
+    });
+  };
+
+  const handleChatClick = () => {
+    if (offerStatus === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'pending') {
+      toast({
+        title: "Waiting for seller response",
+        description: "Please wait for the seller to respond to your offer before chatting.",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'accepted') {
+      // Navigate to chat - in real app, this would be the actual chat ID
+      navigate('/chat/1');
+    }
+  };
+
+  const getChatButtonText = () => {
+    switch (offerStatus) {
+      case 'none':
+        return 'Make offer to chat';
+      case 'pending':
+        return 'Waiting for response';
+      case 'accepted':
+        return 'Chat with seller';
+      case 'rejected':
+        return 'Offer rejected';
+      default:
+        return 'Chat';
+    }
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
+    toast({
+      title: "Test Drive Scheduled! 🚗",
+      description: `Your test drive is confirmed for ${booking.date} at ${booking.timeSlot}`,
     });
   };
 
@@ -242,11 +304,18 @@ const CarDetail = () => {
                   Make an Offer
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline">
+                  <Button 
+                    variant="outline"
+                    onClick={handleChatClick}
+                    disabled={offerStatus === 'pending' || offerStatus === 'rejected'}
+                  >
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    Chat
+                    {getChatButtonText()}
                   </Button>
-                  <Button variant="outline">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowTestDriveModal(true)}
+                  >
                     <CalendarDays className="h-4 w-4 mr-2" />
                     Test Drive
                   </Button>
@@ -270,6 +339,13 @@ const CarDetail = () => {
         onSuccess={handleOTPSuccess}
         phoneNumber="+91 98765 43210"
         purpose="make an offer"
+      />
+
+      <TestDriveModal
+        isOpen={showTestDriveModal}
+        onClose={() => setShowTestDriveModal(false)}
+        car={car}
+        onScheduled={handleTestDriveScheduled}
       />
     </ResponsiveLayout>
   );
