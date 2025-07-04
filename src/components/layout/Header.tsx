@@ -96,7 +96,7 @@ const Header = () => {
             </Button>
             
             {/* Desktop Profile */}
-            <div className="hidden md:flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <Link to="/profile" className="hidden md:flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
               <Avatar className="h-9 w-9 border-2 border-primary/20">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-primary/10 text-primary">
@@ -104,12 +104,14 @@ const Header = () => {
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">Sign In</span>
-            </div>
+            </Link>
             
             {/* Desktop Post Car Button */}
-            <Button size="sm" className="hidden md:inline-flex bg-primary hover:bg-primary/90 font-medium px-6 text-white">
-              Post Your Car
-            </Button>
+            <Link to="/sell">
+              <Button size="sm" className="hidden md:inline-flex bg-primary hover:bg-primary/90 font-medium px-6 text-white">
+                Post Your Car
+              </Button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button
@@ -157,13 +159,17 @@ const Header = () => {
               
               {/* Mobile Actions */}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <User className="h-4 w-4 mr-2" />
-                  Sign In
-                </Button>
-                <Button size="sm" className="w-full bg-primary font-semibold">
-                  Post Your Car
-                </Button>
+                <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <User className="h-4 w-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/sell" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button size="sm" className="w-full bg-primary font-semibold">
+                    Post Your Car
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

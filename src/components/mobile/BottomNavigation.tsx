@@ -18,7 +18,7 @@ const BottomNavigation = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="bg-white border-t border-gray-200 shadow-lg px-2 py-1">
+      <div className="bg-white border-t border-gray-200 shadow-lg px-2 py-2">
         <div className="flex items-center justify-around">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -34,13 +34,13 @@ const BottomNavigation = () => {
               >
                 <div className="relative">
                   {item.isPrimary ? (
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
                       item.active ? 'bg-primary scale-110' : 'bg-primary/90 hover:bg-primary'
                     }`}>
-                      <Icon className="h-7 w-7 text-white" />
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
                   ) : (
-                    <div className="p-2">
+                    <div className="p-1">
                       <Icon className={`h-6 w-6 ${item.active ? 'text-primary' : ''}`} />
                     </div>
                   )}
@@ -52,7 +52,7 @@ const BottomNavigation = () => {
                 </div>
                 <span className={`text-xs mt-1 font-medium ${
                   item.active ? 'text-primary' : 'text-gray-500'
-                } ${item.isPrimary ? 'mt-0' : ''}`}>
+                } ${item.isPrimary ? 'text-white' : ''}`}>
                   {item.label}
                 </span>
               </Link>

@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ interface MobileCarCardProps {
 
 const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
   
   const formatPrice = (price: number) => {
     return `₹${price.toLocaleString()}`;
@@ -44,13 +46,18 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/car/${car.id}`);
+  };
+
   return (
-    <Card className="mb-4 mx-4 overflow-hidden shadow-sm border border-gray-200 bg-white">
+    <Card className="mb-4 mx-4 overflow-hidden shadow-sm border border-gray-200 bg-white cursor-pointer" onClick={handleCardClick}>
       {/* Image Section */}
       <div className="relative">
         <div 
           className="relative h-48 bg-gray-100 overflow-hidden"
           onTouchStart={(e) => {
+            e.stopPropagation();
             const touchStart = e.touches[0].clientX;
             const handleTouchEnd = (endEvent: TouchEvent) => {
               const touchEnd = endEvent.changedTouches[0].clientX;
@@ -87,7 +94,10 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
 
           {/* Save Button */}
           <button
-            onClick={() => onSave(car.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSave(car.id);
+            }}
             className="absolute top-3 right-3 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-sm"
           >
             <Heart className={`h-5 w-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
@@ -170,7 +180,10 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
         {/* Action Buttons */}
         <div className="space-y-2">
           <Button 
-            onClick={onMakeOffer}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMakeOffer();
+            }}
             className="w-full bg-primary hover:bg-primary/90 text-white font-medium h-11"
           >
             Make an Offer
@@ -179,7 +192,10 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
           <div className="grid grid-cols-2 gap-2">
             <Button 
               variant="outline" 
-              onClick={onChat}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChat();
+              }}
               className="h-10 text-sm font-medium"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
@@ -187,7 +203,10 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
             </Button>
             <Button 
               variant="outline" 
-              onClick={onTestDrive}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTestDrive();
+              }}
               className="h-10 text-sm font-medium"
             >
               <Calendar className="h-4 w-4 mr-2" />

@@ -55,8 +55,8 @@ const HeroBanner = () => {
   ];
 
   return (
-    <div className="py-4 md:py-6 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <div className="px-4 py-4 md:py-6 bg-gray-50">
+      <div className="container mx-auto">
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           spaceBetween={0}

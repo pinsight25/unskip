@@ -54,7 +54,10 @@ const Home = () => {
 
   const handleFilterChange = (filters: SearchFiltersType) => {
     setCurrentFilters(filters);
-    
+    applyFilters(filters);
+  };
+
+  const applyFilters = (filters: SearchFiltersType) => {
     let filtered = cars;
     
     if (filters.type !== 'all') {
@@ -72,6 +75,12 @@ const Home = () => {
     }
     
     setFilteredCars(filtered);
+  };
+
+  const handleTypeFilter = (type: 'all' | 'dealer' | 'individual') => {
+    const newFilters = { ...currentFilters, type };
+    setCurrentFilters(newFilters);
+    applyFilters(newFilters);
   };
 
   const handleSort = (sortValue: string) => {
@@ -168,15 +177,11 @@ const Home = () => {
       {/* Filter Tabs */}
       <FilterTabs 
         activeType={currentFilters.type}
-        onTypeChange={(type) => {
-          const newFilters = { ...currentFilters, type };
-          setCurrentFilters(newFilters);
-          handleFilterChange(newFilters);
-        }}
+        onTypeChange={handleTypeFilter}
       />
 
       {/* Results Section */}
-      <section className="py-6 md:py-12 px-0 md:px-4 bg-white">
+      <section className="py-6 md:py-12 bg-white">
         <div className="container mx-auto">
           {/* Pull to Refresh (Mobile) */}
           {isMobile && (
