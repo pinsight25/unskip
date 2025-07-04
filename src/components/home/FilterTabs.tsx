@@ -31,40 +31,39 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
 
   return (
     <div className="bg-white border-b border-gray-100 sticky top-14 md:top-16 z-40">
-      <div className="container mx-auto px-4 py-2">
+      <div className="container mx-auto px-4 py-3">
         <div className="max-w-5xl mx-auto">
-          {/* Compact Horizontal Tabs */}
-          <div className="flex items-center justify-center md:justify-start">
-            <div className="flex border-b border-gray-200">
-              {filterTypes.map((filter) => {
-                const Icon = filter.icon;
-                const isActive = activeType === filter.key;
-                return (
-                  <button
-                    key={filter.key}
-                    onClick={() => onTypeChange(filter.key)}
-                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 min-h-[44px] ${
+          {/* Fixed Toggle Tabs */}
+          <div className="grid grid-cols-3 gap-2 bg-gray-50 p-1 rounded-lg">
+            {filterTypes.map((filter) => {
+              const Icon = filter.icon;
+              const isActive = activeType === filter.key;
+              return (
+                <button
+                  key={filter.key}
+                  onClick={() => onTypeChange(filter.key)}
+                  className={`flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium transition-all duration-200 rounded-md ${
+                    isActive 
+                      ? 'bg-primary text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-primary hover:bg-white/50'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="font-semibold hidden sm:inline">{filter.label}</span>
+                  <span className="font-semibold sm:hidden">{filter.label.split(' ')[0]}</span>
+                  <Badge 
+                    variant="secondary" 
+                    className={`text-xs px-1.5 py-0.5 font-medium ${
                       isActive 
-                        ? 'border-primary text-primary bg-primary/5' 
-                        : 'border-transparent text-gray-600 hover:text-primary hover:border-gray-300'
+                        ? 'bg-white/20 text-white border-white/30' 
+                        : 'bg-gray-200 text-gray-600'
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
-                    <span className="font-semibold">{filter.label}</span>
-                    <Badge 
-                      variant="secondary" 
-                      className={`text-xs px-2 py-0.5 font-medium ${
-                        isActive 
-                          ? 'bg-primary/10 text-primary border-primary/20' 
-                          : 'bg-gray-200 text-gray-600'
-                      }`}
-                    >
-                      {filter.count}
-                    </Badge>
-                  </button>
-                );
-              })}
-            </div>
+                    {filter.count}
+                  </Badge>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

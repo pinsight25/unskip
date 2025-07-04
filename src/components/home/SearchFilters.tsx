@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, MapPin, X } from 'lucide-react';
+import { Search, MapPin, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
@@ -55,7 +54,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   };
 
   return (
-    <div className="bg-white py-3">
+    <div className="bg-white py-2 border-b border-gray-100">
       <div className="container mx-auto px-4">
         <div className="space-y-3 max-w-4xl mx-auto">
           {/* Search Section */}
@@ -66,32 +65,32 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                 placeholder="Search by make, model, or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 text-base border-2 border-border focus:border-primary bg-white shadow-sm rounded-xl transition-all duration-200 hover:shadow-md"
+                className="pl-12 h-11 text-base border-2 border-border focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
             <Button 
               onClick={handleSearch}
               size="lg"
-              className="bg-primary px-6 h-12 text-base font-medium hover:bg-primary/90 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 min-h-[44px]"
+              className="bg-primary px-6 h-11 text-base font-medium hover:bg-primary/90 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Search
             </Button>
           </div>
 
-          {/* Popular Locations - Compact Chip Design */}
+          {/* Horizontal Location Pills */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+              <span className="text-sm text-muted-foreground font-medium flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
-                <span>Popular Areas:</span>
-              </div>
+                Popular Areas
+              </span>
               {selectedLocation && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearLocation}
-                  className="text-primary hover:text-primary/80 font-medium hover:bg-primary/10 transition-all duration-200 min-h-[44px] px-3 h-8"
+                  className="text-primary hover:text-primary/80 font-medium hover:bg-primary/10 transition-all duration-200 h-8 px-3"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Clear
@@ -99,25 +98,31 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
               )}
             </div>
             
-            {/* Modern Chips - Horizontal Scrollable */}
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-              {popularLocations.map((location) => {
-                const isSelected = selectedLocation === location;
-                return (
-                  <button
-                    key={location}
-                    onClick={() => handleLocationClick(location)}
-                    className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 min-h-[44px] whitespace-nowrap ${
-                      isSelected 
-                        ? 'bg-primary text-white shadow-md hover:bg-primary/90' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30'
-                    }`}
-                  >
-                    {location}
-                    {isSelected && <X className="h-3 w-3 ml-1" />}
-                  </button>
-                );
-              })}
+            {/* Horizontal Scrollable Pills */}
+            <div className="relative">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 scroll-smooth">
+                {popularLocations.map((location) => {
+                  const isSelected = selectedLocation === location;
+                  return (
+                    <button
+                      key={location}
+                      onClick={() => handleLocationClick(location)}
+                      className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap ${
+                        isSelected 
+                          ? 'bg-primary text-white shadow-md hover:bg-primary/90' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30'
+                      }`}
+                    >
+                      {location}
+                      {isSelected && <X className="h-3 w-3 ml-1" />}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              {/* Fade edges for scroll indication */}
+              <div className="absolute left-0 top-0 w-4 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 w-4 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
             </div>
 
             {/* Selected Location Indicator */}

@@ -166,8 +166,8 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-background pb-4 md:pb-0">
-      {/* Hero Section */}
+    <div className="bg-background">
+      {/* Compact Header Flow */}
       <section className="pt-14 md:pt-16">
         <SearchFilters onFilterChange={handleFilterChange} />
         <HeroBanner />
@@ -180,7 +180,7 @@ const Home = () => {
       />
 
       {/* Results Section */}
-      <section className="py-6 md:py-12 bg-white">
+      <section className="py-6 md:py-8 bg-white">
         <div className="container mx-auto">
           {/* Pull to Refresh (Mobile) */}
           {isMobile && (
@@ -261,7 +261,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Car Grid - Improved responsive layout */}
+          {/* Car Grid */}
           {filteredCars.length > 0 ? (
             <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:px-4">
               {filteredCars.map((car) => (
