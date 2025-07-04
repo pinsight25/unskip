@@ -27,7 +27,7 @@ const Home = () => {
   } = useHomeState();
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
       <HomeHeader
         currentFilters={currentFilters}
         onFilterChange={handleFilterChange}

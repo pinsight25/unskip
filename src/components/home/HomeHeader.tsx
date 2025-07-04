@@ -18,19 +18,19 @@ interface HomeHeaderProps {
 
 const HomeHeader = ({ currentFilters, onFilterChange, onTypeChange }: HomeHeaderProps) => {
   return (
-    <>
-      {/* Compact Header Flow - No Grey Space */}
-      <section>
-        <SearchFilters onFilterChange={onFilterChange} />
-        <HeroBanner />
-      </section>
-
-      {/* Filter Tabs */}
+    <div className="bg-white">
+      {/* Search Section - No padding issues */}
+      <SearchFilters onFilterChange={onFilterChange} />
+      
+      {/* Hero Banner - Proper spacing */}
+      <HeroBanner />
+      
+      {/* Filter Tabs - Fixed positioning */}
       <FilterTabs 
         activeType={currentFilters.type}
         onTypeChange={onTypeChange}
       />
-    </>
+    </div>
   );
 };
 

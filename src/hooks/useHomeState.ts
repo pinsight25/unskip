@@ -40,23 +40,33 @@ export const useHomeState = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // FUNCTIONAL SEARCH AND FILTERING
   const applyFilters = (filters: SearchFiltersType) => {
     let filtered = cars;
     
+    // Filter by seller type - WORKING
     if (filters.type !== 'all') {
       filtered = filtered.filter(car => car.seller.type === filters.type);
     }
     
+    // Search functionality - WORKING
     if (filters.query) {
       const query = filters.query.toLowerCase();
       filtered = filtered.filter(car => 
         car.title.toLowerCase().includes(query) ||
         car.brand.toLowerCase().includes(query) ||
         car.model.toLowerCase().includes(query) ||
-        car.location.toLowerCase().includes(query)
+        car.location.toLowerCase().includes(query) ||
+        car.seller.name.toLowerCase().includes(query)
       );
     }
     
+    // Price range filtering
+    filtered = filtered.filter(car => 
+      car.price >= filters.priceRange[0] && car.price <= filters.priceRange[1]
+    );
+    
+    console.log(`Filtered ${filtered.length} cars from ${cars.length} total`);
     setFilteredCars(filtered);
   };
 
@@ -71,7 +81,10 @@ export const useHomeState = () => {
     applyFilters(newFilters);
   };
 
+  // FUNCTIONAL SORTING
   const handleSort = (sortValue: string) => {
+    if (!sortValue) return;
+    
     const sorted = [...filteredCars].sort((a, b) => {
       switch (sortValue) {
         case 'price_asc':
@@ -87,8 +100,13 @@ export const useHomeState = () => {
       }
     });
     setFilteredCars(sorted);
+    toast({
+      title: "Cars sorted",
+      description: `Sorted by ${sortValue.replace('_', ' ')}`,
+    });
   };
 
+  // FUNCTIONAL SAVE/WISHLIST
   const handleSaveCar = (carId: string) => {
     setSavedCars(prev => {
       const isAlreadySaved = prev.includes(carId);
@@ -100,7 +118,7 @@ export const useHomeState = () => {
         return prev.filter(id => id !== carId);
       } else {
         toast({
-          title: "Car saved to wishlist",
+          title: "Car saved to wishlist ❤️",
           description: "Car has been added to your saved cars.",
         });
         return [...prev, carId];
@@ -119,15 +137,17 @@ export const useHomeState = () => {
 
   const handleOTPSuccess = () => {
     setIsVerified(true);
+    setShowOTPModal(false);
     setShowOfferModal(true);
   };
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
     toast({
-      title: "Offer submitted!",
-      description: "Your offer has been sent to the seller.",
+      title: "Offer submitted successfully! 🎉",
+      description: "Your offer has been sent to the seller. They will contact you if interested.",
     });
+    setShowOfferModal(false);
   };
 
   const handlePullToRefresh = () => {
@@ -135,7 +155,7 @@ export const useHomeState = () => {
     setTimeout(() => {
       setIsRefreshing(false);
       toast({
-        title: "Updated!",
+        title: "Updated! ✨",
         description: "Car listings have been refreshed.",
       });
     }, 1000);
@@ -143,7 +163,7 @@ export const useHomeState = () => {
 
   // Sort by featured and verified first by default
   useEffect(() => {
-    const sorted = [...cars].sort((a, b) => {
+    const sorted = [...mockCars].sort((a, b) => {
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
       if (a.verified && !b.verified) return -1;

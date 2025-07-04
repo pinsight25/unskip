@@ -1,23 +1,27 @@
 
 export const formatIndianPrice = (price: number): string => {
-  // Convert to string and reverse for easier processing
-  const priceStr = price.toString();
-  const reversed = priceStr.split('').reverse();
+  // Format with Indian numbering system and ₹ symbol
+  const formatted = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
   
-  // Add commas in Indian format
-  const formatted = [];
-  for (let i = 0; i < reversed.length; i++) {
-    if (i === 3) {
-      formatted.push(',');
-    } else if (i > 3 && (i - 3) % 2 === 0) {
-      formatted.push(',');
-    }
-    formatted.push(reversed[i]);
+  return formatted;
+};
+
+export const formatPriceShort = (price: number): string => {
+  if (price >= 10000000) {
+    return `₹${(price / 10000000).toFixed(1)}Cr`;
+  } else if (price >= 100000) {
+    return `₹${(price / 100000).toFixed(1)}L`;
+  } else if (price >= 1000) {
+    return `₹${(price / 1000).toFixed(0)}K`;
   }
-  
-  return '₹' + formatted.reverse().join('');
+  return `₹${price.toLocaleString('en-IN')}`;
 };
 
 export const formatRentalPrice = (price: number): string => {
-  return `₹${price.toLocaleString()}/day`;
+  return `₹${price.toLocaleString('en-IN')}/day`;
 };

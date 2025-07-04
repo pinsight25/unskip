@@ -51,66 +51,64 @@ const HeroBanner = () => {
   const Icon = currentBanner.icon;
 
   return (
-    <div className="relative bg-white py-4">
-      <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className={`relative rounded-2xl bg-gradient-to-r ${currentBanner.bgGradient} p-6 md:p-8 text-white overflow-hidden`}>
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 right-4 w-32 h-32 rounded-full border-2 border-white/20"></div>
-              <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white/20"></div>
-            </div>
-            
-            {/* Content */}
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex-1 text-center md:text-left">
-                {/* Badge */}
-                <Badge className="bg-white/20 text-white border-white/30 mb-3 backdrop-blur-sm">
-                  <Award className="h-3 w-3 mr-1" />
-                  {currentBanner.badge}
-                </Badge>
-                
-                {/* Main Content */}
-                <h1 className="text-2xl md:text-3xl font-bold mb-2">
-                  {currentBanner.title}
-                </h1>
-                <p className="text-lg md:text-xl font-semibold text-white/90 mb-2">
-                  {currentBanner.subtitle}
-                </p>
-                <p className="text-white/80 mb-4 text-sm md:text-base">
-                  {currentBanner.description}
-                </p>
-                
-                {/* CTA Button */}
-                <Button 
-                  size="lg" 
-                  className="bg-white text-gray-900 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  {currentBanner.cta}
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+    <div className="bg-white py-6">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className={`relative rounded-2xl bg-gradient-to-r ${currentBanner.bgGradient} p-6 md:p-8 text-white overflow-hidden shadow-xl`}>
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 right-4 w-32 h-32 rounded-full border-2 border-white/20"></div>
+            <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white/20"></div>
+          </div>
+          
+          {/* Content */}
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex-1 text-center md:text-left">
+              {/* Badge */}
+              <Badge className="bg-white/20 text-white border-white/30 mb-4 backdrop-blur-sm">
+                <Award className="h-3 w-3 mr-1" />
+                {currentBanner.badge}
+              </Badge>
               
-              {/* Icon */}
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <Icon className="h-8 w-8 md:h-10 md:w-10 text-white" />
-                </div>
-              </div>
+              {/* Main Content */}
+              <h1 className="text-2xl md:text-3xl font-bold mb-3">
+                {currentBanner.title}
+              </h1>
+              <p className="text-lg md:text-xl font-semibold text-white/90 mb-3">
+                {currentBanner.subtitle}
+              </p>
+              <p className="text-white/80 mb-6 text-sm md:text-base">
+                {currentBanner.description}
+              </p>
+              
+              {/* CTA Button */}
+              <Button 
+                size="lg" 
+                className="bg-white text-gray-900 hover:bg-white/90 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 h-12 px-8"
+              >
+                {currentBanner.cta}
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
             </div>
             
-            {/* Slide Indicators */}
-            <div className="flex justify-center space-x-2 mt-4">
-              {banners.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentSlide ? 'bg-white' : 'bg-white/40'
-                  }`}
-                />
-              ))}
+            {/* Icon */}
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Icon className="h-8 w-8 md:h-10 md:w-10 text-white" />
+              </div>
             </div>
+          </div>
+          
+          {/* Slide Indicators */}
+          <div className="flex justify-center space-x-2 mt-6">
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentSlide ? 'bg-white' : 'bg-white/40'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>

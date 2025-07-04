@@ -5,124 +5,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CarVibe Vibrant Design System - Friendly & Trustworthy */
+/* CarVibe Polished Design System */
 
 @layer base {
   :root {
-    /* Base Colors - Light & Airy */
-    --background: 0 0% 97%;           /* #f7f8fa */
-    --foreground: 213 20% 18%;        /* #2d3436 soft black */
+    /* Enhanced Color Palette */
+    --background: 0 0% 98%;           /* Cleaner background */
+    --foreground: 213 20% 18%;        /* Rich text color */
 
-    /* Card System */
-    --card: 0 0% 100%;                /* Pure white */
+    --card: 0 0% 100%;                
     --card-foreground: 213 20% 18%;
 
-    /* Popover System */
     --popover: 0 0% 100%;
     --popover-foreground: 213 20% 18%;
 
-    /* CarVibe Vibrant Color Palette */
-    --primary: 14 100% 57%;           /* Vibrant coral #ff5722 */
+    /* CarVibe Brand Colors */
+    --primary: 14 100% 57%;           /* Vibrant coral */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 14 100% 67%;     /* Lighter coral */
-    --primary-dark: 14 100% 47%;      /* Darker coral */
+    --primary-light: 14 100% 67%;     
+    --primary-dark: 14 100% 47%;      
 
-    /* Fresh Secondary Colors */
-    --secondary: 193 100% 42%;        /* Fresh teal #00b4d8 */
+    --secondary: 193 100% 42%;        /* Fresh teal */
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 154 100% 52%;  /* Mint #06ffa5 */
+    --secondary-light: 154 100% 52%;  
     --secondary-dark: 193 100% 32%;
 
-    /* Muted Tones */
-    --muted: 210 14% 96%;            /* Light gray */
+    --muted: 210 14% 96%;            
     --muted-foreground: 213 12% 52%;
 
-    /* Accent Colors */
-    --accent: 258 90% 58%;           /* Warm purple #7c3aed */
+    --accent: 258 90% 58%;           
     --accent-foreground: 0 0% 100%;
     --accent-light: 258 90% 68%;
 
-    /* Status Colors */
-    --success: 175 100% 41%;         /* Mint green #00d2d3 */
+    --success: 175 100% 41%;         
     --success-foreground: 0 0% 100%;
     
-    --trust: 223 100% 46%;           /* Royal blue #0984e3 */
+    --trust: 223 100% 46%;           
     --trust-foreground: 0 0% 100%;
     
-    --warning: 45 100% 50%;          /* Sunny yellow */
+    --warning: 45 100% 50%;          
     --warning-foreground: 213 20% 18%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border & Input */
     --border: 210 14% 89%;
     --input: 210 14% 89%;
     --ring: 14 100% 57%;
 
-    /* Design Tokens - Vibrant & Friendly */
-    --gradient-hero: linear-gradient(135deg, hsl(14 100% 57%) 0%, hsl(193 100% 42%) 50%, hsl(258 90% 58%) 100%);
-    --gradient-coral: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
-    --gradient-teal: linear-gradient(135deg, hsl(193 100% 42%), hsl(154 100% 52%));
-    --gradient-purple: linear-gradient(135deg, hsl(258 90% 58%), hsl(258 90% 68%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 14% 98%));
-    --gradient-premium: linear-gradient(135deg, hsl(14 100% 57%), hsl(258 90% 58%));
-    --gradient-vibrant: linear-gradient(135deg, hsl(14 100% 57%) 0%, hsl(193 100% 42%) 100%);
-    
-    /* Friendly Shadows */
-    --shadow-soft: 0 4px 20px 0 hsl(14 100% 57% / 0.08);
-    --shadow-card: 0 8px 32px 0 hsl(14 100% 57% / 0.12);
-    --shadow-float: 0 12px 40px 0 hsl(14 100% 57% / 0.15);
-    --shadow-trust: 0 4px 20px 0 hsl(223 100% 46% / 0.2);
-    --shadow-premium: 0 20px 50px 0 hsl(14 100% 57% / 0.25);
-    --shadow-glow: 0 0 30px hsl(14 100% 57% / 0.4);
-    
     --radius: 1rem;
     --radius-lg: 1.5rem;
     --radius-xl: 2rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
     --background: 222 84% 5%;
     --foreground: 0 0% 98%;
-
     --card: 222 84% 5%;
     --card-foreground: 0 0% 98%;
-
     --popover: 222 84% 5%;
     --popover-foreground: 0 0% 98%;
-
     --primary: 217 91% 60%;
     --primary-foreground: 222 84% 5%;
-
     --secondary: 215 25% 20%;
     --secondary-foreground: 0 0% 98%;
-
     --muted: 215 25% 20%;
     --muted-foreground: 215 25% 65%;
-
     --accent: 160 84% 39%;
     --accent-foreground: 0 0% 98%;
-
     --destructive: 0 62% 31%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 215 25% 20%;
     --input: 215 25% 20%;
     --ring: 217 91% 60%;
@@ -136,54 +97,60 @@
 
   body {
     @apply bg-background text-foreground font-poppins antialiased;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Enhanced Typography */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
+    line-height: 1.2;
   }
 
-  /* Vibrant Components */
-  .coral-gradient {
-    background: var(--gradient-coral);
+  /* Improved Button Styles */
+  button, [role="button"] {
+    @apply transition-all duration-200;
   }
 
-  .teal-gradient {
-    background: var(--gradient-teal);
+  /* Enhanced Focus States */
+  input:focus, textarea:focus, select:focus {
+    @apply ring-2 ring-primary/20 border-primary;
   }
 
-  .purple-gradient {
-    background: var(--gradient-purple);
+  /* Mobile Touch Targets */
+  @media (max-width: 768px) {
+    button, [role="button"], a {
+      min-height: 44px;
+      min-width: 44px;
+    }
   }
 
-  .premium-gradient {
-    background: var(--gradient-premium);
+  /* Scrollbar Styling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
-  .hero-gradient {
-    background: var(--gradient-hero);
-  }
-
-  .gradient-vibrant {
-    background: var(--gradient-vibrant);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Safe Area Support for iOS */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Enhanced Animations */
   @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(2deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
   }
 
   @keyframes slideUp {
     from { 
       opacity: 0; 
-      transform: translateY(30px); 
+      transform: translateY(20px); 
     }
     to { 
       opacity: 1; 
@@ -191,24 +158,19 @@
     }
   }
 
-  @keyframes gradientShift {
-    0% { 
-      background-position: 0% 50%; 
-    }
-    50% { 
-      background-position: 100% 50%; 
-    }
-    100% { 
-      background-position: 0% 50%; 
-    }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  @keyframes bounceGentle {
-    0%, 100% { 
-      transform: translateY(0px); 
+  @keyframes scaleIn {
+    from { 
+      opacity: 0; 
+      transform: scale(0.9); 
     }
-    50% { 
-      transform: translateY(-5px); 
+    to { 
+      opacity: 1; 
+      transform: scale(1); 
     }
   }
 
@@ -217,55 +179,136 @@
   }
 
   .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
+    animation: slideUp 0.4s ease-out forwards;
   }
 
-  .animate-bounce-gentle {
-    animation: bounceGentle 2s ease-in-out infinite;
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
   }
 
-  .animate-gradient-shift {
-    background-size: 400% 400%;
-    animation: gradientShift 8s ease infinite;
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out forwards;
   }
 
-  /* Enhanced Cards */
-  .card-vibrant {
-    background: var(--gradient-card);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
+  /* Enhanced Card Styles */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
   }
 
-  .card-float {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Gradient Utilities */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
   }
 
-  .card-float:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-float);
+  .gradient-secondary {
+    background: linear-gradient(135deg, hsl(193 100% 42%), hsl(154 100% 52%));
   }
 
-  /* Trust Elements */
-  .trust-badge {
-    background: hsl(var(--trust));
-    color: hsl(var(--trust-foreground));
-    box-shadow: var(--shadow-trust);
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(258 90% 58%), hsl(258 90% 68%));
   }
 
-  /* Enhanced Shadow Classes */
-  .shadow-premium {
-    box-shadow: var(--shadow-premium);
+  /* Glass Effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
+  /* Text Utilities */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  /* Utility Classes */
+  /* Enhanced Shadows */
+  .shadow-soft {
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-medium {
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .shadow-strong {
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  /* Mobile-First Responsive Grid */
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .grid-responsive {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-responsive {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .grid-responsive {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Line Clamping */
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* Container Improvements */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
   }
 }
