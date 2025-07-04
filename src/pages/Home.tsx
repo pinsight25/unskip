@@ -89,14 +89,12 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-background to-muted/30">
-        <div className="container mx-auto">
-          <SearchFilters onFilterChange={handleFilterChange} />
-        </div>
+      <section className="pt-16">
+        <SearchFilters onFilterChange={handleFilterChange} />
       </section>
 
       {/* Results Section */}
-      <section className="py-8 px-4">
+      <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
           {/* Results Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
