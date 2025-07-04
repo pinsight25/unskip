@@ -5,7 +5,7 @@ import SearchFilters from '@/components/home/SearchFilters';
 import CarCard from '@/components/car/CarCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Filter } from 'lucide-react';
+import { Filter, Car as CarIcon } from 'lucide-react';
 
 interface SearchFiltersType {
   query: string;
@@ -98,15 +98,20 @@ const Home = () => {
         <div className="container mx-auto">
           {/* Results Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold">
-                {filteredCars.length} Cars Available
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <CarIcon className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-foreground">
+                  {filteredCars.length} Cars Available
+                </h2>
                 {currentFilters.type !== 'all' && (
-                  <span className="text-primary ml-2">
-                    • {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
-                  </span>
+                  <Badge variant="outline" className="text-primary border-primary">
+                    {currentFilters.type === 'dealer' ? 'Dealers' : 'Individual Owners'}
+                  </Badge>
                 )}
-              </h2>
+              </div>
               {currentFilters.query && (
                 <p className="text-muted-foreground">
                   Showing results for "{currentFilters.query}"

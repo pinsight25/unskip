@@ -52,12 +52,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
       <div className="absolute inset-0 hero-gradient" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/5" />
       
-      {/* Dynamic Floating Elements */}
-      <div className="absolute top-10 left-10 w-24 h-24 bg-white/20 rounded-full blur-xl animate-float" />
-      <div className="absolute top-32 right-20 w-40 h-40 bg-white/15 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
-      <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-white/25 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
-      <div className="absolute top-1/2 left-8 w-16 h-16 bg-white/30 rounded-full blur-lg animate-float" style={{ animationDelay: '1.5s' }} />
-      <div className="absolute bottom-32 right-16 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '3.5s' }} />
+      {/* Clean Background - No floating shapes */}
       
       {/* Enhanced Car Silhouettes */}
       <div className="absolute top-16 right-8 opacity-30 animate-float" style={{ animationDelay: '1s' }}>
@@ -90,7 +85,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
           </div>
 
           {/* Enhanced Search Card */}
-          <Card className="max-w-4xl mx-auto bg-white/90 backdrop-blur-lg border-2 border-white/50 shadow-premium animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <Card className="max-w-4xl mx-auto bg-white border-2 border-white/20 shadow-premium animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <CardContent className="p-6 lg:p-8">
               <div className="space-y-6">
                 {/* Main Search */}
@@ -123,8 +118,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                   {['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR'].map((location) => (
                     <Badge 
                       key={location}
-                      variant="secondary" 
-                      className="cursor-pointer hover:bg-primary hover:text-white transition-all duration-300 bg-white/60 backdrop-blur-sm border-border/50"
+                      className="cursor-pointer bg-primary text-white hover:bg-primary-dark transition-all duration-300 px-3 py-1 font-medium"
                       onClick={() => setSearchQuery(location)}
                     >
                       {location}
@@ -143,10 +137,10 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
               return (
                 <Card
                   key={filter.key}
-                  className={`cursor-pointer transition-all duration-300 hover:shadow-premium group ${
+                  className={`cursor-pointer transition-all duration-300 hover:shadow-card group ${
                     isActive 
-                      ? 'glass-card shadow-premium ring-2 ring-primary' 
-                      : 'bg-white/80 backdrop-blur-sm hover:bg-white/90'
+                      ? 'bg-white shadow-card ring-2 ring-primary' 
+                      : 'bg-white hover:shadow-soft'
                   }`}
                   onClick={() => handleTypeChange(filter.key)}
                 >
