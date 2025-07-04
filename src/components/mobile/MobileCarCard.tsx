@@ -1,253 +1,202 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Car } from '@/types/car';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, DollarSign, CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Heart, 
+  MessageCircle, 
+  Calendar,
+  MapPin,
+  Fuel,
+  Settings,
+  Users,
+  Star,
+  Shield,
+  Award
+} from 'lucide-react';
 
 interface MobileCarCardProps {
-  car: Car;
-  onSave?: (carId: string) => void;
-  isSaved?: boolean;
+  car: any;
+  onSave: (carId: string) => void;
+  isSaved: boolean;
   onMakeOffer: () => void;
   onChat: () => void;
   onTestDrive: () => void;
 }
 
-const MobileCarCard = ({ car, onSave, isSaved = false, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
+const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { toast } = useToast();
-
+  
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(price);
+    return `₹${price.toLocaleString()}`;
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(car.id);
+  const formatRental = (rate: number) => {
+    return `₹${rate.toLocaleString()}/day`;
+  };
+
+  const handleImageSwipe = (direction: 'left' | 'right') => {
+    if (direction === 'right' && currentImageIndex < car.images.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    } else if (direction === 'left' && currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
     }
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: car.title,
-        text: `Check out this ${car.title} for ${formatPrice(car.price)}`,
-        url: window.location.origin + `/car/${car.id}`
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.origin + `/car/${car.id}`);
-      toast({
-        title: "Link copied!",
-        description: "Car link copied to clipboard",
-      });
-    }
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % car.images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length);
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden mb-4 mx-4">
-      {/* Image Gallery */}
-      <div className="relative aspect-[4/3]">
-        <Link to={`/car/${car.id}`}>
-          <img
-            src={car.images[currentImageIndex]}
+    <Card className="mb-4 mx-4 overflow-hidden shadow-sm border border-gray-200 bg-white">
+      {/* Image Section */}
+      <div className="relative">
+        <div 
+          className="relative h-48 bg-gray-100 overflow-hidden"
+          onTouchStart={(e) => {
+            const touchStart = e.touches[0].clientX;
+            const handleTouchEnd = (endEvent: TouchEvent) => {
+              const touchEnd = endEvent.changedTouches[0].clientX;
+              const diff = touchStart - touchEnd;
+              if (Math.abs(diff) > 50) {
+                handleImageSwipe(diff > 0 ? 'right' : 'left');
+              }
+              document.removeEventListener('touchend', handleTouchEnd);
+            };
+            document.addEventListener('touchend', handleTouchEnd);
+          }}
+        >
+          <img 
+            src={car.images[currentImageIndex]} 
             alt={car.title}
             className="w-full h-full object-cover"
           />
-        </Link>
-        
-        {/* Navigation arrows */}
-        {car.images.length > 1 && (
-          <>
-            <button
-              onClick={prevImage}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full backdrop-blur-sm"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black/60 text-white p-2 rounded-full backdrop-blur-sm"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </>
-        )}
-
-        {/* Image indicators */}
-        {car.images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
-            {car.images.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                }`}
-              />
-            ))}
+          
+          {/* Badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1">
+            {car.featured && (
+              <Badge className="bg-orange-500 text-white text-xs font-medium px-2 py-1">
+                <Award className="h-3 w-3 mr-1" />
+                Featured
+              </Badge>
+            )}
+            {car.verified && (
+              <Badge className="bg-green-500 text-white text-xs font-medium px-2 py-1">
+                <Shield className="h-3 w-3 mr-1" />
+                Verified
+              </Badge>
+            )}
           </div>
-        )}
 
-        {/* Top badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {car.featured && (
-            <Badge className="bg-amber-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
-              ⭐ Featured
-            </Badge>
-          )}
-          {car.verified && (
-            <Badge className="bg-green-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
-              <Shield className="h-3 w-3 mr-1" />
-              Verified
-            </Badge>
-          )}
-          {car.isRentAvailable && (
-            <Badge className="bg-blue-500/90 text-white text-xs px-2 py-1 backdrop-blur-sm">
-              Also for Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
-            </Badge>
-          )}
-        </div>
+          {/* Save Button */}
+          <button
+            onClick={() => onSave(car.id)}
+            className="absolute top-3 right-3 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-sm"
+          >
+            <Heart className={`h-5 w-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+          </button>
 
-        {/* Heart and Share buttons */}
-        <div className="absolute top-3 right-3 flex gap-2">
-          <Button 
-            size="sm" 
-            variant="secondary" 
-            className={`h-9 w-9 p-0 shadow-lg rounded-full backdrop-blur-sm ${
-              isSaved ? 'bg-red-50 hover:bg-red-100' : 'bg-white/90 hover:bg-white'
-            }`}
-            onClick={handleSave}
-          >
-            <Heart className={`h-4 w-4 ${
-              isSaved ? 'text-red-500 fill-current' : 'text-gray-600'
-            }`} />
-          </Button>
-          <Button 
-            size="sm" 
-            variant="secondary" 
-            className="h-9 w-9 p-0 shadow-lg rounded-full bg-white/90 hover:bg-white backdrop-blur-sm"
-            onClick={handleShare}
-          >
-            <Share2 className="h-4 w-4 text-gray-600" />
-          </Button>
+          {/* Image Dots */}
+          {car.images.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+              {car.images.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4">
+      <div className="p-4">
         {/* Title and Price */}
-        <div>
-          <Link to={`/car/${car.id}`}>
-            <h3 className="font-bold text-xl leading-tight mb-2 line-clamp-2 hover:text-primary transition-colors">
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
               {car.title}
             </h3>
-          </Link>
-          <div className="flex items-center justify-between">
-            <p className="text-2xl font-black text-primary">
-              {formatPrice(car.price)}
-            </p>
-          </div>
-        </div>
-
-        {/* Key Details */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center text-gray-600">
-            <Calendar className="h-4 w-4 mr-2 text-primary" />
-            <span className="font-medium">{car.year}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Settings className="h-4 w-4 mr-2 text-primary" />
-            <span className="font-medium">{car.transmission}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Fuel className="h-4 w-4 mr-2 text-primary" />
-            <span className="font-medium">{car.fuelType}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <span className="font-medium">{car.mileage.toLocaleString('en-IN')} km</span>
-          </div>
-        </div>
-
-        {/* Location */}
-        <div className="flex items-center text-gray-600">
-          <MapPin className="h-4 w-4 mr-2 text-primary" />
-          <span className="font-medium">{car.location}</span>
-        </div>
-
-        {/* Seller Info */}
-        <div className="flex items-center space-x-3 pt-2 border-t border-gray-100">
-          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-            <span className="text-sm font-bold text-primary">
-              {car.seller.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm font-semibold">{car.seller.name}</p>
-              {car.seller.verified && (
-                <Badge className="bg-success/10 text-success border-success/20 text-xs px-2 py-0.5">
-                  <Shield className="h-3 w-3 mr-1" />
-                  Verified
-                </Badge>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-2xl font-bold text-primary">
+                {formatPrice(car.price)}
+              </span>
+              {car.rentalRate && (
+                <span className="text-sm text-gray-500 ml-2">
+                  or {formatRental(car.rentalRate)}
+                </span>
               )}
             </div>
-            {car.seller.rating > 0 && (
-              <div className="flex items-center text-xs">
-                <div className="flex items-center text-amber-500 mr-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-3 w-3 ${i < car.seller.rating ? 'fill-current' : ''}`} />
-                  ))}
-                </div>
-                <span className="font-medium text-gray-600">{car.seller.rating}.0</span>
-              </div>
-            )}
+          </div>
+        </div>
+
+        {/* Car Details */}
+        <div className="grid grid-cols-2 gap-3 mb-3 text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            <span>{car.year}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Settings className="h-4 w-4" />
+            <span>{car.transmission}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Fuel className="h-4 w-4" />
+            <span>{car.fuelType}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-gray-500">{car.mileage.toLocaleString()} km</span>
+          </div>
+        </div>
+
+        {/* Location and Seller */}
+        <div className="flex items-center justify-between mb-4 text-sm">
+          <div className="flex items-center gap-1 text-gray-600">
+            <MapPin className="h-4 w-4" />
+            <span>{car.location}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1">
+              {car.seller.rating && (
+                <>
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-gray-700 font-medium">{car.seller.rating}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3 pt-2">
+        <div className="space-y-2">
           <Button 
-            className="w-full h-12 bg-primary hover:bg-primary/90 font-semibold text-white text-base"
             onClick={onMakeOffer}
+            className="w-full bg-primary hover:bg-primary/90 text-white font-medium h-11"
           >
-            <DollarSign className="h-5 w-5 mr-2" />
             Make an Offer
           </Button>
-          <div className="grid grid-cols-2 gap-3">
+          
+          <div className="grid grid-cols-2 gap-2">
             <Button 
               variant="outline" 
-              className="h-11 font-medium border-gray-300 hover:bg-gray-50"
               onClick={onChat}
+              className="h-10 text-sm font-medium"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               Chat
             </Button>
             <Button 
               variant="outline" 
-              className="h-11 font-medium border-gray-300 hover:bg-gray-50"
               onClick={onTestDrive}
+              className="h-10 text-sm font-medium"
             >
-              <CalendarDays className="h-4 w-4 mr-2" />
+              <Calendar className="h-4 w-4 mr-2" />
               Test Drive
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

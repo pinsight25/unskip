@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import SearchFilters from '@/components/home/SearchFilters';
+import HeroBanner from '@/components/home/HeroBanner';
+import FilterTabs from '@/components/home/FilterTabs';
 import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
-import MobileFilters from '@/components/mobile/MobileFilters';
 import OfferModal from '@/components/modals/OfferModal';
 import OTPModal from '@/components/modals/OTPModal';
 import MobileOfferModal from '@/components/modals/MobileOfferModal';
@@ -126,6 +127,10 @@ const Home = () => {
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
+    toast({
+      title: "Offer submitted!",
+      description: "Your offer has been sent to the seller.",
+    });
   };
 
   const handlePullToRefresh = () => {
@@ -157,13 +162,17 @@ const Home = () => {
       {/* Hero Section */}
       <section className="pt-14 md:pt-16">
         <SearchFilters onFilterChange={handleFilterChange} />
+        <HeroBanner />
       </section>
 
-      {/* Mobile Filters */}
-      <MobileFilters 
+      {/* Filter Tabs */}
+      <FilterTabs 
         activeType={currentFilters.type}
-        onTypeChange={(type) => setCurrentFilters(prev => ({ ...prev, type }))}
-        onFilterChange={handleFilterChange}
+        onTypeChange={(type) => {
+          const newFilters = { ...currentFilters, type };
+          setCurrentFilters(newFilters);
+          handleFilterChange(newFilters);
+        }}
       />
 
       {/* Results Section */}
