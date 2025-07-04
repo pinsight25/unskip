@@ -4,7 +4,7 @@ import { Car } from '@/types/car';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, Phone, MessageCircle, Gauge } from 'lucide-react';
+import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, Gauge, DollarSign, Clock } from 'lucide-react';
 
 interface CarCardProps {
   car: Car;
@@ -55,7 +55,7 @@ const CarCard = ({ car }: CarCardProps) => {
             )}
             {car.isRentAvailable && (
               <Badge className="bg-primary/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                🚗 Rent Available
+                🚗 Also Available for Rent
               </Badge>
             )}
           </div>
@@ -133,7 +133,7 @@ const CarCard = ({ car }: CarCardProps) => {
             <span className="font-semibold">{car.location}</span>
           </div>
 
-          {/* Enhanced Seller Info with Ratings */}
+          {/* Enhanced Seller Info with Ratings & Response Time */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -142,34 +142,53 @@ const CarCard = ({ car }: CarCardProps) => {
                 </span>
               </div>
               <div>
-                <p className="text-sm font-semibold">{car.seller.name}</p>
-                <div className="flex items-center text-xs text-muted-foreground gap-2">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">{car.seller.name}</p>
                   {car.seller.verified && (
-                    <div className="flex items-center text-success">
+                    <Badge className="bg-success/10 text-success border-success/20 text-xs px-2 py-0.5 rounded-full">
                       <Shield className="h-3 w-3 mr-1" />
-                      <span>Verified</span>
-                    </div>
+                      Verified Seller
+                    </Badge>
                   )}
+                </div>
+                <div className="flex items-center text-xs text-muted-foreground gap-3">
                   {car.seller.rating > 0 && (
                     <div className="flex items-center text-accent">
                       <Star className="h-3 w-3 mr-1 fill-current" />
                       <span className="font-medium">{car.seller.rating}</span>
                     </div>
                   )}
+                  <div className="flex items-center text-green-600">
+                    <Clock className="h-3 w-3 mr-1" />
+                    <span className="font-medium">Responds in 2 hrs</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Clear Action Buttons */}
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <Button variant="outline" size="sm" className="font-medium hover:bg-primary hover:text-white transition-all duration-300">
-              <Phone className="h-4 w-4 mr-2" />
-              Call Now
+          {/* Trust Elements */}
+          <div className="bg-muted/30 p-3 rounded-lg">
+            <p className="text-xs text-muted-foreground text-center font-medium">
+              💬 No lowball guarantee • 🛡️ Platform verified
+            </p>
+          </div>
+
+          {/* Core Action Buttons */}
+          <div className="space-y-3">
+            <Button size="sm" className="w-full premium-gradient font-medium text-white hover:shadow-lg transition-all duration-300">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Make an Offer
             </Button>
-            <Button size="sm" className="premium-gradient font-medium text-white hover:shadow-lg transition-all duration-300">
-              View Details
-            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" size="sm" className="font-medium hover:bg-primary hover:text-white transition-all duration-300">
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Chat
+              </Button>
+              <Button variant="outline" size="sm" className="font-medium hover:bg-secondary hover:text-white transition-all duration-300">
+                Test Drive
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
