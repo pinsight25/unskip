@@ -55,6 +55,7 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
                 onMakeOffer={() => {}}
                 onChat={() => {}}
                 onTestDrive={() => {}}
+                offerStatus="none"
               />
             ) : (
               <CarCard 
