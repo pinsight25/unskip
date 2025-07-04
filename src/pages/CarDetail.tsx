@@ -8,6 +8,7 @@ import OTPModal from '@/components/modals/OTPModal';
 import TestDriveModal from '@/components/modals/TestDriveModal';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useToast } from '@/hooks/use-toast';
+import { useChatManager } from '@/hooks/useChatManager';
 import CarImageGallery from '@/components/car/CarImageGallery';
 import CarOverview from '@/components/car/CarOverview';
 import CarSpecifications from '@/components/car/CarSpecifications';
@@ -17,12 +18,12 @@ import CarActions from '@/components/car/CarActions';
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { navigateToChat } = useChatManager();
   const car: Car | undefined = mockCars.find((car) => car.id === id);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [offerMade, setOfferMade] = useState(false);
   const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
   const { toast } = useToast();
 
@@ -52,12 +53,12 @@ const CarDetail = () => {
 
   const handleOTPSuccess = () => {
     setIsVerified(true);
+    setShowOTPModal(false);
     setShowOfferModal(true);
   };
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
-    setOfferMade(true);
     setOfferStatus('pending');
     
     // Simulate offer acceptance after 3 seconds
@@ -73,6 +74,7 @@ const CarDetail = () => {
       title: "Offer submitted!",
       description: "Your offer has been sent to the seller.",
     });
+    setShowOfferModal(false);
   };
 
   const handleChatClick = () => {
@@ -94,9 +96,17 @@ const CarDetail = () => {
     }
     
     if (offerStatus === 'accepted') {
-      // Navigate to chat - in real app, this would be the actual chat ID
-      navigate('/chat/1');
+      navigateToChat(car.id);
     }
+  };
+
+  const handleTestDrive = () => {
+    toast({
+      title: "Test Drive Request",
+      description: `Test drive request sent for ${car.title}`,
+    });
+    console.log('Test drive requested for car:', car.id);
+    setShowTestDriveModal(true);
   };
 
   const handleTestDriveScheduled = (booking: any) => {
@@ -145,7 +155,7 @@ const CarDetail = () => {
                 offerStatus={offerStatus}
                 onMakeOffer={handleMakeOffer}
                 onChatClick={handleChatClick}
-                onTestDrive={() => setShowTestDriveModal(true)}
+                onTestDrive={handleTestDrive}
               />
             </div>
           </div>
