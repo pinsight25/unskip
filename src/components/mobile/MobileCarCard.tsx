@@ -1,8 +1,6 @@
 
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 import MobileCarImage from './MobileCarImage';
 import MobileCarPrice from './MobileCarPrice';
 import MobileCarDetails from './MobileCarDetails';
@@ -15,46 +13,22 @@ interface MobileCarCardProps {
   onMakeOffer: () => void;
   onChat: () => void;
   onTestDrive: () => void;
+  offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
 }
 
-const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive }: MobileCarCardProps) => {
-  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
+const MobileCarCard = ({ 
+  car, 
+  onSave, 
+  isSaved, 
+  onMakeOffer, 
+  onChat, 
+  onTestDrive,
+  offerStatus 
+}: MobileCarCardProps) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleCardClick = () => {
     navigate(`/car/${car.id}`);
-  };
-
-  const handleChat = () => {
-    if (offerStatus === 'none') {
-      toast({
-        title: "Make an offer first",
-        description: "You need to make an offer before you can chat with the seller.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (offerStatus === 'pending') {
-      toast({
-        title: "Waiting for seller response",
-        description: "Please wait for the seller to respond to your offer before chatting.",
-      });
-      return;
-    }
-    
-    if (offerStatus === 'accepted') {
-      navigate('/chat/1');
-    }
-  };
-
-  const handleTestDrive = () => {
-    toast({
-      title: "Test Drive Request",
-      description: `Test drive request sent for ${car.title}`,
-    });
-    console.log('Test drive requested for car:', car.id);
   };
 
   const handleSave = () => {
@@ -95,8 +69,8 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
         <MobileCarActions
           offerStatus={offerStatus}
           onMakeOffer={onMakeOffer}
-          onChat={handleChat}
-          onTestDrive={handleTestDrive}
+          onChat={onChat}
+          onTestDrive={onTestDrive}
         />
       </div>
     </Card>

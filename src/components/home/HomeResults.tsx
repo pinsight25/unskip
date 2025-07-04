@@ -5,6 +5,8 @@ import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Filter, Car as CarIcon, Heart, RefreshCw, SortAsc } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface HomeResultsProps {
   filteredCars: Car[];
@@ -15,11 +17,13 @@ interface HomeResultsProps {
   };
   isMobile: boolean;
   isRefreshing: boolean;
+  offerStatuses: Record<string, 'none' | 'pending' | 'accepted' | 'rejected'>;
   onSort: (sortValue: string) => void;
   onSaveCar: (carId: string) => void;
   onMakeOffer: (car: Car) => void;
   onPullToRefresh: () => void;
   onFilterChange: (filters: any) => void;
+  getOfferStatus: (carId: string) => 'none' | 'pending' | 'accepted' | 'rejected';
 }
 
 const HomeResults = ({
@@ -28,12 +32,50 @@ const HomeResults = ({
   currentFilters,
   isMobile,
   isRefreshing,
+  offerStatuses,
   onSort,
   onSaveCar,
   onMakeOffer,
   onPullToRefresh,
-  onFilterChange
+  onFilterChange,
+  getOfferStatus
 }: HomeResultsProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleChatClick = (car: Car) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Waiting for seller response",
+        description: "Please wait for the seller to respond to your offer before chatting.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      navigate('/chat/1');
+    }
+  };
+
+  const handleTestDriveClick = (car: Car) => {
+    toast({
+      title: "Test Drive Request",
+      description: `Test drive request sent for ${car.title}`,
+    });
+    console.log('Test drive requested for car:', car.id);
+  };
+
   return (
     <section className="py-6 md:py-8 bg-gray-50 min-h-screen">
       <div className="container mx-auto max-w-7xl">
@@ -141,8 +183,9 @@ const HomeResults = ({
                   onSave={onSaveCar}
                   isSaved={savedCars.includes(car.id)}
                   onMakeOffer={() => onMakeOffer(car)}
-                  onChat={() => console.log('Chat with seller')}
-                  onTestDrive={() => console.log('Schedule test drive')}
+                  onChat={() => handleChatClick(car)}
+                  onTestDrive={() => handleTestDriveClick(car)}
+                  offerStatus={getOfferStatus(car.id)}
                 />
               ) : (
                 <CarCard 

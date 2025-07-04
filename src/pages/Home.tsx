@@ -16,6 +16,7 @@ const Home = () => {
     selectedCar,
     isMobile,
     isRefreshing,
+    offerStatuses,
     handleFilterChange,
     handleTypeFilter,
     handleSort,
@@ -23,7 +24,8 @@ const Home = () => {
     handleMakeOffer,
     handleOTPSuccess,
     handleOfferSubmit,
-    handlePullToRefresh
+    handlePullToRefresh,
+    getOfferStatus
   } = useHomeState();
 
   return (
@@ -40,11 +42,13 @@ const Home = () => {
         currentFilters={currentFilters}
         isMobile={isMobile}
         isRefreshing={isRefreshing}
+        offerStatuses={offerStatuses}
         onSort={handleSort}
         onSaveCar={handleSaveCar}
         onMakeOffer={handleMakeOffer}
         onPullToRefresh={handlePullToRefresh}
         onFilterChange={handleFilterChange}
+        getOfferStatus={getOfferStatus}
       />
 
       <HomeModals

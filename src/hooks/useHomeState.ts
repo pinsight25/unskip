@@ -15,6 +15,7 @@ export const useHomeState = () => {
   const [cars, setCars] = useState<Car[]>(mockCars);
   const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
   const [savedCars, setSavedCars] = useState<string[]>([]);
+  const [offerStatuses, setOfferStatuses] = useState<Record<string, 'none' | 'pending' | 'accepted' | 'rejected'>>({});
   const [currentFilters, setCurrentFilters] = useState<SearchFiltersType>({
     query: '',
     type: 'all',
@@ -143,6 +144,21 @@ export const useHomeState = () => {
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
+    
+    if (selectedCar) {
+      // Set offer status to pending
+      setOfferStatuses(prev => ({ ...prev, [selectedCar.id]: 'pending' }));
+      
+      // Simulate offer acceptance after 3 seconds
+      setTimeout(() => {
+        setOfferStatuses(prev => ({ ...prev, [selectedCar.id]: 'accepted' }));
+        toast({
+          title: "Offer Accepted! 🎉",
+          description: "Great news! The seller has accepted your offer. You can now chat with them.",
+        });
+      }, 3000);
+    }
+    
     toast({
       title: "Offer submitted successfully! 🎉",
       description: "Your offer has been sent to the seller. They will contact you if interested.",
@@ -159,6 +175,10 @@ export const useHomeState = () => {
         description: "Car listings have been refreshed.",
       });
     }, 1000);
+  };
+
+  const getOfferStatus = (carId: string) => {
+    return offerStatuses[carId] || 'none';
   };
 
   // Sort by featured and verified first by default
@@ -187,6 +207,7 @@ export const useHomeState = () => {
     isVerified,
     isRefreshing,
     isMobile,
+    offerStatuses,
     handleFilterChange,
     handleTypeFilter,
     handleSort,
@@ -194,6 +215,7 @@ export const useHomeState = () => {
     handleMakeOffer,
     handleOTPSuccess,
     handleOfferSubmit,
-    handlePullToRefresh
+    handlePullToRefresh,
+    getOfferStatus
   };
 };
