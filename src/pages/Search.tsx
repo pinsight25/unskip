@@ -1,4 +1,3 @@
-
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -55,7 +54,7 @@ const Search = () => {
 
     // Fuel type filter
     if (selectedFuel.length > 0) {
-      filtered = filtered.filter(car => selectedFuel.includes(car.fuel));
+      filtered = filtered.filter(car => selectedFuel.includes(car.fuelType));
     }
 
     // Year filter
