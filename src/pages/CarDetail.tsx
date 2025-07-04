@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
@@ -30,13 +29,11 @@ const CarDetail = () => {
   if (!car) {
     return (
       <ResponsiveLayout>
-        <div className="pt-16 md:pt-20">
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Car Not Found</h2>
-              <p className="text-gray-600">Sorry, the car you are looking for could not be found.</p>
-              <Link to="/" className="text-blue-500">Go back to homepage</Link>
-            </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Car Not Found</h2>
+            <p className="text-gray-600">Sorry, the car you are looking for could not be found.</p>
+            <Link to="/" className="text-blue-500">Go back to homepage</Link>
           </div>
         </div>
       </ResponsiveLayout>
@@ -118,39 +115,40 @@ const CarDetail = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="pt-16 md:pt-20">
-        <div className="container mx-auto px-4">
-          <CarImageGallery
-            images={car.images}
-            title={car.title}
-            featured={car.featured}
-            verified={car.verified}
-          />
+      <div className="container mx-auto px-4 py-6 pb-32 md:pb-6">
+        <CarImageGallery
+          images={car.images}
+          title={car.title}
+          featured={car.featured}
+          verified={car.verified}
+        />
 
-          {/* Car Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column - Car Overview */}
-            <div>
-              <CarOverview
-                title={car.title}
-                price={car.price}
-                rentPrice={car.rentPrice}
-                description={car.description}
-              />
+        {/* Car Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {/* Left Column - Car Overview */}
+          <div>
+            <CarOverview
+              title={car.title}
+              price={car.price}
+              rentPrice={car.rentPrice}
+              description={car.description}
+            />
 
-              <CarSpecifications
-                year={car.year}
-                transmission={car.transmission}
-                fuelType={car.fuelType}
-                location={car.location}
-                seller={car.seller}
-              />
-            </div>
+            <CarSpecifications
+              year={car.year}
+              transmission={car.transmission}
+              fuelType={car.fuelType}
+              location={car.location}
+              seller={car.seller}
+            />
+          </div>
 
-            {/* Right Column - Seller & Actions */}
-            <div>
-              <SellerCard seller={car.seller} />
+          {/* Right Column - Seller & Actions */}
+          <div>
+            <SellerCard seller={car.seller} />
 
+            {/* Actions Section with extra bottom padding on mobile */}
+            <div className="mb-8 md:mb-0">
               <CarActions
                 offerStatus={offerStatus}
                 onMakeOffer={handleMakeOffer}
