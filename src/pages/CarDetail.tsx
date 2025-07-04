@@ -1,59 +1,39 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
+import { Car } from '@/types/car';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import OTPModal from '@/components/modals/OTPModal';
-import OfferModal from '@/components/modals/OfferModal';
-import { 
-  ArrowLeft, 
-  Heart, 
-  Share2, 
-  Eye, 
-  MapPin, 
-  Calendar, 
-  Fuel, 
-  Settings, 
-  User, 
-  Shield, 
-  Star, 
-  Phone, 
-  MessageCircle, 
-  Clock,
-  DollarSign,
-  Car as CarIcon,
-  Building2
-} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { OfferModal } from '@/components/modals/OfferModal';
+import { OTPModal } from '@/components/modals/OTPModal';
+import { Calendar, Fuel, MapPin, MessageCircle, RotateCcw, Settings, Star, Users, Shield, Award, DollarSign, CalendarDays } from 'lucide-react';
+import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useToast } from '@/hooks/use-toast';
 
 const CarDetail = () => {
-  const { id } = useParams();
-  const { toast } = useToast();
-  const [isOTPModalOpen, setIsOTPModalOpen] = useState(false);
-  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
-  const [otpPurpose, setOtpPurpose] = useState('');
+  const { id } = useParams<{ id: string }>();
+  const car: Car | undefined = mockCars.find((car) => car.id === id);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  const car = mockCars.find(c => c.id === id);
-  
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [offerMade, setOfferMade] = useState(false);
+  const { toast } = useToast();
+
   if (!car) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Car not found</h1>
-            <Link to="/">
-              <Button>Back to Home</Button>
-            </Link>
+      <ResponsiveLayout>
+        <div className="pt-16 md:pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Car Not Found</h2>
+              <p className="text-gray-600">Sorry, the car you are looking for could not be found.</p>
+              <Link to="/" className="text-blue-500">Go back to homepage</Link>
+            </div>
           </div>
         </div>
-        <Footer />
-      </div>
+      </ResponsiveLayout>
     );
   }
 
@@ -65,329 +45,232 @@ const CarDetail = () => {
     }).format(price);
   };
 
-  const handleContactSeller = () => {
-    setOtpPurpose('contact the seller');
-    setIsOTPModalOpen(true);
+  const handleImageSwipe = (direction: 'left' | 'right') => {
+    if (direction === 'right' && currentImageIndex < car.images.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    } else if (direction === 'left' && currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    }
   };
 
-  const handleScheduleTestDrive = () => {
-    setOtpPurpose('schedule a test drive');
-    setIsOTPModalOpen(true);
+  const handleMakeOffer = () => {
+    if (!isVerified) {
+      setShowOTPModal(true);
+    } else {
+      setShowOfferModal(true);
+    }
   };
 
   const handleOTPSuccess = () => {
-    toast({
-      title: "Verification Successful!",
-      description: "You can now contact the seller directly.",
-    });
+    setIsVerified(true);
+    setShowOfferModal(true);
   };
 
-  const handleOfferSubmit = (offer: any) => {
+  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    console.log('Offer submitted:', offer);
+    setOfferMade(true);
     toast({
-      title: "Offer Submitted!",
-      description: "Your offer has been sent to the seller. They will contact you if interested.",
+      title: "Offer submitted!",
+      description: "Your offer has been sent to the seller.",
     });
   };
-
-  const carSpecs = [
-    { label: 'Year', value: car.year, icon: Calendar },
-    { label: 'Fuel Type', value: car.fuelType, icon: Fuel },
-    { label: 'Transmission', value: car.transmission, icon: Settings },
-    { label: 'Ownership', value: `${car.ownership}${car.ownership === 1 ? 'st' : car.ownership === 2 ? 'nd' : car.ownership === 3 ? 'rd' : 'th'} Owner`, icon: User },
-    { label: 'Mileage', value: `${car.mileage.toLocaleString('en-IN')} km`, icon: CarIcon },
-    { label: 'Location', value: car.location, icon: MapPin }
-  ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-1 py-6 px-4">
-        <div className="container mx-auto max-w-6xl">
-          {/* Back Button */}
-          <div className="mb-6">
-            <Link to="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Search
-              </Button>
-            </Link>
+    <ResponsiveLayout>
+      <div className="pt-16 md:pt-20">
+        <div className="container mx-auto px-4">
+          {/* Car Image Gallery */}
+          <div className="relative mb-6">
+            <div 
+              className="relative h-64 md:h-96 bg-gray-100 overflow-hidden rounded-lg"
+              onTouchStart={(e) => {
+                const touchStart = e.touches[0].clientX;
+                const handleTouchEnd = (endEvent: TouchEvent) => {
+                  const touchEnd = endEvent.changedTouches[0].clientX;
+                  const diff = touchStart - touchEnd;
+                  if (Math.abs(diff) > 50) {
+                    handleImageSwipe(diff > 0 ? 'right' : 'left');
+                  }
+                  document.removeEventListener('touchend', handleTouchEnd);
+                };
+                document.addEventListener('touchend', handleTouchEnd);
+              }}
+            >
+              <img 
+                src={car.images[currentImageIndex]} 
+                alt={car.title}
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Badges */}
+              <div className="absolute top-3 left-3 flex flex-col gap-1">
+                {car.featured && (
+                  <Badge className="bg-orange-500 text-white text-xs font-medium px-2 py-1">
+                    <Award className="h-3 w-3 mr-1" />
+                    Featured
+                  </Badge>
+                )}
+                {car.verified && (
+                  <Badge className="bg-green-500 text-white text-xs font-medium px-2 py-1">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Verified
+                  </Badge>
+                )}
+              </div>
+
+              {/* Image Dots */}
+              {car.images.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                  {car.images.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Image Navigation Arrows - Desktop Only */}
+            <div className="hidden md:flex absolute top-1/2 transform -translate-y-1/2 w-full justify-between px-4">
+              <button 
+                onClick={() => handleImageSwipe('left')}
+                className="bg-white/70 hover:bg-white rounded-full p-2"
+                disabled={currentImageIndex === 0}
+              >
+                <RotateCcw className="h-6 w-6" />
+              </button>
+              <button 
+                onClick={() => handleImageSwipe('right')}
+                className="bg-white/70 hover:bg-white rounded-full p-2"
+                disabled={currentImageIndex === car.images.length - 1}
+              >
+                <RotateCcw className="h-6 w-6 transform rotate-180" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Images & Details */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Image Gallery */}
-              <Card>
-                <CardContent className="p-0">
-                  <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                    <img
-                      src={car.images[currentImageIndex]}
-                      alt={car.title}
-                      className="w-full h-full object-cover"
-                    />
-                    
-                    {/* Badges */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-2">
-                      {car.featured && (
-                        <Badge className="bg-accent text-accent-foreground">Featured</Badge>
-                      )}
-                      {car.verified && (
-                        <Badge className="bg-success/10 text-success border-success/20">
-                          <Shield className="h-3 w-3 mr-1" />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
+          {/* Car Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left Column - Car Overview */}
+            <div>
+              <h1 className="text-2xl font-bold mb-2">{car.title}</h1>
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-3xl font-bold text-primary">{formatPrice(car.price)}</span>
+                {car.rentalRate && (
+                  <span className="text-sm text-gray-500">
+                    or ₹{car.rentalRate.toLocaleString()}/day
+                  </span>
+                )}
+              </div>
 
-                    {/* Views Counter */}
-                    <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-lg flex items-center">
-                      <Eye className="h-4 w-4 mr-1" />
-                      {car.views}
-                    </div>
+              <div className="grid grid-cols-2 gap-3 mb-4 text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>{car.year}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Settings className="h-4 w-4" />
+                  <span>{car.transmission}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Fuel className="h-4 w-4" />
+                  <span>{car.fuelType}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="h-4 w-4" />
+                  <span>{car.seats} Seats</span>
+                </div>
+              </div>
 
-                    {/* Image Navigation */}
-                    {car.images.length > 1 && (
+              <div className="flex items-center justify-between mb-4 text-sm">
+                <div className="flex items-center gap-1 text-gray-600">
+                  <MapPin className="h-4 w-4" />
+                  <span>{car.location}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1">
+                    {car.seller.rating && (
                       <>
-                        <button
-                          onClick={() => setCurrentImageIndex(Math.max(0, currentImageIndex - 1))}
-                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
-                          disabled={currentImageIndex === 0}
-                        >
-                          ←
-                        </button>
-                        <button
-                          onClick={() => setCurrentImageIndex(Math.min(car.images.length - 1, currentImageIndex + 1))}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full"
-                          disabled={currentImageIndex === car.images.length - 1}
-                        >
-                          →
-                        </button>
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-gray-700 font-medium">{car.seller.rating}</span>
                       </>
                     )}
                   </div>
-                  
-                  {/* Thumbnail Gallery */}
-                  {car.images.length > 1 && (
-                    <div className="p-4 flex gap-2 overflow-x-auto">
-                      {car.images.map((image, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 ${
-                            currentImageIndex === index ? 'border-primary' : 'border-border'
-                          }`}
-                        >
-                          <img
-                            src={image}
-                            alt={`${car.title} - Image ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              {/* Car Details */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Vehicle Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {carSpecs.map((spec) => {
-                      const Icon = spec.icon;
-                      return (
-                        <div key={spec.label} className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg">
-                          <Icon className="h-5 w-5 text-primary" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">{spec.label}</p>
-                            <p className="font-medium">{spec.value}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Description */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Description</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{car.description}</p>
-                </CardContent>
-              </Card>
+              <p className="text-gray-700 mb-6">{car.description}</p>
             </div>
 
-            {/* Right Column - Pricing & Actions */}
-            <div className="space-y-6">
-              {/* Price & Actions Card */}
-              <Card className="sticky top-6">
-                <CardContent className="p-6 space-y-4">
-                  {/* Title & Price */}
-                  <div>
-                    <h1 className="text-2xl font-bold mb-2">{car.title}</h1>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-3xl font-bold text-primary">
-                        {formatPrice(car.price)}
-                      </span>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
-                          <Heart className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+            {/* Right Column - Seller & Actions */}
+            <div>
+              <Card className="mb-6">
+                <div className="p-4">
+                  <h4 className="text-lg font-semibold mb-3">Seller Information</h4>
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-700 font-semibold">{car.seller.name.charAt(0).toUpperCase()}</span>
                     </div>
-                    
-                    {/* Rent Option */}
-                    {car.isRentAvailable && car.rentPrice && (
-                      <div className="mt-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                        <h4 className="font-semibold text-primary mb-1">Also Available for Rent</h4>
-                        <div className="text-sm space-y-1">
-                          <div>Daily: ₹{car.rentPrice.daily.toLocaleString('en-IN')}</div>
-                          <div>Weekly: ₹{car.rentPrice.weekly.toLocaleString('en-IN')}</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <Separator />
-
-                  {/* Action Buttons */}
-                  <div className="space-y-3">
-                    <Button 
-                      onClick={() => setIsOfferModalOpen(true)}
-                      className="w-full bg-gradient-primary"
-                      size="lg"
-                    >
-                      <DollarSign className="h-5 w-5 mr-2" />
-                      Make Offer
-                    </Button>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button 
-                        variant="outline" 
-                        onClick={handleContactSeller}
-                        className="flex-1"
-                      >
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={handleContactSeller}
-                        className="flex-1"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Chat
-                      </Button>
+                    <div>
+                      <p className="font-medium">{car.seller.name}</p>
+                      <p className="text-sm text-gray-500">Member since March 2023</p>
                     </div>
-                    
-                    <Button 
-                      variant="outline" 
-                      onClick={handleScheduleTestDrive}
-                      className="w-full"
-                    >
-                      <Clock className="h-4 w-4 mr-2" />
-                      Schedule Test Drive
-                    </Button>
                   </div>
-
-                  <Separator />
-
-                  {/* Seller Info */}
-                  <div>
-                    <h4 className="font-semibold mb-3">Seller Information</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                          <span className="text-lg font-medium">
-                            {car.seller.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <h5 className="font-medium">{car.seller.name}</h5>
-                            {car.seller.verified && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Shield className="h-3 w-3 mr-1" />
-                                Verified
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                            <Star className="h-4 w-4 text-accent fill-current" />
-                            <span>{car.seller.rating} rating</span>
-                            <span>•</span>
-                            <span>{car.seller.totalSales} sales</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="text-sm space-y-1">
-                        <div className="flex items-center text-muted-foreground">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {car.seller.location}
-                        </div>
-                        <div className="flex items-center text-muted-foreground">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Member since {new Date(car.seller.memberSince).getFullYear()}
-                        </div>
-                      </div>
-
-                      {car.seller.type === 'dealer' && (
-                        <Badge variant="outline" className="w-full justify-center">
-                          <Building2 className="h-3 w-3 mr-1" />
-                          Verified Dealer
-                        </Badge>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1">
+                      {car.seller.rating && (
+                        <>
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-gray-700 font-medium">{car.seller.rating}</span>
+                        </>
                       )}
                     </div>
                   </div>
-
-                  {/* Safety Notice */}
-                  <div className="bg-warning/10 border border-warning/20 rounded-lg p-3">
-                    <div className="flex items-start space-x-2">
-                      <Shield className="h-4 w-4 text-warning mt-0.5" />
-                      <div>
-                        <h5 className="text-sm font-semibold text-warning-foreground">Safety First</h5>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Always inspect the vehicle in person, verify documents, and meet in a safe public location.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
+                </div>
               </Card>
+
+              <div className="space-y-3">
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
+                  onClick={handleMakeOffer}
+                >
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Make an Offer
+                </Button>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Chat
+                  </Button>
+                  <Button variant="outline">
+                    <CalendarDays className="h-4 w-4 mr-2" />
+                    Test Drive
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-
-      {/* Modals */}
-      <OTPModal
-        isOpen={isOTPModalOpen}
-        onClose={() => setIsOTPModalOpen(false)}
-        onSuccess={handleOTPSuccess}
-        phoneNumber="+91 98765 43210"
-        purpose={otpPurpose}
-      />
+      </div>
 
       <OfferModal
-        isOpen={isOfferModalOpen}
-        onClose={() => setIsOfferModalOpen(false)}
+        isOpen={showOfferModal}
+        onClose={() => setShowOfferModal(false)}
         car={car}
         onSubmit={handleOfferSubmit}
       />
-    </div>
+
+      <OTPModal
+        isOpen={showOTPModal}
+        onClose={() => setShowOTPModal(false)}
+        onSuccess={handleOTPSuccess}
+        phoneNumber="+91 98765 43210"
+        purpose="make an offer"
+      />
+    </ResponsiveLayout>
   );
 };
 

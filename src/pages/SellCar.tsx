@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Camera, Upload, MapPin, Car, IndianRupee, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 
 const SellCar = () => {
   const navigate = useNavigate();
@@ -316,46 +316,48 @@ const SellCar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-2xl">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold">Sell Your Car</h1>
-            <Badge variant="outline">Step {currentStep} of 5</Badge>
+    <ResponsiveLayout showFooter={false}>
+      <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-2xl font-bold">Sell Your Car</h1>
+              <Badge variant="outline">Step {currentStep} of 5</Badge>
+            </div>
+            <Progress value={(currentStep / 5) * 100} className="h-2" />
           </div>
-          <Progress value={(currentStep / 5) * 100} className="h-2" />
-        </div>
 
-        {/* Form Content */}
-        <Card>
-          <CardContent className="p-6">
-            {renderStep()}
-          </CardContent>
-        </Card>
+          {/* Form Content */}
+          <Card>
+            <CardContent className="p-6">
+              {renderStep()}
+            </CardContent>
+          </Card>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-6">
-          <Button 
-            variant="outline" 
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-          >
-            Previous
-          </Button>
-          
-          {currentStep === 5 ? (
-            <Button onClick={handleSubmit} className="bg-primary">
-              Post for Free
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-6">
+            <Button 
+              variant="outline" 
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+            >
+              Previous
             </Button>
-          ) : (
-            <Button onClick={handleNext} className="bg-primary">
-              Next
-            </Button>
-          )}
+            
+            {currentStep === 5 ? (
+              <Button onClick={handleSubmit} className="bg-primary">
+                Post for Free
+              </Button>
+            ) : (
+              <Button onClick={handleNext} className="bg-primary">
+                Next
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </ResponsiveLayout>
   );
 };
 

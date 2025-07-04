@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
@@ -167,7 +166,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="bg-background pb-4 md:pb-0">
       {/* Hero Section */}
       <section className="pt-14 md:pt-16">
         <SearchFilters onFilterChange={handleFilterChange} />
@@ -262,7 +261,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Car Grid */}
+          {/* Car Grid - Improved responsive layout */}
           {filteredCars.length > 0 ? (
             <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:px-4">
               {filteredCars.map((car) => (

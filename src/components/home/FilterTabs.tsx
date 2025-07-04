@@ -17,7 +17,7 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
   return (
     <div className="bg-white border-b border-gray-200 sticky top-14 md:top-16 z-40">
       <div className="container mx-auto px-4">
-        <div className="flex space-x-6 md:space-x-8 overflow-x-auto">
+        <div className="flex space-x-6 md:space-x-8 overflow-x-auto py-4">
           {filterTypes.map((filter) => {
             const Icon = filter.icon;
             const isActive = activeType === filter.key;
@@ -25,15 +25,15 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
               <button
                 key={filter.key}
                 onClick={() => onTypeChange(filter.key)}
-                className={`flex items-center gap-2 pb-3 px-1 font-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
+                className={`flex items-center gap-3 pb-3 px-2 font-medium transition-all duration-200 whitespace-nowrap border-b-2 ${
                   isActive 
                     ? 'text-primary border-primary' 
                     : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
                 }`}
               >
-                <Icon className="h-4 w-4" />
-                <span>{filter.label}</span>
-                <Badge variant="outline" className={`text-xs ${isActive ? 'border-primary/30 text-primary/70' : 'border-gray-300 text-gray-500'}`}>
+                <Icon className="h-5 w-5" />
+                <span className="text-base">{filter.label}</span>
+                <Badge variant="outline" className={`text-sm px-3 py-1 ${isActive ? 'border-primary/30 text-primary/70' : 'border-gray-300 text-gray-500'}`}>
                   {filter.count}
                 </Badge>
               </button>

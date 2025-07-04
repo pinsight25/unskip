@@ -1,21 +1,12 @@
 
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
-import BottomNavigation from '@/components/mobile/BottomNavigation';
+import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import Home from '@/pages/Home';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1">
-        <Home />
-      </main>
-      <Footer />
-      <WhatsAppWidget />
-      <BottomNavigation />
-    </div>
+    <ResponsiveLayout>
+      <Home />
+    </ResponsiveLayout>
   );
 };
 
