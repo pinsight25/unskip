@@ -102,15 +102,15 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
           <div className="space-y-6 animate-slide-up max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-4 py-2 text-white/90 text-sm font-medium border border-white/30">
               <Sparkles className="h-4 w-4" />
-              Chennai's #1 Car Marketplace
+              Find Your Perfect Car
             </div>
             
             <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-              Find Your Perfect Car
+              Smart Car Shopping
             </h1>
             
             <p className="text-lg text-white/90 max-w-2xl mx-auto font-medium">
-              Smart offer filtering • Verified sellers • No lowball guarantee
+              Connect with verified sellers • Fair pricing • Quality guaranteed
             </p>
 
             {/* Live Activity Counter */}
@@ -132,7 +132,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                       placeholder="Search by make, model, or location..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-14 h-14 text-base border-2 border-border focus:border-primary bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-lg"
+                      className="pl-14 h-14 text-base border-2 border-border focus:border-primary bg-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg"
                       onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     />
                   </div>
@@ -154,7 +154,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                   {['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR'].map((location) => (
                     <Badge 
                       key={location}
-                      className="cursor-pointer bg-white text-primary border-2 border-primary/20 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 px-4 py-2 font-medium rounded-full hover:scale-105 shadow-sm hover:shadow-md"
+                      className="cursor-pointer bg-white text-gray-800 border-2 border-gray-300 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 px-4 py-2 font-semibold rounded-full hover:scale-105 shadow-md hover:shadow-lg"
                       onClick={() => setSearchQuery(location)}
                     >
                       <MapPin className="h-3 w-3 mr-1" />

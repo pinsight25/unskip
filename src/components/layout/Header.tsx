@@ -47,14 +47,14 @@ const Header = () => {
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Enhanced Logo with Tagline */}
+          {/* Enhanced Logo with New Tagline */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="h-12 w-12 premium-gradient rounded-xl flex items-center justify-center shadow-glow group-hover:shadow-premium transition-all duration-300 group-hover:scale-110">
               <Car className="h-6 w-6 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">CarVibe</span>
-              <span className="text-xs text-muted-foreground -mt-1 font-medium hidden sm:block">Chennai's #1 Car Marketplace</span>
+              <span className="text-xs text-muted-foreground -mt-1 font-medium hidden sm:block">Good Vibes, Fair Deals</span>
             </div>
           </Link>
 
@@ -100,10 +100,9 @@ const Header = () => {
               <span className="text-sm font-medium">Sign In</span>
             </div>
             
-            {/* Enhanced Post Car Button with Animation */}
-            <Button size="sm" className="premium-gradient hover:shadow-glow transition-all duration-300 font-bold px-8 text-white border-0 relative overflow-hidden group animate-pulse">
-              <span className="relative z-10">Post Your Car</span>
-              <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            {/* Static Post Car Button */}
+            <Button size="sm" className="premium-gradient hover:shadow-glow transition-all duration-300 font-bold px-8 text-white border-0">
+              Post Your Car
             </Button>
           </div>
 
