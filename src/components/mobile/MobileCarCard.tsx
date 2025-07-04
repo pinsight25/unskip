@@ -26,9 +26,7 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
     navigate(`/car/${car.id}`);
   };
 
-  const handleChat = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
+  const handleChat = () => {
     if (offerStatus === 'none') {
       toast({
         title: "Make an offer first",
@@ -51,8 +49,7 @@ const MobileCarCard = ({ car, onSave, isSaved, onMakeOffer, onChat, onTestDrive 
     }
   };
 
-  const handleTestDrive = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleTestDrive = () => {
     toast({
       title: "Test Drive Request",
       description: `Test drive request sent for ${car.title}`,
