@@ -65,12 +65,15 @@
     --gradient-teal: linear-gradient(135deg, hsl(193 100% 42%), hsl(154 100% 52%));
     --gradient-purple: linear-gradient(135deg, hsl(258 90% 58%), hsl(258 90% 68%));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 14% 98%));
+    --gradient-premium: linear-gradient(135deg, hsl(14 100% 57%), hsl(258 90% 58%));
     
     /* Friendly Shadows */
     --shadow-soft: 0 4px 20px 0 hsl(14 100% 57% / 0.08);
     --shadow-card: 0 8px 32px 0 hsl(14 100% 57% / 0.12);
     --shadow-float: 0 12px 40px 0 hsl(14 100% 57% / 0.15);
     --shadow-trust: 0 4px 20px 0 hsl(223 100% 46% / 0.2);
+    --shadow-premium: 0 20px 50px 0 hsl(14 100% 57% / 0.25);
+    --shadow-glow: 0 0 30px hsl(14 100% 57% / 0.4);
     
     --radius: 1rem;
     --radius-lg: 1.5rem;
@@ -151,6 +154,20 @@
     background: var(--gradient-purple);
   }
 
+  .premium-gradient {
+    background: var(--gradient-premium);
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
   /* Friendly Animations */
   .animate-bounce-gentle {
     animation: bounceGentle 2s ease-in-out infinite;
@@ -185,5 +202,14 @@
     background: hsl(var(--trust));
     color: hsl(var(--trust-foreground));
     box-shadow: var(--shadow-trust);
+  }
+
+  /* Enhanced Shadow Classes */
+  .shadow-premium {
+    box-shadow: var(--shadow-premium);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
   }
 }

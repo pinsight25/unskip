@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search, MapPin, Car, Users, Building2, Sparkles, TrendingUp, Shield } from 'lucide-react';
+import carSilhouettes from '@/assets/car-silhouettes.png';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
@@ -55,6 +56,14 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
       <div className="absolute top-10 left-10 w-20 h-20 bg-primary-light/20 rounded-full blur-xl animate-float" />
       <div className="absolute top-32 right-20 w-32 h-32 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
       <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-primary/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+      
+      {/* Car Silhouettes */}
+      <div className="absolute top-16 right-8 opacity-10 animate-float" style={{ animationDelay: '1s' }}>
+        <img src={carSilhouettes} alt="" className="w-48 h-24 object-contain" />
+      </div>
+      <div className="absolute bottom-16 left-8 opacity-10 animate-float" style={{ animationDelay: '3s' }}>
+        <img src={carSilhouettes} alt="" className="w-40 h-20 object-contain transform scale-x-[-1]" />
+      </div>
 
       <div className="relative z-10 py-20 lg:py-32 px-4">
         <div className="container mx-auto text-center space-y-8">
