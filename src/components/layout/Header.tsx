@@ -100,7 +100,7 @@ const Header = () => {
               <Avatar className="h-9 w-9 border-2 border-primary/20">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  <UserClassName="h-4 w-4" />
+                  <User className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">Sign In</span>
