@@ -55,9 +55,9 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
   };
 
   return (
-    <div className="bg-white py-4">
+    <div className="bg-white py-3">
       <div className="container mx-auto px-4">
-        <div className="space-y-4 max-w-4xl mx-auto">
+        <div className="space-y-3 max-w-4xl mx-auto">
           {/* Search Section */}
           <div className="flex gap-3 md:gap-4">
             <div className="flex-1 relative">
@@ -79,19 +79,19 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </Button>
           </div>
 
-          {/* Popular Locations - Modern Chips Design */}
-          <div className="space-y-3">
+          {/* Popular Locations - Compact Chip Design */}
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                 <MapPin className="h-4 w-4" />
-                <span>Popular Areas in Chennai:</span>
+                <span>Popular Areas:</span>
               </div>
               {selectedLocation && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearLocation}
-                  className="text-primary hover:text-primary/80 font-medium hover:bg-primary/10 transition-all duration-200 min-h-[44px] px-3"
+                  className="text-primary hover:text-primary/80 font-medium hover:bg-primary/10 transition-all duration-200 min-h-[44px] px-3 h-8"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Clear
@@ -99,15 +99,15 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
               )}
             </div>
             
-            {/* Modern Chips Layout - No Scroll Issues */}
-            <div className="flex flex-wrap gap-2">
+            {/* Modern Chips - Horizontal Scrollable */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
               {popularLocations.map((location) => {
                 const isSelected = selectedLocation === location;
                 return (
                   <button
                     key={location}
                     onClick={() => handleLocationClick(location)}
-                    className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 min-h-[44px] ${
+                    className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 min-h-[44px] whitespace-nowrap ${
                       isSelected 
                         ? 'bg-primary text-white shadow-md hover:bg-primary/90' 
                         : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30'
@@ -122,7 +122,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
 
             {/* Selected Location Indicator */}
             {selectedLocation && (
-              <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 px-4 py-2 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 px-3 py-2 rounded-lg border border-primary/20">
                 <MapPin className="h-4 w-4" />
                 <span>Showing cars in: <strong>{selectedLocation}</strong></span>
               </div>

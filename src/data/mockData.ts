@@ -1,4 +1,3 @@
-
 import { Car, Seller } from '@/types/car';
 
 export const mockSellers: Seller[] = [
@@ -76,6 +75,31 @@ export const mockSellers: Seller[] = [
     memberSince: '2019-08-15',
     businessName: 'Elite Cars Chennai',
     location: 'ECR, Chennai'
+  },
+  {
+    id: '7',
+    name: 'Arjun Motors',
+    type: 'dealer',
+    phone: '+91 98765 43216',
+    email: 'sales@arjunmotors.com',
+    verified: true,
+    rating: 4.6,
+    totalSales: 67,
+    memberSince: '2021-02-18',
+    businessName: 'Arjun Motors',
+    location: 'Tambaram, Chennai'
+  },
+  {
+    id: '8',
+    name: 'Kavitha Reddy',
+    type: 'individual',
+    phone: '+91 98765 43217',
+    email: 'kavitha@example.com',
+    verified: true,
+    rating: 4.7,
+    totalSales: 1,
+    memberSince: '2023-05-25',
+    location: 'Chromepet, Chennai'
   }
 ];
 
@@ -278,6 +302,149 @@ export const mockCars: Car[] = [
     featured: false,
     views: 145,
     createdAt: '2024-01-07T16:10:00Z'
+  },
+  {
+    id: '9',
+    title: '2020 Volkswagen Polo GT TSI',
+    brand: 'Volkswagen',
+    model: 'Polo',
+    year: 2020,
+    price: 850000,
+    images: [
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800',
+      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'
+    ],
+    mileage: 32000,
+    fuelType: 'Petrol',
+    transmission: 'Manual',
+    ownership: 1,
+    location: 'T. Nagar, Chennai',
+    description: 'Premium hatchback with turbo engine. Perfect for Chennai traffic.',
+    seller: mockSellers[0],
+    verified: true,
+    featured: false,
+    views: 187,
+    createdAt: '2024-01-11T12:00:00Z'
+  },
+  {
+    id: '10',
+    title: '2019 Skoda Rapid TSI',
+    brand: 'Skoda',
+    model: 'Rapid',
+    year: 2019,
+    price: 780000,
+    images: [
+      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800',
+      'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800'
+    ],
+    mileage: 41000,
+    fuelType: 'Petrol',
+    transmission: 'Manual',
+    ownership: 1,
+    location: 'Anna Nagar, Chennai',
+    description: 'European build quality sedan. Well maintained with service records.',
+    seller: mockSellers[6],
+    verified: true,
+    featured: false,
+    views: 156,
+    createdAt: '2024-01-06T14:30:00Z'
+  },
+  {
+    id: '11',
+    title: '2021 Nissan Magnite XV',
+    brand: 'Nissan',
+    model: 'Magnite',
+    year: 2021,
+    price: 720000,
+    images: [
+      'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
+      'https://images.unsplash.com/photo-1494976688430-30aacd673f5c?w=800'
+    ],
+    mileage: 18000,
+    fuelType: 'Petrol',
+    transmission: 'Manual',
+    ownership: 1,
+    location: 'Adyar, Chennai',
+    description: 'Compact SUV with modern features. Great fuel efficiency.',
+    seller: mockSellers[7],
+    verified: false,
+    featured: false,
+    views: 98,
+    createdAt: '2024-01-04T11:15:00Z'
+  },
+  {
+    id: '12',
+    title: '2018 Ford EcoSport Titanium',
+    brand: 'Ford',
+    model: 'EcoSport',
+    year: 2018,
+    price: 680000,
+    images: [
+      'https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?w=800',
+      'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800'
+    ],
+    mileage: 47000,
+    fuelType: 'Diesel',
+    transmission: 'Manual',
+    ownership: 2,
+    location: 'Velachery, Chennai',
+    description: 'Robust compact SUV. Perfect for city and highway driving.',
+    seller: mockSellers[3],
+    verified: true,
+    featured: false,
+    views: 132,
+    createdAt: '2024-01-03T16:45:00Z'
+  },
+  {
+    id: '13',
+    title: '2022 Hyundai i20 Asta',
+    brand: 'Hyundai',
+    model: 'i20',
+    year: 2022,
+    price: 950000,
+    images: [
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800',
+      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'
+    ],
+    mileage: 8000,
+    fuelType: 'Petrol',
+    transmission: 'Automatic',
+    ownership: 1,
+    location: 'OMR, Chennai',
+    description: 'Premium hatchback with all modern features. Like new condition.',
+    seller: mockSellers[4],
+    verified: true,
+    featured: true,
+    views: 278,
+    createdAt: '2024-01-13T09:30:00Z'
+  },
+  {
+    id: '14',
+    title: '2020 Renault Duster RXZ',
+    brand: 'Renault',
+    model: 'Duster',
+    year: 2020,
+    price: 1180000,
+    images: [
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800',
+      'https://images.unsplash.com/photo-1570733117311-d990c3816c47?w=800'
+    ],
+    mileage: 29000,
+    fuelType: 'Diesel',
+    transmission: 'Manual',
+    ownership: 1,
+    location: 'ECR, Chennai',
+    description: 'Rugged SUV perfect for Chennai roads. Single owner, well maintained.',
+    seller: mockSellers[5],
+    isRentAvailable: true,
+    rentPrice: {
+      daily: 2000,
+      weekly: 12000
+    },
+    verified: true,
+    featured: false,
+    views: 165,
+    createdAt: '2024-01-02T13:20:00Z'
   }
 ];
 
