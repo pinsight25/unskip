@@ -33,13 +33,13 @@ const BottomNavigation = () => {
             >
               <div className="relative">
                 {item.isPrimary ? (
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform ${
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-300 transform ${
                     item.active 
-                      ? 'bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 scale-110 shadow-orange-300' 
-                      : 'bg-gradient-to-br from-orange-400 via-red-400 to-pink-400 hover:from-orange-500 hover:via-red-500 hover:to-pink-500 hover:scale-105 shadow-orange-200'
-                  } ring-4 ring-white/80 relative overflow-hidden`}>
+                      ? 'bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 scale-110 shadow-orange-400' 
+                      : 'bg-gradient-to-br from-orange-400 via-red-400 to-pink-400 hover:from-orange-500 hover:via-red-500 hover:to-pink-500 hover:scale-105 shadow-orange-300'
+                  } ring-4 ring-white/90 relative overflow-hidden`}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                    <Icon className="h-8 w-8 text-white relative z-10" />
+                    <Icon className="h-9 w-9 text-white relative z-10" />
                   </div>
                 ) : (
                   <div className="p-2 relative">

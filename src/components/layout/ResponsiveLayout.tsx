@@ -17,7 +17,7 @@ const ResponsiveLayout = ({ children, showFooter = true }: ResponsiveLayoutProps
       <Header />
       
       {/* Main content area with proper spacing for bottom nav on mobile */}
-      <main className="flex-1 pb-24 md:pb-0 pt-16">
+      <main className="flex-1 pb-24 md:pb-0 pt-14 md:pt-16">
         {children}
       </main>
       

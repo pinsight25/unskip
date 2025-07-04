@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
@@ -166,9 +167,9 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-background">
-      {/* Compact Header Flow */}
-      <section className="pt-14 md:pt-16">
+    <div className="bg-background min-h-screen">
+      {/* Compact Header Flow - No Grey Space */}
+      <section>
         <SearchFilters onFilterChange={handleFilterChange} />
         <HeroBanner />
       </section>
@@ -261,9 +262,9 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Car Grid */}
+          {/* Car Grid with proper bottom spacing */}
           {filteredCars.length > 0 ? (
-            <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:px-4">
+            <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:px-4 pb-8 md:pb-0">
               {filteredCars.map((car) => (
                 isMobile ? (
                   <MobileCarCard 

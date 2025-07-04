@@ -126,7 +126,7 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32">
           {/* Car Summary */}
           <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-4">
             <img 
@@ -229,8 +229,8 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t bg-white space-y-3">
+        {/* Fixed Footer */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 border-t bg-white z-50 space-y-3">
           <Button 
             onClick={handleSubmit}
             disabled={!isFormValid() || isSubmitting}
