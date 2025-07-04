@@ -1,4 +1,3 @@
-
 import { Car } from '@/types/car';
 import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
@@ -7,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Filter, Car as CarIcon, Heart, RefreshCw, SortAsc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useChatManager } from '@/hooks/useChatManager';
 
 interface HomeResultsProps {
   filteredCars: Car[];
@@ -40,7 +40,7 @@ const HomeResults = ({
   onFilterChange,
   getOfferStatus
 }: HomeResultsProps) => {
-  const navigate = useNavigate();
+  const { navigateToChat } = useChatManager();
   const { toast } = useToast();
 
   const handleChatClick = (car: Car) => {
@@ -64,7 +64,7 @@ const HomeResults = ({
     }
     
     if (status === 'accepted') {
-      navigate('/chat/1');
+      navigateToChat(car.id);
     }
   };
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ArrowLeft, Send, MapPin, Phone, Camera, MoreVertical, Calendar } from 'lucide-react';
-import { mockChats, mockMessages, quickReplies } from '@/data/chatMockData';
+import { mockChats, mockMessages, quickReplies, generateChatId } from '@/data/chatMockData';
 import { mockCars } from '@/data/mockData';
 import { ChatMessage } from '@/types/chat';
 import { useToast } from '@/hooks/use-toast';
