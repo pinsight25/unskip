@@ -38,6 +38,10 @@ const Header = () => {
     };
   }, []);
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
@@ -151,7 +155,7 @@ const Header = () => {
                   className={`text-base font-medium transition-colors py-2 ${
                     isActive(item.path) ? 'text-primary' : 'text-foreground/80 hover:text-primary'
                   }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   {item.label}
                 </Link>
@@ -159,13 +163,13 @@ const Header = () => {
               
               {/* Mobile Actions */}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-                <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile" onClick={closeMobileMenu}>
                   <Button variant="outline" size="sm" className="w-full justify-start">
                     <User className="h-4 w-4 mr-2" />
                     Sign In
                   </Button>
                 </Link>
-                <Link to="/sell" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/sell" onClick={closeMobileMenu}>
                   <Button size="sm" className="w-full bg-primary font-semibold">
                     Post Your Car
                   </Button>

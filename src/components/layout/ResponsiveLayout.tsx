@@ -16,7 +16,7 @@ const ResponsiveLayout = ({ children, showFooter = true }: ResponsiveLayoutProps
       {/* Header - visible on all devices but styled differently */}
       <Header />
       
-      {/* Main content area */}
+      {/* Main content area with proper spacing for bottom nav on mobile */}
       <main className="flex-1 pb-20 md:pb-0">
         {children}
       </main>
@@ -31,8 +31,8 @@ const ResponsiveLayout = ({ children, showFooter = true }: ResponsiveLayoutProps
       {/* WhatsApp Widget */}
       <WhatsAppWidget />
       
-      {/* Bottom Navigation - only on mobile/tablet */}
-      <div className="md:hidden">
+      {/* Bottom Navigation - always visible on mobile/tablet for ALL pages */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
         <BottomNavigation />
       </div>
     </div>

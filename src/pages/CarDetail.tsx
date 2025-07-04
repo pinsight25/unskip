@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
@@ -11,6 +10,7 @@ import OTPModal from '@/components/modals/OTPModal';
 import { Calendar, Fuel, MapPin, MessageCircle, RotateCcw, Settings, Star, Users, Shield, Award, DollarSign, CalendarDays } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useToast } from '@/hooks/use-toast';
+import { formatIndianPrice } from '@/utils/priceFormatter';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -159,7 +159,7 @@ const CarDetail = () => {
             <div>
               <h1 className="text-2xl font-bold mb-2">{car.title}</h1>
               <div className="flex items-center gap-4 mb-4">
-                <span className="text-3xl font-bold text-primary">{formatPrice(car.price)}</span>
+                <span className="text-3xl font-bold text-primary">{formatIndianPrice(car.price)}</span>
                 {car.rentPrice && (
                   <span className="text-sm text-gray-500">
                     or ₹{car.rentPrice.daily.toLocaleString()}/day
