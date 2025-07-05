@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -67,13 +66,13 @@ const HeroBanner = () => {
             </Button>
           </div>
           
-          {/* Dots Indicator */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+          {/* Dots Indicator - Improved for mobile */}
+          <div className="absolute bottom-6 md:bottom-4 left-1/2 -translate-x-1/2 flex space-x-1 md:space-x-2 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`w-1 h-1 md:w-2 md:h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide 
                     ? 'bg-white scale-125' 
                     : 'bg-white/50 hover:bg-white/70'

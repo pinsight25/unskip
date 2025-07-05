@@ -1,5 +1,5 @@
 
-import { Calendar, Gauge, Fuel, MapPin, Star, Shield } from 'lucide-react';
+import { Calendar, Gauge, Fuel, MapPin, Star, Shield, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface MobileCarDetailsProps {
@@ -27,33 +27,34 @@ const MobileCarDetails = ({
 }: MobileCarDetailsProps) => {
   return (
     <div className="space-y-4">
-      {/* Car Specs - Better Spacing */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1 text-gray-600">
-            <Calendar className="h-3 w-3 text-orange-500" />
-            <span className="font-medium">{year}</span>
+      {/* Car Specs - Improved Mobile Layout */}
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded-md">
+            <Calendar className="h-3 w-3 text-orange-500 flex-shrink-0" />
+            <span className="font-medium text-gray-700">{year}</span>
           </div>
-          <div className="flex items-center gap-1 text-gray-600">
-            <Gauge className="h-3 w-3 text-orange-500" />
-            <span className="font-medium">{transmission}</span>
+          <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded-md">
+            <Gauge className="h-3 w-3 text-orange-500 flex-shrink-0" />
+            <span className="font-medium text-gray-700">{(mileage/1000).toFixed(0)}k km</span>
           </div>
         </div>
         
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1 text-gray-600">
-            <Fuel className="h-3 w-3 text-orange-500" />
-            <span className="font-medium">{fuelType}</span>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded-md">
+            <Fuel className="h-3 w-3 text-orange-500 flex-shrink-0" />
+            <span className="font-medium text-gray-700">{fuelType}</span>
           </div>
-          <div className="text-gray-600">
-            <span className="font-medium">{mileage} km/l</span>
+          <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-2 rounded-md">
+            <Settings className="h-3 w-3 text-orange-500 flex-shrink-0" />
+            <span className="font-medium text-gray-700">{transmission}</span>
           </div>
         </div>
       </div>
 
       {/* Location - Better Spacing */}
       <div className="flex items-center gap-2 text-sm text-gray-600 bg-orange-50 px-3 py-2 rounded-md">
-        <MapPin className="h-3 w-3 text-orange-500" />
+        <MapPin className="h-3 w-3 text-orange-500 flex-shrink-0" />
         <span className="font-medium">{location}</span>
       </div>
 
