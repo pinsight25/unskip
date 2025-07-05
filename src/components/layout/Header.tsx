@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -54,7 +55,8 @@ const Header = () => {
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        <div className="flex h-16 md:h-18 items-center justify-between">
+        {/* Mobile Header Layout - Improved Spacing */}
+        <div className="flex h-14 md:h-16 lg:h-18 items-center justify-between">
           <Logo />
 
           <DesktopNavigation navItems={navItems} />
@@ -63,7 +65,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-4"
+            className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (

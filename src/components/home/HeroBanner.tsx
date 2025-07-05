@@ -134,8 +134,8 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Slide Indicators */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+          {/* Single Set of Slide Indicators - Fixed Position */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
