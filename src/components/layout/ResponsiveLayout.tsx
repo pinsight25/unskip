@@ -8,31 +8,34 @@ import WhatsAppWidget from '../ui/WhatsAppWidget';
 interface ResponsiveLayoutProps {
   children: ReactNode;
   showFooter?: boolean;
+  fullHeight?: boolean;
 }
 
-const ResponsiveLayout = ({ children, showFooter = true }: ResponsiveLayoutProps) => {
+const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: ResponsiveLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header - responsive positioning */}
+    <div className="app-container">
+      {/* Header - fixed at top */}
       <Header />
       
-      {/* Main content - PROPER SPACING FOR MOBILE */}
-      <main className="flex-1 pt-14 md:pt-16 pb-24 md:pb-0">
-        {children}
+      {/* Main content - flexible height with proper spacing */}
+      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-14 md:pt-16`}>
+        <div className="desktop-container">
+          {children}
+        </div>
       </main>
       
-      {/* Footer - desktop only */}
+      {/* Footer - desktop only, only show on landing/marketing pages */}
       {showFooter && (
         <div className="hidden md:block">
           <Footer />
         </div>
       )}
       
-      {/* WhatsApp Widget */}
+      {/* WhatsApp Widget - floating action button */}
       <WhatsAppWidget />
       
-      {/* Bottom Navigation - ENHANCED FOR MOBILE */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-2xl">
+      {/* Bottom Navigation - mobile only, fixed at bottom */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-2xl safe-area-bottom">
         <BottomNavigation />
       </div>
     </div>

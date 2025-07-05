@@ -6,10 +6,10 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Search, MessageCircle, Clock } from 'lucide-react';
+import { Search, MessageCircle } from 'lucide-react';
 import { mockChats, mockMessages } from '@/data/chatMockData';
 import { mockCars } from '@/data/mockData';
-import { Chat, ChatMessage } from '@/types/chat';
+import { Chat } from '@/types/chat';
 
 const Chats = () => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const Chats = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="pt-16 md:pt-20 pb-28 md:pb-8">
+      <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-4xl mx-auto">
             {/* Header */}
@@ -97,7 +97,7 @@ const Chats = () => {
             </div>
 
             {/* Chat List */}
-            <div className="space-y-3">
+            <div className="space-y-3 pb-6">
               {filteredChats.length > 0 ? (
                 filteredChats.map((chat) => {
                   const { carTitle, carImage, otherPersonName } = getChatInfo(chat);

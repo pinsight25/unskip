@@ -5,13 +5,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CarVibe Polished Design System */
+/* CarVibe Mobile-First Layout System */
 
 @layer base {
   :root {
     /* Enhanced Color Palette */
-    --background: 0 0% 98%;           /* Cleaner background */
-    --foreground: 213 20% 18%;        /* Rich text color */
+    --background: 0 0% 98%;           
+    --foreground: 213 20% 18%;        
 
     --card: 0 0% 100%;                
     --card-foreground: 213 20% 18%;
@@ -20,12 +20,12 @@
     --popover-foreground: 213 20% 18%;
 
     /* CarVibe Brand Colors */
-    --primary: 14 100% 57%;           /* Vibrant coral */
+    --primary: 14 100% 57%;           
     --primary-foreground: 0 0% 100%;
     --primary-light: 14 100% 67%;     
     --primary-dark: 14 100% 47%;      
 
-    --secondary: 193 100% 42%;        /* Fresh teal */
+    --secondary: 193 100% 42%;        
     --secondary-foreground: 0 0% 100%;
     --secondary-light: 154 100% 52%;  
     --secondary-dark: 193 100% 32%;
@@ -91,8 +91,17 @@
 }
 
 @layer base {
+  /* Global CSS Reset for Proper Layout */
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
   }
 
   body {
@@ -100,6 +109,33 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* App Container Structure */
+  .app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px; /* Space for bottom nav on mobile */
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 768px) {
+    .main-content {
+      padding-bottom: 0; /* Remove bottom padding on desktop */
+    }
   }
 
   /* Enhanced Typography */
@@ -119,7 +155,7 @@
   }
 
   /* Mobile Touch Targets */
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     button, [role="button"], a {
       min-height: 44px;
       min-width: 44px;
@@ -139,6 +175,38 @@
   /* Safe Area Support for iOS */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Desktop Container */
+  .desktop-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Mobile-First Responsive Grid */
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .grid-responsive {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-responsive {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .grid-responsive {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   /* Enhanced Animations */
@@ -190,36 +258,6 @@
     animation: scaleIn 0.2s ease-out forwards;
   }
 
-  /* Enhanced Card Styles */
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-  }
-
-  /* Gradient Utilities */
-  .gradient-primary {
-    background: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
-  }
-
-  .gradient-secondary {
-    background: linear-gradient(135deg, hsl(193 100% 42%), hsl(154 100% 52%));
-  }
-
-  .gradient-accent {
-    background: linear-gradient(135deg, hsl(258 90% 58%), hsl(258 90% 68%));
-  }
-
-  /* Glass Effect */
-  .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  /* Text Utilities */
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
   /* Enhanced Shadows */
   .shadow-soft {
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
@@ -231,31 +269,6 @@
 
   .shadow-strong {
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  /* Mobile-First Responsive Grid */
-  .grid-responsive {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .grid-responsive {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .grid-responsive {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .grid-responsive {
-      grid-template-columns: repeat(4, 1fr);
-    }
   }
 
   /* Line Clamping */

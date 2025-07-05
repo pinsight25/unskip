@@ -2,11 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, Send, MapPin, Phone, Camera, MoreVertical, Calendar } from 'lucide-react';
-import { mockChats, mockMessages, quickReplies, generateChatId } from '@/data/chatMockData';
+import { ArrowLeft, Send, Camera, MoreVertical, Calendar } from 'lucide-react';
+import { mockChats, mockMessages, quickReplies } from '@/data/chatMockData';
 import { mockCars } from '@/data/mockData';
 import { ChatMessage } from '@/types/chat';
 import { useToast } from '@/hooks/use-toast';
@@ -46,7 +44,7 @@ const ChatDetail = () => {
     const message: ChatMessage = {
       id: Date.now().toString(),
       chatId: chat.id,
-      senderId: 'buyer1', // Current user
+      senderId: 'buyer1',
       receiverId: chat.sellerId,
       content: newMessage,
       timestamp: new Date().toISOString(),
@@ -118,8 +116,8 @@ const ChatDetail = () => {
 
   if (!chat || !car) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center p-6">
           <h2 className="text-xl font-semibold mb-2">Chat not found</h2>
           <Button onClick={() => navigate('/chats')}>Back to Chats</Button>
         </div>
@@ -128,9 +126,9 @@ const ChatDetail = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
+    <div className="flex flex-col h-screen bg-gray-50 md:h-auto md:min-h-screen">
+      {/* Header - Fixed at top */}
+      <div className="bg-white border-b border-gray-200 p-4 fixed top-0 left-0 right-0 z-40 md:relative">
         <div className="flex items-center gap-3">
           <Button 
             variant="ghost" 
@@ -156,8 +154,8 @@ const ChatDetail = () => {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages Area - Scrollable, fills available space */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-20 md:pt-4 pb-32 md:pb-4">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -201,60 +199,58 @@ const ChatDetail = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Replies */}
-      <div className="bg-white border-t border-gray-200 p-3">
-        <div className="flex gap-2 mb-3 overflow-x-auto">
-          {quickReplies.map((reply) => (
+      {/* Input Area - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 md:relative md:bottom-auto safe-area-bottom">
+        {/* Quick Replies - Horizontal scroll */}
+        <div className="p-3 border-b border-gray-100">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {quickReplies.map((reply) => (
+              <Button
+                key={reply.id}
+                variant="outline"
+                size="sm"
+                onClick={() => handleQuickReply(reply.text)}
+                className="whitespace-nowrap text-xs flex-shrink-0"
+              >
+                {reply.text}
+              </Button>
+            ))}
             <Button
-              key={reply.id}
               variant="outline"
               size="sm"
-              onClick={() => handleQuickReply(reply.text)}
-              className="whitespace-nowrap text-xs"
+              onClick={() => setShowTestDriveModal(true)}
+              className="whitespace-nowrap text-xs flex-shrink-0"
             >
-              {reply.text}
-            </Button>
-          ))}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowTestDriveModal(true)}
-            className="whitespace-nowrap text-xs"
-          >
-            <Calendar className="h-3 w-3 mr-1" />
-            Schedule Test Drive
-          </Button>
-        </div>
-      </div>
-
-      {/* Message Input */}
-      <div className="bg-white border-t border-gray-200 p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-2">
-            <Button variant="ghost" size="sm" className="p-2">
-              <Camera className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="sm" className="p-2">
-              <MapPin className="h-5 w-5" />
+              <Calendar className="h-3 w-3 mr-1" />
+              Test Drive
             </Button>
           </div>
-          
-          <div className="flex-1 flex gap-2">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1"
-            />
-            <Button 
-              onClick={handleSendMessage}
-              disabled={!newMessage.trim()}
-              size="sm"
-              className="px-4"
-            >
-              <Send className="h-4 w-4" />
+        </div>
+
+        {/* Message Input */}
+        <div className="p-4 pb-20 md:pb-4">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" className="p-2 flex-shrink-0">
+              <Camera className="h-5 w-5" />
             </Button>
+            
+            <div className="flex-1 flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleSendMessage}
+                disabled={!newMessage.trim()}
+                size="sm"
+                className="px-4 flex-shrink-0"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

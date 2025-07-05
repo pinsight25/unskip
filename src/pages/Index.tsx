@@ -4,7 +4,7 @@ import Home from '@/pages/Home';
 
 const Index = () => {
   return (
-    <ResponsiveLayout>
+    <ResponsiveLayout showFooter={true}>
       <Home />
     </ResponsiveLayout>
   );
