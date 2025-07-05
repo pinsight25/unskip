@@ -10,7 +10,7 @@ const HeroBanner = () => {
       id: 1,
       title: "Find Your Perfect Car",
       subtitle: "2000+ verified listings",
-      cta: "Browse Cars",
+      cta: "Browse",
       image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop"
     },
     {
@@ -23,8 +23,8 @@ const HeroBanner = () => {
     {
       id: 3,
       title: "Verified Dealers Only",
-      subtitle: "Buy with confidence",
-      cta: "View Dealers",
+      subtitle: "Buy with confidence", 
+      cta: "View All",
       image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop"
     }
   ];
@@ -61,7 +61,7 @@ const HeroBanner = () => {
             </p>
             <Button 
               size="lg"
-              className="bg-white text-gray-900 hover:bg-white/90 font-semibold shadow-md h-12 px-8"
+              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-md px-8 py-3 min-w-[120px] h-auto text-base"
             >
               {currentBanner.cta}
             </Button>
