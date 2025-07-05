@@ -17,8 +17,8 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       {/* Header */}
       <Header />
       
-      {/* Main content with proper spacing */}
-      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 md:pt-18`}>
+      {/* Main content with proper spacing for floating nav */}
+      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 md:pt-18 pb-24 md:pb-0`}>
         <div className="w-full max-w-6xl mx-auto">
           {children}
         </div>
@@ -34,8 +34,8 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       {/* WhatsApp Widget */}
       <WhatsAppWidget />
       
-      {/* Bottom Navigation - Mobile */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-lg safe-area-bottom">
+      {/* Bottom Navigation - Mobile (Now Floating) */}
+      <div className="md:hidden">
         <BottomNavigation />
       </div>
     </div>
