@@ -12,26 +12,26 @@ interface HeaderActionsProps {
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center space-x-2 lg:space-x-8">
-      {/* Desktop Stats - Enhanced design */}
-      <div className="hidden lg:flex items-center space-x-6">
-        <Badge variant="secondary" className="bg-green-500/15 text-green-700 border-green-500/30 px-4 py-2.5 font-semibold text-base shadow-sm">
-          <TrendingUp className="h-4 w-4 mr-2" />
-          {carsSoldToday} cars sold today
+    <div className="flex items-center space-x-1 lg:space-x-4">
+      {/* Desktop Stats - Compact design */}
+      <div className="hidden lg:flex items-center space-x-3">
+        <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 px-2 py-1 text-xs font-medium">
+          <TrendingUp className="h-3 w-3 mr-1" />
+          {carsSoldToday} sold today
         </Badge>
 
-        <Badge variant="secondary" className="bg-success/15 text-success border-success/30 px-4 py-2.5 font-semibold text-base shadow-sm">
-          <Shield className="h-4 w-4 mr-2" />
-          Trusted Platform
+        <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 px-2 py-1 text-xs font-medium">
+          <Shield className="h-3 w-3 mr-1" />
+          Trusted
         </Badge>
       </div>
 
-      {/* Chat Icon - Enhanced visibility */}
+      {/* Chat Icon - Compact */}
       <Link to="/chats" className="hidden lg:flex relative">
-        <Button variant="ghost" size="sm" className="p-3 h-12 w-12 hover:bg-primary/10">
-          <MessageCircle className="h-6 w-6" />
+        <Button variant="ghost" size="sm" className="p-2 h-8 w-8 hover:bg-primary/10">
+          <MessageCircle className="h-4 w-4" />
           {unreadChats > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-sm h-6 w-6 rounded-full p-0 flex items-center justify-center font-bold shadow-lg">
+            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs h-4 w-4 rounded-full p-0 flex items-center justify-center font-bold">
               {unreadChats}
             </Badge>
           )}
@@ -39,24 +39,24 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       </Link>
 
       {/* Mobile Notification */}
-      <Button variant="ghost" size="sm" className="lg:hidden p-2 h-10 w-10">
-        <Bell className="h-5 w-5" />
+      <Button variant="ghost" size="sm" className="lg:hidden p-2 h-8 w-8">
+        <Bell className="h-4 w-4" />
       </Button>
       
-      {/* Desktop Profile - Enhanced */}
-      <Link to="/profile" className="hidden lg:flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
-        <Avatar className="h-12 w-12 border-2 border-primary/20">
+      {/* Desktop Profile - Compact */}
+      <Link to="/profile" className="hidden lg:flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
+        <Avatar className="h-8 w-8 border border-primary/20">
           <AvatarImage src="" />
-          <AvatarFallback className="bg-primary/10 text-primary text-lg">
-            <User className="h-6 w-6" />
+          <AvatarFallback className="bg-primary/10 text-primary text-sm">
+            <User className="h-4 w-4" />
           </AvatarFallback>
         </Avatar>
-        <span className="text-base font-semibold">Sign In</span>
+        <span className="text-sm font-medium">Sign In</span>
       </Link>
       
-      {/* Post Car Button - More prominent */}
+      {/* Post Car Button - Balanced prominence */}
       <Link to="/sell">
-        <Button size="lg" className="hidden lg:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-bold px-10 h-14 text-white shadow-xl hover:shadow-2xl transition-all text-lg">
+        <Button size="sm" className="hidden lg:inline-flex bg-primary hover:bg-primary/90 font-medium px-4 h-10 text-white shadow-sm">
           Post Your Car
         </Button>
       </Link>

@@ -14,12 +14,12 @@ interface ResponsiveLayoutProps {
 const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: ResponsiveLayoutProps) => {
   return (
     <div className="app-container">
-      {/* Enhanced Header */}
+      {/* Compact Header */}
       <Header />
       
-      {/* Main content with proper spacing */}
-      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 md:pt-20`}>
-        <div className="w-full max-w-7xl mx-auto">
+      {/* Main content with compact spacing */}
+      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-14 md:pt-16`}>
+        <div className="w-full max-w-6xl mx-auto">
           {children}
         </div>
       </main>
@@ -31,11 +31,11 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
         </div>
       )}
       
-      {/* Enhanced WhatsApp Widget */}
+      {/* WhatsApp Widget */}
       <WhatsAppWidget />
       
-      {/* Enhanced Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-2xl safe-area-bottom">
+      {/* Compact Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-lg safe-area-bottom">
         <BottomNavigation />
       </div>
     </div>
