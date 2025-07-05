@@ -68,7 +68,7 @@ const HeroBanner = () => {
           {/* Background with gradient */}
           <div className={`absolute inset-0 bg-gradient-to-r ${currentBanner.bgGradient}`} />
           
-          {/* Navigation Arrows - Positioned outside content */}
+          {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 shadow-lg"
@@ -83,17 +83,15 @@ const HeroBanner = () => {
             <ChevronRight className="h-5 w-5 text-gray-700" />
           </button>
           
-          {/* Content with proper spacing from arrows */}
+          {/* Content */}
           <div className="relative z-10 flex flex-col lg:flex-row items-center h-full px-16 md:px-20 py-8 max-w-5xl mx-auto">
-            {/* Left Content - 60% */}
+            {/* Left Content */}
             <div className="flex-1 lg:pr-8 text-center lg:text-left max-w-md lg:max-w-none">
-              {/* Badge */}
               <Badge className="bg-white/20 text-white border-white/30 mb-4 backdrop-blur-sm px-3 py-1 text-xs">
                 <Award className="h-3 w-3 mr-1" />
                 {currentBanner.badge}
               </Badge>
               
-              {/* Main Content */}
               <h1 className="text-2xl lg:text-4xl font-bold mb-3 leading-tight text-white">
                 {currentBanner.title}
               </h1>
@@ -104,7 +102,6 @@ const HeroBanner = () => {
                 {currentBanner.description}
               </p>
               
-              {/* CTA Button */}
               <Button 
                 size="lg"
                 className="bg-white text-gray-900 hover:bg-white/90 font-semibold shadow-md hover:shadow-lg transition-all duration-200 h-12 px-8"
@@ -114,10 +111,9 @@ const HeroBanner = () => {
               </Button>
             </div>
             
-            {/* Right Visual - 40% */}
+            {/* Right Visual */}
             <div className="flex-1 lg:pl-8 mt-6 lg:mt-0 flex justify-center lg:justify-end">
               <div className="relative">
-                {/* Car Image */}
                 <div className="w-72 h-48 lg:w-80 lg:h-56 rounded-lg overflow-hidden shadow-xl border-4 border-white/20">
                   <img 
                     src={currentBanner.image} 
@@ -126,7 +122,6 @@ const HeroBanner = () => {
                   />
                 </div>
                 
-                {/* Floating Icon */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30">
                   <Icon className="h-8 w-8 text-white" />
                 </div>
@@ -134,7 +129,7 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Single Set of Slide Indicators - Fixed Position */}
+          {/* Single Set of Indicators - Fixed to prevent duplicates */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
             {banners.map((_, index) => (
               <button

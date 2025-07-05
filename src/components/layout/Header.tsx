@@ -55,25 +55,27 @@ const Header = () => {
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        {/* Mobile Header Layout - Improved Spacing */}
-        <div className="flex h-14 md:h-16 lg:h-18 items-center justify-between">
+        {/* Improved Mobile Header Layout with Better Alignment */}
+        <div className="flex h-16 items-center justify-between">
           <Logo />
 
           <DesktopNavigation navItems={navItems} />
 
-          <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
+          <div className="flex items-center">
+            <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+            {/* Mobile Menu Button - Better Spacing */}
+            <button
+              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-1"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
 
         <MobileMenu

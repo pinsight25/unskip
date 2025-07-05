@@ -17,48 +17,48 @@ const BottomNavigation = () => {
   ];
 
   return (
-    <div className="fixed bottom-5 left-5 right-5 z-50">
-      <nav className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-lg border border-white/20 p-2 flex items-center justify-around h-16">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-bottom">
+      <nav className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center relative p-2 rounded-2xl transition-all duration-300 transform active:scale-95 ${
+              className={`flex flex-col items-center justify-center relative p-2 rounded-lg transition-all duration-200 active:scale-95 ${
                 item.isPrimary 
                   ? 'flex-none' 
-                  : 'flex-1'
+                  : 'flex-1 max-w-[80px]'
               } ${
                 item.active && !item.isPrimary
-                  ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white scale-105' 
+                  ? 'text-orange-500' 
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               {item.isPrimary ? (
                 <div className="relative">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform ${
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform ${
                     item.active 
-                      ? 'bg-gradient-to-br from-orange-500 to-red-500 scale-110 shadow-orange-400/40' 
-                      : 'bg-gradient-to-br from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 hover:scale-105 shadow-orange-300/30'
-                  } -translate-y-2`}>
-                    <Icon className="h-7 w-7 text-white" strokeWidth={2.5} />
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 scale-105' 
+                      : 'bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 hover:scale-105'
+                  }`}>
+                    <Icon className="h-6 w-6 text-white" strokeWidth={2.5} />
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="relative mb-1">
-                    <Icon className={`h-6 w-6 transition-all duration-300 ${
-                      item.active ? 'text-white scale-110' : 'text-gray-600'
+                    <Icon className={`h-5 w-5 transition-all duration-200 ${
+                      item.active ? 'text-orange-500 scale-110' : 'text-gray-600'
                     }`} strokeWidth={item.active ? 2.5 : 2} />
                     {item.badge && item.badge > 0 && (
-                      <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-4 w-4 rounded-full flex items-center justify-center p-0 border-2 border-white shadow-sm font-bold text-[10px]">
+                      <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-4 w-4 rounded-full flex items-center justify-center p-0 border border-white shadow-sm font-bold text-[9px]">
                         {item.badge}
                       </Badge>
                     )}
                   </div>
-                  <span className={`text-xs font-semibold transition-all duration-300 ${
-                    item.active ? 'text-white' : 'text-gray-600'
+                  <span className={`text-xs font-medium transition-all duration-200 ${
+                    item.active ? 'text-orange-500' : 'text-gray-600'
                   }`}>
                     {item.label}
                   </span>

@@ -17,14 +17,14 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       {/* Header */}
       <Header />
       
-      {/* Main content with proper spacing for floating nav */}
-      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 md:pt-18 pb-24 md:pb-0`}>
+      {/* Main content with proper spacing */}
+      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 pb-20 md:pb-0`}>
         <div className="w-full max-w-6xl mx-auto">
           {children}
         </div>
       </main>
       
-      {/* Footer - only on homepage */}
+      {/* Footer - only on homepage and desktop */}
       {showFooter && (
         <div className="hidden md:block">
           <Footer />
@@ -34,7 +34,7 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       {/* WhatsApp Widget */}
       <WhatsAppWidget />
       
-      {/* Bottom Navigation - Mobile (Now Floating) */}
+      {/* Bottom Navigation - Mobile Only */}
       <div className="md:hidden">
         <BottomNavigation />
       </div>

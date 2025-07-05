@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Car } from '@/types/car';
@@ -119,17 +120,17 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
             </div>
           </div>
 
-          {/* Content Section */}
-          <div className="p-4 space-y-3">
+          {/* Content Section - Improved Layout and Spacing */}
+          <div className="p-4 space-y-4">
             {/* Title & Price */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Link to={`/car/${car.id}`} className="block">
-                <h3 className="font-medium text-[18px] leading-tight hover:text-orange-500 transition-colors line-clamp-2 text-gray-900 h-[48px] flex items-start">
+                <h3 className="font-semibold text-lg leading-tight hover:text-orange-500 transition-colors line-clamp-2 text-gray-900">
                   {car.title}
                 </h3>
               </Link>
               <div className="flex items-center justify-between">
-                <p className="text-[24px] font-bold text-orange-500">
+                <p className="text-2xl font-bold text-orange-500">
                   {formatPrice(car.price)}
                 </p>
                 {car.isRentAvailable && car.rentPrice && (
@@ -141,78 +142,78 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </div>
             </div>
 
-            {/* Details Grid */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
+            {/* Car Specs Grid - Better Organized */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
                 <Calendar className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-[14px]">{car.year}</span>
+                <span className="font-medium text-sm">{car.year}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
                 <Gauge className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-[14px]">{(car.mileage/1000).toFixed(0)}k km</span>
+                <span className="font-medium text-sm">{(car.mileage/1000).toFixed(0)}k km</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
                 <Fuel className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-[14px]">{car.fuelType}</span>
+                <span className="font-medium text-sm">{car.fuelType}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
                 <Settings className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-[14px]">{car.transmission}</span>
+                <span className="font-medium text-sm">{car.transmission}</span>
               </div>
             </div>
 
             {/* Location */}
-            <div className="flex items-center text-gray-600 bg-orange-50 p-2 rounded-lg">
+            <div className="flex items-center text-gray-600 bg-orange-50 px-3 py-2.5 rounded-lg">
               <MapPin className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-              <span className="font-medium text-[14px]">{car.location}</span>
+              <span className="font-medium text-sm">{car.location}</span>
             </div>
 
-            {/* Compact Seller Info */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-              <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-bold text-orange-600">
-                    {car.seller.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-medium text-[14px] text-gray-900 truncate">{car.seller.name}</p>
-                    {car.seller.verified && (
-                      <Shield className="h-3 w-3 text-green-600 flex-shrink-0" />
-                    )}
+            {/* Seller Info - Redesigned for Better Layout */}
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 flex-1">
+                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-orange-600">
+                      {car.seller.name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
-                  <div className="flex items-center text-[12px] text-gray-500 gap-2">
-                    {car.seller.rating > 0 && (
-                      <div className="flex items-center text-amber-500">
-                        <Star className="h-3 w-3 fill-current mr-1" />
-                        <span className="font-medium">{car.seller.rating}.0</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold text-sm text-gray-900 truncate">{car.seller.name}</p>
+                      {car.seller.verified && (
+                        <Shield className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      )}
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500 gap-3">
+                      {car.seller.rating > 0 && (
+                        <div className="flex items-center text-amber-500">
+                          <Star className="h-3 w-3 fill-current mr-1" />
+                          <span className="font-medium">{car.seller.rating}.0</span>
+                        </div>
+                      )}
+                      <div className="flex items-center text-green-600">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span className="font-medium">Active 2h</span>
                       </div>
-                    )}
-                    <span>•</span>
-                    <div className="flex items-center text-green-600">
-                      <Clock className="h-3 w-3 mr-1" />
-                      <span className="font-medium">Active 2hrs</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-2 pt-2">
+            {/* Action Buttons - Better Spacing */}
+            <div className="space-y-3 pt-2">
               <Button 
                 size="default"
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-[40px] text-[15px] shadow-sm"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-11 text-sm shadow-sm"
                 onClick={handleMakeOffer}
               >
                 Make an Offer
               </Button>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <Button 
                   variant="outline" 
-                  size="default"
-                  className="font-medium hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-300 h-[36px] text-[14px]"
+                  className="font-medium hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-300 h-10 text-sm"
                   onClick={handleChat}
                 >
                   <MessageCircle className="h-4 w-4 mr-1" />
@@ -220,8 +221,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
                 </Button>
                 <Button 
                   variant="outline" 
-                  size="default"
-                  className="font-medium hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 h-[36px] text-[14px]"
+                  className="font-medium hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 h-10 text-sm"
                 >
                   Test Drive
                 </Button>
