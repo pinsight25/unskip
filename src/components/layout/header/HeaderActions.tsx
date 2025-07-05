@@ -13,7 +13,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
     <div className="flex items-center space-x-3">
       {/* Chat Icon - Desktop Only */}
-      <Link to="/chats" className="hidden lg:flex relative">
+      <Link to="/chats" className="hidden md:flex relative">
         <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
           <MessageCircle className="h-5 w-5" />
           {unreadChats > 0 && (
@@ -25,7 +25,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       </Link>
       
       {/* Desktop Profile */}
-      <Link to="/profile" className="hidden lg:flex items-center space-x-3 hover:opacity-80 transition-opacity">
+      <Link to="/profile" className="hidden md:flex items-center space-x-3 hover:opacity-80 transition-opacity">
         <Avatar className="h-8 w-8 border border-gray-200">
           <AvatarImage src="" />
           <AvatarFallback className="bg-gray-100 text-gray-600">
@@ -37,7 +37,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Post Car Button */}
       <Link to="/sell">
-        <Button size="sm" className="hidden lg:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-4 h-9 text-white shadow-sm text-sm">
+        <Button size="sm" className="hidden md:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-4 h-9 text-white shadow-sm text-sm">
           Post Your Car
         </Button>
       </Link>

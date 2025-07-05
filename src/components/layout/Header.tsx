@@ -55,16 +55,18 @@ const Header = () => {
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        {/* Mobile Header Layout - Consistent Height and Alignment */}
+        {/* Header Layout */}
         <div className="flex h-14 items-center justify-between">
           <Logo />
 
+          {/* Desktop Navigation - Only visible on md+ screens */}
           <DesktopNavigation navItems={navItems} />
 
           <div className="flex items-center space-x-2">
+            {/* Desktop Actions - Always rendered but conditionally shown */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Menu Button - Proper Touch Target */}
+            {/* Mobile Menu Button - Only visible on mobile */}
             <button
               className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
