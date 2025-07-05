@@ -129,11 +129,11 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Fixed Indicators - Single Set Only */}
+          {/* Single Set of Indicators - Fixed */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
             {banners.map((_, index) => (
               <button
-                key={`indicator-${index}`}
+                key={index}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide 

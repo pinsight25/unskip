@@ -25,12 +25,12 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
         </Button>
       </Link>
 
-      {/* Mobile Bell Notification - Fixed Positioning */}
+      {/* Mobile Bell Notification - Fixed Badge Position */}
       <div className="lg:hidden relative">
         <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
           <Bell className="h-5 w-5 text-gray-700" />
           {unreadChats > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white h-4 w-4 rounded-full p-0 flex items-center justify-center font-bold text-[9px] border-2 border-white shadow-sm">
+            <Badge className="absolute -top-0.5 -right-0.5 bg-red-500 text-white h-3.5 w-3.5 rounded-full p-0 flex items-center justify-center font-bold text-[8px] border border-white">
               {unreadChats}
             </Badge>
           )}
