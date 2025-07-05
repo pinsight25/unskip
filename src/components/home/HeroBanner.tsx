@@ -9,22 +9,22 @@ const HeroBanner = () => {
     {
       id: 1,
       title: "Find Your Perfect Car",
-      subtitle: "2000+ verified listings",
-      cta: "Browse",
+      subtitle: "Verified listings from trusted sellers",
+      cta: "Browse Cars",
       image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop"
     },
     {
       id: 2,
-      title: "Sell Without Lowballers",
-      subtitle: "Get fair offers only",
-      cta: "Sell Now",
+      title: "Sell Your Car",
+      subtitle: "Get the best price in 24 hours",
+      cta: "Start Selling",
       image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop"
     },
     {
       id: 3,
-      title: "Verified Dealers Only",
-      subtitle: "Buy with confidence", 
-      cta: "View All",
+      title: "Trusted Dealers",
+      subtitle: "All dealers are verified for your safety", 
+      cta: "View Dealers",
       image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop"
     }
   ];

@@ -16,17 +16,17 @@ const Footer = () => {
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-xl font-bold text-gray-900">CarVibe</span>
-                <span className="text-xs text-gray-600 font-medium mt-0.5">Good Vibes, Fair Deals</span>
+                <span className="text-xs text-gray-600 font-medium mt-0.5">Professional Car Marketplace</span>
               </div>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed max-w-sm">
-              Your trusted platform for buying and selling cars with verified users and fair pricing.
+              Your trusted platform for buying and selling cars with verified users and transparent pricing.
             </p>
             
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                <span className="text-sm text-gray-700 font-medium">No Lowball Offers</span>
+                <span className="text-sm text-gray-700 font-medium">Fair Market Pricing</span>
               </div>
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
