@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
+import { mockAccessories } from '@/data/accessoryMockData';
 import { Car } from '@/types/car';
 import OfferModal from '@/components/modals/OfferModal';
 import OTPModal from '@/components/modals/OTPModal';
@@ -13,6 +15,7 @@ import CarOverview from '@/components/car/CarOverview';
 import CarSpecifications from '@/components/car/CarSpecifications';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
+import AccessoryCard from '@/components/accessories/AccessoryCard';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +42,16 @@ const CarDetail = () => {
       </ResponsiveLayout>
     );
   }
+
+  // Get recommended accessories for this car
+  const recommendedAccessories = mockAccessories
+    .filter(accessory => 
+      accessory.compatibility.some(model => 
+        model.toLowerCase().includes(car.brand.toLowerCase()) ||
+        model.toLowerCase().includes(car.model.toLowerCase())
+      ) || accessory.compatibility.includes('Universal fit - All cars')
+    )
+    .slice(0, 6);
 
   const handleMakeOffer = () => {
     if (!isVerified) {
@@ -158,6 +171,45 @@ const CarDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Recommended Accessories Section */}
+        {recommendedAccessories.length > 0 && (
+          <div className="mt-12 border-t border-gray-200 pt-8">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                ✨ Recommended Accessories
+              </h2>
+              <p className="text-gray-600">
+                Popular upgrades for {car.brand} {car.model}
+              </p>
+            </div>
+
+            {/* Mobile: Horizontal scroll, Desktop: Grid */}
+            <div className="md:hidden">
+              <div className="flex space-x-4 overflow-x-auto pb-4">
+                {recommendedAccessories.map((accessory) => (
+                  <div key={accessory.id} className="flex-shrink-0 w-64">
+                    <AccessoryCard accessory={accessory} viewMode="grid" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {recommendedAccessories.map((accessory) => (
+                <AccessoryCard key={accessory.id} accessory={accessory} viewMode="grid" />
+              ))}
+            </div>
+
+            <div className="mt-6 text-center">
+              <Link to={`/accessories?search=${car.brand} ${car.model}`}>
+                <button className="text-primary hover:text-primary/80 font-medium">
+                  View all accessories for {car.brand} {car.model} →
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       <OfferModal

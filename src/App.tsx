@@ -13,6 +13,8 @@ import Saved from "./pages/Saved";
 import Dealers from "./pages/Dealers";
 import Chats from "./pages/Chats";
 import ChatDetail from "./pages/ChatDetail";
+import Accessories from "./pages/Accessories";
+import AccessoryDetail from "./pages/AccessoryDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/chats" element={<Chats />} />
           <Route path="/chat/:id" element={<ChatDetail />} />
           <Route path="/car/:id" element={<CarDetail />} />
+          <Route path="/accessories" element={<Accessories />} />
+          <Route path="/accessories/:id" element={<AccessoryDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

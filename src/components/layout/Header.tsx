@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ const Header = () => {
     { label: 'Buy Cars', path: '/' },
     { label: 'Sell', path: '/sell' },
     { label: 'Dealers', path: '/dealers' },
+    { label: 'Accessories', path: '/accessories' },
     { label: 'Rent', path: '/rent' }
   ];
 
