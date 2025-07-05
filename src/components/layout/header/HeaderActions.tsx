@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Bell, MessageCircle, User } from 'lucide-react';
+import { MessageCircle, User } from 'lucide-react';
 
 interface HeaderActionsProps {
   carsSoldToday: number;
@@ -23,18 +23,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           )}
         </Button>
       </Link>
-
-      {/* Mobile Bell Notification - Fixed Badge Position */}
-      <div className="lg:hidden relative">
-        <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
-          <Bell className="h-5 w-5 text-gray-700" />
-          {unreadChats > 0 && (
-            <div className="absolute -top-0.5 -right-0.5 bg-red-500 text-white h-4 w-4 rounded-full flex items-center justify-center font-bold text-[9px] border border-white">
-              {unreadChats}
-            </div>
-          )}
-        </Button>
-      </div>
       
       {/* Desktop Profile */}
       <Link to="/profile" className="hidden lg:flex items-center space-x-3 hover:opacity-80 transition-opacity">
