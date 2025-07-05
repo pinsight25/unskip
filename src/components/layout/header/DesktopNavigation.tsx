@@ -16,7 +16,7 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="hidden lg:flex items-center space-x-12">
+    <nav className="hidden lg:flex items-center space-x-8">
       {navItems.map((item) => (
         <Link
           key={item.path}

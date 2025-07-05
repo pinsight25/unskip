@@ -12,7 +12,7 @@ interface HeaderActionsProps {
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center space-x-6">
+    <div className="flex items-center space-x-5">
       {/* Chat Icon */}
       <Link to="/chats" className="hidden lg:flex relative">
         <Button variant="ghost" size="sm" className="p-2.5 h-10 w-10 hover:bg-gray-100 rounded-lg">

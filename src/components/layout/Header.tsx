@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -60,21 +59,19 @@ const Header = () => {
 
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center space-x-4 lg:space-x-6">
-            <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
+          <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </button>
-          </div>
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-4"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
         </div>
 
         <MobileMenu
