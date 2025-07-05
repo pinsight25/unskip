@@ -67,16 +67,16 @@ const HeroBanner = () => {
             </Button>
           </div>
           
-          {/* Dots Indicator - Very bottom edge, tiny and subtle */}
-          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex space-x-1 z-20">
+          {/* Dots Indicator - Hidden on mobile, visible on desktop */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden md:flex space-x-2 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentSlide 
-                    ? 'bg-white/80' 
-                    : 'bg-white/40 hover:bg-white/60'
+                    ? 'bg-white scale-125' 
+                    : 'bg-white/60 hover:bg-white/80'
                 }`}
               />
             ))}
