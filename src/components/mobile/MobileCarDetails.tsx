@@ -1,5 +1,5 @@
 
-import { Calendar, Gauge, Fuel, MapPin, Star } from 'lucide-react';
+import { Calendar, Gauge, Fuel, MapPin, Star, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface MobileCarDetailsProps {
@@ -26,57 +26,64 @@ const MobileCarDetails = ({
   seller 
 }: MobileCarDetailsProps) => {
   return (
-    <div className="space-y-3">
-      {/* Car Specs */}
-      <div className="flex items-center justify-between text-sm text-gray-600">
-        <div className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          <span>{year}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Gauge className="h-3 w-3" />
-          <span>{transmission}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Fuel className="h-3 w-3" />
-          <span>{fuelType}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span>{mileage} km/l</span>
-        </div>
-      </div>
-
-      {/* Location */}
-      <div className="flex items-center gap-1 text-sm text-gray-600">
-        <MapPin className="h-3 w-3" />
-        <span>{location}</span>
-      </div>
-
-      {/* Seller Info - Fixed Layout */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-900">{seller.name}</span>
-            {seller.verified && (
-              <Badge variant="secondary" className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700">
-                ✓
-              </Badge>
-            )}
+    <div className="space-y-4">
+      {/* Car Specs - Better Spacing */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1 text-gray-600">
+            <Calendar className="h-3 w-3 text-orange-500" />
+            <span className="font-medium">{year}</span>
           </div>
-          {/* Rating and Active Time - Fixed Alignment */}
-          <div className="flex items-center gap-2 mt-1">
-            {seller.rating && (
-              <div className="flex items-center gap-1">
-                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-xs font-medium text-gray-700">{seller.rating}</span>
-              </div>
-            )}
-            {seller.activeTime && (
-              <>
-                <span className="text-gray-400">•</span>
+          <div className="flex items-center gap-1 text-gray-600">
+            <Gauge className="h-3 w-3 text-orange-500" />
+            <span className="font-medium">{transmission}</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1 text-gray-600">
+            <Fuel className="h-3 w-3 text-orange-500" />
+            <span className="font-medium">{fuelType}</span>
+          </div>
+          <div className="text-gray-600">
+            <span className="font-medium">{mileage} km/l</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Location - Better Spacing */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 bg-orange-50 px-3 py-2 rounded-md">
+        <MapPin className="h-3 w-3 text-orange-500" />
+        <span className="font-medium">{location}</span>
+      </div>
+
+      {/* Seller Info - Improved Layout and Spacing */}
+      <div className="bg-gray-50 p-3 rounded-md">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-orange-600">
+              {seller.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-semibold text-gray-900 truncate">{seller.name}</span>
+              {seller.verified && (
+                <Shield className="h-3 w-3 text-green-600 flex-shrink-0" />
+              )}
+            </div>
+            {/* Rating and Active Time - Better Alignment */}
+            <div className="flex items-center gap-3">
+              {seller.rating && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-medium text-gray-700">{seller.rating}</span>
+                </div>
+              )}
+              {seller.activeTime && (
                 <span className="text-xs text-gray-500">Active {seller.activeTime}</span>
-              </>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -129,7 +129,7 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Single Set of Indicators - Fixed */}
+          {/* Single Set of Indicators - Centered and Properly Sized */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
             {banners.map((_, index) => (
               <button

@@ -1,0 +1,136 @@
+
+/* CarVibe Design System - Consistent Variables and Utilities */
+
+:root {
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;       /* 12px */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg: 1.125rem;      /* 18px */
+  --text-xl: 1.25rem;       /* 20px */
+  --text-2xl: 1.5rem;       /* 24px */
+  --text-3xl: 1.875rem;     /* 30px */
+  --text-4xl: 2.25rem;      /* 36px */
+  
+  /* Border Radius Scale */
+  --radius-sm: 0.25rem;     /* 4px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+  --radius-xl: 1rem;        /* 16px */
+  
+  /* Shadow Scale */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Transition Speeds */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* Consistent Button Styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold shadow-sm transition-all duration-300;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium transition-all duration-300;
+}
+
+.btn-outline {
+  @apply border border-gray-300 hover:border-orange-500 hover:text-orange-500 text-gray-700 font-medium transition-all duration-300;
+}
+
+/* Consistent Card Styles */
+.card-base {
+  @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+}
+
+.card-hover {
+  @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+}
+
+/* Consistent Typography */
+.heading-1 {
+  @apply text-3xl md:text-4xl font-bold text-gray-900 leading-tight;
+}
+
+.heading-2 {
+  @apply text-2xl md:text-3xl font-bold text-gray-900 leading-tight;
+}
+
+.heading-3 {
+  @apply text-xl md:text-2xl font-semibold text-gray-900 leading-tight;
+}
+
+.body-text {
+  @apply text-base text-gray-700 leading-relaxed;
+}
+
+.small-text {
+  @apply text-sm text-gray-600;
+}
+
+/* Consistent Spacing Utilities */
+.spacing-section {
+  @apply py-8 md:py-12;
+}
+
+.spacing-container {
+  @apply px-4 lg:px-6;
+}
+
+.spacing-content {
+  @apply space-y-6;
+}
+
+/* Consistent Badge Styles */
+.badge-primary {
+  @apply bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-notification {
+  @apply bg-red-500 text-white rounded-full flex items-center justify-center font-bold border border-white;
+}
+
+/* Responsive Breakpoint Utilities */
+.container-responsive {
+  @apply w-full max-w-7xl mx-auto px-4 lg:px-6;
+}
+
+.grid-responsive {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+/* Touch Target Standards */
+.touch-target {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Focus States */
+.focus-visible {
+  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2;
+}

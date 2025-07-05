@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import './styles/design-system.css';
 
 @tailwind base;
 @tailwind components;
@@ -128,14 +129,6 @@
   .main-content {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 80px; /* Space for bottom nav on mobile */
-  }
-
-  /* Desktop adjustments */
-  @media (min-width: 768px) {
-    .main-content {
-      padding-bottom: 0; /* Remove bottom padding on desktop */
-    }
   }
 
   /* Enhanced Typography */
@@ -175,13 +168,6 @@
   /* Safe Area Support for iOS */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  /* Desktop Container */
-  .desktop-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
   }
 
   /* Mobile-First Responsive Grid */
@@ -256,19 +242,6 @@
 
   .animate-scale-in {
     animation: scaleIn 0.2s ease-out forwards;
-  }
-
-  /* Enhanced Shadows */
-  .shadow-soft {
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
-  }
-
-  .shadow-medium {
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
-  }
-
-  .shadow-strong {
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
   }
 
   /* Line Clamping */

@@ -55,7 +55,7 @@ const Header = () => {
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        {/* Mobile Header Layout - Fixed Height and Alignment */}
+        {/* Mobile Header Layout - Consistent Height and Alignment */}
         <div className="flex h-14 items-center justify-between">
           <Logo />
 
@@ -64,10 +64,11 @@ const Header = () => {
           <div className="flex items-center space-x-2">
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Menu Button - Better Alignment */}
+            {/* Mobile Menu Button - Proper Touch Target */}
             <button
-              className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+              className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
                 <X className="h-5 w-5 text-gray-700" />

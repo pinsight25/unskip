@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, Plus, Heart, User } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -17,28 +16,28 @@ const BottomNavigation = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
-      <nav className="flex items-center justify-around h-14 px-2 max-w-md mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-bottom">
+      <nav className="flex items-center justify-around h-14 px-1 max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.path}
               to={item.path}
-              className="flex flex-col items-center justify-center flex-1 py-1"
+              className="flex flex-col items-center justify-center flex-1 py-2 min-h-[44px] relative"
             >
               <div className="relative mb-1">
                 <Icon className={`h-5 w-5 ${
                   item.active ? 'text-orange-500' : 'text-gray-600'
                 }`} />
                 {item.badge && item.badge > 0 && (
-                  <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs h-3 w-3 rounded-full flex items-center justify-center p-0 border border-white font-bold text-[8px]">
+                  <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center font-bold border border-white">
                     {item.badge}
-                  </Badge>
+                  </div>
                 )}
               </div>
               <span className={`text-xs ${
-                item.active ? 'text-orange-500' : 'text-gray-600'
+                item.active ? 'text-orange-500 font-medium' : 'text-gray-600'
               }`}>
                 {item.label}
               </span>
