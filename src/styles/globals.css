@@ -1,0 +1,54 @@
+
+/* Global CSS Reset and Base Styles */
+
+@layer base {
+  /* Global CSS Reset for Proper Layout */
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply bg-background text-foreground font-poppins antialiased;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Enhanced Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+
+  /* Improved Button Styles */
+  button, [role="button"] {
+    @apply transition-all duration-200;
+  }
+
+  /* Enhanced Focus States */
+  input:focus, textarea:focus, select:focus {
+    @apply ring-2 ring-primary/20 border-primary;
+  }
+
+  /* Mobile Touch Targets */
+  @media (max-width: 767px) {
+    button, [role="button"], a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}
