@@ -14,12 +14,12 @@ interface ResponsiveLayoutProps {
 const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: ResponsiveLayoutProps) => {
   return (
     <div className="app-container">
-      {/* Enhanced Header */}
+      {/* Header */}
       <Header />
       
       {/* Main content with proper spacing */}
-      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-18 md:pt-20`}>
-        <div className="w-full max-w-7xl mx-auto">
+      <main className={`main-content ${fullHeight ? 'min-h-screen' : ''} pt-16 md:pt-18`}>
+        <div className="w-full max-w-6xl mx-auto">
           {children}
         </div>
       </main>

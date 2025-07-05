@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Car } from '@/types/car';
@@ -70,8 +69,8 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
     <>
       <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white border border-gray-200 overflow-hidden w-full max-w-[350px] mx-auto">
         <CardContent className="p-0">
-          {/* Standardized Image Section */}
-          <div className="relative w-full h-[240px] overflow-hidden">
+          {/* Image Section */}
+          <div className="relative w-full h-[200px] overflow-hidden">
             <Link to={`/car/${car.id}`}>
               <img
                 src={car.images[0]}
@@ -80,7 +79,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               />
             </Link>
             
-            {/* Consistent Badge Positioning */}
+            {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {car.featured && (
                 <Badge className="bg-amber-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-sm">
@@ -95,7 +94,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               )}
             </div>
 
-            {/* Consistent Save Button */}
+            {/* Save Button */}
             <div className="absolute top-3 right-3">
               <Button 
                 size="sm" 
@@ -111,7 +110,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </Button>
             </div>
 
-            {/* Consistent Views Badge */}
+            {/* Views Badge */}
             <div className="absolute bottom-3 left-3">
               <div className="bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-md text-xs flex items-center font-medium">
                 <Eye className="h-3 w-3 mr-1" />
@@ -120,9 +119,9 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
             </div>
           </div>
 
-          {/* Standardized Content Section */}
-          <div className="p-4 space-y-4">
-            {/* Consistent Title & Price Layout */}
+          {/* Content Section */}
+          <div className="p-4 space-y-3">
+            {/* Title & Price */}
             <div className="space-y-2">
               <Link to={`/car/${car.id}`} className="block">
                 <h3 className="font-medium text-[18px] leading-tight hover:text-orange-500 transition-colors line-clamp-2 text-gray-900 h-[48px] flex items-start">
@@ -142,57 +141,55 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </div>
             </div>
 
-            {/* Standardized Details Grid */}
+            {/* Details Grid */}
             <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2.5 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
                 <Calendar className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
                 <span className="font-medium text-[14px]">{car.year}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2.5 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
                 <Gauge className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
                 <span className="font-medium text-[14px]">{(car.mileage/1000).toFixed(0)}k km</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2.5 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
                 <Fuel className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
                 <span className="font-medium text-[14px]">{car.fuelType}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 p-2.5 rounded-lg">
+              <div className="flex items-center text-gray-600 bg-gray-50 p-2 rounded-lg">
                 <Settings className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
                 <span className="font-medium text-[14px]">{car.transmission}</span>
               </div>
             </div>
 
-            {/* Consistent Location */}
-            <div className="flex items-center text-gray-600 bg-orange-50 p-2.5 rounded-lg">
+            {/* Location */}
+            <div className="flex items-center text-gray-600 bg-orange-50 p-2 rounded-lg">
               <MapPin className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
               <span className="font-medium text-[14px]">{car.location}</span>
             </div>
 
-            {/* Standardized Seller Info */}
+            {/* Compact Seller Info */}
             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-orange-600">
+              <div className="flex items-center space-x-3 flex-1 min-w-0">
+                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-bold text-orange-600">
                     {car.seller.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="font-medium text-[16px] text-gray-900 truncate">{car.seller.name}</p>
+                    <p className="font-medium text-[14px] text-gray-900 truncate">{car.seller.name}</p>
                     {car.seller.verified && (
-                      <Badge className="bg-green-100 text-green-700 border-green-200 text-xs px-2 py-0.5 flex-shrink-0">
-                        <Shield className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
+                      <Shield className="h-3 w-3 text-green-600 flex-shrink-0" />
                     )}
                   </div>
-                  <div className="flex items-center text-[14px] text-gray-500 gap-3">
+                  <div className="flex items-center text-[12px] text-gray-500 gap-2">
                     {car.seller.rating > 0 && (
                       <div className="flex items-center text-amber-500">
                         <Star className="h-3 w-3 fill-current mr-1" />
                         <span className="font-medium">{car.seller.rating}.0</span>
                       </div>
                     )}
+                    <span>•</span>
                     <div className="flex items-center text-green-600">
                       <Clock className="h-3 w-3 mr-1" />
                       <span className="font-medium">Active 2hrs</span>
@@ -202,8 +199,8 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </div>
             </div>
 
-            {/* Standardized Action Buttons */}
-            <div className="space-y-3 pt-2">
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-2">
               <Button 
                 size="default"
                 className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-[40px] text-[15px] shadow-sm"

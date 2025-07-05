@@ -59,47 +59,47 @@ const HeroBanner = () => {
   const Icon = currentBanner.icon;
 
   return (
-    <div className="bg-white py-4 lg:py-6">
-      <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        <div className={`relative rounded-xl bg-gradient-to-r ${currentBanner.bgGradient} p-6 lg:p-8 text-white overflow-hidden shadow-lg h-72 md:h-80`}>
+    <div className="bg-white py-3 lg:py-4">
+      <div className="w-full max-w-5xl mx-auto px-4 lg:px-6">
+        <div className={`relative rounded-xl bg-gradient-to-r ${currentBanner.bgGradient} overflow-hidden shadow-lg h-64 md:h-72`}>
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 right-4 w-24 h-24 rounded-full border border-white/20"></div>
-            <div className="absolute bottom-4 left-4 w-20 h-20 rounded-full border border-white/20"></div>
+            <div className="absolute top-4 right-4 w-20 h-20 rounded-full border border-white/20"></div>
+            <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full border border-white/20"></div>
           </div>
           
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - Outside content area */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 shadow-lg"
           >
-            <ChevronLeft className="h-4 w-4 text-white" />
+            <ChevronLeft className="h-5 w-5 text-gray-700" />
           </button>
           
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 shadow-lg"
           >
-            <ChevronRight className="h-4 w-4 text-white" />
+            <ChevronRight className="h-5 w-5 text-gray-700" />
           </button>
           
-          {/* Content - Compact and centered */}
-          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 h-full max-w-5xl mx-auto">
+          {/* Content with safe padding from arrows */}
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-4 h-full px-16 md:px-20 py-6 max-w-4xl mx-auto">
             <div className="flex-1 text-center lg:text-left">
               {/* Badge */}
-              <Badge className="bg-white/20 text-white border-white/30 mb-4 backdrop-blur-sm px-3 py-1 text-sm">
+              <Badge className="bg-white/20 text-white border-white/30 mb-3 backdrop-blur-sm px-3 py-1 text-xs">
                 <Award className="h-3 w-3 mr-1" />
                 {currentBanner.badge}
               </Badge>
               
               {/* Main Content */}
-              <h1 className="text-2xl lg:text-4xl font-bold mb-3 leading-tight">
+              <h1 className="text-xl lg:text-3xl font-bold mb-2 leading-tight">
                 {currentBanner.title}
               </h1>
-              <p className="text-lg lg:text-xl font-semibold text-white/90 mb-2">
+              <p className="text-base lg:text-lg font-semibold text-white/90 mb-2">
                 {currentBanner.subtitle}
               </p>
-              <p className="text-white/80 mb-6 text-sm lg:text-base leading-relaxed max-w-md mx-auto lg:mx-0">
+              <p className="text-white/80 mb-4 text-sm lg:text-base leading-relaxed max-w-md mx-auto lg:mx-0">
                 {currentBanner.description}
               </p>
               
@@ -113,10 +113,10 @@ const HeroBanner = () => {
               </Button>
             </div>
             
-            {/* Icon - Smaller */}
+            {/* Icon */}
             <div className="flex-shrink-0">
-              <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Icon className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+              <div className="w-14 h-14 lg:w-16 lg:h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Icon className="h-7 w-7 lg:h-8 lg:w-8 text-white" />
               </div>
             </div>
           </div>

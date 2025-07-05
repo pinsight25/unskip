@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, MessageCircle, User, Shield } from 'lucide-react';
+import { MessageCircle, User } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -31,18 +31,6 @@ const MobileMenu = ({
   return (
     <div className="md:hidden border-t border-border py-4 bg-white">
       <nav className="flex flex-col space-y-4">
-        {/* Mobile Stats */}
-        <div className="flex flex-col space-y-2 pb-4 border-b border-border">
-          <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 self-start">
-            <TrendingUp className="h-3 w-3 mr-1" />
-            {carsSoldToday} cars sold today
-          </Badge>
-          <Badge variant="secondary" className="bg-success/10 text-success border-success/20 self-start">
-            <Shield className="h-3 w-3 mr-1" />
-            Trusted Platform
-          </Badge>
-        </div>
-
         {/* Mobile Nav Items */}
         {navItems.map((item) => (
           <Link

@@ -54,8 +54,8 @@ const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="flex h-18 md:h-20 items-center justify-between">
+      <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
+        <div className="flex h-16 md:h-18 items-center justify-between">
           <Logo />
 
           <DesktopNavigation navItems={navItems} />
