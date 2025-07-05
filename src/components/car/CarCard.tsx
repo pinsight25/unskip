@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import OfferModal from '@/components/modals/OfferModal';
 import OTPModal from '@/components/modals/OTPModal';
-import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, Gauge, DollarSign, Clock, CalendarDays } from 'lucide-react';
+import { MapPin, Eye, Star, Shield, Calendar, Fuel, Settings, Heart, Share2, MessageCircle, Gauge, Clock, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CarCardProps {
@@ -19,8 +19,6 @@ interface CarCardProps {
 const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showChatModal, setShowChatModal] = useState(false);
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [offerMade, setOfferMade] = useState(false);
   const { toast } = useToast();
@@ -50,11 +48,6 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
       });
       return;
     }
-    setShowChatModal(true);
-  };
-
-  const handleTestDrive = () => {
-    setShowTestDriveModal(true);
   };
 
   const handleSave = () => {
@@ -77,7 +70,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
     <>
       <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white border-0 overflow-hidden hover:scale-[1.02] shadow-lg">
         <CardContent className="p-0">
-          {/* Image Section */}
+          {/* Enhanced Image Section */}
           <div className="relative aspect-[4/3] overflow-hidden">
             <Link to={`/car/${car.id}`}>
               <img
@@ -90,178 +83,167 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            {/* Save Heart Icon */}
+            {/* Save Heart Icon - Enhanced */}
             <div className="absolute top-4 right-4">
               <Button 
                 size="sm" 
                 variant="secondary" 
-                className={`h-10 w-10 p-0 shadow-lg rounded-full group-hover:scale-110 transition-all duration-300 ${
+                className={`h-12 w-12 p-0 shadow-lg rounded-full group-hover:scale-110 transition-all duration-300 ${
                   isSaved ? 'bg-red-50 hover:bg-red-100' : 'bg-white/90 hover:bg-white'
                 }`}
                 onClick={handleSave}
               >
-                <Heart className={`h-4 w-4 transition-colors ${
+                <Heart className={`h-5 w-5 transition-colors ${
                   isSaved ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-500'
                 }`} />
               </Button>
             </div>
             
-            {/* Modern Badges */}
+            {/* Enhanced Badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {car.featured && (
-                <Badge className="bg-amber-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+                <Badge className="bg-amber-500/90 backdrop-blur-sm text-white border-0 font-bold text-sm px-4 py-2 rounded-full shadow-lg">
                   ⭐ Featured
                 </Badge>
               )}
               {car.verified && (
-                <Badge className="bg-green-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                  <Shield className="h-3 w-3 mr-1" />
+                <Badge className="bg-green-500/90 backdrop-blur-sm text-white border-0 font-bold text-sm px-4 py-2 rounded-full shadow-lg">
+                  <Shield className="h-4 w-4 mr-1" />
                   Verified
                 </Badge>
               )}
               {car.isRentAvailable && (
-                <Badge className="bg-blue-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                  Also for Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
-                </Badge>
-              )}
-            </div>
-
-            {/* Seller Type Badge */}
-            <div className="absolute top-4 right-16">
-              {car.seller.type === 'dealer' && (
-                <Badge className="bg-white/90 text-foreground font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                  Certified Dealer
+                <Badge className="bg-blue-500/90 backdrop-blur-sm text-white border-0 font-bold text-sm px-4 py-2 rounded-full shadow-lg">
+                  Rent ₹{car.rentPrice?.daily.toLocaleString('en-IN')}/day
                 </Badge>
               )}
             </div>
 
             {/* Views & Quick Actions */}
             <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <div className="bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs flex items-center font-medium">
-                <Eye className="h-3 w-3 mr-1" />
+              <div className="bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm flex items-center font-semibold">
+                <Eye className="h-4 w-4 mr-2" />
                 {car.views}
               </div>
               
               {/* Quick Action Buttons */}
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                <Button size="sm" variant="secondary" className="h-9 w-9 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg">
-                  <Share2 className="h-4 w-4" />
+                <Button size="sm" variant="secondary" className="h-10 w-10 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg">
+                  <Share2 className="h-5 w-5" />
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Enhanced Content Section */}
-          <div className="p-6 space-y-5">
-            {/* Title & Price */}
-            <div className="space-y-3">
+          <div className="p-8 space-y-6">
+            {/* Title & Price - Enhanced Typography */}
+            <div className="space-y-4">
               <Link to={`/car/${car.id}`} className="block">
-                <h3 className="font-bold text-xl leading-tight hover:text-primary transition-colors group-hover:text-primary line-clamp-2">
+                <h3 className="font-bold text-2xl leading-tight hover:text-primary transition-colors group-hover:text-primary line-clamp-2">
                   {car.title}
                 </h3>
               </Link>
               <div className="flex items-center justify-between">
-                <p className="text-3xl font-black text-primary">
+                <p className="text-4xl font-black text-primary">
                   {formatPrice(car.price)}
                 </p>
                 {car.isRentAvailable && car.rentPrice && (
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Rent from</p>
-                    <p className="text-sm font-bold text-secondary">₹{car.rentPrice.daily.toLocaleString('en-IN')}/day</p>
+                    <p className="text-sm text-muted-foreground">Rent from</p>
+                    <p className="text-lg font-bold text-secondary">₹{car.rentPrice.daily.toLocaleString('en-IN')}/day</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Enhanced Key Details Grid with Icons */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center text-muted-foreground bg-secondary/5 p-3 rounded-lg">
-                <Calendar className="h-4 w-4 mr-2 text-primary" />
-                <span className="font-semibold">{car.year}</span>
+            {/* Enhanced Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4 text-base">
+              <div className="flex items-center text-muted-foreground bg-secondary/5 p-4 rounded-xl">
+                <Calendar className="h-5 w-5 mr-3 text-primary" />
+                <span className="font-bold">{car.year}</span>
               </div>
-              <div className="flex items-center text-muted-foreground bg-secondary/5 p-3 rounded-lg">
-                <Gauge className="h-4 w-4 mr-2 text-primary" />
-                <span className="font-semibold">{car.mileage.toLocaleString('en-IN')} km</span>
+              <div className="flex items-center text-muted-foreground bg-secondary/5 p-4 rounded-xl">
+                <Gauge className="h-5 w-5 mr-3 text-primary" />
+                <span className="font-bold">{car.mileage.toLocaleString('en-IN')} km</span>
               </div>
-              <div className="flex items-center text-muted-foreground bg-secondary/5 p-3 rounded-lg">
-                <Fuel className="h-4 w-4 mr-2 text-primary" />
-                <span className="font-semibold">{car.fuelType}</span>
+              <div className="flex items-center text-muted-foreground bg-secondary/5 p-4 rounded-xl">
+                <Fuel className="h-5 w-5 mr-3 text-primary" />
+                <span className="font-bold">{car.fuelType}</span>
               </div>
-              <div className="flex items-center text-muted-foreground bg-secondary/5 p-3 rounded-lg">
-                <Settings className="h-4 w-4 mr-2 text-primary" />
-                <span className="font-semibold">{car.transmission}</span>
+              <div className="flex items-center text-muted-foreground bg-secondary/5 p-4 rounded-xl">
+                <Settings className="h-5 w-5 mr-3 text-primary" />
+                <span className="font-bold">{car.transmission}</span>
               </div>
             </div>
 
-            {/* Location */}
-            <div className="flex items-center text-muted-foreground bg-primary/5 p-3 rounded-lg">
-              <MapPin className="h-4 w-4 mr-2 text-primary" />
-              <span className="font-semibold">{car.location}</span>
+            {/* Location - Enhanced */}
+            <div className="flex items-center text-muted-foreground bg-primary/5 p-4 rounded-xl">
+              <MapPin className="h-5 w-5 mr-3 text-primary" />
+              <span className="font-bold text-lg">{car.location}</span>
             </div>
 
-            {/* Enhanced Seller Info with Ratings & Response Time */}
-            <div className="flex items-center justify-between pt-4 border-t border-border">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary">
+            {/* Enhanced Seller Info */}
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-lg font-bold text-primary">
                     {car.seller.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold">{car.seller.name}</p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-lg font-bold">{car.seller.name}</p>
                     {car.seller.verified && (
-                      <Badge className="bg-success/10 text-success border-success/20 text-xs px-2 py-0.5 rounded-full">
-                        <Shield className="h-3 w-3 mr-1" />
+                      <Badge className="bg-success/10 text-success border-success/20 text-sm px-3 py-1 rounded-full">
+                        <Shield className="h-4 w-4 mr-1" />
                         Verified
                       </Badge>
                     )}
                   </div>
-                  <div className="flex items-center text-xs text-muted-foreground gap-3">
+                  <div className="flex items-center text-sm text-muted-foreground gap-4">
                     {car.seller.rating > 0 && (
                       <div className="flex items-center text-amber-500">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-3 w-3 ${i < car.seller.rating ? 'fill-current' : ''}`} />
+                          <Star key={i} className={`h-4 w-4 ${i < car.seller.rating ? 'fill-current' : ''}`} />
                         ))}
-                        <span className="font-medium ml-1 text-foreground">{car.seller.rating}.0</span>
+                        <span className="font-semibold ml-2 text-foreground text-base">{car.seller.rating}.0</span>
                       </div>
                     )}
                     <div className="flex items-center text-green-600">
-                      <Clock className="h-3 w-3 mr-1" />
-                      <span className="font-medium">Responds in 2 hrs</span>
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span className="font-semibold">Responds in 2 hrs</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Core Action Buttons */}
-            <div className="space-y-3">
+            {/* Enhanced Action Buttons */}
+            <div className="space-y-4">
               <Button 
-                size="sm" 
-                className="w-full premium-gradient font-medium text-white hover:shadow-lg transition-all duration-300"
+                size="lg" 
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-bold text-white hover:shadow-lg transition-all duration-300 h-14 text-lg"
                 onClick={handleMakeOffer}
               >
-                <DollarSign className="h-4 w-4 mr-2" />
                 Make an Offer
               </Button>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <Button 
                   variant="outline" 
-                  size="sm" 
-                  className="font-medium hover:bg-primary hover:text-white transition-all duration-300"
+                  size="lg" 
+                  className="font-semibold hover:bg-primary hover:text-white transition-all duration-300 h-12 text-base"
                   onClick={handleChat}
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <MessageCircle className="h-5 w-5 mr-2" />
                   Chat
                 </Button>
                 <Button 
                   variant="outline" 
-                  size="sm" 
-                  className="font-medium hover:bg-secondary hover:text-white transition-all duration-300"
-                  onClick={handleTestDrive}
+                  size="lg" 
+                  className="font-semibold hover:bg-secondary hover:text-white transition-all duration-300 h-12 text-base"
                 >
-                  <CalendarDays className="h-4 w-4 mr-2" />
+                  <CalendarDays className="h-5 w-5 mr-2" />
                   Test Drive
                 </Button>
               </div>

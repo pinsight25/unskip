@@ -52,26 +52,26 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-100 ${
-      isScrolled ? 'shadow-sm' : ''
+      isScrolled ? 'shadow-md' : ''
     }`}>
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="flex h-14 md:h-18 items-center justify-between">
+      <div className="w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div className="flex h-16 md:h-20 items-center justify-between">
           <Logo />
 
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center space-x-2 lg:space-x-6">
+          <div className="flex items-center space-x-3 lg:space-x-8">
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-1.5 h-8 w-8 rounded-lg hover:bg-secondary/50 transition-colors flex items-center justify-center"
+              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-secondary/50 transition-colors flex items-center justify-center"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               ) : (
-                <Menu className="h-4 w-4" />
+                <Menu className="h-5 w-5" />
               )}
             </button>
           </div>
