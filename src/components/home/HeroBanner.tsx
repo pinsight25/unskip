@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -43,39 +44,39 @@ const HeroBanner = () => {
         <div className="relative rounded-xl overflow-hidden shadow-lg h-[200px] md:h-[300px]">
           {/* Background Image */}
           <div 
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-500"
             style={{ backgroundImage: `url(${currentBanner.image})` }}
           />
           
           {/* Dark Overlay */}
           <div className="absolute inset-0 bg-black/50" />
           
-          {/* Content */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8">
-            <h1 className="text-2xl lg:text-4xl font-bold mb-2 text-white">
+          {/* Content - Positioned in upper area */}
+          <div className="relative z-10 flex flex-col items-center justify-start h-full text-center px-8 pt-8 md:pt-12">
+            <h1 className="text-xl md:text-4xl font-bold mb-2 text-white">
               {currentBanner.title}
             </h1>
-            <p className="text-lg text-white/90 mb-6">
+            <p className="text-sm md:text-lg text-white/90 mb-4 md:mb-6">
               {currentBanner.subtitle}
             </p>
             <Button 
               size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-md px-8 py-3 min-w-[120px] h-auto text-base"
+              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-md px-6 md:px-8 py-2 md:py-3 min-w-[100px] md:min-w-[120px] h-auto text-sm md:text-base"
             >
               {currentBanner.cta}
             </Button>
           </div>
           
-          {/* Dots Indicator - Improved for mobile */}
-          <div className="absolute bottom-6 md:bottom-4 left-1/2 -translate-x-1/2 flex space-x-1 md:space-x-2 z-20">
+          {/* Dots Indicator - Very bottom edge, tiny and subtle */}
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex space-x-1 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-1 h-1 md:w-2 md:h-2 rounded-full transition-all duration-300 ${
+                className={`w-1 h-1 rounded-full transition-all duration-300 ${
                   index === currentSlide 
-                    ? 'bg-white scale-125' 
-                    : 'bg-white/50 hover:bg-white/70'
+                    ? 'bg-white/80' 
+                    : 'bg-white/40 hover:bg-white/60'
                 }`}
               />
             ))}
