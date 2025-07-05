@@ -55,24 +55,24 @@ const Header = () => {
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        {/* Improved Mobile Header Layout with Better Alignment */}
-        <div className="flex h-16 items-center justify-between">
+        {/* Mobile Header Layout - Fixed Height and Alignment */}
+        <div className="flex h-14 items-center justify-between">
           <Logo />
 
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Menu Button - Better Spacing */}
+            {/* Mobile Menu Button - Better Alignment */}
             <button
-              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center ml-1"
+              className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-gray-700" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5 text-gray-700" />
               )}
             </button>
           </div>

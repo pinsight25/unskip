@@ -100,7 +100,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               <Button 
                 size="sm" 
                 variant="secondary" 
-                className={`h-9 w-9 p-0 shadow-md rounded-full border ${
+                className={`h-8 w-8 p-0 shadow-md rounded-full border ${
                   isSaved ? 'bg-red-50 hover:bg-red-100 border-red-200' : 'bg-white hover:bg-gray-50 border-gray-200'
                 }`}
                 onClick={handleSave}
@@ -120,17 +120,17 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
             </div>
           </div>
 
-          {/* Content Section - Improved Layout and Spacing */}
-          <div className="p-4 space-y-4">
-            {/* Title & Price */}
-            <div className="space-y-3">
+          {/* Content Section - Redesigned for Better Layout */}
+          <div className="p-4 space-y-3">
+            {/* Title & Price - Better Spacing */}
+            <div className="space-y-2">
               <Link to={`/car/${car.id}`} className="block">
                 <h3 className="font-semibold text-lg leading-tight hover:text-orange-500 transition-colors line-clamp-2 text-gray-900">
                   {car.title}
                 </h3>
               </Link>
               <div className="flex items-center justify-between">
-                <p className="text-2xl font-bold text-orange-500">
+                <p className="text-xl font-bold text-orange-500">
                   {formatPrice(car.price)}
                 </p>
                 {car.isRentAvailable && car.rentPrice && (
@@ -142,49 +142,49 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </div>
             </div>
 
-            {/* Car Specs Grid - Better Organized */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
-                <Calendar className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-sm">{car.year}</span>
+            {/* Car Specs - Clean Grid Layout */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center text-gray-600 bg-gray-50 px-2 py-2 rounded-md">
+                <Calendar className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
+                <span className="font-medium text-xs">{car.year}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
-                <Gauge className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-sm">{(car.mileage/1000).toFixed(0)}k km</span>
+              <div className="flex items-center text-gray-600 bg-gray-50 px-2 py-2 rounded-md">
+                <Gauge className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
+                <span className="font-medium text-xs">{(car.mileage/1000).toFixed(0)}k km</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
-                <Fuel className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-sm">{car.fuelType}</span>
+              <div className="flex items-center text-gray-600 bg-gray-50 px-2 py-2 rounded-md">
+                <Fuel className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
+                <span className="font-medium text-xs">{car.fuelType}</span>
               </div>
-              <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2.5 rounded-lg">
-                <Settings className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-                <span className="font-medium text-sm">{car.transmission}</span>
+              <div className="flex items-center text-gray-600 bg-gray-50 px-2 py-2 rounded-md">
+                <Settings className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
+                <span className="font-medium text-xs">{car.transmission}</span>
               </div>
             </div>
 
             {/* Location */}
-            <div className="flex items-center text-gray-600 bg-orange-50 px-3 py-2.5 rounded-lg">
-              <MapPin className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
-              <span className="font-medium text-sm">{car.location}</span>
+            <div className="flex items-center text-gray-600 bg-orange-50 px-3 py-2 rounded-md">
+              <MapPin className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
+              <span className="font-medium text-xs">{car.location}</span>
             </div>
 
-            {/* Seller Info - Redesigned for Better Layout */}
-            <div className="bg-gray-50 p-3 rounded-lg">
+            {/* Seller Info - Improved Layout */}
+            <div className="bg-gray-50 p-3 rounded-md">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-orange-600">
+                <div className="flex items-center space-x-2 flex-1">
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-orange-600">
                       {car.seller.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-semibold text-sm text-gray-900 truncate">{car.seller.name}</p>
+                    <div className="flex items-center gap-1 mb-1">
+                      <p className="font-semibold text-xs text-gray-900 truncate">{car.seller.name}</p>
                       {car.seller.verified && (
-                        <Shield className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        <Shield className="h-3 w-3 text-green-600 flex-shrink-0" />
                       )}
                     </div>
-                    <div className="flex items-center text-xs text-gray-500 gap-3">
+                    <div className="flex items-center text-xs text-gray-500 gap-2">
                       {car.seller.rating > 0 && (
                         <div className="flex items-center text-amber-500">
                           <Star className="h-3 w-3 fill-current mr-1" />
@@ -201,27 +201,29 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
               </div>
             </div>
 
-            {/* Action Buttons - Better Spacing */}
-            <div className="space-y-3 pt-2">
+            {/* Action Buttons - Clean Layout */}
+            <div className="space-y-2 pt-1">
               <Button 
-                size="default"
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-11 text-sm shadow-sm"
+                size="sm"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-9 text-xs shadow-sm"
                 onClick={handleMakeOffer}
               >
                 Make an Offer
               </Button>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="outline" 
-                  className="font-medium hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-300 h-10 text-sm"
+                  size="sm"
+                  className="font-medium hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-300 h-8 text-xs"
                   onClick={handleChat}
                 >
-                  <MessageCircle className="h-4 w-4 mr-1" />
+                  <MessageCircle className="h-3 w-3 mr-1" />
                   Chat
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="font-medium hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 h-10 text-sm"
+                  size="sm"
+                  className="font-medium hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 h-8 text-xs"
                 >
                   Test Drive
                 </Button>

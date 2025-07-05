@@ -12,25 +12,25 @@ interface HeaderActionsProps {
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-3">
       {/* Chat Icon - Desktop Only */}
       <Link to="/chats" className="hidden lg:flex relative">
-        <Button variant="ghost" size="sm" className="p-2.5 h-10 w-10 hover:bg-gray-100 rounded-lg">
+        <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
           <MessageCircle className="h-5 w-5" />
           {unreadChats > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs h-5 w-5 rounded-full p-0 flex items-center justify-center font-bold text-[10px]">
+            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs h-4 w-4 rounded-full p-0 flex items-center justify-center font-bold text-[9px] border border-white">
               {unreadChats}
             </Badge>
           )}
         </Button>
       </Link>
 
-      {/* Mobile Notification - Properly Positioned Badge */}
+      {/* Mobile Bell Notification - Fixed Positioning */}
       <div className="lg:hidden relative">
-        <Button variant="ghost" size="sm" className="p-2 h-10 w-10 hover:bg-gray-100 rounded-lg">
-          <Bell className="h-5 w-5" />
+        <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
+          <Bell className="h-5 w-5 text-gray-700" />
           {unreadChats > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white h-4 w-4 rounded-full p-0 flex items-center justify-center font-bold text-[9px] border border-white">
+            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white h-4 w-4 rounded-full p-0 flex items-center justify-center font-bold text-[9px] border-2 border-white shadow-sm">
               {unreadChats}
             </Badge>
           )}
@@ -39,10 +39,10 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Desktop Profile */}
       <Link to="/profile" className="hidden lg:flex items-center space-x-3 hover:opacity-80 transition-opacity">
-        <Avatar className="h-10 w-10 border-2 border-gray-200">
+        <Avatar className="h-8 w-8 border border-gray-200">
           <AvatarImage src="" />
           <AvatarFallback className="bg-gray-100 text-gray-600">
-            <User className="h-5 w-5" />
+            <User className="h-4 w-4" />
           </AvatarFallback>
         </Avatar>
         <span className="text-sm font-medium text-gray-700">Sign In</span>
@@ -50,7 +50,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Post Car Button */}
       <Link to="/sell">
-        <Button size="default" className="hidden lg:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-6 h-10 text-white shadow-lg text-sm">
+        <Button size="sm" className="hidden lg:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-4 h-9 text-white shadow-sm text-sm">
           Post Your Car
         </Button>
       </Link>
