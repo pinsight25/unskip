@@ -3,7 +3,8 @@ import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, Car, Phone, Shield } from 'lucide-react';
+import { Star, MapPin, Car, Phone, Shield, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Dealers = () => {
   const dealers = [1, 2, 3, 4, 5, 6]; // Mock data
@@ -13,9 +14,18 @@ const Dealers = () => {
       <div className="pt-16 md:pt-20">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-6xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">Authorized Dealers</h1>
-              <p className="text-gray-600">Find trusted dealers near you</p>
+            {/* Header with CTA */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold mb-2">Authorized Dealers</h1>
+                <p className="text-gray-600">Find trusted dealers near you</p>
+              </div>
+              <Link to="/dealer-register">
+                <Button className="mt-4 md:mt-0 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 shadow-lg">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Become a Dealer
+                </Button>
+              </Link>
             </div>
 
             {/* Filters */}
@@ -89,6 +99,17 @@ const Dealers = () => {
                   </div>
                 </Card>
               ))}
+            </div>
+
+            {/* Bottom CTA for Mobile */}
+            <div className="mt-12 text-center md:hidden">
+              <Link to="/dealer-register">
+                <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-4 text-lg shadow-lg">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Join as a Dealer
+                </Button>
+              </Link>
+              <p className="text-sm text-gray-600 mt-2">Grow your business with us</p>
             </div>
           </div>
         </div>

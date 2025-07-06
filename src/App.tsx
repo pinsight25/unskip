@@ -11,6 +11,7 @@ import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Saved from "./pages/Saved";
 import Dealers from "./pages/Dealers";
+import DealerRegister from "./pages/DealerRegister";
 import Chats from "./pages/Chats";
 import ChatDetail from "./pages/ChatDetail";
 import Accessories from "./pages/Accessories";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/dealers" element={<Dealers />} />
+          <Route path="/dealer-register" element={<DealerRegister />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/chat/:id" element={<ChatDetail />} />
           <Route path="/car/:id" element={<CarDetail />} />
