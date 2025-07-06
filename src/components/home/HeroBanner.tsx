@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +17,7 @@ const HeroBanner = () => {
       title: "Sell Your Car",
       subtitle: "Get the best price in 24 hours",
       cta: "Start Selling",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop"
+      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
     },
     {
       id: 3,
