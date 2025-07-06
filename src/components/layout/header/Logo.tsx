@@ -9,8 +9,8 @@ const Logo = () => {
         <Car className="h-5 w-5 text-white" />
       </div>
       <div className="flex flex-col leading-tight">
-        <span className="text-xl md:text-2xl font-bold text-gray-900">CarVibe</span>
-        <span className="text-[10px] md:text-xs text-gray-600 font-medium mt-0.5">Good Vibes, Fair Deals</span>
+        <span className="text-xl md:text-2xl font-bold text-gray-900">Unskip</span>
+        <span className="text-[10px] md:text-xs text-gray-600 font-medium mt-0.5">Don't skip the right car</span>
       </div>
     </Link>
   );

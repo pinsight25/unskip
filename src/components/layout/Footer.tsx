@@ -15,8 +15,8 @@ const Footer = () => {
                 <Car className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-xl font-bold text-gray-900">CarVibe</span>
-                <span className="text-xs text-gray-600 font-medium mt-0.5">Professional Car Marketplace</span>
+                <span className="text-xl font-bold text-gray-900">Unskip</span>
+                <span className="text-xs text-gray-600 font-medium mt-0.5">Don't skip the right car</span>
               </div>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed max-w-sm">
@@ -66,7 +66,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                <span className="text-sm text-gray-700 font-medium">hello@carvibe.com</span>
+                <span className="text-sm text-gray-700 font-medium">hello@unskip.com</span>
               </div>
               
               <div className="flex gap-4 pt-2">
@@ -90,7 +90,7 @@ const Footer = () => {
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <p className="text-gray-600 text-sm text-center md:text-left">
-              © 2024 CarVibe. All rights reserved.
+              © 2025 Unskip. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <Link to="/privacy" className="text-gray-600 hover:text-orange-500 transition-colors">Privacy Policy</Link>
