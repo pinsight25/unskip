@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
+import { Menu, X, MessageCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { mockChats } from '@/data/chatMockData';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
@@ -65,6 +66,19 @@ const Header = () => {
           <div className="flex items-center space-x-2">
             {/* Desktop Actions - Always rendered but conditionally shown */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
+
+            {/* Mobile Chat Icon - Only visible on mobile */}
+            <Link
+              to="/chats"
+              className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target relative"
+            >
+              <MessageCircle className="h-5 w-5 text-gray-700" />
+              {unreadChats > 0 && (
+                <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                  {unreadChats}
+                </Badge>
+              )}
+            </Link>
 
             {/* Mobile Menu Button - Only visible on mobile */}
             <button

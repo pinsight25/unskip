@@ -1,8 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { MessageCircle, User } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -47,17 +46,6 @@ const MobileMenu = ({
         
         {/* Mobile Actions */}
         <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-          <Link to="/chats" onClick={onMenuClose}>
-            <Button variant="outline" size="sm" className="w-full justify-start">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              My Chats
-              {unreadChats > 0 && (
-                <Badge className="ml-auto bg-red-500 text-white text-xs">
-                  {unreadChats}
-                </Badge>
-              )}
-            </Button>
-          </Link>
           <Link to="/profile" onClick={onMenuClose}>
             <Button variant="outline" size="sm" className="w-full justify-start">
               <User className="h-4 w-4 mr-2" />
