@@ -58,84 +58,40 @@
     }
   }
 
-  /* COMPREHENSIVE MOBILE TAP HIGHLIGHT PREVENTION */
+  /* Remove unwanted outlines and browser debugging indicators */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-focus-ring-color: transparent;
+    outline: none !important;
+  }
+
+  /* Prevent browser-generated debugging outlines */
+  *:focus,
+  *:active,
+  *:target {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile-specific outline prevention */
   @media (max-width: 767px) {
-    /* Global prevention of all tap highlights and focus rings */
-    * {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-focus-ring-color: transparent !important;
-      -webkit-touch-callout: none !important;
-      -webkit-user-select: none !important;
-      user-select: none !important;
-    }
-    
-    /* Allow text selection for inputs and content areas */
-    input, textarea, [contenteditable] {
-      -webkit-user-select: auto !important;
-      user-select: auto !important;
-    }
-    
-    /* NO-TAP-HIGHLIGHT CLASS - Prevents any green highlights */
-    .no-tap-highlight,
-    .no-tap-highlight *,
-    .no-tap-highlight::before,
-    .no-tap-highlight::after {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-focus-ring-color: transparent !important;
+    *,
+    *::before,
+    *::after {
       outline: none !important;
-      box-shadow: none !important;
-      border-bottom: none !important;
-      text-decoration: none !important;
-      background-image: none !important;
-      background-color: transparent !important;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-focus-ring-color: transparent;
     }
     
     /* Specifically target header and navigation elements */
-    header, header *, 
-    nav, nav *,
-    .mobile-menu, .mobile-menu *,
-    [class*="sticky"], [class*="sticky"] *,
-    [class*="fixed"], [class*="fixed"] * {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-focus-ring-color: transparent !important;
+    header,
+    nav,
+    button,
+    a,
+    [role="button"] {
       outline: none !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
-    
-    /* REMOVE ANY GREEN BACKGROUNDS - Emergency override */
-    * {
-      background-color: inherit !important;
-    }
-    
-    *[style*="background-color: rgb(34, 197, 94)"],
-    *[style*="bg-green"],
-    .bg-green-500,
-    .bg-green-400,
-    .bg-green-600 {
-      background-color: transparent !important;
-      background: transparent !important;
-    }
-
-    /* Prevent any focus states on all interactive elements */
-    button, button *,
-    [role="button"], [role="button"] *,
-    a[role="button"], a[role="button"] *,
-    [class*="transition-all"], [class*="transition-all"] * {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-focus-ring-color: transparent !important;
-      outline: none !important;
-      box-shadow: none !important;
-    }
-
-    /* Target any potential focus states */
-    *:focus, *:active, *:hover,
-    *:focus *, *:active *, *:hover * {
-      outline: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-      box-shadow: none !important;
-      text-decoration: none !important;
-      border-bottom: none !important;
+      -webkit-tap-highlight-color: transparent;
+      border: none;
     }
   }
 
@@ -143,9 +99,11 @@
   button, [role="button"] {
     transition: all 0.2s ease;
     border-radius: var(--radius-sm);
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Enhanced Focus States - Custom accessible focus */
+  /* Enhanced Focus States - Custom accessible focus without browser defaults */
   input:focus, textarea:focus, select:focus {
     outline: none !important;
     border-color: var(--color-primary);
@@ -157,6 +115,8 @@
     button, [role="button"], a[role="button"] {
       min-height: var(--button-height-mobile);
       min-width: var(--button-height-mobile);
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent;
     }
   }
 
@@ -172,6 +132,8 @@
     color: var(--color-primary);
     text-decoration: none;
     transition: color 0.2s ease;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
   }
 
   a:hover {
@@ -185,6 +147,7 @@
     padding: 12px 16px;
     font-size: var(--text-base);
     transition: all 0.2s ease;
+    outline: none !important;
   }
 
   @media (max-width: 767px) {

@@ -30,10 +30,10 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
   ];
 
   return (
-    <div className="bg-white border-b border-gray-100 sticky top-14 md:top-16 z-40 shadow-sm no-tap-highlight">
+    <div className="bg-white border-b border-gray-100 sticky top-14 md:top-16 z-40 shadow-sm">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6 py-4">
         {/* Mobile-Optimized Toggle Tabs */}
-        <div className="flex justify-around bg-gray-50 p-2 rounded-xl max-w-2xl mx-auto md:grid md:grid-cols-3 md:gap-2 no-tap-highlight">
+        <div className="flex justify-around bg-gray-50 p-2 rounded-xl max-w-2xl mx-auto md:grid md:grid-cols-3 md:gap-2">
           {filterTypes.map((filter) => {
             const Icon = filter.icon;
             const isActive = activeType === filter.key;
@@ -41,7 +41,7 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
               <button
                 key={filter.key}
                 onClick={() => onTypeChange(filter.key)}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-3 text-sm font-medium transition-all duration-300 rounded-lg min-h-[60px] md:flex-row md:gap-2 md:min-h-[48px] no-tap-highlight ${
+                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-3 text-sm font-medium transition-all duration-300 rounded-lg min-h-[60px] md:flex-row md:gap-2 md:min-h-[48px] ${
                   isActive 
                     ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md' 
                     : 'text-gray-600 hover:text-primary hover:bg-white/80 hover:shadow-sm'
