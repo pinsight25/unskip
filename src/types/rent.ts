@@ -1,54 +1,32 @@
 
-export interface RentCar {
-  id: string;
-  title: string;
-  brand: string;
-  model: string;
-  year: number;
-  images: string[];
+import { Car, Seller } from './car';
+
+// Use the unified Car interface for rental cars
+export interface RentCar extends Car {
+  // All rental-specific properties are now part of the base Car interface
   rentPrice: {
     daily: number;
     weekly: number;
     monthly: number;
   };
   securityDeposit: number;
-  mileage: number;
-  fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
-  transmission: 'Manual' | 'Automatic';
-  location: string;
-  description: string;
-  seller: RentSeller;
   rentType: 'economy' | 'premium' | 'luxury' | 'suv';
   features: string[];
   policies: {
     fuelPolicy: 'full-to-full' | 'pay-for-fuel';
     kmLimit: number;
     insuranceIncluded: boolean;
-    minRentalPeriod: number; // in days
+    minRentalPeriod: number;
   };
   availability: {
     available: boolean;
     nextAvailableDate?: string;
   };
-  verified: boolean;
-  featured: boolean;
-  views: number;
-  createdAt: string;
 }
 
-export interface RentSeller {
-  id: string;
-  name: string;
+export interface RentSeller extends Seller {
   type: 'individual' | 'rental-company';
-  phone: string;
-  email: string;
-  verified: boolean;
-  rating: number;
   totalRentals: number;
-  memberSince: string;
-  avatar?: string;
-  businessName?: string;
-  location: string;
 }
 
 export interface RentFilters {

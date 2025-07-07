@@ -17,7 +17,17 @@ export interface Car {
   rentPrice?: {
     daily: number;
     weekly: number;
+    monthly?: number;
   };
+  rentPolicies?: {
+    securityDeposit: number;
+    fuelPolicy: 'full-to-full' | 'pay-for-fuel';
+    kmLimit: number;
+    insuranceIncluded: boolean;
+    minRentalPeriod: number;
+  };
+  rentType?: 'economy' | 'premium' | 'luxury' | 'suv';
+  features?: string[];
   verified: boolean;
   featured: boolean;
   views: number;
