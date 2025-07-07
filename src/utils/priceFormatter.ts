@@ -8,7 +8,8 @@ export const formatIndianPrice = (price: number): string => {
     maximumFractionDigits: 0,
   }).format(price);
   
-  return formatted;
+  // Replace the default symbol with proper rupee symbol
+  return formatted.replace('₹', '₹');
 };
 
 export const formatPriceShort = (price: number): string => {

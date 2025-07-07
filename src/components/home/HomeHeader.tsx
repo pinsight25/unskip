@@ -54,20 +54,20 @@ const HomeHeader = ({
         />
       </div>
       
-      {/* Hero Banner - Hidden during search */}
+      {/* Filter Tabs - Now moved up and more prominent */}
       {!isSearching && (
-        <div className="pb-8">
-          <HeroBanner />
-        </div>
-      )}
-      
-      {/* Filter Tabs - Hidden during search */}
-      {!isSearching && (
-        <div className="pb-5">
+        <div className="pb-2">
           <FilterTabs 
             activeType={currentFilters.type}
             onTypeChange={onTypeChange}
           />
+        </div>
+      )}
+      
+      {/* Hero Banner - Now below filter tabs */}
+      {!isSearching && (
+        <div className="pb-8">
+          <HeroBanner />
         </div>
       )}
     </div>

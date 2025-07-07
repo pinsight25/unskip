@@ -11,7 +11,7 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price).replace('₹', '₹');
   };
 
   return (
