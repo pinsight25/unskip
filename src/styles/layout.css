@@ -1,6 +1,17 @@
 
 /* Layout and Spacing Utilities */
 
+/* CRITICAL: Responsive Header Spacing */
+.responsive-header-spacing {
+  padding-top: 4rem; /* 64px - Mobile header height */
+}
+
+@media (min-width: 1024px) {
+  .responsive-header-spacing {
+    padding-top: 5rem; /* 80px - Desktop header height */
+  }
+}
+
 /* CRITICAL: Desktop Header Spacing Fix */
 .desktop-header-compensation {
   padding-top: 5rem; /* 80px - compensates for fixed header */

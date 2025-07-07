@@ -16,8 +16,8 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      {/* Main content with proper spacing for fixed header */}
-      <main className={`flex-1 ${isMobile ? 'pt-4 pb-24' : 'pt-20 pb-8'}`}>
+      {/* Main content with responsive header spacing */}
+      <main className={`flex-1 responsive-header-spacing ${isMobile ? 'pb-24' : 'pb-8'}`}>
         {children}
       </main>
       

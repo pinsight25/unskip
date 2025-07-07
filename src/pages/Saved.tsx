@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
@@ -51,7 +52,7 @@ const Saved = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-gray-50 min-h-screen">
-        {/* Header Section - No extra padding since ResponsiveLayout handles it */}
+        {/* Header Section */}
         <div className="bg-gradient-to-r from-orange-50 to-red-50 border-b border-gray-200">
           <div className="max-width-container-wide py-6 lg:py-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -126,7 +127,7 @@ const Profile = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section - No extra padding since ResponsiveLayout handles it */}
+        {/* Header Section */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
           <div className="max-width-container py-6 lg:py-8">
             <div className="text-center">
