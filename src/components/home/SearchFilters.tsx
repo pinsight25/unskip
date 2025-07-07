@@ -123,7 +123,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                         className={`flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                            : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
                         }`}
                       >
                         {location}
@@ -147,7 +147,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                         className={`flex-shrink-0 px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                            : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
                         }`}
                       >
                         {location}
