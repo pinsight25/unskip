@@ -36,8 +36,7 @@ const MobileCarCard = ({
     navigate(`/car/${car.id}`);
   };
 
-  const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleSave = () => {
     onSave(car.id);
   };
 
