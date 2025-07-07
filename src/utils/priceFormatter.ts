@@ -1,6 +1,6 @@
 
 export const formatIndianPrice = (price: number): string => {
-  // Format with Indian numbering system and ₹ symbol
+  // Format with Indian numbering system and proper rupee symbol
   const formatted = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',

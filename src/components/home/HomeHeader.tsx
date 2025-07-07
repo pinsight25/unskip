@@ -54,17 +54,15 @@ const HomeHeader = ({
         />
       </div>
       
-      {/* Filter Tabs - Now moved up and more prominent */}
+      {/* Filter Tabs - Immediately after search */}
       {!isSearching && (
-        <div className="pb-2">
-          <FilterTabs 
-            activeType={currentFilters.type}
-            onTypeChange={onTypeChange}
-          />
-        </div>
+        <FilterTabs 
+          activeType={currentFilters.type}
+          onTypeChange={onTypeChange}
+        />
       )}
       
-      {/* Hero Banner - Now below filter tabs */}
+      {/* Hero Banner - Below filter tabs */}
       {!isSearching && (
         <div className="pb-8">
           <HeroBanner />
