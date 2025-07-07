@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Car } from '@/types/car';
 import { PricingAlert } from '@/types/car';
-import { X, IndianRupee, CheckCircle, AlertTriangle } from 'lucide-react';
+import { IndianRupee, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatIndianPrice } from '@/utils/priceFormatter';
 
@@ -116,18 +116,12 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-full sm:h-full sm:max-h-screen p-0 gap-0 rounded-t-3xl">
-        {/* Header */}
-        <DialogHeader className="p-6 border-b bg-white rounded-t-3xl">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-bold">Make an Offer</DialogTitle>
-            <Button variant="ghost" size="sm" onClick={onClose} className="h-10 w-10 rounded-full">
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">Make an Offer</DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 pb-40">
+        <div className="space-y-6">
           {/* Car Summary */}
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 flex items-center space-x-4">
             <img 
@@ -156,7 +150,7 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
                 placeholder="Full name"
                 value={buyerName}
                 onChange={(e) => setBuyerName(e.target.value)}
-                className="h-14 text-base border-2 rounded-2xl"
+                className="h-12 text-base border-2 rounded-xl"
               />
             </div>
             <div>
@@ -165,7 +159,7 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
                 placeholder="+91 98765 43210"
                 value={buyerPhone}
                 onChange={(e) => setBuyerPhone(e.target.value)}
-                className="h-14 text-base border-2 rounded-2xl"
+                className="h-12 text-base border-2 rounded-xl"
                 inputMode="tel"
               />
             </div>
@@ -180,15 +174,15 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
                 placeholder="Enter your offer amount"
                 value={offerAmount}
                 onChange={(e) => handleOfferAmountChange(e.target.value)}
-                className="pl-14 h-16 text-xl font-semibold border-2 rounded-2xl"
+                className="pl-14 h-14 text-xl font-semibold border-2 rounded-xl"
                 inputMode="numeric"
               />
             </div>
           </div>
 
-          {/* SMART PRICING ALERT */}
+          {/* Pricing Alert */}
           {pricingAlert && (
-            <Alert className={`border-2 rounded-2xl ${
+            <Alert className={`border-2 rounded-xl ${
               pricingAlert.type === 'blocked' 
                 ? 'border-red-500 bg-red-50' 
                 : pricingAlert.type === 'warning'
@@ -227,28 +221,28 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
-              className="text-base border-2 rounded-2xl"
+              className="text-base border-2 rounded-xl"
             />
           </div>
-        </div>
 
-        {/* Fixed Footer - ADJUSTED FOR BOTTOM NAV */}
-        <div className="fixed bottom-20 left-0 right-0 p-6 border-t bg-white z-50 space-y-4 rounded-t-3xl shadow-2xl">
-          <Button 
-            onClick={handleSubmit}
-            disabled={!isFormValid() || isSubmitting}
-            className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 rounded-2xl shadow-lg"
-          >
-            {isSubmitting ? 'Sending Offer...' : (
-              <>
-                <IndianRupee className="h-5 w-5 mr-2" />
-                Send Offer
-              </>
-            )}
-          </Button>
-          <p className="text-xs text-gray-500 text-center">
-            By submitting an offer, you agree to our terms and conditions.
-          </p>
+          {/* Submit Button */}
+          <div className="space-y-4">
+            <Button 
+              onClick={handleSubmit}
+              disabled={!isFormValid() || isSubmitting}
+              className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 rounded-xl"
+            >
+              {isSubmitting ? 'Sending Offer...' : (
+                <>
+                  <IndianRupee className="h-5 w-5 mr-2" />
+                  Send Offer
+                </>
+              )}
+            </Button>
+            <p className="text-xs text-gray-500 text-center">
+              By submitting an offer, you agree to our terms and conditions.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

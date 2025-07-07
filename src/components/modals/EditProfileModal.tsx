@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Camera, X } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface EditProfileModalProps {
@@ -46,7 +46,6 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile, onSave }: EditProfi
 
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       onSave({ name: name.trim(), phone: phone.trim(), email: email.trim() });
       setIsLoading(false);

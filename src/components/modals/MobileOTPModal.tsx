@@ -1,9 +1,10 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Phone, CheckCircle, Edit, X } from 'lucide-react';
+import { Shield, Phone, CheckCircle, Edit } from 'lucide-react';
 
 interface MobileOTPModalProps {
   isOpen: boolean;
@@ -71,9 +72,9 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
 
   if (isVerified) {
     return (
-      <Dialog open={isOpen}>
-        <DialogContent className="sm:max-w-full sm:h-full sm:max-h-screen p-0 gap-0">
-          <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
@@ -86,30 +87,23 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   }
 
   return (
-    <Dialog open={isOpen}>
-      <DialogContent className="sm:max-w-full sm:h-full sm:max-h-screen p-0 gap-0">
-        {/* Header - SINGLE CLOSE BUTTON ONLY */}
-        <DialogHeader className="p-4 border-b">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                <Shield className="h-5 w-5 text-primary" />
-              </div>
-              <DialogTitle className="text-lg">Verify Your Phone</DialogTitle>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <Shield className="h-5 w-5 text-primary" />
             </div>
-            <Button variant="ghost" size="sm" onClick={handleClose}>
-              <X className="h-5 w-5" />
-            </Button>
+            <DialogTitle className="text-lg">Verify Your Phone</DialogTitle>
           </div>
-          <p className="text-sm text-muted-foreground mt-2 px-13">
+          <p className="text-sm text-muted-foreground mt-2">
             To ensure safe transactions, we need to verify your phone number before you can {purpose}.
           </p>
         </DialogHeader>
 
-        <div className="flex-1 p-6 space-y-6">
+        <div className="space-y-6 py-4">
           {step === 'phone' ? (
             <>
-              {/* Phone Number Input */}
               <div className="space-y-4">
                 <label className="text-base font-medium">Enter your phone number</label>
                 <div className="relative">
@@ -127,10 +121,16 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                   <p className="text-sm text-red-600">{error}</p>
                 )}
               </div>
+              <Button 
+                onClick={handleSendOTP} 
+                disabled={phoneNumber.length < 10}
+                className="w-full h-12 text-base font-semibold"
+              >
+                Send OTP
+              </Button>
             </>
           ) : (
             <>
-              {/* Phone Number Display */}
               <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <span className="text-base font-medium flex-1">{phoneNumber}</span>
@@ -142,7 +142,6 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 </Badge>
               </div>
 
-              {/* Demo Notice */}
               <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
                 <p className="text-green-800 font-medium text-center">
                   <strong>🔥 Demo Mode:</strong><br />
@@ -150,7 +149,6 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 </p>
               </div>
 
-              {/* OTP Input */}
               <div className="space-y-4">
                 <label className="text-base font-medium">Enter 6-digit OTP</label>
                 <Input
@@ -166,43 +164,29 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 )}
               </div>
 
-              {/* Resend OTP */}
               <div className="text-center">
                 <Button variant="ghost" size="sm" className="text-sm">
                   Didn't receive OTP? Resend
                 </Button>
               </div>
-            </>
-          )}
-        </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t bg-white space-y-3">
-          {step === 'phone' ? (
-            <Button 
-              onClick={handleSendOTP} 
-              disabled={phoneNumber.length < 10}
-              className="w-full h-12 text-base font-semibold bg-primary"
-            >
-              Send OTP
-            </Button>
-          ) : (
-            <div className="space-y-3">
-              <Button 
-                onClick={handleVerifyOTP} 
-                disabled={otp.length !== 6 || isVerifying}
-                className="w-full h-12 text-base font-semibold bg-primary"
-              >
-                {isVerifying ? 'Verifying...' : 'Verify OTP'}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={editPhoneNumber} 
-                className="w-full h-12 text-base"
-              >
-                Edit Phone Number
-              </Button>
-            </div>
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleVerifyOTP} 
+                  disabled={otp.length !== 6 || isVerifying}
+                  className="w-full h-12 text-base font-semibold"
+                >
+                  {isVerifying ? 'Verifying...' : 'Verify OTP'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={editPhoneNumber} 
+                  className="w-full h-12 text-base"
+                >
+                  Edit Phone Number
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </DialogContent>
