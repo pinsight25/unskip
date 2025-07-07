@@ -1,8 +1,11 @@
+
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const HeroBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
   
   const banners = [
     {
@@ -10,21 +13,24 @@ const HeroBanner = () => {
       title: "Find Your Perfect Car",
       subtitle: "Verified listings from trusted sellers",
       cta: "Browse Cars",
-      image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop"
+      image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop",
+      action: () => navigate('/search')
     },
     {
       id: 2,
       title: "Sell Your Car",
       subtitle: "Get the best price in 24 hours",
       cta: "Start Selling",
-      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
+      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop",
+      action: () => navigate('/sell')
     },
     {
       id: 3,
       title: "Trusted Dealers",
       subtitle: "All dealers are verified for your safety", 
       cta: "View Dealers",
-      image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop"
+      image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop",
+      action: () => navigate('/dealers')
     }
   ];
 
@@ -60,6 +66,7 @@ const HeroBanner = () => {
             </p>
             <Button 
               size="lg"
+              onClick={currentBanner.action}
               className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-md px-6 md:px-8 py-2 md:py-3 min-w-[100px] md:min-w-[120px] h-auto text-sm md:text-base"
             >
               {currentBanner.cta}
