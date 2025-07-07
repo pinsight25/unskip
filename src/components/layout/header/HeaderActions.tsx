@@ -11,13 +11,13 @@ interface HeaderActionsProps {
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center space-x-3">
+    <div className="flex items-center space-x-6">
       {/* Chat Icon - Desktop Only */}
       <Link to="/chats" className="hidden md:flex relative">
-        <Button variant="ghost" size="sm" className="p-2 h-9 w-9 hover:bg-gray-100 rounded-lg">
+        <Button variant="ghost" size="sm" className="p-2 h-10 w-10 hover:bg-gray-100 rounded-lg flex items-center justify-center">
           <MessageCircle className="h-5 w-5" />
           {unreadChats > 0 && (
-            <div className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] h-4 w-4 rounded-full flex items-center justify-center font-bold border border-white">
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] h-5 w-5 rounded-full flex items-center justify-center font-bold border-2 border-white shadow-sm">
               {unreadChats}
             </div>
           )}
@@ -26,7 +26,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Desktop Profile */}
       <Link to="/profile" className="hidden md:flex items-center space-x-3 hover:opacity-80 transition-opacity">
-        <Avatar className="h-8 w-8 border border-gray-200">
+        <Avatar className="h-9 w-9 border border-gray-200">
           <AvatarImage src="" />
           <AvatarFallback className="bg-gray-100 text-gray-600">
             <User className="h-4 w-4" />
@@ -37,7 +37,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Post Car Button */}
       <Link to="/sell">
-        <Button size="sm" className="hidden md:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-4 h-9 text-white shadow-sm text-sm">
+        <Button size="sm" className="hidden md:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-6 h-10 text-white shadow-sm text-sm">
           Post Your Car
         </Button>
       </Link>
