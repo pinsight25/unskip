@@ -1,4 +1,3 @@
-
 import { Car, Seller } from './car';
 
 // Use the unified Car interface for rental cars
@@ -25,7 +24,8 @@ export interface RentCar extends Car {
 }
 
 export interface RentSeller extends Seller {
-  type: 'individual' | 'rental-company';
+  // Keep the same seller types as the base Seller interface
+  // 'dealer' type sellers can represent rental companies
   totalRentals: number;
 }
 

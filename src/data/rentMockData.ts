@@ -1,11 +1,11 @@
-
 import { getCarsForRent, unifiedSellers } from './unifiedCarData';
 import { RentCar, RentSeller } from '@/types/rent';
 
 // Convert unified sellers to rent sellers
 export const mockRentSellers: RentSeller[] = unifiedSellers.map(seller => ({
   ...seller,
-  type: seller.type === 'dealer' ? 'rental-company' : 'individual',
+  // Keep the original seller type (individual/dealer)
+  // Dealers can represent rental companies in the rent context
   totalRentals: seller.totalSales
 })) as RentSeller[];
 
