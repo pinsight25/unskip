@@ -1,18 +1,19 @@
-
-import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { Car } from '@/types/car';
+import { Card, CardContent } from '@/components/ui/card';
 import MobileCarImage from './MobileCarImage';
+import MobileCarBadges from './MobileCarBadges';
 import MobileCarPrice from './MobileCarPrice';
 import MobileCarDetails from './MobileCarDetails';
 import MobileCarActions from './MobileCarActions';
 
 interface MobileCarCardProps {
-  car: any;
+  car: Car;
   onSave: (carId: string) => void;
   isSaved: boolean;
-  onMakeOffer: () => void;
-  onChat: () => void;
-  onTestDrive: () => void;
+  onMakeOffer: (car: Car) => void;
+  onChat: (car: Car) => void;
+  onTestDrive: (car: Car) => void;
   offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
 }
 
@@ -22,55 +23,41 @@ const MobileCarCard = ({
   isSaved, 
   onMakeOffer, 
   onChat, 
-  onTestDrive,
+  onTestDrive, 
   offerStatus 
 }: MobileCarCardProps) => {
-  const navigate = useNavigate();
-
-  const handleCardClick = () => {
-    navigate(`/car/${car.id}`);
-  };
-
-  const handleSave = () => {
-    onSave(car.id);
-  };
 
   return (
-    <Card className="overflow-hidden cursor-pointer container-safe mb-4" onClick={handleCardClick}>
-      <MobileCarImage
-        images={car.images}
-        title={car.title}
-        featured={car.featured}
-        verified={car.verified}
-        isSaved={isSaved}
-        onSave={handleSave}
-      />
+    <Card className="mx-4 mb-4 overflow-hidden">
+      <CardContent className="p-0">
+        <MobileCarImage car={car} isSaved={isSaved} onSave={onSave} />
+        
+        <div className="p-4">
+          <MobileCarBadges car={car} />
+          
+          <Link to={`/car/${car.id}`}>
+            <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+              {car.title}
+            </h3>
+          </Link>
 
-      <div className="card-padding-mobile space-y-4">
-        {/* Title and Price */}
-        <div>
-          <h3 className="heading-4 line-clamp-1 mb-2">
-            {car.title}
-          </h3>
-          <MobileCarPrice price={car.price} rentalRate={car.rentalRate} />
+          <MobileCarPrice 
+            price={car.price} 
+            rentalRate={car.rentPrice?.daily}
+            isRentAvailable={car.isRentAvailable}
+          />
+
+          <MobileCarDetails car={car} />
+          
+          <MobileCarActions 
+            car={car}
+            onMakeOffer={onMakeOffer}
+            onChat={onChat}
+            onTestDrive={onTestDrive}
+            offerStatus={offerStatus}
+          />
         </div>
-
-        <MobileCarDetails
-          year={car.year}
-          transmission={car.transmission}
-          fuelType={car.fuelType}
-          mileage={car.mileage}
-          location={car.location}
-          seller={car.seller}
-        />
-
-        <MobileCarActions
-          offerStatus={offerStatus}
-          onMakeOffer={onMakeOffer}
-          onChat={onChat}
-          onTestDrive={onTestDrive}
-        />
-      </div>
+      </CardContent>
     </Card>
   );
 };

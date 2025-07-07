@@ -22,14 +22,17 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
           {formatPrice(car.price)}
         </p>
         {car.isRentAvailable && car.rentPrice && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge 
+            variant="outline" 
+            className="bg-teal-50 text-teal-700 border-teal-200 text-xs px-2 py-1 font-medium"
+          >
             Also for rent
           </Badge>
         )}
       </div>
       {car.isRentAvailable && car.rentPrice && (
-        <div className="text-right">
-          <p className="small-text font-semibold text-green-600">
+        <div className="mt-1">
+          <p className="text-sm font-semibold text-teal-600">
             ₹{car.rentPrice.daily.toLocaleString('en-IN')}/day
           </p>
         </div>
