@@ -1,7 +1,7 @@
 
 import { Car } from '@/types/car';
-import CompactCarCard from '@/components/car/CompactCarCard';
-import CompactMobileCarCard from '@/components/mobile/CompactMobileCarCard';
+import CarCard from '@/components/car/CarCard';
+import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
@@ -62,7 +62,7 @@ const SearchResultsView = ({
   if (results.length === 0) {
     return (
       <div className="text-center py-12 px-4">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">No cars found</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-4">No cars found</h3>
         <p className="text-gray-600 mb-6">
           We couldn't find any cars matching "{query}". Try adjusting your search terms.
         </p>
@@ -74,16 +74,16 @@ const SearchResultsView = ({
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
-      {/* Sort Options - Compact */}
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 search-results-ultra-compact">
+      {/* Sort Options - Ultra compact */}
+      <div className="flex justify-between items-center results-to-cards">
         <div className="text-sm text-gray-600">
           Found {results.length} {results.length === 1 ? 'result' : 'results'}
         </div>
         <select 
           value={sortBy}
           onChange={(e) => handleSort(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
         >
           <option value="">Sort by Relevance</option>
           <option value="price_asc">Price: Low to High</option>
@@ -93,24 +93,27 @@ const SearchResultsView = ({
         </select>
       </div>
 
-      {/* Compact Results Grid */}
-      <div className="w-full pb-20 md:pb-8">
+      {/* Results Grid - Ultra compact */}
+      <div className="w-full">
         {isMobile ? (
-          <div className="space-y-0">
+          <div className="space-y-3 pb-20">
             {sortedResults.map((car) => (
-              <CompactMobileCarCard 
+              <MobileCarCard 
                 key={car.id} 
                 car={car} 
                 onSave={onSaveCar}
                 isSaved={savedCars.includes(car.id)}
                 onMakeOffer={() => onMakeOffer(car)}
+                onChat={() => onChat(car)}
+                onTestDrive={() => onTestDrive(car)}
+                offerStatus={getOfferStatus(car.id)}
               />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-compact">
             {sortedResults.map((car) => (
-              <CompactCarCard 
+              <CarCard 
                 key={car.id} 
                 car={car} 
                 onSave={onSaveCar}

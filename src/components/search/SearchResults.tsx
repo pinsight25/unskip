@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Car } from '@/types/car';
-import CompactCarCard from '@/components/car/CompactCarCard';
-import CompactMobileCarCard from '@/components/mobile/CompactMobileCarCard';
+import CarCard from '@/components/car/CarCard';
+import MobileCarCard from '@/components/mobile/MobileCarCard';
 
 interface SearchResultsProps {
   cars: Car[];
@@ -21,16 +21,12 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleMakeOffer = (car: Car) => {
-    console.log('Make offer for car:', car.id);
-  };
-
   return (
     <div className="flex-1 w-full overflow-hidden">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center component-spacing gap-4">
         <div>
-          <h2 className="text-xl font-bold">Search Results</h2>
-          <p className="text-sm text-gray-600">{cars.length} cars found</p>
+          <h2 className="heading-2">Search Results</h2>
+          <p className="small-text">{cars.length} cars found</p>
         </div>
         
         <select 
@@ -46,25 +42,28 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
         </select>
       </div>
       
-      {/* Compact Search Results Grid */}
+      {/* Search Results Grid - Fixed responsive layout */}
       {cars.length > 0 ? (
-        <div className="w-full overflow-hidden pb-20 md:pb-8">
+        <div className="w-full overflow-hidden">
           {isMobile ? (
-            <div className="space-y-0">
+            <div className="space-y-4">
               {cars.map((car) => (
-                <CompactMobileCarCard 
+                <MobileCarCard 
                   key={car.id} 
                   car={car} 
                   onSave={() => {}}
                   isSaved={false}
-                  onMakeOffer={() => handleMakeOffer(car)}
+                  onMakeOffer={() => {}}
+                  onChat={() => {}}
+                  onTestDrive={() => {}}
+                  offerStatus="none"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="cards-equal-height grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap w-full">
               {cars.map((car) => (
-                <CompactCarCard 
+                <CarCard 
                   key={car.id} 
                   car={car} 
                   onSave={() => {}}
@@ -75,9 +74,9 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
           )}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-semibold mb-4">No cars found</h3>
-          <p className="text-gray-600 mb-6">Try adjusting your search criteria</p>
+        <div className="text-center section-spacing">
+          <h3 className="heading-3 mb-4">No cars found</h3>
+          <p className="body-text mb-6">Try adjusting your search criteria</p>
           <Button onClick={() => window.location.reload()}>Clear All Filters</Button>
         </div>
       )}
