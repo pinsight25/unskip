@@ -73,7 +73,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Mobile-specific outline prevention */
+  /* Mobile-specific outline prevention and green background removal */
   @media (max-width: 767px) {
     *,
     *::before,
@@ -81,6 +81,25 @@
       outline: none !important;
       -webkit-tap-highlight-color: transparent;
       -webkit-focus-ring-color: transparent;
+    }
+    
+    /* Specifically prevent green backgrounds on mobile */
+    * {
+      background-color: inherit !important;
+    }
+    
+    /* Override any green backgrounds that might appear */
+    *[style*="rgb(34, 197, 94)"],
+    *[style*="background-color: rgb(34, 197, 94)"] {
+      background-color: transparent !important;
+    }
+    
+    /* Remove any green Tailwind classes */
+    .bg-green-500,
+    .bg-green-400,
+    .bg-green-600,
+    .bg-green {
+      background-color: transparent !important;
     }
     
     /* Specifically target header and navigation elements */
@@ -92,6 +111,20 @@
       outline: none !important;
       -webkit-tap-highlight-color: transparent;
       border: none;
+      background-color: inherit !important;
+    }
+    
+    /* Prevent green backgrounds on sticky elements */
+    .sticky,
+    [class*="sticky"] {
+      background-color: white !important;
+    }
+    
+    /* Ensure header elements don't have green backgrounds */
+    header *,
+    [data-testid*="header"] *,
+    .header * {
+      background-color: inherit !important;
     }
   }
 
