@@ -13,16 +13,16 @@ interface CompactSearchHeaderProps {
 const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactSearchHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40">
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
+      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-3 lg:py-4">
         {/* Compact Search Bar */}
-        <div className="flex gap-4 items-center mb-4">
+        <div className="flex gap-3 items-center mb-3 lg:mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
               placeholder="Search cars, brands, or locations..."
               value={query}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-12 pr-12 h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
+              className="pl-12 pr-12 h-11 lg:h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
               onKeyPress={(e) => e.key === 'Enter' && onSearch(query)}
             />
             {query && (
@@ -36,12 +36,12 @@ const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactS
           </div>
         </div>
 
-        {/* Results Count */}
+        {/* Results Count - Minimal spacing */}
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-1">
             {resultCount} {resultCount === 1 ? 'Car' : 'Cars'} found
           </h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600">
             Showing results for "{query}"
           </p>
         </div>

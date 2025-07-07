@@ -69,18 +69,18 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
   };
 
   return (
-    <div className="bg-white py-6 lg:py-8 border-b border-gray-100">
+    <div className="bg-white py-4 lg:py-6 border-b border-gray-100">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        <div className="space-y-6">
+        <div className="space-y-4 lg:space-y-6">
           {/* Search Bar */}
-          <div className="flex gap-4 max-w-4xl mx-auto">
+          <div className="flex gap-3 max-w-4xl mx-auto">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
                 placeholder="Search by make, model, or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-12 h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
+                className="pl-12 pr-12 h-11 lg:h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
               {searchQuery && (
@@ -94,8 +94,8 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             </div>
             <Button 
               onClick={handleSearch}
-              size="lg"
-              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 h-12 text-base font-bold text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+              size="default"
+              className="px-6 lg:px-8 h-11 lg:h-12 text-base font-bold"
             >
               Search
             </Button>
@@ -103,22 +103,22 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
 
           {/* Popular Areas - Only show when not in search mode */}
           {!hideContent && (
-            <div className="space-y-4 max-w-5xl mx-auto">
+            <div className="space-y-3 lg:space-y-4 max-w-5xl mx-auto">
               <div className="flex items-center justify-center sm:justify-between">
-                <span className="text-base text-gray-700 font-semibold flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
+                <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
                   Popular Areas in Chennai
                 </span>
               </div>
               
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-2 lg:gap-3 overflow-x-auto pb-2 scrollbar-hide">
                 {popularLocations.map((location) => {
                   const isSelected = selectedLocation === location;
                   return (
                     <button
                       key={location}
                       onClick={() => handleLocationClick(location)}
-                      className={`flex-shrink-0 px-6 py-3 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
+                      className={`flex-shrink-0 px-4 lg:px-6 py-2 lg:py-3 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] lg:min-h-[44px] ${
                         isSelected 
                           ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
                           : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30 hover:shadow-md'
@@ -131,8 +131,8 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
               </div>
 
               {selectedLocation && (
-                <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-6 py-4 rounded-lg border border-primary/20 max-w-lg mx-auto sm:mx-0">
-                  <MapPin className="h-5 w-5" />
+                <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-4 lg:px-6 py-3 lg:py-4 rounded-lg border border-primary/20 max-w-lg mx-auto sm:mx-0">
+                  <MapPin className="h-4 w-4 lg:h-5 lg:w-5" />
                   <span>Showing cars in: <strong className="text-base">{selectedLocation}</strong></span>
                   <button
                     onClick={clearSearch}

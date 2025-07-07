@@ -10,7 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import RentCarCard from '@/components/rent/RentCarCard';
-import { Search, Filter, CalendarIcon } from 'lucide-react';
+import { Search, Filter, CalendarIcon, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -76,33 +76,43 @@ const Rent = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section */}
+        {/* Header Section - Reduced mobile padding */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center mb-8">
-              <h1 className="heading-1 mb-3">
+          <div className="container mx-auto px-4 py-4 lg:py-8">
+            <div className="text-center mb-4 lg:mb-8">
+              <h1 className="text-2xl lg:text-4xl font-bold mb-2 lg:mb-3 text-gray-900">
                 Rent Premium Cars
               </h1>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-base lg:text-lg text-gray-600 mb-4 lg:mb-6">
                 Drive your dream car by the day, week, or month
               </p>
+              
+              {/* Modern CTA Button */}
+              <Button 
+                variant="cta" 
+                size="lg"
+                className="mb-4 lg:mb-6 shadow-xl hover:shadow-2xl"
+              >
+                <Plus className="h-5 w-5" />
+                List Your Car for Rent
+              </Button>
             </div>
 
-            {/* Search Bar */}
-            <div className="max-w-3xl mx-auto mb-6">
+            {/* Search Bar - Reduced spacing */}
+            <div className="max-w-3xl mx-auto mb-4 lg:mb-6">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   placeholder="Search cars by brand, model, or location..."
-                  className="pl-12 pr-4 h-14 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
+                  className="pl-12 pr-4 h-11 lg:h-14 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
                 />
               </div>
             </div>
 
-            {/* Quick Filters */}
-            <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {/* Quick Filters - Reduced spacing */}
+            <div className="flex flex-wrap justify-center gap-2 lg:gap-3 mb-4 lg:mb-6">
               {[
                 { id: 'all', name: 'All Cars', icon: '🚗' },
                 { id: 'economy', name: 'Economy', icon: '💰' },
@@ -115,7 +125,7 @@ const Rent = () => {
                   variant={filters.carType === type.id ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilters(prev => ({ ...prev, carType: type.id as any }))}
-                  className="rounded-full px-4 py-2 min-h-[44px] font-medium"
+                  className="px-3 lg:px-4 py-2 min-h-[40px] lg:min-h-[44px] font-medium text-sm"
                 >
                   <span className="mr-2">{type.icon}</span>
                   {type.name}
@@ -125,18 +135,18 @@ const Rent = () => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="container mx-auto px-4 py-8">
-          {/* Filters and Results Header */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+        {/* Main Content - Reduced padding */}
+        <div className="container mx-auto px-4 py-4 lg:py-8">
+          {/* Filters and Results Header - Tighter spacing */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-6 mb-4 lg:mb-8">
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-1 lg:mb-2">
                 {filteredCars.length} {filteredCars.length === 1 ? 'car' : 'cars'} available for rent
               </h2>
-              <p className="text-gray-600">Perfect cars for your next adventure</p>
+              <p className="text-sm lg:text-base text-gray-600">Perfect cars for your next adventure</p>
             </div>
 
-            <div className="flex items-center gap-4 w-full lg:w-auto">
+            <div className="flex items-center gap-3 lg:gap-4 w-full lg:w-auto">
               {/* Mobile Filters Toggle */}
               <Button 
                 variant="outline" 
@@ -166,12 +176,12 @@ const Rent = () => {
             </div>
           </div>
 
-          {/* Desktop Filters */}
-          <div className="hidden lg:block mb-8 p-6 bg-gray-50 rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* Desktop Filters - Reduced padding */}
+          <div className="hidden lg:block mb-6 lg:mb-8 p-4 lg:p-6 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6">
               {/* Price Range */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2 lg:mb-3">
                   Daily Price Range
                 </label>
                 <Slider
@@ -190,7 +200,7 @@ const Rent = () => {
 
               {/* Duration */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2 lg:mb-3">
                   Rental Duration
                 </label>
                 <Select 
@@ -211,7 +221,7 @@ const Rent = () => {
 
               {/* Available From */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2 lg:mb-3">
                   Available From
                 </label>
                 <Popover>
@@ -260,8 +270,8 @@ const Rent = () => {
             </div>
           </div>
 
-          {/* Cars Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Cars Grid - Tighter spacing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
             {filteredCars.map((car) => (
               <RentCarCard key={car.id} car={car} />
             ))}
@@ -269,12 +279,12 @@ const Rent = () => {
 
           {/* Empty State */}
           {filteredCars.length === 0 && (
-            <div className="text-center py-16">
-              <div className="text-8xl mb-6">🔍</div>
-              <h3 className="heading-3 text-gray-900 mb-3">
+            <div className="text-center py-12 lg:py-16">
+              <div className="text-6xl lg:text-8xl mb-4 lg:mb-6">🔍</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 lg:mb-3">
                 No cars found
               </h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <p className="text-gray-600 mb-4 lg:mb-6 max-w-md mx-auto">
                 Try adjusting your search terms or filters to find the perfect rental car
               </p>
               <Button
