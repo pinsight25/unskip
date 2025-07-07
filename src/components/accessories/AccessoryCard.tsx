@@ -56,79 +56,80 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
 
   if (viewMode === 'list') {
     return (
-      <Card className="hover:shadow-lg transition-all duration-300">
+      <Card className="hover:shadow-lg transition-all duration-300 h-full">
         <CardContent className="p-0">
-          <Link to={`/accessories/${accessory.id}`} className="flex flex-col md:flex-row">
+          <Link to={`/accessories/${accessory.id}`} className="flex flex-col md:flex-row h-full">
             {/* Image */}
-            <div className="md:w-1/3 aspect-square md:aspect-video relative">
+            <div className="md:w-1/3 aspect-square md:aspect-[4/3] relative overflow-hidden">
               <img
                 src={accessory.images[0]}
                 alt={accessory.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
               {accessory.featured && (
-                <Badge className="absolute top-2 left-2 bg-amber-500 text-white">
+                <Badge className="absolute top-3 left-3 bg-amber-500 text-white font-medium">
                   Featured
                 </Badge>
               )}
             </div>
 
             {/* Content */}
-            <div className="md:w-2/3 p-4 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-start mb-2">
+            <div className="md:w-2/3 p-6 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-lg">{accessory.name}</h3>
-                    <p className="text-sm text-gray-600">{accessory.brand}</p>
+                    <h3 className="heading-4 line-clamp-2">{accessory.name}</h3>
+                    <p className="text-sm text-gray-600 font-medium mt-1">{accessory.brand}</p>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleSave}
-                    className="p-1"
+                    className="p-2 h-10 w-10 rounded-full hover:bg-gray-100"
                   >
-                    <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
+                    <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
                   </Button>
                 </div>
 
-                <div className="flex flex-wrap gap-1 mb-3">
+                <div className="flex flex-wrap gap-2">
                   {accessory.compatibility.slice(0, 3).map((model, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                    <Badge key={index} variant="secondary" className="text-xs font-medium">
                       {model}
                     </Badge>
                   ))}
                   {accessory.compatibility.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs font-medium">
                       +{accessory.compatibility.length - 3} more
                     </Badge>
                   )}
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                    {accessory.rating} ({accessory.reviewCount})
+                <div className="flex items-center gap-6 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                    <span className="font-medium">{accessory.rating}</span>
+                    <span>({accessory.reviewCount})</span>
                   </div>
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {accessory.location}
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{accessory.location}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-end mt-4">
                 <div>
-                  <p className="text-lg font-bold text-primary">
+                  <p className="text-xl font-bold text-primary">
                     {formatPrice(accessory.price)}
                   </p>
-                  <p className="text-sm text-gray-600">{accessory.seller.shopName}</p>
+                  <p className="text-sm text-gray-600 mt-1">{accessory.seller.shopName}</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleChat}>
-                    <MessageCircle className="h-4 w-4 mr-1" />
+                <div className="flex gap-3">
+                  <Button variant="outline" size="sm" onClick={handleChat} className="px-4">
+                    <MessageCircle className="h-4 w-4 mr-2" />
                     Chat
                   </Button>
-                  <Button size="sm" onClick={handleGetQuote}>
+                  <Button size="sm" onClick={handleGetQuote} className="px-4">
                     Get Quote
                   </Button>
                 </div>
@@ -141,9 +142,9 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
   }
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-white overflow-hidden">
-      <CardContent className="p-0">
-        {/* Image Section */}
+    <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white overflow-hidden h-full flex flex-col">
+      <CardContent className="p-0 flex flex-col h-full">
+        {/* Image Section - Fixed aspect ratio */}
         <div className="relative aspect-square overflow-hidden">
           <Link to={`/accessories/${accessory.id}`}>
             <img
@@ -158,7 +159,7 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
             <Button 
               size="sm" 
               variant="secondary" 
-              className="h-9 w-9 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg"
+              className="h-10 w-10 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg"
               onClick={handleSave}
             >
               <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'}`} />
@@ -168,12 +169,12 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {accessory.featured && (
-              <Badge className="bg-amber-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+              <Badge className="bg-amber-500/90 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
                 ⭐ Featured
               </Badge>
             )}
             {accessory.seller.verified && (
-              <Badge className="bg-green-500/80 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
+              <Badge className="bg-green-500/90 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
                 <Shield className="h-3 w-3 mr-1" />
                 Verified
               </Badge>
@@ -181,76 +182,76 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
           </div>
 
           {/* Quick Actions */}
-          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button size="sm" variant="secondary" className="h-8 w-8 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg">
               <Share2 className="h-3 w-3" />
             </Button>
           </div>
         </div>
 
-        {/* Content Section */}
-        <div className="p-4 space-y-3">
+        {/* Content Section - Improved spacing and typography */}
+        <div className="p-5 space-y-4 flex-1 flex flex-col">
           {/* Title & Brand */}
-          <Link to={`/accessories/${accessory.id}`}>
-            <h3 className="font-semibold text-lg leading-tight hover:text-primary transition-colors line-clamp-2">
+          <Link to={`/accessories/${accessory.id}`} className="flex-grow">
+            <h3 className="heading-4 leading-tight hover:text-primary transition-colors line-clamp-2 mb-2">
               {accessory.name}
             </h3>
             <p className="text-sm text-gray-600 font-medium">{accessory.brand}</p>
           </Link>
 
-          {/* Price */}
+          {/* Price and Rating */}
           <div className="flex items-center justify-between">
             <p className="text-xl font-bold text-primary">
               {formatPrice(accessory.price)}
             </p>
             <div className="flex items-center text-sm text-gray-500">
-              <Star className="h-3 w-3 text-yellow-500 mr-1" />
-              {accessory.rating}
+              <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 mr-1" />
+              <span className="font-medium">{accessory.rating}</span>
             </div>
           </div>
 
-          {/* Compatibility */}
-          <div className="flex flex-wrap gap-1">
+          {/* Compatibility Tags */}
+          <div className="flex flex-wrap gap-2">
             {accessory.compatibility.slice(0, 2).map((model, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} variant="secondary" className="text-xs font-medium">
                 {model}
               </Badge>
             ))}
             {accessory.compatibility.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs font-medium">
                 +{accessory.compatibility.length - 2} more
               </Badge>
             )}
           </div>
 
           {/* Seller Info */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-            <div>
-              <p className="text-sm font-medium">{accessory.seller.shopName}</p>
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{accessory.seller.shopName}</p>
               <div className="flex items-center text-xs text-gray-500">
-                <MapPin className="h-3 w-3 mr-1" />
-                {accessory.location}
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{accessory.location}</span>
               </div>
             </div>
             {accessory.seller.verified && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs ml-2 flex-shrink-0">
                 <Shield className="h-3 w-3 mr-1" />
                 Verified
               </Badge>
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-2">
+          {/* Action Buttons - Consistent sizing */}
+          <div className="space-y-2 pt-2">
             <Button 
-              className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium"
               onClick={handleGetQuote}
             >
               Get Quote
             </Button>
             <Button 
               variant="outline" 
-              className="w-full"
+              className="w-full h-11 font-medium"
               onClick={handleChat}
             >
               <MessageCircle className="h-4 w-4 mr-2" />

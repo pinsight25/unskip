@@ -17,6 +17,7 @@ import Chats from "./pages/Chats";
 import ChatDetail from "./pages/ChatDetail";
 import Accessories from "./pages/Accessories";
 import AccessoryDetail from "./pages/AccessoryDetail";
+import PostAccessory from "./pages/PostAccessory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/car/:id" element={<CarDetail />} />
           <Route path="/accessories" element={<Accessories />} />
           <Route path="/accessories/:id" element={<AccessoryDetail />} />
+          <Route path="/post-accessory" element={<PostAccessory />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
