@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Menu, X, MessageCircle } from 'lucide-react';
@@ -53,10 +52,10 @@ const Header = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
-    }`}>
-      <div className="w-full max-w-7xl mx-auto container-safe">
+    }`} style={{ backgroundColor: 'white' }}>
+      <div className="w-full max-w-7xl mx-auto container-safe bg-white">
         {/* Header Layout */}
-        <div className="flex h-16 lg:h-20 items-center justify-between">
+        <div className="flex h-16 lg:h-20 items-center justify-between bg-white">
           <Logo />
 
           {/* Desktop Navigation */}

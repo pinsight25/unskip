@@ -84,11 +84,6 @@
     }
     
     /* Specifically prevent green backgrounds on mobile */
-    * {
-      background-color: inherit !important;
-    }
-    
-    /* Override any green backgrounds that might appear */
     *[style*="rgb(34, 197, 94)"],
     *[style*="background-color: rgb(34, 197, 94)"] {
       background-color: transparent !important;
@@ -102,29 +97,29 @@
       background-color: transparent !important;
     }
     
-    /* Specifically target header and navigation elements */
-    header,
-    nav,
-    button,
-    a,
-    [role="button"] {
-      outline: none !important;
-      -webkit-tap-highlight-color: transparent;
-      border: none;
-      background-color: inherit !important;
+    /* Specifically target elements that might have green backgrounds but preserve header/nav backgrounds */
+    :not(header):not(nav):not(.fixed) {
+      background-color: inherit;
     }
     
-    /* Prevent green backgrounds on sticky elements */
-    .sticky,
-    [class*="sticky"] {
+    /* Ensure header and bottom navigation keep their white backgrounds */
+    header,
+    header *,
+    [data-testid*="header"],
+    [data-testid*="header"] *,
+    .fixed.top-0,
+    .fixed.bottom-0,
+    nav.fixed,
+    .bottom-navigation,
+    .bottom-navigation * {
       background-color: white !important;
     }
     
-    /* Ensure header elements don't have green backgrounds */
-    header *,
-    [data-testid*="header"] *,
-    .header * {
-      background-color: inherit !important;
+    /* Specifically ensure bottom navigation backdrop is preserved */
+    .bg-white\/95.backdrop-blur-md,
+    .bg-white\/95 {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(12px) !important;
     }
   }
 
