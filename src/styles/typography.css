@@ -1,0 +1,74 @@
+
+/* Typography Classes */
+
+.heading-1 {
+  font-size: clamp(var(--text-5xl), 4vw, var(--text-6xl));
+  line-height: var(--leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.heading-2 {
+  font-size: clamp(var(--text-3xl), 3vw, var(--text-4xl));
+  line-height: var(--leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.heading-3 {
+  font-size: clamp(var(--text-xl), 2.5vw, var(--text-2xl));
+  line-height: var(--leading-snug);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.heading-4 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.body-text {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+}
+
+.body-text-mobile {
+  font-size: var(--text-mobile);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+}
+
+.small-text {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-secondary);
+}
+
+.label-text {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
+}
+
+/* Compact heading for mobile page headers */
+.heading-1-compact {
+  font-size: 1.5rem;        /* 24px for desktop */
+  line-height: var(--leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;   /* 4px - tighter spacing */
+}
+
+@media (max-width: 767px) {
+  .heading-1-compact {
+    font-size: 1.375rem;     /* 22px for mobile */
+    margin-bottom: 0.125rem; /* 2px - very tight spacing */
+  }
+}

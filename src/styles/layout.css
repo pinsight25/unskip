@@ -1,86 +1,128 @@
 
-/* Layout Utilities and Container Styles */
+/* Layout and Spacing Utilities */
 
-@layer base {
-  /* App Container Structure */
-  .app-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
-
-  .main-content {
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  /* Safe Area Support for iOS */
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  /* Mobile-First Responsive Grid */
-  .grid-responsive {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .grid-responsive {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .grid-responsive {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .grid-responsive {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-}
-
-/* Container Improvements */
-.container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
+/* SINGLE STANDARDIZED PAGE CONTAINER */
+.mobile-page-container-fixed {
+  padding-top: var(--page-top-mobile);
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
 }
 
 @media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
+  .mobile-page-container-fixed {
+    padding-top: var(--page-top-desktop);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
   }
 }
 
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
+/* Header Spacing Utilities */
+.header-spaced-content {
+  padding-top: var(--header-bottom-spacing-mobile);
+}
+
+@media (min-width: 1024px) {
+  .header-spaced-content {
+    padding-top: var(--header-bottom-spacing-desktop);
   }
 }
 
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
+/* Mobile Compact Header for Profile and Saved Pages */
+.mobile-compact-header {
+  padding-top: 1rem;        /* 16px */
+  padding-bottom: 1rem;     /* 16px */
+  max-height: 80px;
+}
+
+@media (max-width: 767px) {
+  .mobile-compact-header {
+    padding-top: 0.75rem;    /* 12px */
+    padding-bottom: 0.75rem; /* 12px */
+    max-height: 60px;
+  }
+}
+
+/* Standardized Section Spacing */
+.section-gap {
+  margin-bottom: var(--section-gap);
+}
+
+.element-gap {
+  margin-bottom: var(--element-gap);
+}
+
+/* Grid Utilities */
+.grid-gap-standard {
+  gap: var(--spacing-sm);
+}
+
+@media (min-width: 1024px) {
+  .grid-gap-standard {
+    gap: var(--spacing-md);
+  }
+}
+
+/* Safe Area and Container */
+.container-safe {
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
+}
+
+@media (min-width: 1024px) {
+  .container-safe {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+/* Equal Height Cards */
+.cards-equal-height {
+  display: grid;
+  align-items: stretch;
+}
+
+.cards-equal-height > * {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Aspect Ratio Utilities */
+.aspect-ratio-16-9 {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.aspect-ratio-4-3 {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.aspect-ratio-square {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* Image Utilities */
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Mobile-specific bottom padding for scrollable content */
+@media (max-width: 767px) {
+  .mobile-page-container-fixed {
+    @apply pb-32; /* Increased bottom padding for mobile */
+  }
+  
+  .mobile-safe-bottom {
+    @apply pb-32; /* Extra safe bottom padding */
+  }
+  
+  /* Ensure car listing areas have proper bottom spacing */
+  .car-listings-container {
+    @apply pb-32;
   }
 }
