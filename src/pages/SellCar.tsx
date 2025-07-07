@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Upload, MapPin, Car, IndianRupee, CheckCircle } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Camera, Upload, MapPin, Car, IndianRupee, CheckCircle, Star, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 
@@ -20,6 +22,7 @@ const SellCar = () => {
   const [formData, setFormData] = useState({
     make: '',
     model: '',
+    variant: '',
     year: '',
     fuelType: '',
     transmission: '',
@@ -29,14 +32,38 @@ const SellCar = () => {
     isRentAvailable: false,
     dailyRate: '',
     weeklyRate: '',
+    minRentalPeriod: '1',
+    securityDeposit: '',
     photos: [] as string[],
+    coverPhotoIndex: 0,
     area: '',
-    description: ''
+    landmark: '',
+    phone: '',
+    phoneVerified: false,
+    description: '',
+    acceptOffers: false,
+    offerPercentage: '10',
+    termsAccepted: false
   });
 
   const makes = ['Maruti Suzuki', 'Hyundai', 'Honda', 'Toyota', 'Mahindra', 'Tata', 'Ford', 'Volkswagen', 'BMW', 'Mercedes'];
   const models = ['Swift', 'i20', 'City', 'Innova', 'XUV700', 'Harrier', 'EcoSport', 'Polo', 'X1', 'C-Class'];
+  const variants = ['Base', 'Mid', 'Top', 'VXI', 'ZXI', 'SX', 'VDI', 'Diesel', 'Petrol'];
   const areas = ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'Porur', 'Tambaram', 'Chrompet'];
+
+  const validatePrice = (price: string) => {
+    const priceNum = Number(price);
+    if (priceNum < 50000) return { valid: false, message: 'Price seems too low for a car' };
+    if (priceNum > 10000000) return { valid: false, message: 'Price seems unusually high' };
+    return { valid: true, message: '' };
+  };
+
+  const validateMileage = (mileage: string) => {
+    const mileageNum = Number(mileage);
+    if (mileageNum > 300000) return { valid: false, message: 'Mileage seems unusually high' };
+    if (mileageNum < 100 && formData.year && Number(formData.year) < 2023) return { valid: false, message: 'Mileage seems too low for car age' };
+    return { valid: true, message: '' };
+  };
 
   const handleNext = () => {
     if (currentStep < 5) {
@@ -50,7 +77,31 @@ const SellCar = () => {
     }
   };
 
+  const handlePhoneVerification = () => {
+    toast({
+      title: "OTP Sent",
+      description: "Please check your phone for verification code",
+    });
+    // Simulate verification
+    setTimeout(() => {
+      setFormData({ ...formData, phoneVerified: true });
+      toast({
+        title: "Phone Verified",
+        description: "Your phone number has been verified successfully",
+      });
+    }, 2000);
+  };
+
   const handleSubmit = () => {
+    if (!formData.termsAccepted) {
+      toast({
+        title: "Terms Required",
+        description: "Please accept the terms and conditions to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     toast({
       title: "Car Listed Successfully!",
       description: "Your car has been posted. You'll receive calls from interested buyers soon.",
@@ -87,6 +138,19 @@ const SellCar = () => {
                   <SelectContent>
                     {models.map((model) => (
                       <SelectItem key={model} value={model}>{model}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Variant/Trim</Label>
+                <Select value={formData.variant} onValueChange={(value) => setFormData({ ...formData, variant: value })}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select variant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {variants.map((variant) => (
+                      <SelectItem key={variant} value={variant}>{variant}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -133,7 +197,24 @@ const SellCar = () => {
                   type="number" 
                   placeholder="50000"
                   value={formData.mileage}
-                  onChange={(e) => setFormData({ ...formData, mileage: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, mileage: e.target.value });
+                  }}
+                  className="mt-1"
+                />
+                {formData.mileage && !validateMileage(formData.mileage).valid && (
+                  <div className="flex items-center mt-1 text-sm text-orange-600">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {validateMileage(formData.mileage).message}
+                  </div>
+                )}
+              </div>
+              <div>
+                <Label>Color</Label>
+                <Input 
+                  placeholder="White"
+                  value={formData.color}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                   className="mt-1"
                 />
               </div>
@@ -158,7 +239,38 @@ const SellCar = () => {
                     className="flex-1"
                   />
                 </div>
+                {formData.price && !validatePrice(formData.price).valid && (
+                  <div className="flex items-center mt-1 text-sm text-orange-600">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {validatePrice(formData.price).message}
+                  </div>
+                )}
               </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  checked={formData.acceptOffers}
+                  onCheckedChange={(checked) => setFormData({ ...formData, acceptOffers: checked })}
+                />
+                <Label>Accept offers below asking price?</Label>
+              </div>
+
+              {formData.acceptOffers && (
+                <div className="ml-6">
+                  <Label>Minimum acceptable percentage</Label>
+                  <Select value={formData.offerPercentage} onValueChange={(value) => setFormData({ ...formData, offerPercentage: value })}>
+                    <SelectTrigger className="mt-1 w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">95% (-5%)</SelectItem>
+                      <SelectItem value="10">90% (-10%)</SelectItem>
+                      <SelectItem value="15">85% (-15%)</SelectItem>
+                      <SelectItem value="20">80% (-20%)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               <div className="flex items-center space-x-2">
                 <Switch 
@@ -171,7 +283,7 @@ const SellCar = () => {
               {formData.isRentAvailable && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6">
                   <div>
-                    <Label>Daily Rate</Label>
+                    <Label>Daily Rate *</Label>
                     <div className="flex items-center mt-1">
                       <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
                       <Input 
@@ -196,6 +308,32 @@ const SellCar = () => {
                       <span className="ml-2 text-sm text-gray-500">/week</span>
                     </div>
                   </div>
+                  <div>
+                    <Label>Minimum Rental Period</Label>
+                    <Select value={formData.minRentalPeriod} onValueChange={(value) => setFormData({ ...formData, minRentalPeriod: value })}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">1 day</SelectItem>
+                        <SelectItem value="3">3 days</SelectItem>
+                        <SelectItem value="7">1 week</SelectItem>
+                        <SelectItem value="30">1 month</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Security Deposit</Label>
+                    <div className="flex items-center mt-1">
+                      <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
+                      <Input 
+                        type="number" 
+                        placeholder="10000"
+                        value={formData.securityDeposit}
+                        onChange={(e) => setFormData({ ...formData, securityDeposit: e.target.value })}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -207,16 +345,22 @@ const SellCar = () => {
           <div className="space-y-6">
             <h2 className="text-xl font-semibold">Photos</h2>
             <div className="text-sm text-gray-600 mb-4">
-              Add at least 3 photos of your car. Good photos help sell faster!
+              <p className="mb-2">Include exterior, interior, engine, and documents photos. Upload up to 10 photos.</p>
+              <p className="text-xs text-blue-600">💡 Tip: First photo will be your cover photo</p>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((index) => (
-                <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
+                <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer relative">
                   <div className="text-center">
-                    <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <span className="text-xs text-gray-500">Add Photo {index}</span>
+                    <Camera className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                    <span className="text-xs text-gray-500">
+                      {index === 1 ? 'Cover Photo' : `Photo ${index}`}
+                    </span>
                   </div>
+                  {index === 1 && (
+                    <Star className="h-4 w-4 text-orange-500 absolute top-1 right-1" />
+                  )}
                 </div>
               ))}
             </div>
@@ -248,6 +392,43 @@ const SellCar = () => {
               </div>
 
               <div>
+                <Label>Landmark (Optional)</Label>
+                <Input 
+                  placeholder="Near Landmark Mall, Opposite Metro Station"
+                  value={formData.landmark}
+                  onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label>Phone Number *</Label>
+                <div className="flex items-center space-x-2 mt-1">
+                  <Input 
+                    type="tel" 
+                    placeholder="+91 9876543210"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="flex-1"
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handlePhoneVerification}
+                    disabled={formData.phoneVerified || !formData.phone}
+                  >
+                    {formData.phoneVerified ? 'Verified' : 'Verify'}
+                  </Button>
+                </div>
+                {formData.phoneVerified && (
+                  <div className="flex items-center mt-1 text-sm text-green-600">
+                    <CheckCircle className="h-4 w-4 mr-1" />
+                    Phone number verified
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <Label>Description (Optional)</Label>
                 <Textarea 
                   placeholder="Tell buyers about your car's condition, service history, etc."
@@ -265,38 +446,57 @@ const SellCar = () => {
         return (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold">Review & Post</h2>
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <Car className="h-8 w-8 text-primary" />
-                  <div>
-                    <h3 className="font-semibold">{formData.make} {formData.model}</h3>
-                    <p className="text-sm text-gray-600">{formData.year} • {formData.fuelType} • {formData.transmission}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Price:</span>
-                    <span className="ml-2 font-semibold text-primary">₹{formData.price ? Number(formData.price).toLocaleString() : '0'}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Mileage:</span>
-                    <span className="ml-2">{formData.mileage} km</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Location:</span>
-                    <span className="ml-2">{formData.area}</span>
-                  </div>
-                  {formData.isRentAvailable && (
+            
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium mb-2">How your listing will appear:</h3>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <Car className="h-8 w-8 text-primary" />
                     <div>
-                      <span className="text-gray-600">Rental:</span>
-                      <span className="ml-2">₹{formData.dailyRate}/day</span>
+                      <h3 className="font-semibold">{formData.make} {formData.model} {formData.variant}</h3>
+                      <p className="text-sm text-gray-600">{formData.year} • {formData.fuelType} • {formData.transmission}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Price:</span>
+                      <span className="ml-2 font-semibold text-primary">₹{formData.price ? Number(formData.price).toLocaleString() : '0'}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Mileage:</span>
+                      <span className="ml-2">{formData.mileage} km</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Location:</span>
+                      <span className="ml-2">{formData.area}</span>
+                    </div>
+                    {formData.isRentAvailable && (
+                      <div>
+                        <span className="text-gray-600">Rental:</span>
+                        <span className="ml-2">₹{formData.dailyRate}/day</span>
+                      </div>
+                    )}
+                  </div>
+                  {formData.acceptOffers && (
+                    <div className="mt-2">
+                      <Badge variant="secondary" className="text-xs">Accepts offers</Badge>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox 
+                checked={formData.termsAccepted}
+                onCheckedChange={(checked) => setFormData({ ...formData, termsAccepted: checked as boolean })}
+              />
+              <Label className="text-sm">
+                I agree to the <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and confirm that all information provided is accurate
+              </Label>
+            </div>
 
             <div className="bg-green-50 p-4 rounded-lg">
               <div className="flex items-center space-x-2">
@@ -335,7 +535,7 @@ const SellCar = () => {
             </CardContent>
           </Card>
 
-          {/* Navigation Buttons - COMPLETE FIX FOR MOBILE */}
+          {/* Navigation Buttons */}
           <div className="flex justify-between mt-6 mb-12">
             <Button 
               variant="outline" 
@@ -346,7 +546,11 @@ const SellCar = () => {
             </Button>
             
             {currentStep === 5 ? (
-              <Button onClick={handleSubmit} className="bg-primary">
+              <Button 
+                onClick={handleSubmit} 
+                className="bg-primary"
+                disabled={!formData.termsAccepted}
+              >
                 Post for Free
               </Button>
             ) : (
