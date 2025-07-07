@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -87,17 +88,17 @@ const Accessories = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section - Improved styling and layout */}
+        {/* Header Section - Standardized spacing */}
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-gray-100">
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center mb-8">
+          <div className="container mx-auto px-4 py-6">
+            <div className="text-center mb-6">
               <h1 className="heading-1 mb-3">
                 Accessories Marketplace
               </h1>
               <p className="text-lg text-gray-600 mb-4">
                 Enhance your car with premium accessories
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
                 <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-4 py-2">
                   🎉 Beta - Free for Limited Time
                 </Badge>
@@ -110,8 +111,8 @@ const Accessories = () => {
               </div>
             </div>
 
-            {/* Improved Search Bar */}
-            <div className="max-w-3xl mx-auto mb-8">
+            {/* Search Bar */}
+            <div className="max-w-3xl mx-auto mb-6">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
@@ -129,8 +130,8 @@ const Accessories = () => {
               </div>
             </div>
 
-            {/* Improved Category Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-3 mb-4">
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap justify-center gap-3">
               {accessoryCategories.map((category) => (
                 <Button
                   key={category.id}
@@ -147,10 +148,10 @@ const Accessories = () => {
           </div>
         </div>
 
-        {/* Results Section - Improved layout */}
-        <div className="container mx-auto px-4 py-8">
-          {/* Controls Bar - Better spacing and alignment */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+        {/* Results Section - Standardized spacing */}
+        <div className="container mx-auto px-4 py-6">
+          {/* Controls Bar */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
             <div className="flex items-center gap-6">
               <h2 className="text-xl font-bold text-gray-900">
                 {filteredAccessories.length} {filteredAccessories.length === 1 ? 'Accessory' : 'Accessories'} Found
@@ -197,7 +198,7 @@ const Accessories = () => {
             </div>
           </div>
 
-          {/* Accessories Grid - Fixed responsive layout */}
+          {/* Accessories Grid */}
           <div className={`grid gap-6 ${
             viewMode === 'grid' 
               ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
@@ -212,10 +213,10 @@ const Accessories = () => {
             ))}
           </div>
 
-          {/* Empty State - Improved styling */}
+          {/* Empty State */}
           {filteredAccessories.length === 0 && (
-            <div className="text-center py-16">
-              <div className="text-8xl mb-6">🔍</div>
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🔍</div>
               <h3 className="heading-3 text-gray-900 mb-3">
                 No accessories found
               </h3>

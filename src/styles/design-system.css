@@ -26,7 +26,7 @@
   --font-semibold: 600;
   --font-bold: 700;
   
-  /* Spacing Scale - Ultra Compact Mobile System */
+  /* STANDARDIZED SPACING SYSTEM - ONE SYSTEM FOR ALL PAGES */
   --spacing-xs: 0.5rem;     /* 8px */
   --spacing-sm: 1rem;       /* 16px */
   --spacing-md: 1.5rem;     /* 24px */
@@ -34,21 +34,11 @@
   --spacing-xl: 3rem;       /* 48px */
   --spacing-2xl: 4rem;      /* 64px */
   
-  /* Mobile-specific ultra tight spacing */
-  --spacing-mobile-xs: 0.5rem;  /* 8px */
-  --spacing-mobile-sm: 1rem;    /* 16px - Standard mobile section gap */
-  --spacing-mobile-md: 1.5rem;  /* 24px - Between major sections */
-  --spacing-mobile-lg: 2rem;    /* 32px - Very rare, only for page sections */
-  
-  /* Standardized Mobile Page Spacing - FIXED */
-  --mobile-page-top: 0;          /* 0px - No extra top padding, handled by main */
-  --mobile-section-gap: 1.5rem;  /* 24px - Between sections */
-  --mobile-element-gap: 1rem;    /* 16px - Between elements */
-  
-  /* Search Results Ultra Compact */
-  --search-header-gap: 1rem;    /* 16px - Header to search bar */
-  --search-results-gap: 1rem;   /* 16px - Search bar to results count */
-  --results-cards-gap: 1.5rem;  /* 24px - Results count to first card */
+  /* FIXED STANDARDIZED PAGE SPACING */
+  --page-top-mobile: 1rem;     /* 16px - Standard for all mobile pages */
+  --page-top-desktop: 2rem;    /* 32px - Standard for all desktop pages */
+  --section-gap: 1.5rem;       /* 24px - Between sections */
+  --element-gap: 1rem;         /* 16px - Between elements */
   
   /* Border Radius Scale */
   --radius-sm: 0.5rem;      /* 8px - Buttons */
@@ -141,43 +131,28 @@
   color: var(--color-text-tertiary);
 }
 
-/* Fixed Mobile Page Layout */
+/* SINGLE STANDARDIZED PAGE CONTAINER */
 .mobile-page-container-fixed {
-  padding-top: 1rem;  /* Fixed 16px for all pages */
-  padding-left: var(--spacing-mobile-sm);
-  padding-right: var(--spacing-mobile-sm);
+  padding-top: var(--page-top-mobile);
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
 }
 
 @media (min-width: 1024px) {
   .mobile-page-container-fixed {
-    padding-top: var(--spacing-lg);
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
-  }
-}
-
-/* Legacy mobile-page-container for backward compatibility */
-.mobile-page-container {
-  padding-top: var(--mobile-page-top);
-  padding-left: var(--spacing-mobile-sm);
-  padding-right: var(--spacing-mobile-sm);
-}
-
-@media (min-width: 1024px) {
-  .mobile-page-container {
-    padding-top: var(--spacing-lg);
+    padding-top: var(--page-top-desktop);
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
 }
 
 /* Standardized Section Spacing */
-.mobile-section {
-  margin-bottom: var(--mobile-section-gap);
+.section-gap {
+  margin-bottom: var(--section-gap);
 }
 
-.mobile-element {
-  margin-bottom: var(--mobile-element-gap);
+.element-gap {
+  margin-bottom: var(--element-gap);
 }
 
 /* Standardized Card Styles */
@@ -194,16 +169,8 @@
   transform: translateY(-2px);
 }
 
-.card-padding-mobile {
-  padding: var(--spacing-mobile-sm);
-}
-
-.card-padding-desktop {
-  padding: var(--spacing-md);
-}
-
 .card-padding {
-  padding: var(--spacing-mobile-sm);
+  padding: var(--spacing-sm);
 }
 
 @media (min-width: 1024px) {
@@ -313,69 +280,21 @@
   }
 }
 
-/* Search Results Compact Layout */
-.search-results-compact {
-  padding-top: var(--mobile-page-top);
-}
-
-.search-header-to-bar {
-  margin-bottom: var(--search-header-gap);
-}
-
-.search-bar-to-results {
-  margin-bottom: var(--search-results-gap);
-}
-
-.results-to-cards {
-  margin-bottom: var(--results-cards-gap);
-}
-
-@media (min-width: 1024px) {
-  .search-results-compact {
-    padding-top: var(--spacing-md);
-  }
-  
-  .search-header-to-bar {
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .search-bar-to-results {
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .results-to-cards {
-    margin-bottom: var(--spacing-lg);
-  }
-}
-
-/* Page Header Compact */
-.page-header-compact {
-  padding-top: var(--mobile-page-top);
-  padding-bottom: var(--mobile-element-gap);
-}
-
-@media (min-width: 1024px) {
-  .page-header-compact {
-    padding-top: var(--spacing-lg);
-    padding-bottom: var(--spacing-md);
-  }
-}
-
 /* Grid Utilities */
-.grid-gap-compact {
-  gap: var(--spacing-mobile-sm);
+.grid-gap-standard {
+  gap: var(--spacing-sm);
 }
 
 @media (min-width: 1024px) {
-  .grid-gap-compact {
+  .grid-gap-standard {
     gap: var(--spacing-md);
   }
 }
 
 /* Safe Area and Container */
 .container-safe {
-  padding-left: var(--spacing-mobile-sm);
-  padding-right: var(--spacing-mobile-sm);
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
 }
 
 @media (min-width: 1024px) {

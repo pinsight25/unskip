@@ -11,9 +11,9 @@ const Dealers = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="pt-16 md:pt-20">
-        <div className="w-full max-w-7xl mx-auto px-4 py-6">
-          {/* Header with CTA */}
+      <div className="bg-white min-h-screen">
+        <div className="container mx-auto px-4 py-6">
+          {/* Header with CTA - Standardized spacing */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold mb-2">Authorized Dealers</h1>
