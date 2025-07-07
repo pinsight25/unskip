@@ -89,9 +89,9 @@ const Accessories = () => {
       <div className="bg-white min-h-screen">
         {/* Header Section - Desktop contained width */}
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
             <div className="text-center desktop-header-section">
-              <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6">
                 Accessories Marketplace
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
@@ -112,7 +112,7 @@ const Accessories = () => {
 
             {/* Search Bar - Fixed container width */}
             <div className="max-w-4xl mx-auto desktop-content-spacing">
-              <div className="relative overflow-hidden">
+              <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
                 <Input
                   placeholder="Search accessories by name, brand, or car model..."
@@ -148,7 +148,7 @@ const Accessories = () => {
         </div>
 
         {/* Results Section - Desktop contained width */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
           {/* Controls Bar */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 desktop-header-section">
             <div className="flex items-center gap-6">

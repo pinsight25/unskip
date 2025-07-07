@@ -107,10 +107,10 @@ const Profile = () => {
       <div className="bg-white min-h-screen">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
             <div className="text-center">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-              <p className="text-sm md:text-base text-gray-600">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">My Profile</h1>
+              <p className="text-base md:text-lg text-gray-600">
                 Manage your account and track your activity
               </p>
             </div>
@@ -118,7 +118,7 @@ const Profile = () => {
         </div>
 
         {/* Content Section */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8 pb-24 lg:pb-8">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8 pb-24 lg:pb-8">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
             <ProfileHeader

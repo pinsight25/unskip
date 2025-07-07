@@ -107,11 +107,11 @@ const SellCar = () => {
   return (
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 max-w-2xl pb-44 md:pb-8">
+        <div className="max-w-4xl mx-auto px-4 lg:px-6 xl:px-8 pb-44 md:pb-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <h1 className="text-2xl font-bold">Sell Your Car</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">Sell Your Car</h1>
               <Badge variant="outline">Step {currentStep} of 5</Badge>
             </div>
             <Progress value={(currentStep / 5) * 100} className="h-2" />
