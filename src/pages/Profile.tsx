@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -8,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EditProfileModal from '@/components/modals/EditProfileModal';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
-import { User, Car, Heart, Settings, LogOut, Edit, Trash2, Eye, Clock, TrendingUp, MessageCircle } from 'lucide-react';
+import { User, Car, Settings, LogOut, Edit, Trash2, Eye, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Profile = () => {
@@ -66,45 +67,9 @@ const Profile = () => {
     }
   ]);
 
-  const [offers] = useState([
-    {
-      id: '1',
-      carTitle: '2021 Toyota Innova Crysta',
-      carPrice: 1800000,
-      offerAmount: 1650000,
-      status: 'pending',
-      timeAgo: '2 hours ago'
-    },
-    {
-      id: '2',
-      carTitle: '2022 Mahindra XUV700',
-      carPrice: 2200000,
-      offerAmount: 2000000,
-      status: 'rejected',
-      timeAgo: '1 day ago'
-    }
-  ]);
-
-  const [savedCars] = useState([
-    {
-      id: '1',
-      title: '2023 Tata Nexon EV',
-      price: 1400000,
-      location: 'Mumbai, Maharashtra'
-    },
-    {
-      id: '2',
-      title: '2022 MG Hector Plus',
-      price: 1650000,
-      location: 'Mumbai, Maharashtra'
-    }
-  ]);
-
   const stats = {
     totalViews: listings.reduce((sum, listing) => sum + listing.views, 0),
-    activeListings: listings.filter(l => l.status === 'active').length,
-    totalOffers: offers.length,
-    soldCars: listings.filter(l => l.status === 'sold').length
+    activeListings: listings.filter(l => l.status === 'active').length
   };
 
   const handleEditProfile = (newProfile: typeof profile) => {
@@ -159,16 +124,6 @@ const Profile = () => {
     );
   };
 
-  const getOfferStatusColor = (status: string) => {
-    const colors = {
-      pending: 'text-yellow-600 bg-yellow-50',
-      accepted: 'text-green-600 bg-green-50',
-      rejected: 'text-red-600 bg-red-50',
-      countered: 'text-blue-600 bg-blue-50'
-    };
-    return colors[status as keyof typeof colors] || colors.pending;
-  };
-
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
@@ -185,7 +140,7 @@ const Profile = () => {
         </div>
 
         {/* Content Section */}
-        <div className="container mx-auto mobile-page-container-fixed">
+        <div className="container mx-auto mobile-page-container-fixed pb-20 md:pb-8">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
             <Card className="p-4 md:p-6 section-gap">
@@ -221,8 +176,8 @@ const Profile = () => {
               </div>
             </Card>
 
-            {/* Stats Section */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 section-gap">
+            {/* Simplified Stats Section */}
+            <div className="grid grid-cols-2 gap-4 section-gap">
               <Card className="p-4 text-center">
                 <Eye className="h-6 w-6 text-primary mx-auto mb-2" />
                 <p className="text-2xl font-bold">{stats.totalViews}</p>
@@ -233,29 +188,13 @@ const Profile = () => {
                 <p className="text-2xl font-bold">{stats.activeListings}</p>
                 <p className="text-sm text-gray-600">Active Listings</p>
               </Card>
-              <Card className="p-4 text-center">
-                <MessageCircle className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                <p className="text-2xl font-bold">{stats.totalOffers}</p>
-                <p className="text-sm text-gray-600">Offers Made</p>
-              </Card>
-              <Card className="p-4 text-center">
-                <TrendingUp className="h-6 w-6 text-orange-600 mx-auto mb-2" />
-                <p className="text-2xl font-bold">{stats.soldCars}</p>
-                <p className="text-sm text-gray-600">Cars Sold</p>
-              </Card>
             </div>
 
-            {/* Tabs */}
+            {/* Simplified Tabs */}
             <Tabs defaultValue="listings" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 section-gap">
+              <TabsList className="grid w-full grid-cols-1 section-gap">
                 <TabsTrigger value="listings">
                   My Listings ({stats.activeListings})
-                </TabsTrigger>
-                <TabsTrigger value="offers">
-                  My Offers ({stats.totalOffers})
-                </TabsTrigger>
-                <TabsTrigger value="saved">
-                  Saved Cars ({savedCars.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -325,90 +264,6 @@ const Profile = () => {
                   )}
                 </Card>
               </TabsContent>
-
-              {/* My Offers Tab */}
-              <TabsContent value="offers">
-                <Card className="p-4 md:p-6">
-                  {offers.length > 0 ? (
-                    <div className="space-y-4">
-                      {offers.map((offer) => (
-                        <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="flex flex-col md:flex-row gap-4">
-                            <div className="w-full md:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0"></div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg mb-2">{offer.carTitle}</h3>
-                              <div className="flex items-center gap-4 mb-2">
-                                <div>
-                                  <p className="text-sm text-gray-600">Car Price</p>
-                                  <p className="font-semibold">{formatPrice(offer.carPrice)}</p>
-                                </div>
-                                <div>
-                                  <p className="text-sm text-gray-600">Your Offer</p>
-                                  <p className="font-bold text-primary">{formatPrice(offer.offerAmount)}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getOfferStatusColor(offer.status)}`}>
-                                  {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
-                                </span>
-                                <span className="text-sm text-gray-500">{offer.timeAgo}</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <Button size="sm" variant="outline">View Car</Button>
-                              {offer.status === 'pending' && (
-                                <Button size="sm" variant="outline">Withdraw</Button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No offers made yet</h3>
-                      <p className="text-gray-600 mb-6">Start browsing cars to make your first offer</p>
-                      <Button onClick={() => navigate('/search')}>Browse Cars</Button>
-                    </div>
-                  )}
-                </Card>
-              </TabsContent>
-
-              {/* Saved Cars Tab */}
-              <TabsContent value="saved">
-                <Card className="p-4 md:p-6">
-                  {savedCars.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {savedCars.map((car) => (
-                        <div key={car.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="w-full h-32 bg-gray-200 rounded-lg mb-3"></div>
-                          <h3 className="font-semibold mb-2">{car.title}</h3>
-                          <p className="text-primary font-bold text-lg mb-1">{formatPrice(car.price)}</p>
-                          <p className="text-gray-600 text-sm mb-3">{car.location}</p>
-                          <div className="space-y-2">
-                            <Button size="sm" className="w-full">Make Offer</Button>
-                            <div className="grid grid-cols-2 gap-2">
-                              <Button size="sm" variant="outline">
-                                <Heart className="h-4 w-4 mr-1 fill-red-500 text-red-500" />
-                                Remove
-                              </Button>
-                              <Button size="sm" variant="outline">View</Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No saved cars yet</h3>
-                      <p className="text-gray-600 mb-6">Start browsing to save cars you like</p>
-                      <Button onClick={() => navigate('/search')}>Browse Cars</Button>
-                    </div>
-                  )}
-                </Card>
-              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -428,6 +283,8 @@ const Profile = () => {
         onConfirm={handleSignOut}
         title="Sign Out"
         description="Are you sure you want to sign out of your account?"
+        confirmText="Sign Out"
+        cancelText="Cancel"
       />
 
       <DeleteConfirmModal

@@ -1,5 +1,6 @@
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Calendar } from 'lucide-react';
 
 interface MobileCarActionsProps {
@@ -9,62 +10,68 @@ interface MobileCarActionsProps {
   onTestDrive: () => void;
 }
 
-const MobileCarActions = ({ 
-  offerStatus, 
-  onMakeOffer, 
-  onChat, 
-  onTestDrive 
+const MobileCarActions = ({
+  offerStatus,
+  onMakeOffer,
+  onChat,
+  onTestDrive
 }: MobileCarActionsProps) => {
-  const getChatButtonText = () => {
+  const getOfferButton = () => {
     switch (offerStatus) {
-      case 'none':
-        return 'Chat';
       case 'pending':
-        return 'Pending';
+        return (
+          <Button size="sm" variant="secondary" disabled className="flex-1">
+            <Badge variant="secondary" className="mr-2 text-xs">Pending</Badge>
+            Offer Sent
+          </Button>
+        );
       case 'accepted':
-        return 'Chat';
+        return (
+          <Button size="sm" variant="secondary" className="flex-1 bg-green-100 text-green-800">
+            <Badge className="mr-2 text-xs bg-green-200 text-green-800">Accepted</Badge>
+            Offer Accepted
+          </Button>
+        );
       case 'rejected':
-        return 'Rejected';
+        return (
+          <Button size="sm" variant="outline" onClick={onMakeOffer} className="flex-1">
+            Make New Offer
+          </Button>
+        );
       default:
-        return 'Chat';
+        return (
+          <Button size="sm" onClick={onMakeOffer} className="flex-1">
+            Make an Offer
+          </Button>
+        );
     }
   };
 
   return (
-    <div className="space-y-3 pt-2">
-      <Button 
-        onClick={(e) => {
-          e.stopPropagation();
-          onMakeOffer();
-        }}
-        className="w-full"
-      >
-        Make an Offer
-      </Button>
+    <div className="space-y-3 pb-4">
+      {/* Primary Action */}
+      <div className="flex gap-2">
+        {getOfferButton()}
+      </div>
       
-      <div className="grid grid-cols-2 grid-gap">
+      {/* Secondary Actions with improved spacing */}
+      <div className="flex gap-2">
         <Button 
-          variant="outline" 
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onChat();
-          }}
-          disabled={offerStatus === 'pending' || offerStatus === 'rejected'}
+          size="sm" 
+          variant="default"
+          onClick={onChat}
+          className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
         >
-          <MessageCircle className="h-4 w-4 mr-2" />
-          {getChatButtonText()}
+          <MessageCircle className="h-4 w-4 mr-1" />
+          Chat
         </Button>
         <Button 
+          size="sm" 
           variant="outline" 
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onTestDrive();
-          }}
-          className="hover:bg-green-500 hover:text-white hover:border-green-500"
+          onClick={onTestDrive}
+          className="flex-1"
         >
-          <Calendar className="h-4 w-4 mr-2" />
+          <Calendar className="h-4 w-4 mr-1" />
           Test Drive
         </Button>
       </div>

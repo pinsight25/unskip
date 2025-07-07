@@ -29,7 +29,7 @@ const Saved = () => {
         </div>
 
         {/* Content Section */}
-        <div className="container mx-auto mobile-page-container-fixed">
+        <div className="container mx-auto mobile-page-container-fixed pb-20 md:pb-8">
           <div className="max-w-6xl mx-auto">
             {savedCars.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -44,14 +44,9 @@ const Saved = () => {
                     <div className="p-4">
                       <h3 className="font-semibold mb-2">2022 Maruti Swift VXI</h3>
                       <p className="text-2xl font-bold text-primary mb-2">₹6,50,000</p>
-                      <p className="text-gray-600 text-sm mb-3">Mumbai, Maharashtra</p>
-                      <div className="space-y-2">
-                        <Button size="sm" className="w-full">Make Offer</Button>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button size="sm" variant="outline">Chat</Button>
-                          <Button size="sm" variant="outline">View</Button>
-                        </div>
-                      </div>
+                      <p className="text-gray-600 text-sm mb-4">Mumbai, Maharashtra</p>
+                      {/* Simplified - only Make Offer button */}
+                      <Button size="sm" className="w-full">Make Offer</Button>
                     </div>
                   </Card>
                 ))}

@@ -15,9 +15,16 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Extended nav items with Profile and Saved
+  const extendedNavItems = [
+    ...navItems,
+    { label: 'Profile', path: '/profile' },
+    { label: 'Saved', path: '/saved' }
+  ];
+
   return (
-    <nav className="hidden md:flex items-center space-x-10">
-      {navItems.map((item) => (
+    <nav className="hidden md:flex items-center space-x-8">
+      {extendedNavItems.map((item) => (
         <Link
           key={item.path}
           to={item.path}
