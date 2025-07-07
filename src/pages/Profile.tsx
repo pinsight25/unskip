@@ -127,12 +127,12 @@ const Profile = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Compact Header Section - Fixed overlap */}
+        {/* Header Section */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed mobile-compact-header">
+          <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
             <div className="text-center">
-              <h1 className="heading-1-compact">My Profile</h1>
-              <p className="text-sm md:text-base text-gray-600 mt-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
+              <p className="text-sm md:text-base text-gray-600">
                 Manage your account and track your activity
               </p>
             </div>
@@ -140,7 +140,7 @@ const Profile = () => {
         </div>
 
         {/* Content Section */}
-        <div className="container mx-auto mobile-page-container-fixed pb-20 md:pb-8">
+        <div className="container mx-auto px-4 lg:px-6 py-4 lg:py-6 pb-24 lg:pb-8">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
             <Card className="p-4 md:p-6 section-gap">

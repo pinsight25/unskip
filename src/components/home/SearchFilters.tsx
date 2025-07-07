@@ -69,9 +69,9 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
   };
 
   return (
-    <div className="bg-white compact-section border-b border-gray-100">
-      <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        <div className="space-y-3 lg:space-y-4">
+    <div className="bg-white border-b border-gray-100">
+      <div className="w-full max-w-6xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+        <div className="space-y-4 lg:space-y-5">
           {/* Search Bar */}
           <div className="flex gap-3 max-w-4xl mx-auto">
             <div className="flex-1 relative">
