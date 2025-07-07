@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0",
         destructive: "bg-red-500 text-white hover:bg-red-600 border border-red-500 hover:border-red-600 shadow-md hover:shadow-lg hover:-translate-y-0.5",
-        outline: "border-2 border-primary bg-white text-primary hover:bg-primary hover:text-white shadow-md hover:shadow-lg hover:-translate-y-0.5",
+        outline: "border border-orange-500/30 bg-white text-orange-500 hover:bg-orange-50 hover:border-orange-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5",
         secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-0.5",
         ghost: "hover:bg-gray-100 hover:text-gray-900 hover:-translate-y-0.5",
         link: "text-primary underline-offset-4 hover:underline",
