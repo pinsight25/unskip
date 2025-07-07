@@ -127,12 +127,12 @@ const Profile = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section with Gradient */}
+        {/* Compact Header Section with Gradient */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed">
-            <div className="text-center section-gap">
-              <h1 className="heading-1 mb-3">My Profile</h1>
-              <p className="text-lg text-gray-600">
+          <div className="container mx-auto mobile-page-container-fixed mobile-compact-header">
+            <div className="text-center">
+              <h1 className="heading-1-compact">My Profile</h1>
+              <p className="text-base md:text-lg text-gray-600">
                 Manage your account and track your activity
               </p>
             </div>

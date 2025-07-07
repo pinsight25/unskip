@@ -10,17 +10,17 @@ const Saved = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section with Gradient */}
+        {/* Compact Header Section with Gradient */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed">
-            <div className="flex flex-col md:flex-row md:items-center justify-between section-gap">
+          <div className="container mx-auto mobile-page-container-fixed mobile-compact-header">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div className="text-center md:text-left">
-                <h1 className="heading-1 mb-3">Saved Cars</h1>
-                <p className="text-lg text-gray-600">
+                <h1 className="heading-1-compact">Saved Cars</h1>
+                <p className="text-base md:text-lg text-gray-600">
                   {savedCars.length} cars in your wishlist
                 </p>
               </div>
-              <Button variant="outline" className="mt-4 md:mt-0">
+              <Button variant="outline" className="mt-2 md:mt-0 self-center md:self-auto">
                 <Search className="h-4 w-4 mr-2" />
                 Find Similar
               </Button>
