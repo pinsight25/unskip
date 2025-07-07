@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Accessory } from '@/types/accessory';
-import { Heart, Star, MapPin, Shield, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AccessoryCardProps {
@@ -36,22 +36,18 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
     });
   };
 
-  const handleGetQuote = (e: React.MouseEvent) => {
+  const handleCall = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast({
-      title: "Quote Request Sent!",
-      description: "The seller will contact you with pricing details",
-    });
+    window.location.href = `tel:${accessory.seller.phone}`;
   };
 
-  const handleChat = (e: React.MouseEvent) => {
+  const handleWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast({
-      title: "Chat with seller",
-      description: "Starting conversation with the seller",
-    });
+    const message = `Hi, I'm interested in your ${accessory.name} listed on Unskip`;
+    const whatsappUrl = `https://wa.me/${accessory.seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (viewMode === 'list') {
@@ -66,11 +62,6 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
                 alt={accessory.name}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
-              {accessory.featured && (
-                <Badge className="absolute top-3 left-3 bg-amber-500 text-white font-medium">
-                  Featured
-                </Badge>
-              )}
             </div>
 
             {/* Content */}
@@ -103,18 +94,6 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
                     </Badge>
                   )}
                 </div>
-
-                <div className="flex items-center gap-6 text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                    <span className="font-medium">{accessory.rating}</span>
-                    <span>({accessory.reviewCount})</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{accessory.location}</span>
-                  </div>
-                </div>
               </div>
 
               <div className="flex justify-between items-end mt-4">
@@ -125,12 +104,13 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
                   <p className="text-sm text-gray-600 mt-1">{accessory.seller.shopName}</p>
                 </div>
                 <div className="flex gap-3">
-                  <Button variant="outline" size="sm" onClick={handleChat} className="px-4">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Chat
+                  <Button variant="outline" size="sm" onClick={handleCall} className="px-4">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call
                   </Button>
-                  <Button size="sm" onClick={handleGetQuote} className="px-4">
-                    Get Quote
+                  <Button variant="outline" size="sm" onClick={handleWhatsApp} className="px-4">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    WhatsApp
                   </Button>
                 </div>
               </div>
@@ -144,7 +124,7 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white overflow-hidden h-full flex flex-col">
       <CardContent className="p-0 flex flex-col h-full">
-        {/* Image Section - Fixed aspect ratio */}
+        {/* Image Section */}
         <div className="relative aspect-square overflow-hidden">
           <Link to={`/accessories/${accessory.id}`}>
             <img
@@ -165,31 +145,9 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
               <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'}`} />
             </Button>
           </div>
-
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {accessory.featured && (
-              <Badge className="bg-amber-500/90 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                ⭐ Featured
-              </Badge>
-            )}
-            {accessory.seller.verified && (
-              <Badge className="bg-green-500/90 backdrop-blur-sm text-white border-0 font-medium text-xs px-3 py-1 rounded-full shadow-lg">
-                <Shield className="h-3 w-3 mr-1" />
-                Verified
-              </Badge>
-            )}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button size="sm" variant="secondary" className="h-8 w-8 p-0 bg-white/90 hover:bg-white rounded-full shadow-lg">
-              <Share2 className="h-3 w-3" />
-            </Button>
-          </div>
         </div>
 
-        {/* Content Section - Improved spacing and typography */}
+        {/* Content Section */}
         <div className="p-5 space-y-4 flex-1 flex flex-col">
           {/* Title & Brand */}
           <Link to={`/accessories/${accessory.id}`} className="flex-grow">
@@ -199,15 +157,11 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
             <p className="text-sm text-gray-600 font-medium">{accessory.brand}</p>
           </Link>
 
-          {/* Price and Rating */}
-          <div className="flex items-center justify-between">
+          {/* Price */}
+          <div>
             <p className="text-xl font-bold text-primary">
               {formatPrice(accessory.price)}
             </p>
-            <div className="flex items-center text-sm text-gray-500">
-              <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 mr-1" />
-              <span className="font-medium">{accessory.rating}</span>
-            </div>
           </div>
 
           {/* Compatibility Tags */}
@@ -225,37 +179,27 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
           </div>
 
           {/* Seller Info */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{accessory.seller.shopName}</p>
-              <div className="flex items-center text-xs text-gray-500">
-                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                <span className="truncate">{accessory.location}</span>
-              </div>
-            </div>
-            {accessory.seller.verified && (
-              <Badge variant="secondary" className="text-xs ml-2 flex-shrink-0">
-                <Shield className="h-3 w-3 mr-1" />
-                Verified
-              </Badge>
-            )}
+          <div className="pt-3 border-t border-gray-100">
+            <p className="text-sm font-medium truncate">{accessory.seller.shopName}</p>
           </div>
 
-          {/* Action Buttons - Consistent sizing */}
-          <div className="space-y-2 pt-2">
+          {/* Action Buttons */}
+          <div className="flex gap-2 pt-2">
             <Button 
-              className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium"
-              onClick={handleGetQuote}
+              variant="outline" 
+              className="flex-1 h-11 font-medium"
+              onClick={handleCall}
             >
-              Get Quote
+              <Phone className="h-4 w-4 mr-2" />
+              Call
             </Button>
             <Button 
               variant="outline" 
-              className="w-full h-11 font-medium"
-              onClick={handleChat}
+              className="flex-1 h-11 font-medium"
+              onClick={handleWhatsApp}
             >
               <MessageCircle className="h-4 w-4 mr-2" />
-              Chat with Seller
+              WhatsApp
             </Button>
           </div>
         </div>

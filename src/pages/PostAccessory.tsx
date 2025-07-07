@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, X, ArrowLeft } from 'lucide-react';
+import { Upload, X, ArrowLeft, Camera } from 'lucide-react';
 import { accessoryCategories } from '@/data/accessoryMockData';
 
 const PostAccessory = () => {
@@ -172,6 +171,36 @@ const PostAccessory = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Photos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Photos</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-sm text-gray-600 mb-4">
+                  <p>Upload up to 2 photos of your accessory. First photo will be the main image.</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {[1, 2].map((index) => (
+                    <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer relative">
+                      <div className="text-center">
+                        <Camera className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                        <span className="text-xs text-gray-500">
+                          Add Photo {index}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-center space-x-4 p-4 bg-blue-50 rounded-lg">
+                  <Upload className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm text-blue-800">Drag & drop photos here or click to browse</span>
                 </div>
               </CardContent>
             </Card>
