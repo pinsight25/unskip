@@ -1,8 +1,11 @@
 
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { SlidersHorizontal } from 'lucide-react';
+import PriceRangeFilter from './filters/PriceRangeFilter';
+import MakeFilter from './filters/MakeFilter';
+import YearFilter from './filters/YearFilter';
+import FuelTypeFilter from './filters/FuelTypeFilter';
 
 interface SearchFiltersProps {
   priceRange: [number, number];
@@ -38,75 +41,26 @@ const SearchFilters = ({
         </h3>
         
         <div className="space-y-6">
-          {/* Price Range */}
-          <div>
-            <h4 className="font-medium mb-3 text-gray-900">Price Range</h4>
-            <div className="flex gap-2">
-              <Input 
-                type="number" 
-                placeholder="Min (₹)" 
-                value={priceRange[0] || ''}
-                onChange={(e) => onPriceRangeChange([parseInt(e.target.value) || 0, priceRange[1]])}
-                className="text-sm flex-1"
-              />
-              <Input 
-                type="number" 
-                placeholder="Max (₹)" 
-                value={priceRange[1] === 5000000 ? '' : priceRange[1]}
-                onChange={(e) => onPriceRangeChange([priceRange[0], parseInt(e.target.value) || 5000000])}
-                className="text-sm flex-1"
-              />
-            </div>
-          </div>
+          <PriceRangeFilter 
+            priceRange={priceRange}
+            onPriceRangeChange={onPriceRangeChange}
+          />
           
-          {/* Make */}
-          <div>
-            <h4 className="font-medium mb-3 text-gray-900">Make</h4>
-            <select 
-              value={selectedMake}
-              onChange={(e) => onMakeChange(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
-            >
-              <option value="">All Makes</option>
-              {makes.map(make => (
-                <option key={make} value={make}>{make}</option>
-              ))}
-            </select>
-          </div>
+          <MakeFilter 
+            selectedMake={selectedMake}
+            onMakeChange={onMakeChange}
+            makes={makes}
+          />
 
-          {/* Year */}
-          <div>
-            <h4 className="font-medium mb-3 text-gray-900">Year</h4>
-            <select 
-              value={selectedYear}
-              onChange={(e) => onYearChange(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
-            >
-              <option value="">Any Year</option>
-              <option value="2020">2020 & Newer</option>
-              <option value="2018">2018 & Newer</option>
-              <option value="2015">2015 & Newer</option>
-              <option value="2010">2010 & Newer</option>
-            </select>
-          </div>
+          <YearFilter 
+            selectedYear={selectedYear}
+            onYearChange={onYearChange}
+          />
           
-          {/* Fuel Type */}
-          <div>
-            <h4 className="font-medium mb-3 text-gray-900">Fuel Type</h4>
-            <div className="space-y-3">
-              {['Petrol', 'Diesel', 'CNG', 'Electric'].map((fuel) => (
-                <label key={fuel} className="flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="mr-3 rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
-                    checked={selectedFuel.includes(fuel)}
-                    onChange={() => onFuelToggle(fuel)}
-                  />
-                  <span className="text-sm text-gray-700">{fuel}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <FuelTypeFilter 
+            selectedFuel={selectedFuel}
+            onFuelToggle={onFuelToggle}
+          />
           
           <Button 
             onClick={onClearFilters}
