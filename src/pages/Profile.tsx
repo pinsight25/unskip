@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -128,6 +129,7 @@ const Profile = () => {
   };
 
   const confirmDeleteListing = () => {
+    // Simulate delete
     setTimeout(() => {
       setDeleteModal({ isOpen: false, listingId: null, title: '' });
       toast({
@@ -171,24 +173,11 @@ const Profile = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="bg-white min-h-screen">
-        {/* Header Section with Gradient */}
-        <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed">
-            <div className="text-center section-gap">
-              <h1 className="heading-1 mb-3">My Profile</h1>
-              <p className="text-lg text-gray-600">
-                Manage your account and track your activity
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Section */}
-        <div className="container mx-auto mobile-page-container-fixed">
+      <div className="pt-16 md:pt-20 pb-28 md:pb-8">
+        <div className="container mx-auto px-4 py-6">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
-            <Card className="p-4 md:p-6 section-gap">
+            <Card className="p-4 md:p-6 mb-6">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
                 <Avatar className="h-20 w-20 md:h-24 md:w-24">
                   <AvatarFallback className="text-xl md:text-2xl">
@@ -197,7 +186,7 @@ const Profile = () => {
                 </Avatar>
                 
                 <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-bold mb-2">{profile.name}</h2>
+                  <h1 className="text-xl md:text-2xl font-bold mb-2">{profile.name}</h1>
                   <p className="text-gray-600 mb-4">Member since March 2024</p>
                   <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                     <Button 
@@ -222,7 +211,7 @@ const Profile = () => {
             </Card>
 
             {/* Stats Section */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 section-gap">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <Card className="p-4 text-center">
                 <Eye className="h-6 w-6 text-primary mx-auto mb-2" />
                 <p className="text-2xl font-bold">{stats.totalViews}</p>
@@ -247,7 +236,7 @@ const Profile = () => {
 
             {/* Tabs */}
             <Tabs defaultValue="listings" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 section-gap">
+              <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="listings">
                   My Listings ({stats.activeListings})
                 </TabsTrigger>
