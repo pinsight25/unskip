@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import RentCarCard from '@/components/car/RentCarCard';
+import RentCarCard from '@/components/rent/RentCarCard';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Search } from 'lucide-react';
 
