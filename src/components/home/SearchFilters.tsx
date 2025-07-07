@@ -104,7 +104,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
           {/* Popular Areas - Mobile horizontal scroll, Desktop wrapped */}
           {!hideContent && (
             <div className="space-y-2 lg:space-y-3">
-              <div className="flex items-center justify-center sm:justify-start max-w-5xl mx-auto">
+              <div className="flex items-center justify-start max-w-5xl mx-auto">
                 <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
                   Popular Areas in Chennai
@@ -123,7 +123,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                         className={`flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                            : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
                         }`}
                       >
                         {location}
@@ -137,7 +137,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
 
               {/* Desktop: Wrapped layout */}
               <div className="max-w-5xl mx-auto hidden lg:block">
-                <div className="flex flex-wrap gap-3 justify-center sm:justify-start pb-2">
+                <div className="flex flex-wrap gap-3 justify-start pb-2">
                   {popularLocations.map((location) => {
                     const isSelected = selectedLocation === location;
                     return (
@@ -147,7 +147,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                         className={`flex-shrink-0 px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                            : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
                         }`}
                       >
                         {location}

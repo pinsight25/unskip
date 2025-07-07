@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -111,13 +110,13 @@ const Accessories = () => {
               </div>
             </div>
 
-            {/* Search Bar */}
+            {/* Search Bar - Fixed container width */}
             <div className="max-w-4xl mx-auto desktop-content-spacing">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <div className="relative overflow-hidden">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
                 <Input
                   placeholder="Search accessories by name, brand, or car model..."
-                  className="pl-12 pr-4 h-16 md:h-20 text-base md:text-lg border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
+                  className="pl-12 pr-4 h-16 md:h-20 text-base md:text-lg border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md w-full"
                   value={filters.search}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />

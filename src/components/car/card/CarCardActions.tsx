@@ -24,6 +24,7 @@ const CarCardActions = ({ onMakeOffer, onChat, offerMade }: CarCardActionsProps)
           variant="outline" 
           size="sm"
           onClick={onChat}
+          className="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white hover:border-orange-500 active:bg-orange-600 transition-all duration-200"
         >
           <MessageCircle className="h-4 w-4 mr-1" />
           Chat
@@ -31,7 +32,7 @@ const CarCardActions = ({ onMakeOffer, onChat, offerMade }: CarCardActionsProps)
         <Button 
           variant="outline" 
           size="sm"
-          className="hover:bg-green-500 hover:text-white hover:border-green-500"
+          className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200"
         >
           <Calendar className="h-4 w-4 mr-1" />
           Test Drive

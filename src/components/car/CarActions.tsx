@@ -32,7 +32,7 @@ const CarActions = ({ offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarA
           text: 'Chat',
           disabled: false,
           variant: 'outline' as const,
-          className: 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white'
+          className: 'border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 active:bg-orange-600'
         };
       case 'rejected':
         return {
@@ -46,7 +46,7 @@ const CarActions = ({ offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarA
           text: 'Chat',
           disabled: false,
           variant: 'outline' as const,
-          className: 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white'
+          className: 'border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white hover:border-orange-500 active:bg-orange-600'
         };
     }
   };
