@@ -14,12 +14,12 @@ const MobileCarPrice = ({ price, rentalRate }: MobileCarPriceProps) => {
   };
 
   return (
-    <div className="flex items-center gap-2 mt-1">
+    <div className="flex items-center gap-2">
       <span className="text-2xl font-bold text-primary">
         {formatPrice(price)}
       </span>
       {rentalRate && (
-        <span className="text-sm text-gray-500 ml-2">
+        <span className="small-text text-gray-500 ml-2">
           or {formatRental(rentalRate)}
         </span>
       )}

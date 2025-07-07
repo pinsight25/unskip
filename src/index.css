@@ -10,22 +10,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CarVibe Mobile-First Layout System */
+/* CarVibe Mobile-First Layout System with Enhanced Design Standards */
 
 @layer base {
   :root {
-    /* Enhanced Color Palette */
+    /* Enhanced Color Palette - Consistent with Design System */
     --background: 0 0% 98%;           
-    --foreground: 213 20% 18%;        
+    --foreground: var(--color-text-primary);        
 
     --card: 0 0% 100%;                
-    --card-foreground: 213 20% 18%;
+    --card-foreground: var(--color-text-primary);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 213 20% 18%;
+    --popover-foreground: var(--color-text-primary);
 
-    /* CarVibe Brand Colors */
-    --primary: 14 100% 57%;           
+    /* CarVibe Brand Colors - Standardized */
+    --primary: 14 100% 57%;           /* #FF6B35 */
     --primary-foreground: 0 0% 100%;
     --primary-light: 14 100% 67%;     
     --primary-dark: 14 100% 47%;      
@@ -36,7 +36,7 @@
     --secondary-dark: 193 100% 32%;
 
     --muted: 210 14% 96%;            
-    --muted-foreground: 213 12% 52%;
+    --muted-foreground: var(--color-text-secondary);
 
     --accent: 258 90% 58%;           
     --accent-foreground: 0 0% 100%;
@@ -49,7 +49,7 @@
     --trust-foreground: 0 0% 100%;
     
     --warning: 45 100% 50%;          
-    --warning-foreground: 213 20% 18%;
+    --warning-foreground: var(--color-text-primary);
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -58,7 +58,7 @@
     --input: 210 14% 89%;
     --ring: 14 100% 57%;
 
-    --radius: 1rem;
+    --radius: var(--radius-md);
     --radius-lg: 1.5rem;
     --radius-xl: 2rem;
 
@@ -92,5 +92,32 @@
     --border: 215 25% 20%;
     --input: 215 25% 20%;
     --ring: 217 91% 60%;
+  }
+}
+
+/* Utility Classes for Responsive Design */
+@layer utilities {
+  .text-primary {
+    color: var(--color-primary);
+  }
+  
+  .text-primary-hover:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  
+  .border-primary {
+    border-color: var(--color-primary);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-card-hover:hover {
+    box-shadow: var(--shadow-card-hover);
   }
 }

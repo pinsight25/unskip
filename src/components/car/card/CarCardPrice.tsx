@@ -15,14 +15,16 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between mb-3">
-      <p className="text-xl font-bold text-orange-500">
+    <div className="flex items-center justify-between">
+      <p className="text-2xl font-bold text-primary">
         {formatPrice(car.price)}
       </p>
       {car.isRentAvailable && car.rentPrice && (
         <div className="text-right">
-          <p className="text-xs text-gray-500 font-medium">Rent Available</p>
-          <p className="text-sm font-semibold text-green-600">₹{car.rentPrice.daily.toLocaleString('en-IN')}/day</p>
+          <p className="label-text">Rent Available</p>
+          <p className="small-text font-semibold text-green-600">
+            ₹{car.rentPrice.daily.toLocaleString('en-IN')}/day
+          </p>
         </div>
       )}
     </div>

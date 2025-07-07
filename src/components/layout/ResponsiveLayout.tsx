@@ -13,20 +13,20 @@ interface ResponsiveLayoutProps {
 
 const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: ResponsiveLayoutProps) => {
   return (
-    <div className="app-container min-h-screen flex flex-col">
+    <div className="app-container min-h-screen flex flex-col prevent-horizontal-scroll">
       {/* Header */}
       <Header />
       
-      {/* Main content with proper spacing and bottom padding for mobile navigation */}
-      <main className={`flex-1 pt-16 lg:pt-20 pb-20 md:pb-8 ${fullHeight ? 'min-h-screen' : ''}`}>
-        <div className="w-full max-w-6xl mx-auto">
+      {/* Main content with proper spacing for fixed header */}
+      <main className={`flex-1 pt-16 lg:pt-20 pb-20 lg:pb-8 ${fullHeight ? 'min-h-screen' : ''}`}>
+        <div className="w-full max-w-7xl mx-auto prevent-horizontal-scroll">
           {children}
         </div>
       </main>
       
       {/* Footer - only on homepage and desktop */}
       {showFooter && (
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <Footer />
         </div>
       )}
@@ -35,7 +35,7 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       <WhatsAppWidget />
       
       {/* Bottom Navigation - Mobile Only */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <BottomNavigation />
       </div>
     </div>

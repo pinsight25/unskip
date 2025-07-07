@@ -10,28 +10,27 @@ interface CarCardActionsProps {
 
 const CarCardActions = ({ onMakeOffer, onChat, offerMade }: CarCardActionsProps) => {
   return (
-    <div className="space-y-3 mt-4">
+    <div className="space-y-3">
       <Button 
         size="sm"
-        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-10 text-sm shadow-sm"
+        className="w-full"
         onClick={onMakeOffer}
       >
         Make an Offer
       </Button>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 grid-gap">
         <Button 
           variant="outline" 
           size="sm"
-          className="font-medium hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-300 h-9 text-sm"
           onClick={onChat}
         >
-          <MessageCircle className="h-3 w-3 mr-1" />
+          <MessageCircle className="h-4 w-4 mr-1" />
           Chat
         </Button>
         <Button 
           variant="outline" 
           size="sm"
-          className="font-medium hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 h-9 text-sm"
+          className="hover:bg-green-500 hover:text-white hover:border-green-500"
         >
           Test Drive
         </Button>

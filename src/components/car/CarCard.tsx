@@ -62,30 +62,36 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
 
   return (
     <>
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white border border-gray-200 overflow-hidden w-full max-w-[350px] mx-auto">
-        <CardContent className="p-0">
+      <Card className="group cards-equal-height overflow-hidden w-full max-w-[350px] mx-auto">
+        <CardContent className="p-0 flex flex-col h-full">
           <CarCardImage car={car} isSaved={isSaved} onSave={handleSave} />
 
-          <div className="p-4 space-y-4">
+          <div className="card-padding flex-1 flex flex-col">
             {/* Title & Price */}
-            <div className="space-y-3">
+            <div className="element-spacing">
               <Link to={`/car/${car.id}`} className="block">
-                <h3 className="font-semibold text-lg leading-tight hover:text-orange-500 transition-colors line-clamp-2 text-gray-900">
+                <h3 className="heading-4 hover:text-primary transition-colors line-clamp-2 mb-2">
                   {car.title}
                 </h3>
               </Link>
               <CarCardPrice car={car} />
             </div>
 
-            <CarCardSpecs car={car} />
+            <div className="element-spacing">
+              <CarCardSpecs car={car} />
+            </div>
 
-            <CarCardSeller seller={car.seller} />
+            <div className="element-spacing">
+              <CarCardSeller seller={car.seller} />
+            </div>
 
-            <CarCardActions 
-              onMakeOffer={handleMakeOffer}
-              onChat={handleChat}
-              offerMade={offerMade}
-            />
+            <div className="mt-auto">
+              <CarCardActions 
+                onMakeOffer={handleMakeOffer}
+                onChat={handleChat}
+                offerMade={offerMade}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -9,32 +9,32 @@ interface CarCardSpecsProps {
 const CarCardSpecs = ({ car }: CarCardSpecsProps) => {
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
-          <Calendar className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
-          <span className="font-medium text-xs">{car.year}</span>
+      <div className="grid grid-cols-2 grid-gap">
+        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+          <Calendar className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+          <span className="small-text font-medium">{car.year}</span>
         </div>
-        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
-          <Gauge className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
-          <span className="font-medium text-xs">{(car.mileage/1000).toFixed(0)}k km</span>
+        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+          <Gauge className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+          <span className="small-text font-medium">{(car.mileage/1000).toFixed(0)}k km</span>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
-          <Fuel className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
-          <span className="font-medium text-xs">{car.fuelType}</span>
+      <div className="grid grid-cols-2 grid-gap">
+        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+          <Fuel className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+          <span className="small-text font-medium">{car.fuelType}</span>
         </div>
-        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
-          <Settings className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
-          <span className="font-medium text-xs">{car.transmission}</span>
+        <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+          <Settings className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+          <span className="small-text font-medium">{car.transmission}</span>
         </div>
       </div>
 
       {/* Location */}
-      <div className="flex items-center text-gray-600 bg-orange-50 px-3 py-2 rounded-md">
-        <MapPin className="h-3 w-3 mr-2 text-orange-500 flex-shrink-0" />
-        <span className="font-medium text-xs">{car.location}</span>
+      <div className="flex items-center text-gray-600 bg-orange-50 px-3 py-2 rounded-lg">
+        <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+        <span className="small-text font-medium">{car.location}</span>
       </div>
     </div>
   );

@@ -1,136 +1,320 @@
 
-/* CarVibe Design System - Consistent Variables and Utilities */
+/* CarVibe Design System - Industry Standard Variables and Utilities */
 
 :root {
-  /* Spacing Scale */
-  --spacing-xs: 0.25rem;    /* 4px */
-  --spacing-sm: 0.5rem;     /* 8px */
-  --spacing-md: 1rem;       /* 16px */
-  --spacing-lg: 1.5rem;     /* 24px */
-  --spacing-xl: 2rem;       /* 32px */
-  --spacing-2xl: 3rem;      /* 48px */
+  /* Typography Scale - Industry Standard */
+  --text-xs: 0.75rem;       /* 12px - Small labels */
+  --text-sm: 0.8125rem;     /* 13px - Small text */
+  --text-base: 1rem;        /* 16px - Body text desktop */
+  --text-mobile: 0.9375rem; /* 15px - Body text mobile */
+  --text-lg: 1.125rem;      /* 18px - H4 */
+  --text-xl: 1.25rem;       /* 20px - H3 min */
+  --text-2xl: 1.375rem;     /* 22px - H3 max */
+  --text-3xl: 1.5rem;       /* 24px - H2 min */
+  --text-4xl: 1.75rem;      /* 28px - H2 max */
+  --text-5xl: 2rem;         /* 32px - H1 min */
+  --text-6xl: 2.5rem;       /* 40px - H1 max */
   
-  /* Typography Scale */
-  --text-xs: 0.75rem;       /* 12px */
-  --text-sm: 0.875rem;      /* 14px */
-  --text-base: 1rem;        /* 16px */
-  --text-lg: 1.125rem;      /* 18px */
-  --text-xl: 1.25rem;       /* 20px */
-  --text-2xl: 1.5rem;       /* 24px */
-  --text-3xl: 1.875rem;     /* 30px */
-  --text-4xl: 2.25rem;      /* 36px */
+  /* Line Heights */
+  --leading-tight: 1.2;     /* Headings */
+  --leading-snug: 1.3;      /* Headings alternate */
+  --leading-normal: 1.5;    /* Body text */
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  
+  /* Spacing Scale - Consistent spacing system */
+  --spacing-xs: 0.5rem;     /* 8px */
+  --spacing-sm: 1rem;       /* 16px */
+  --spacing-md: 1.5rem;     /* 24px */
+  --spacing-lg: 2rem;       /* 32px */
+  --spacing-xl: 3rem;       /* 48px */
+  --spacing-2xl: 4rem;      /* 64px */
   
   /* Border Radius Scale */
-  --radius-sm: 0.25rem;     /* 4px */
-  --radius-md: 0.5rem;      /* 8px */
-  --radius-lg: 0.75rem;     /* 12px */
-  --radius-xl: 1rem;        /* 16px */
+  --radius-sm: 0.5rem;      /* 8px - Buttons */
+  --radius-md: 0.75rem;     /* 12px - Cards */
+  --radius-lg: 1rem;        /* 16px - Large elements */
   
-  /* Shadow Scale */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  /* Standard Card Shadow */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
   
-  /* Transition Speeds */
-  --transition-fast: 150ms;
-  --transition-normal: 300ms;
-  --transition-slow: 500ms;
+  /* Brand Colors - Standardized */
+  --color-primary: #FF6B35;      /* Brand Orange */
+  --color-primary-hover: #E55A2B; /* Darker orange for hover */
+  --color-primary-light: #FF8B5A; /* Lighter orange */
   
-  /* Z-Index Scale */
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
+  /* Text Colors - Consistent grays */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-text-muted: #CCCCCC;
+  
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  
+  /* Button Heights */
+  --button-height-mobile: 2.75rem;  /* 44px - Mobile touch target */
+  --button-height-desktop: 3rem;    /* 48px - Desktop */
 }
 
-/* Consistent Button Styles */
-.btn-primary {
-  @apply bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold shadow-sm transition-all duration-300;
-}
-
-.btn-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium transition-all duration-300;
-}
-
-.btn-outline {
-  @apply border border-gray-300 hover:border-orange-500 hover:text-orange-500 text-gray-700 font-medium transition-all duration-300;
-}
-
-/* Consistent Card Styles */
-.card-base {
-  @apply bg-white border border-gray-200 rounded-lg shadow-sm;
-}
-
-.card-hover {
-  @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
-}
-
-/* Consistent Typography */
+/* Typography Classes */
 .heading-1 {
-  @apply text-3xl md:text-4xl font-bold text-gray-900 leading-tight;
+  font-size: clamp(var(--text-5xl), 4vw, var(--text-6xl));
+  line-height: var(--leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
 }
 
 .heading-2 {
-  @apply text-2xl md:text-3xl font-bold text-gray-900 leading-tight;
+  font-size: clamp(var(--text-3xl), 3vw, var(--text-4xl));
+  line-height: var(--leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
 }
 
 .heading-3 {
-  @apply text-xl md:text-2xl font-semibold text-gray-900 leading-tight;
+  font-size: clamp(var(--text-xl), 2.5vw, var(--text-2xl));
+  line-height: var(--leading-snug);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.heading-4 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
 }
 
 .body-text {
-  @apply text-base text-gray-700 leading-relaxed;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+}
+
+.body-text-mobile {
+  font-size: var(--text-mobile);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
 }
 
 .small-text {
-  @apply text-sm text-gray-600;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  color: var(--color-text-secondary);
 }
 
-/* Consistent Spacing Utilities */
-.spacing-section {
-  @apply py-8 md:py-12;
+.label-text {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
 }
 
-.spacing-container {
-  @apply px-4 lg:px-6;
+/* Standardized Card Styles */
+.card-standard {
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
 }
 
-.spacing-content {
-  @apply space-y-6;
+.card-standard:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
-/* Consistent Badge Styles */
-.badge-primary {
-  @apply bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium;
+.card-padding-mobile {
+  padding: var(--spacing-sm);
 }
 
-.badge-success {
-  @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+.card-padding-desktop {
+  padding: var(--spacing-md);
 }
 
-.badge-notification {
-  @apply bg-red-500 text-white rounded-full flex items-center justify-center font-bold border border-white;
+.card-padding {
+  padding: var(--spacing-sm);
 }
 
-/* Responsive Breakpoint Utilities */
-.container-responsive {
-  @apply w-full max-w-7xl mx-auto px-4 lg:px-6;
+@media (min-width: 1024px) {
+  .card-padding {
+    padding: var(--spacing-md);
+  }
 }
 
-.grid-responsive {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+/* Standardized Button Styles */
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  height: var(--button-height-mobile);
+  padding: 0 var(--spacing-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* Touch Target Standards */
-.touch-target {
-  @apply min-h-[44px] min-w-[44px];
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-/* Focus States */
-.focus-visible {
-  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2;
+.btn-secondary {
+  background: white;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  height: var(--button-height-mobile);
+  padding: 0 var(--spacing-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+@media (min-width: 1024px) {
+  .btn-primary,
+  .btn-secondary {
+    height: var(--button-height-desktop);
+  }
+}
+
+/* Spacing Utilities */
+.section-spacing {
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+@media (min-width: 1024px) {
+  .section-spacing {
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+}
+
+.component-spacing {
+  margin-bottom: var(--spacing-md);
+}
+
+@media (min-width: 1024px) {
+  .component-spacing {
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+.element-spacing {
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Grid Utilities */
+.grid-gap-mobile {
+  gap: var(--spacing-sm);
+}
+
+.grid-gap-desktop {
+  gap: var(--spacing-md);
+}
+
+.grid-gap {
+  gap: var(--spacing-sm);
+}
+
+@media (min-width: 1024px) {
+  .grid-gap {
+    gap: var(--spacing-md);
+  }
+}
+
+/* Safe Area and Container */
+.container-safe {
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
+}
+
+@media (min-width: 1024px) {
+  .container-safe {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+/* Equal Height Cards */
+.cards-equal-height {
+  display: grid;
+  align-items: stretch;
+}
+
+.cards-equal-height > * {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Aspect Ratio Utilities */
+.aspect-ratio-16-9 {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.aspect-ratio-4-3 {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.aspect-ratio-square {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* Image Utilities */
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--color-error);
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  z-index: 10;
 }
