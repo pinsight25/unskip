@@ -77,7 +77,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-y-auto">
+    <div className="bg-gray-50">
       <HomeHeader
         currentFilters={currentFilters}
         onFilterChange={handleFilterChange}
@@ -89,7 +89,7 @@ const Home = () => {
         resultCount={resultCount}
       />
 
-      <div className="overflow-y-auto">
+      <div>
         {isSearching ? (
           <SearchResultsView
             results={results}

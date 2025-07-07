@@ -13,11 +13,11 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
       {/* Main content with responsive header spacing */}
-      <main className={`flex-1 responsive-header-spacing ${isMobile ? 'pb-24' : 'pb-8'}`}>
+      <main className={`responsive-header-spacing ${isMobile ? 'pb-24' : 'pb-8'}`}>
         {children}
       </main>
       

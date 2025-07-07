@@ -261,3 +261,26 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }
+
+/* Ensure proper scrolling for all pages */
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Fix any potential height issues */
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Prevent any overflow issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Fix for any full-height containers that might prevent scrolling */
+.container, .section, .page {
+  max-width: 100%;
+  overflow-x: hidden;
+}
