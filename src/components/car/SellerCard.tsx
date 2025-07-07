@@ -48,7 +48,7 @@ const SellerCard = ({ seller }: SellerCardProps) => {
                 ))}
               </div>
               <span className="text-sm text-gray-600">
-                {seller.rating} • {seller.totalSales} sales
+                {seller.rating} rating • {seller.totalSales} sales
               </span>
             </div>
             

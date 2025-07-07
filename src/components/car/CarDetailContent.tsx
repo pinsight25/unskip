@@ -31,7 +31,7 @@ const CarDetailContent = ({
   };
 
   return (
-    <div className="desktop-page-container pb-32 md:pb-6">
+    <div className="max-w-7xl mx-auto px-4 pb-32 md:pb-6">
       {/* Back Navigation */}
       <div className="mb-4 md:mb-6">
         <Button 
@@ -44,17 +44,20 @@ const CarDetailContent = ({
         </Button>
       </div>
 
-      <CarImageGallery
-        images={car.images}
-        title={car.title}
-        featured={car.featured}
-        verified={car.verified}
-      />
+      {/* Desktop 2-column layout, Mobile stacked */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column - Image Gallery */}
+        <div className="lg:sticky lg:top-4 lg:self-start">
+          <CarImageGallery
+            images={car.images}
+            title={car.title}
+            featured={car.featured}
+            verified={car.verified}
+          />
+        </div>
 
-      {/* Car Details */}
-      <div className="grid grid-cols-1 md:grid-cols-2 grid-gap-standard desktop-content-spacing">
-        {/* Left Column - Car Overview */}
-        <div>
+        {/* Right Column - Car Details */}
+        <div className="space-y-6">
           <CarOverview
             title={car.title}
             price={car.price}
@@ -69,14 +72,10 @@ const CarDetailContent = ({
             location={car.location}
             seller={car.seller}
           />
-        </div>
 
-        {/* Right Column - Seller & Actions */}
-        <div>
           <SellerCard seller={car.seller} />
 
-          {/* Actions Section with extra bottom padding on mobile */}
-          <div className="mb-8 md:mb-0">
+          <div className="lg:sticky lg:bottom-4">
             <CarActions
               offerStatus={offerStatus}
               onMakeOffer={onMakeOffer}

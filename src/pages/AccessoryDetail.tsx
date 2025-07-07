@@ -32,7 +32,7 @@ const AccessoryDetail = () => {
   if (!accessory) {
     return (
       <ResponsiveLayout>
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Accessory Not Found</h2>
             <p className="text-gray-600">Sorry, the accessory you are looking for could not be found.</p>
@@ -60,17 +60,17 @@ const AccessoryDetail = () => {
     });
   };
 
-  const handleGetQuote = () => {
+  const handleChat = () => {
     toast({
-      title: "Quote Request Sent!",
-      description: "The seller will contact you with pricing details",
+      title: "Starting Chat",
+      description: `Connecting you with ${accessory.seller.shopName}`,
     });
   };
 
-  const handleChat = () => {
+  const handleCall = () => {
     toast({
-      title: "Chat with seller",
-      description: "Starting conversation with the seller",
+      title: "Calling Seller",
+      description: `Calling ${accessory.seller.shopName}`,
     });
   };
 
@@ -92,7 +92,7 @@ const AccessoryDetail = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="container mx-auto px-4 py-6 pb-32 md:pb-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
           <Link to="/accessories" className="hover:text-primary">Accessories</Link>
@@ -247,23 +247,22 @@ const AccessoryDetail = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <Button 
-                className="w-full bg-primary hover:bg-primary/90 text-white font-medium text-lg py-6"
-                onClick={handleGetQuote}
+                variant="default" 
+                className="bg-primary hover:bg-primary/90 text-white font-medium"
+                onClick={handleChat}
               >
-                Get Quote
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Chat
               </Button>
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" onClick={handleChat}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Chat
-                </Button>
-                <Button variant="outline">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call
-                </Button>
-              </div>
+              <Button 
+                variant="outline"
+                onClick={handleCall}
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call
+              </Button>
             </div>
           </div>
         </div>
@@ -297,9 +296,6 @@ const AccessoryDetail = () => {
                   </div>
                 </div>
               </div>
-              <Button variant="outline">
-                Visit Store
-              </Button>
             </div>
           </CardContent>
         </Card>
