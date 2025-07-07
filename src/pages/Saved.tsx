@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
@@ -8,14 +7,14 @@ import { mockCars } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 import OfferModal from '@/components/modals/OfferModal';
 import MobileOfferModal from '@/components/modals/MobileOfferModal';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Saved = () => {
   const [savedCarIds, setSavedCarIds] = useState(['1', '2', '3', '4']); // Mock saved car IDs
   const [selectedCar, setSelectedCar] = useState(null);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const { toast } = useToast();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   const savedCars = mockCars.filter(car => savedCarIds.includes(car.id));
 
