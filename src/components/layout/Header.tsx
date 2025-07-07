@@ -67,14 +67,14 @@ const Header = () => {
             {/* Desktop Actions - Always rendered but conditionally shown */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Chat Icon - Only visible on mobile */}
+            {/* Mobile Chat Icon - Only visible on mobile with improved badge positioning */}
             <Link
               to="/chats"
               className="md:hidden p-2 h-9 w-9 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target relative"
             >
               <MessageCircle className="h-5 w-5 text-gray-700" />
               {unreadChats > 0 && (
-                <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                <Badge className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] px-1 py-0.5 rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold border-2 border-white shadow-sm leading-none">
                   {unreadChats}
                 </Badge>
               )}

@@ -82,7 +82,7 @@ const HomeResults = ({
   };
 
   return (
-    <section className="py-8 bg-gray-50 min-h-screen">
+    <section className="pt-6 pb-8 bg-gray-50 min-h-screen">
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
         
         {/* Mobile Pull to Refresh */}
@@ -102,8 +102,8 @@ const HomeResults = ({
           onFilterChange={onFilterChange}
         />
 
-        {/* Mobile Results Counter */}
-        <div className="md:hidden px-4 mb-6">
+        {/* Mobile Results Counter with improved spacing */}
+        <div className="md:hidden px-4 mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
@@ -124,21 +124,23 @@ const HomeResults = ({
           </div>
         </div>
 
-        {/* Results Content */}
-        {filteredCars.length > 0 ? (
-          <ResultsGrid
-            cars={filteredCars}
-            savedCars={savedCars}
-            isMobile={isMobile}
-            onSaveCar={onSaveCar}
-            onMakeOffer={onMakeOffer}
-            onChat={handleChatClick}
-            onTestDrive={handleTestDriveClick}
-            getOfferStatus={getOfferStatus}
-          />
-        ) : (
-          <EmptyResults onClearFilters={handleClearFilters} />
-        )}
+        {/* Results Content with proper bottom padding */}
+        <div className="pb-24 md:pb-8">
+          {filteredCars.length > 0 ? (
+            <ResultsGrid
+              cars={filteredCars}
+              savedCars={savedCars}
+              isMobile={isMobile}
+              onSaveCar={onSaveCar}
+              onMakeOffer={onMakeOffer}
+              onChat={handleChatClick}
+              onTestDrive={handleTestDriveClick}
+              getOfferStatus={getOfferStatus}
+            />
+          ) : (
+            <EmptyResults onClearFilters={handleClearFilters} />
+          )}
+        </div>
       </div>
     </section>
   );

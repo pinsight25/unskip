@@ -15,7 +15,7 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between mb-3">
       <p className="text-xl font-bold text-orange-500">
         {formatPrice(car.price)}
       </p>

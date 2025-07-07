@@ -36,7 +36,7 @@ const MobileCarCard = ({
   };
 
   return (
-    <Card className="mb-4 mx-4 overflow-hidden shadow-sm border border-gray-200 bg-white cursor-pointer" onClick={handleCardClick}>
+    <Card className="mb-6 mx-4 overflow-hidden shadow-sm border border-gray-200 bg-white cursor-pointer" onClick={handleCardClick}>
       <MobileCarImage
         images={car.images}
         title={car.title}
@@ -46,11 +46,11 @@ const MobileCarCard = ({
         onSave={handleSave}
       />
 
-      <div className="p-4">
-        {/* Title and Price */}
-        <div className="flex justify-between items-start mb-2">
+      <div className="p-4 space-y-4">
+        {/* Title and Price with consistent alignment */}
+        <div className="flex justify-between items-start">
           <div className="flex-1">
-            <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 mb-2">
               {car.title}
             </h3>
             <MobileCarPrice price={car.price} rentalRate={car.rentalRate} />

@@ -25,7 +25,7 @@ const BottomNavigation = () => {
             const isCenter = index === 2; // Sell button is in the center
             
             if (isCenter) {
-              // Floating Action Button for Sell
+              // Enhanced Floating Action Button for Sell with orange brand colors
               return (
                 <Link
                   key={item.path}
@@ -33,13 +33,13 @@ const BottomNavigation = () => {
                   className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 z-10"
                 >
                   <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95">
+                    <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ring-4 ring-orange-100">
                       <Icon className="h-6 w-6 text-white" />
                     </div>
-                    {/* Subtle glow effect */}
-                    <div className="absolute inset-0 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-20 blur-lg"></div>
+                    {/* Enhanced glow effect */}
+                    <div className="absolute inset-0 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-30 blur-lg animate-pulse"></div>
                   </div>
-                  <span className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 font-medium whitespace-nowrap">
+                  <span className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs text-orange-600 font-semibold whitespace-nowrap">
                     {item.label}
                   </span>
                 </Link>

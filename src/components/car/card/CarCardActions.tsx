@@ -10,7 +10,7 @@ interface CarCardActionsProps {
 
 const CarCardActions = ({ onMakeOffer, onChat, offerMade }: CarCardActionsProps) => {
   return (
-    <div className="space-y-3 pt-2">
+    <div className="space-y-3 mt-4">
       <Button 
         size="sm"
         className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold text-white h-10 text-sm shadow-sm"

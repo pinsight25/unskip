@@ -17,8 +17,8 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false }: 
       {/* Header */}
       <Header />
       
-      {/* Main content with proper spacing */}
-      <main className={`flex-1 pt-14 pb-16 md:pb-8 ${fullHeight ? 'min-h-screen' : ''}`}>
+      {/* Main content with proper spacing and bottom padding for mobile navigation */}
+      <main className={`flex-1 pt-14 pb-20 md:pb-8 ${fullHeight ? 'min-h-screen' : ''}`}>
         <div className="w-full max-w-6xl mx-auto">
           {children}
         </div>

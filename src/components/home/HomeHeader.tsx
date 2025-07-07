@@ -19,17 +19,23 @@ interface HomeHeaderProps {
 const HomeHeader = ({ currentFilters, onFilterChange, onTypeChange }: HomeHeaderProps) => {
   return (
     <div className="bg-white">
-      {/* Search Section - No padding issues */}
-      <SearchFilters onFilterChange={onFilterChange} />
+      {/* Search Section with improved spacing */}
+      <div className="pb-6">
+        <SearchFilters onFilterChange={onFilterChange} />
+      </div>
       
-      {/* Hero Banner - Proper spacing */}
-      <HeroBanner />
+      {/* Hero Banner with proper spacing */}
+      <div className="pb-8">
+        <HeroBanner />
+      </div>
       
-      {/* Filter Tabs - Fixed positioning */}
-      <FilterTabs 
-        activeType={currentFilters.type}
-        onTypeChange={onTypeChange}
-      />
+      {/* Filter Tabs with consistent spacing */}
+      <div className="pb-5">
+        <FilterTabs 
+          activeType={currentFilters.type}
+          onTypeChange={onTypeChange}
+        />
+      </div>
     </div>
   );
 };

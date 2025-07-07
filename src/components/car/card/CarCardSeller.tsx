@@ -8,7 +8,7 @@ interface CarCardSellerProps {
 
 const CarCardSeller = ({ seller }: CarCardSellerProps) => {
   return (
-    <div className="bg-gray-50 p-4 rounded-md space-y-2">
+    <div className="bg-gray-50 p-4 rounded-md space-y-2 mb-4">
       <div className="flex items-center space-x-3">
         <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
           <span className="text-xs font-bold text-orange-600">

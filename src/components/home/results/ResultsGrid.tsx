@@ -27,7 +27,7 @@ const ResultsGrid = ({
 }: ResultsGridProps) => {
   return (
     <>
-      <div className="md:grid md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 pb-20 md:pb-8">
+      <div className="md:grid md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
         {cars.map((car) => (
           isMobile ? (
             <MobileCarCard 
@@ -51,9 +51,9 @@ const ResultsGrid = ({
         ))}
       </div>
 
-      {/* Load More - Desktop */}
+      {/* Load More - Desktop with proper spacing */}
       {cars.length > 0 && !isMobile && (
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 pb-8">
           <Button variant="outline" size="default" className="h-12 px-12 text-[15px] font-medium">
             Load More Cars
           </Button>
