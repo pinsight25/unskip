@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Car } from '@/types/car';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,10 +31,17 @@ const MobileCarCard = ({
   return (
     <Card className="mx-4 mb-4 overflow-hidden">
       <CardContent className="p-0">
-        <MobileCarImage car={car} isSaved={isSaved} onSave={onSave} />
+        <MobileCarImage 
+          images={car.images}
+          title={car.title}
+          featured={car.featured}
+          verified={car.verified}
+          isSaved={isSaved} 
+          onSave={() => onSave(car.id)} 
+        />
         
         <div className="p-4">
-          <MobileCarBadges car={car} />
+          <MobileCarBadges featured={car.featured} verified={car.verified} />
           
           <Link to={`/car/${car.id}`}>
             <h3 className="font-semibold text-lg mb-2 line-clamp-2">
@@ -47,13 +55,20 @@ const MobileCarCard = ({
             isRentAvailable={car.isRentAvailable}
           />
 
-          <MobileCarDetails car={car} />
+          <MobileCarDetails 
+            year={car.year}
+            transmission={car.transmission}
+            fuelType={car.fuelType}
+            mileage={car.mileage}
+            location={car.location}
+            seller={car.seller}
+          />
           
           <MobileCarActions 
             car={car}
-            onMakeOffer={onMakeOffer}
-            onChat={onChat}
-            onTestDrive={onTestDrive}
+            onMakeOffer={() => onMakeOffer(car)}
+            onChat={() => onChat(car)}
+            onTestDrive={() => onTestDrive(car)}
             offerStatus={offerStatus}
           />
         </div>
