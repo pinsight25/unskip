@@ -283,8 +283,6 @@ const Profile = () => {
         onConfirm={handleSignOut}
         title="Sign Out"
         description="Are you sure you want to sign out of your account?"
-        confirmText="Sign Out"
-        cancelText="Cancel"
       />
 
       <DeleteConfirmModal

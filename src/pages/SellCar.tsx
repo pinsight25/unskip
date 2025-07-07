@@ -316,7 +316,7 @@ const SellCar = () => {
   };
 
   return (
-    <ResponsiveLayout showFooter={false}>
+    <ResponsiveLayout>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 max-w-2xl pb-44 md:pb-8">
           {/* Progress Bar */}
