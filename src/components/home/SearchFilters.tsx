@@ -101,7 +101,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             </Button>
           </div>
 
-          {/* Popular Areas - Only show when not in search mode */}
+          {/* Popular Areas - Mobile horizontal scroll, Desktop wrapped */}
           {!hideContent && (
             <div className="space-y-2 lg:space-y-3">
               <div className="flex items-center justify-center sm:justify-start max-w-5xl mx-auto">
@@ -111,16 +111,40 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                 </span>
               </div>
               
-              {/* Fixed desktop stretching - centered flex container with max-width */}
-              <div className="max-w-5xl mx-auto">
-                <div className="flex flex-wrap gap-2 lg:gap-3 justify-center sm:justify-start pb-2">
+              {/* Mobile: Horizontal scroll container */}
+              <div className="max-w-5xl mx-auto lg:hidden">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
                   {popularLocations.map((location) => {
                     const isSelected = selectedLocation === location;
                     return (
                       <button
                         key={location}
                         onClick={() => handleLocationClick(location)}
-                        className={`flex-shrink-0 px-4 lg:px-5 py-2 lg:py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] lg:min-h-[44px] ${
+                        className={`flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] ${
+                          isSelected 
+                            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
+                            : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
+                        }`}
+                      >
+                        {location}
+                      </button>
+                    );
+                  })}
+                  {/* Extra padding at the end for better UX */}
+                  <div className="w-4 flex-shrink-0" />
+                </div>
+              </div>
+
+              {/* Desktop: Wrapped layout */}
+              <div className="max-w-5xl mx-auto hidden lg:block">
+                <div className="flex flex-wrap gap-3 justify-center sm:justify-start pb-2">
+                  {popularLocations.map((location) => {
+                    const isSelected = selectedLocation === location;
+                    return (
+                      <button
+                        key={location}
+                        onClick={() => handleLocationClick(location)}
+                        className={`flex-shrink-0 px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
                             : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
