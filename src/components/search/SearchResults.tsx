@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Car } from '@/types/car';
 import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
+import { useOfferFlow } from '@/hooks/useOfferFlow';
+import HomeModals from '@/components/home/HomeModals';
+import TestDriveModal from '@/components/modals/TestDriveModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface SearchResultsProps {
   cars: Car[];
@@ -13,6 +17,22 @@ interface SearchResultsProps {
 
 const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [savedCars, setSavedCars] = useState<string[]>([]);
+  const [offerStatuses, setOfferStatuses] = useState<Record<string, 'none' | 'pending' | 'accepted' | 'rejected'>>({});
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
+  
+  const { toast } = useToast();
+  
+  const {
+    selectedCar,
+    showOfferModal,
+    showOTPModal,
+    handleMakeOffer,
+    handleOTPSuccess,
+    handleOfferSubmit,
+    closeModals
+  } = useOfferFlow();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -20,6 +40,109 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const handleSaveCar = (carId: string) => {
+    setSavedCars(prev => 
+      prev.includes(carId) 
+        ? prev.filter(id => id !== carId)
+        : [...prev, carId]
+    );
+  };
+
+  const getOfferStatus = (carId: string): 'none' | 'pending' | 'accepted' | 'rejected' => {
+    return offerStatuses[carId] || 'none';
+  };
+
+  const handleOfferSubmitWithStatus = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    if (selectedCar) {
+      // Update offer status to pending
+      setOfferStatuses(prev => ({
+        ...prev,
+        [selectedCar.id]: 'pending'
+      }));
+      
+      // Simulate seller response after a delay
+      setTimeout(() => {
+        setOfferStatuses(prev => ({
+          ...prev,
+          [selectedCar.id]: Math.random() > 0.3 ? 'accepted' : 'rejected'
+        }));
+      }, 3000);
+    }
+    
+    handleOfferSubmit(offer);
+  };
+
+  const handleChatClick = (car: Car) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Waiting for seller response",
+        description: "Please wait for the seller to respond to your offer before chatting.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      toast({
+        title: "Chat Available",
+        description: "Your offer was accepted! You can now chat with the seller.",
+      });
+    }
+  };
+
+  const handleTestDriveClick = (car: Car) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer first to schedule a test drive.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Wait for seller response",
+        description: "Please wait for the seller to respond to your offer before scheduling a test drive.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      setTestDriveSelectedCar(car);
+      setShowTestDriveModal(true);
+    }
+    
+    if (status === 'rejected') {
+      toast({
+        title: "Offer was rejected",
+        description: "Please make a new offer before scheduling a test drive.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
+    toast({
+      title: "Test Drive Scheduled!",
+      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
+    });
+    setShowTestDriveModal(false);
+    setTestDriveSelectedCar(null);
+  };
 
   return (
     <div className="w-full">
@@ -52,12 +175,12 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
                 <MobileCarCard 
                   key={car.id} 
                   car={car} 
-                  onSave={() => {}}
-                  isSaved={false}
-                  onMakeOffer={() => {}}
-                  onChat={() => {}}
-                  onTestDrive={() => {}}
-                  offerStatus="none"
+                  onSave={() => handleSaveCar(car.id)}
+                  isSaved={savedCars.includes(car.id)}
+                  onMakeOffer={() => handleMakeOffer(car)}
+                  onChat={() => handleChatClick(car)}
+                  onTestDrive={() => handleTestDriveClick(car)}
+                  offerStatus={getOfferStatus(car.id)}
                 />
               ))}
             </div>
@@ -67,8 +190,8 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
                 <CarCard 
                   key={car.id} 
                   car={car} 
-                  onSave={() => {}}
-                  isSaved={false}
+                  onSave={() => handleSaveCar(car.id)}
+                  isSaved={savedCars.includes(car.id)}
                 />
               ))}
             </div>
@@ -80,6 +203,30 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
           <p className="text-gray-600 mb-6">Try adjusting your search criteria</p>
           <Button onClick={() => window.location.reload()}>Clear All Filters</Button>
         </div>
+      )}
+
+      {/* Modals */}
+      <HomeModals
+        selectedCar={selectedCar}
+        showOfferModal={showOfferModal}
+        showOTPModal={showOTPModal}
+        isMobile={isMobile}
+        onCloseOfferModal={closeModals}
+        onCloseOTPModal={closeModals}
+        onOTPSuccess={handleOTPSuccess}
+        onOfferSubmit={handleOfferSubmitWithStatus}
+      />
+
+      {testDriveSelectedCar && (
+        <TestDriveModal
+          isOpen={showTestDriveModal}
+          onClose={() => {
+            setShowTestDriveModal(false);
+            setTestDriveSelectedCar(null);
+          }}
+          car={testDriveSelectedCar}
+          onScheduled={handleTestDriveScheduled}
+        />
       )}
     </div>
   );

@@ -5,10 +5,16 @@ import HomeHeader from '@/components/home/HomeHeader';
 import HomeResults from '@/components/home/HomeResults';
 import HomeModals from '@/components/home/HomeModals';
 import SearchResultsView from '@/components/home/SearchResultsView';
+import TestDriveModal from '@/components/modals/TestDriveModal';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
+import { useState } from 'react';
+import { Car } from '@/types/car';
 
 const Home = () => {
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
+
   const {
     filteredCars,
     savedCars,
@@ -70,10 +76,46 @@ const Home = () => {
   };
 
   const handleTestDriveClick = (car: any) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer first to schedule a test drive.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Wait for seller response",
+        description: "Please wait for the seller to respond to your offer before scheduling a test drive.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      setTestDriveSelectedCar(car);
+      setShowTestDriveModal(true);
+    }
+    
+    if (status === 'rejected') {
+      toast({
+        title: "Offer was rejected",
+        description: "Please make a new offer before scheduling a test drive.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
     toast({
-      title: "Test Drive Request",
-      description: `Test drive request sent for ${car.title}`,
+      title: "Test Drive Scheduled!",
+      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
     });
+    setShowTestDriveModal(false);
+    setTestDriveSelectedCar(null);
   };
 
   return (
@@ -130,6 +172,18 @@ const Home = () => {
         onOTPSuccess={handleOTPSuccess}
         onOfferSubmit={handleOfferSubmit}
       />
+
+      {testDriveSelectedCar && (
+        <TestDriveModal
+          isOpen={showTestDriveModal}
+          onClose={() => {
+            setShowTestDriveModal(false);
+            setTestDriveSelectedCar(null);
+          }}
+          car={testDriveSelectedCar}
+          onScheduled={handleTestDriveScheduled}
+        />
+      )}
     </div>
   );
 };

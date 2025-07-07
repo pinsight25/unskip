@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
+import { useState } from 'react';
+import TestDriveModal from '@/components/modals/TestDriveModal';
 import ResultsHeader from './results/ResultsHeader';
 import RefreshControl from './results/RefreshControl';
 import EmptyResults from './results/EmptyResults';
@@ -41,6 +43,9 @@ const HomeResults = ({
   onFilterChange,
   getOfferStatus
 }: HomeResultsProps) => {
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
+  
   const { navigateToChat } = useChatManager();
   const { toast } = useToast();
 
@@ -70,11 +75,46 @@ const HomeResults = ({
   };
 
   const handleTestDriveClick = (car: Car) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer first to schedule a test drive.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Wait for seller response",
+        description: "Please wait for the seller to respond to your offer before scheduling a test drive.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      setTestDriveSelectedCar(car);
+      setShowTestDriveModal(true);
+    }
+    
+    if (status === 'rejected') {
+      toast({
+        title: "Offer was rejected",
+        description: "Please make a new offer before scheduling a test drive.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
     toast({
-      title: "Test Drive Request",
-      description: `Test drive request sent for ${car.title}`,
+      title: "Test Drive Scheduled!",
+      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
     });
-    console.log('Test drive requested for car:', car.id);
+    setShowTestDriveModal(false);
+    setTestDriveSelectedCar(null);
   };
 
   const handleClearFilters = () => {
@@ -142,6 +182,18 @@ const HomeResults = ({
           )}
         </div>
       </div>
+
+      {testDriveSelectedCar && (
+        <TestDriveModal
+          isOpen={showTestDriveModal}
+          onClose={() => {
+            setShowTestDriveModal(false);
+            setTestDriveSelectedCar(null);
+          }}
+          car={testDriveSelectedCar}
+          onScheduled={handleTestDriveScheduled}
+        />
+      )}
     </section>
   );
 };

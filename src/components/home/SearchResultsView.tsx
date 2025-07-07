@@ -4,6 +4,10 @@ import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { useOfferFlow } from '@/hooks/useOfferFlow';
+import HomeModals from '@/components/home/HomeModals';
+import TestDriveModal from '@/components/modals/TestDriveModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface SearchResultsViewProps {
   results: Car[];
@@ -30,6 +34,20 @@ const SearchResultsView = ({
 }: SearchResultsViewProps) => {
   const [sortBy, setSortBy] = useState('');
   const [sortedResults, setSortedResults] = useState<Car[]>(results);
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
+  
+  const { toast } = useToast();
+  
+  const {
+    selectedCar,
+    showOfferModal,
+    showOTPModal,
+    handleMakeOffer: handleOfferFlowMakeOffer,
+    handleOTPSuccess,
+    handleOfferSubmit,
+    closeModals
+  } = useOfferFlow();
 
   useEffect(() => {
     setSortedResults(results);
@@ -57,6 +75,56 @@ const SearchResultsView = ({
       }
     });
     setSortedResults(sorted);
+  };
+
+  const handleMakeOfferClick = (car: Car) => {
+    handleOfferFlowMakeOffer(car);
+    onMakeOffer(car);
+  };
+
+  const handleTestDriveClick = (car: Car) => {
+    const status = getOfferStatus(car.id);
+    
+    if (status === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer first to schedule a test drive.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (status === 'pending') {
+      toast({
+        title: "Wait for seller response",
+        description: "Please wait for the seller to respond to your offer before scheduling a test drive.",
+      });
+      return;
+    }
+    
+    if (status === 'accepted') {
+      setTestDriveSelectedCar(car);
+      setShowTestDriveModal(true);
+    }
+    
+    if (status === 'rejected') {
+      toast({
+        title: "Offer was rejected",
+        description: "Please make a new offer before scheduling a test drive.",
+        variant: "destructive",
+      });
+    }
+    
+    onTestDrive(car);
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
+    toast({
+      title: "Test Drive Scheduled!",
+      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
+    });
+    setShowTestDriveModal(false);
+    setTestDriveSelectedCar(null);
   };
 
   if (results.length === 0) {
@@ -103,9 +171,9 @@ const SearchResultsView = ({
                 car={car} 
                 onSave={onSaveCar}
                 isSaved={savedCars.includes(car.id)}
-                onMakeOffer={() => onMakeOffer(car)}
+                onMakeOffer={() => handleMakeOfferClick(car)}
                 onChat={() => onChat(car)}
-                onTestDrive={() => onTestDrive(car)}
+                onTestDrive={() => handleTestDriveClick(car)}
                 offerStatus={getOfferStatus(car.id)}
               />
             ))}
@@ -123,6 +191,30 @@ const SearchResultsView = ({
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <HomeModals
+        selectedCar={selectedCar}
+        showOfferModal={showOfferModal}
+        showOTPModal={showOTPModal}
+        isMobile={isMobile}
+        onCloseOfferModal={closeModals}
+        onCloseOTPModal={closeModals}
+        onOTPSuccess={handleOTPSuccess}
+        onOfferSubmit={handleOfferSubmit}
+      />
+
+      {testDriveSelectedCar && (
+        <TestDriveModal
+          isOpen={showTestDriveModal}
+          onClose={() => {
+            setShowTestDriveModal(false);
+            setTestDriveSelectedCar(null);
+          }}
+          car={testDriveSelectedCar}
+          onScheduled={handleTestDriveScheduled}
+        />
+      )}
     </div>
   );
 };
