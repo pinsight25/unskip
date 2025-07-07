@@ -9,7 +9,7 @@ interface HeaderActionsProps {
   unreadChats: number;
 }
 
-const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
+const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
     <div className="hidden lg:flex items-center space-x-6">
       {/* Chat Icon with Badge */}
@@ -45,4 +45,4 @@ const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps
   );
 };
 
-export default HeaderActionsDesktop;
+export default HeaderActions;
