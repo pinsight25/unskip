@@ -69,9 +69,9 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
   };
 
   return (
-    <div className="bg-white py-4 lg:py-6 border-b border-gray-100">
+    <div className="bg-white compact-section border-b border-gray-100">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
-        <div className="space-y-4 lg:space-y-6">
+        <div className="space-y-3 lg:space-y-4">
           {/* Search Bar */}
           <div className="flex gap-3 max-w-4xl mx-auto">
             <div className="flex-1 relative">
@@ -103,7 +103,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
 
           {/* Popular Areas - Only show when not in search mode */}
           {!hideContent && (
-            <div className="space-y-3 lg:space-y-4 max-w-5xl mx-auto">
+            <div className="space-y-2 lg:space-y-3 max-w-5xl mx-auto">
               <div className="flex items-center justify-center sm:justify-between">
                 <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
@@ -121,7 +121,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                       className={`flex-shrink-0 px-4 lg:px-6 py-2 lg:py-3 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] lg:min-h-[44px] ${
                         isSelected 
                           ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30 hover:shadow-md'
+                          : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white hover:shadow-md'
                       }`}
                     >
                       {location}

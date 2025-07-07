@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, User } from 'lucide-react';
+import { MessageCircle, User, Bell } from 'lucide-react';
 
 interface HeaderActionsProps {
   carsSoldToday: number;
@@ -11,8 +11,20 @@ interface HeaderActionsProps {
 
 const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="hidden lg:flex items-center space-x-8">
-      {/* Chat Icon with proper badge positioning */}
+    <div className="hidden lg:flex items-center space-x-6">
+      {/* Notification Bell with Badge */}
+      <Link to="/notifications" className="relative">
+        <Button variant="ghost" size="sm" className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center">
+          <Bell className="h-5 w-5" />
+          {unreadChats > 0 && (
+            <span className="notification-badge">
+              {unreadChats}
+            </span>
+          )}
+        </Button>
+      </Link>
+      
+      {/* Chat Icon with Badge */}
       <Link to="/chats" className="relative">
         <Button variant="ghost" size="sm" className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center">
           <MessageCircle className="h-5 w-5" />
@@ -35,7 +47,7 @@ const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps
         <span className="body-text font-medium text-gray-700">Sign In</span>
       </Link>
       
-      {/* Post Car Button */}
+      {/* Post Car Button - PRIMARY CTA */}
       <Link to="/sell">
         <Button size="default" className="font-semibold px-6 shadow-sm">
           Post Your Car

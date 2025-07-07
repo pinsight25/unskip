@@ -4,6 +4,7 @@ import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockRentCars } from '@/data/rentMockData';
 import { RentFilters } from '@/types/rent';
 import { Button } from '@/components/ui/button';
+import CTAButton from '@/components/ui/CTAButton';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
@@ -76,30 +77,30 @@ const Rent = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section - Reduced mobile padding */}
+        {/* Header Section - Ultra compact mobile */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto px-4 py-4 lg:py-8">
-            <div className="text-center mb-4 lg:mb-8">
-              <h1 className="text-2xl lg:text-4xl font-bold mb-2 lg:mb-3 text-gray-900">
+          <div className="container mx-auto px-4 page-header-ultra-compact">
+            <div className="text-center mobile-component-ultra-tight">
+              <h1 className="text-2xl lg:text-4xl font-bold mobile-element-ultra-tight text-gray-900">
                 Rent Premium Cars
               </h1>
-              <p className="text-base lg:text-lg text-gray-600 mb-4 lg:mb-6">
+              <p className="text-base lg:text-lg text-gray-600 mobile-component-ultra-tight">
                 Drive your dream car by the day, week, or month
               </p>
               
-              {/* Modern CTA Button */}
-              <Button 
-                variant="cta" 
+              {/* PRIMARY CTA Button */}
+              <CTAButton 
+                variant="primary"
                 size="lg"
-                className="mb-4 lg:mb-6 shadow-xl hover:shadow-2xl"
+                className="mobile-component-ultra-tight shadow-xl hover:shadow-2xl"
               >
                 <Plus className="h-5 w-5" />
                 List Your Car for Rent
-              </Button>
+              </CTAButton>
             </div>
 
-            {/* Search Bar - Reduced spacing */}
-            <div className="max-w-3xl mx-auto mb-4 lg:mb-6">
+            {/* Search Bar - Compact spacing */}
+            <div className="max-w-3xl mx-auto mobile-component-ultra-tight">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
@@ -111,8 +112,8 @@ const Rent = () => {
               </div>
             </div>
 
-            {/* Quick Filters - Reduced spacing */}
-            <div className="flex flex-wrap justify-center gap-2 lg:gap-3 mb-4 lg:mb-6">
+            {/* Category Filters - SECONDARY styling (white bg, orange border) */}
+            <div className="flex flex-wrap justify-center gap-2 lg:gap-3 mobile-component-ultra-tight">
               {[
                 { id: 'all', name: 'All Cars', icon: '🚗' },
                 { id: 'economy', name: 'Economy', icon: '💰' },
@@ -135,19 +136,19 @@ const Rent = () => {
           </div>
         </div>
 
-        {/* Main Content - Reduced padding */}
-        <div className="container mx-auto px-4 py-4 lg:py-8">
-          {/* Filters and Results Header - Tighter spacing */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-6 mb-4 lg:mb-8">
+        {/* Main Content - Ultra compact */}
+        <div className="container mx-auto px-4 search-results-ultra-compact">
+          {/* Results Header - Minimal spacing */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 lg:gap-4 results-to-cards">
             <div>
-              <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-1 lg:mb-2">
+              <h2 className="text-lg lg:text-xl font-bold text-gray-900 mobile-element-ultra-tight">
                 {filteredCars.length} {filteredCars.length === 1 ? 'car' : 'cars'} available for rent
               </h2>
               <p className="text-sm lg:text-base text-gray-600">Perfect cars for your next adventure</p>
             </div>
 
             <div className="flex items-center gap-3 lg:gap-4 w-full lg:w-auto">
-              {/* Mobile Filters Toggle */}
+              {/* Mobile Filters Toggle - SECONDARY */}
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -176,8 +177,8 @@ const Rent = () => {
             </div>
           </div>
 
-          {/* Desktop Filters - Reduced padding */}
-          <div className="hidden lg:block mb-6 lg:mb-8 p-4 lg:p-6 bg-gray-50 rounded-lg">
+          {/* Desktop Filters - Compact */}
+          <div className="hidden lg:block mb-4 lg:mb-6 p-4 lg:p-6 bg-gray-50 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6">
               {/* Price Range */}
               <div>
@@ -249,7 +250,7 @@ const Rent = () => {
                 </Popover>
               </div>
 
-              {/* Clear Filters */}
+              {/* Clear Filters - SECONDARY */}
               <div className="flex items-end">
                 <Button
                   variant="outline"
@@ -270,8 +271,8 @@ const Rent = () => {
             </div>
           </div>
 
-          {/* Cars Grid - Tighter spacing */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+          {/* Cars Grid - Compact spacing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-compact">
             {filteredCars.map((car) => (
               <RentCarCard key={car.id} car={car} />
             ))}
@@ -279,8 +280,8 @@ const Rent = () => {
 
           {/* Empty State */}
           {filteredCars.length === 0 && (
-            <div className="text-center py-12 lg:py-16">
-              <div className="text-6xl lg:text-8xl mb-4 lg:mb-6">🔍</div>
+            <div className="text-center py-8 lg:py-12">
+              <div className="text-4xl lg:text-6xl mb-3 lg:mb-4">🔍</div>
               <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 lg:mb-3">
                 No cars found
               </h3>

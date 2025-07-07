@@ -26,7 +26,7 @@
   --font-semibold: 600;
   --font-bold: 700;
   
-  /* Spacing Scale - Mobile-First Compact System */
+  /* Spacing Scale - Ultra Compact Mobile System */
   --spacing-xs: 0.5rem;     /* 8px */
   --spacing-sm: 1rem;       /* 16px */
   --spacing-md: 1.5rem;     /* 24px */
@@ -34,11 +34,16 @@
   --spacing-xl: 3rem;       /* 48px */
   --spacing-2xl: 4rem;      /* 64px */
   
-  /* Mobile-specific tighter spacing */
+  /* Mobile-specific ultra tight spacing */
   --spacing-mobile-xs: 0.5rem;  /* 8px */
-  --spacing-mobile-sm: 1rem;    /* 16px */
-  --spacing-mobile-md: 1.5rem;  /* 24px */
-  --spacing-mobile-lg: 2rem;    /* 32px */
+  --spacing-mobile-sm: 1rem;    /* 16px - MAX for most mobile gaps */
+  --spacing-mobile-md: 1.5rem;  /* 24px - Only for major sections */
+  --spacing-mobile-lg: 2rem;    /* 32px - Very rare, only for page sections */
+  
+  /* Search Results Ultra Compact */
+  --search-header-gap: 1rem;    /* 16px - Header to search bar */
+  --search-results-gap: 1rem;   /* 16px - Search bar to results count */
+  --results-cards-gap: 1.5rem;  /* 24px - Results count to first card */
   
   /* Border Radius Scale */
   --radius-sm: 0.5rem;      /* 8px - Buttons */
@@ -162,7 +167,7 @@
   }
 }
 
-/* Modern Button Styles */
+/* Modern Button Styles - Strategic Color Usage */
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary) 0%, #E55A2B 100%);
   color: white;
@@ -262,90 +267,101 @@
   }
 }
 
-/* Mobile-First Spacing Utilities */
-.mobile-section-spacing {
-  margin-top: var(--spacing-mobile-md);
-  margin-bottom: var(--spacing-mobile-md);
-}
-
-@media (min-width: 1024px) {
-  .mobile-section-spacing {
-    margin-top: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-  }
-}
-
-.mobile-component-spacing {
+/* Ultra-Compact Mobile Spacing Utilities */
+.mobile-section-ultra-tight {
+  margin-top: var(--spacing-mobile-sm);
   margin-bottom: var(--spacing-mobile-sm);
 }
 
+.mobile-component-ultra-tight {
+  margin-bottom: var(--spacing-mobile-xs);
+}
+
+.mobile-element-ultra-tight {
+  margin-bottom: 0.25rem; /* 4px - Ultra tight */
+}
+
+/* Search Results Ultra Compact Layout */
+.search-results-ultra-compact {
+  padding-top: var(--search-header-gap);
+}
+
+.search-header-to-bar {
+  margin-bottom: var(--search-header-gap);
+}
+
+.search-bar-to-results {
+  margin-bottom: var(--search-results-gap);
+}
+
+.results-to-cards {
+  margin-bottom: var(--results-cards-gap);
+}
+
 @media (min-width: 1024px) {
-  .mobile-component-spacing {
+  .search-results-ultra-compact {
+    padding-top: var(--spacing-md);
+  }
+  
+  .search-header-to-bar {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .search-bar-to-results {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .results-to-cards {
     margin-bottom: var(--spacing-lg);
   }
 }
 
-.mobile-element-spacing {
-  margin-bottom: var(--spacing-mobile-xs);
+/* Page Header Ultra Compact */
+.page-header-ultra-compact {
+  padding-top: var(--spacing-mobile-sm);
+  padding-bottom: var(--spacing-mobile-xs);
 }
 
-/* Compact Mobile Header Spacing */
-.mobile-header-tight {
+@media (min-width: 1024px) {
+  .page-header-ultra-compact {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+  }
+}
+
+/* Remove Large Empty Spaces */
+.no-large-gaps {
+  margin: 0;
+  padding: 0;
+}
+
+.compact-section {
   padding-top: var(--spacing-mobile-sm);
   padding-bottom: var(--spacing-mobile-sm);
 }
 
 @media (min-width: 1024px) {
-  .mobile-header-tight {
-    padding-top: var(--spacing-lg);
-    padding-bottom: var(--spacing-lg);
-  }
-}
-
-.mobile-title-spacing {
-  margin-bottom: var(--spacing-mobile-xs);
-}
-
-@media (min-width: 1024px) {
-  .mobile-title-spacing {
-    margin-bottom: var(--spacing-sm);
-  }
-}
-
-/* Search Results Compact Layout */
-.search-results-compact {
-  padding-top: var(--spacing-mobile-sm);
-}
-
-.search-results-header {
-  margin-bottom: var(--spacing-mobile-sm);
-}
-
-@media (min-width: 1024px) {
-  .search-results-compact {
+  .compact-section {
     padding-top: var(--spacing-md);
-  }
-  
-  .search-results-header {
-    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
   }
 }
 
 /* Grid Utilities */
-.grid-gap-mobile {
-  gap: var(--spacing-mobile-sm);
+.grid-gap-ultra-compact {
+  gap: var(--spacing-mobile-xs);
 }
 
-.grid-gap-desktop {
-  gap: var(--spacing-md);
-}
-
-.grid-gap {
+.grid-gap-compact {
   gap: var(--spacing-mobile-sm);
 }
 
 @media (min-width: 1024px) {
-  .grid-gap {
+  .grid-gap-ultra-compact {
+    gap: var(--spacing-sm);
+  }
+  
+  .grid-gap-compact {
     gap: var(--spacing-md);
   }
 }
