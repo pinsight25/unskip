@@ -37,18 +37,18 @@ const AccessoryHeader = ({ filters, onSearchChange, onCategoryFilter }: Accessor
           </div>
         </div>
 
-        {/* Search Bar - Fixed container width */}
+        {/* Search Bar - Fixed container width with overflow control */}
         <div className="max-w-4xl mx-auto desktop-content-spacing">
-          <div className="relative">
+          <div className="relative overflow-hidden rounded-lg">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
             <Input
               placeholder="Search accessories by name, brand, or car model..."
-              className="pl-12 pr-4 h-16 md:h-20 text-base md:text-lg border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md w-full"
+              className="pl-12 pr-20 md:pr-24 h-16 md:h-20 text-base md:text-lg border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-colors duration-200 hover:shadow-md w-full focus:outline-none focus:ring-0 focus:ring-offset-0"
               value={filters.search}
               onChange={(e) => onSearchChange(e.target.value)}
             />
             <Button
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 md:h-16 px-6 md:px-8"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 md:h-16 px-6 md:px-8 flex-shrink-0"
               onClick={() => {}}
             >
               Search
