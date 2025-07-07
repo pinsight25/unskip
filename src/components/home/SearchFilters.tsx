@@ -6,6 +6,8 @@ import { Search, MapPin, X } from 'lucide-react';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
+  onSearch?: (query: string) => void;
+  hideContent?: boolean;
 }
 
 interface SearchFilters {
@@ -15,49 +17,62 @@ interface SearchFilters {
   location: string;
 }
 
-const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
+const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   
   const popularLocations = ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'ECR', 'Tambaram', 'Chromepet'];
 
   const handleSearch = () => {
-    onFilterChange({
-      query: searchQuery,
-      type: 'all',
-      priceRange: [0, 5000000],
-      location: selectedLocation
-    });
+    if (onSearch) {
+      onSearch(searchQuery);
+    } else {
+      onFilterChange({
+        query: searchQuery,
+        type: 'all',
+        priceRange: [0, 5000000],
+        location: selectedLocation
+      });
+    }
   };
 
   const handleLocationClick = (location: string) => {
     const newLocation = selectedLocation === location ? '' : location;
     setSelectedLocation(newLocation);
     setSearchQuery(newLocation);
-    onFilterChange({
-      query: newLocation,
-      type: 'all',
-      priceRange: [0, 5000000],
-      location: newLocation
-    });
+    
+    if (onSearch) {
+      onSearch(newLocation);
+    } else {
+      onFilterChange({
+        query: newLocation,
+        type: 'all',
+        priceRange: [0, 5000000],
+        location: newLocation
+      });
+    }
   };
 
   const clearSearch = () => {
     setSearchQuery('');
     setSelectedLocation('');
-    onFilterChange({
-      query: '',
-      type: 'all',
-      priceRange: [0, 5000000],
-      location: ''
-    });
+    if (onSearch) {
+      onSearch('');
+    } else {
+      onFilterChange({
+        query: '',
+        type: 'all',
+        priceRange: [0, 5000000],
+        location: ''
+      });
+    }
   };
 
   return (
     <div className="bg-white py-6 lg:py-8 border-b border-gray-100">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
         <div className="space-y-6">
-          {/* Search Bar with integrated clear button */}
+          {/* Search Bar */}
           <div className="flex gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -71,7 +86,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
               {searchQuery && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-gray-600 transition-colors bg-gray-100 rounded-full flex items-center justify-center"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -86,49 +101,49 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
             </Button>
           </div>
 
-          {/* Popular Areas */}
-          <div className="space-y-4 max-w-5xl mx-auto">
-            <div className="flex items-center justify-center sm:justify-between">
-              <span className="text-base text-gray-700 font-semibold flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                Popular Areas in Chennai
-              </span>
-            </div>
-            
-            {/* Responsive horizontal scrollable pills */}
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {popularLocations.map((location) => {
-                const isSelected = selectedLocation === location;
-                return (
-                  <button
-                    key={location}
-                    onClick={() => handleLocationClick(location)}
-                    className={`flex-shrink-0 px-6 py-3 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
-                      isSelected 
-                        ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30 hover:shadow-md'
-                    }`}
-                  >
-                    {location}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Selected location indicator */}
-            {selectedLocation && (
-              <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-6 py-4 rounded-lg border border-primary/20 max-w-lg mx-auto sm:mx-0">
-                <MapPin className="h-5 w-5" />
-                <span>Showing cars in: <strong className="text-base">{selectedLocation}</strong></span>
-                <button
-                  onClick={clearSearch}
-                  className="ml-auto text-primary hover:text-primary/80"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+          {/* Popular Areas - Only show when not in search mode */}
+          {!hideContent && (
+            <div className="space-y-4 max-w-5xl mx-auto">
+              <div className="flex items-center justify-center sm:justify-between">
+                <span className="text-base text-gray-700 font-semibold flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Popular Areas in Chennai
+                </span>
               </div>
-            )}
-          </div>
+              
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {popularLocations.map((location) => {
+                  const isSelected = selectedLocation === location;
+                  return (
+                    <button
+                      key={location}
+                      onClick={() => handleLocationClick(location)}
+                      className={`flex-shrink-0 px-6 py-3 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
+                        isSelected 
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary border border-gray-200 hover:border-primary/30 hover:shadow-md'
+                      }`}
+                    >
+                      {location}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedLocation && (
+                <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-6 py-4 rounded-lg border border-primary/20 max-w-lg mx-auto sm:mx-0">
+                  <MapPin className="h-5 w-5" />
+                  <span>Showing cars in: <strong className="text-base">{selectedLocation}</strong></span>
+                  <button
+                    onClick={clearSearch}
+                    className="ml-auto text-primary hover:text-primary/80"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
