@@ -1,0 +1,124 @@
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Car } from '@/types/car';
+import { useToast } from '@/hooks/use-toast';
+import { useChatManager } from '@/hooks/useChatManager';
+import CarDetailContent from './CarDetailContent';
+import CarDetailModals from './CarDetailModals';
+
+interface CarDetailContainerProps {
+  car: Car;
+}
+
+const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
+  const navigate = useNavigate();
+  const { navigateToChat } = useChatManager();
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
+  const { toast } = useToast();
+
+  const handleMakeOffer = () => {
+    if (!isVerified) {
+      setShowOTPModal(true);
+    } else {
+      setShowOfferModal(true);
+    }
+  };
+
+  const handleOTPSuccess = () => {
+    setIsVerified(true);
+    setShowOTPModal(false);
+    setShowOfferModal(true);
+  };
+
+  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    console.log('Offer submitted:', offer);
+    setOfferStatus('pending');
+    
+    // Simulate offer acceptance after 3 seconds
+    setTimeout(() => {
+      setOfferStatus('accepted');
+      toast({
+        title: "Offer Accepted! 🎉",
+        description: "Great news! The seller has accepted your offer. You can now chat with them.",
+      });
+    }, 3000);
+
+    toast({
+      title: "Offer submitted!",
+      description: "Your offer has been sent to the seller.",
+    });
+    setShowOfferModal(false);
+  };
+
+  const handleChatClick = () => {
+    if (offerStatus === 'none') {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'pending') {
+      toast({
+        title: "Waiting for seller response",
+        description: "Please wait for the seller to respond to your offer before chatting.",
+      });
+      return;
+    }
+    
+    if (offerStatus === 'accepted') {
+      // Navigate to chat page with the car ID
+      navigateToChat(car.id);
+    }
+  };
+
+  const handleTestDrive = () => {
+    toast({
+      title: "Test Drive Request",
+      description: `Test drive request sent for ${car.title}`,
+    });
+    console.log('Test drive requested for car:', car.id);
+    setShowTestDriveModal(true);
+  };
+
+  const handleTestDriveScheduled = (booking: any) => {
+    toast({
+      title: "Test Drive Scheduled! 🚗",
+      description: `Your test drive is confirmed for ${booking.date} at ${booking.timeSlot}`,
+    });
+  };
+
+  return (
+    <>
+      <CarDetailContent
+        car={car}
+        offerStatus={offerStatus}
+        onMakeOffer={handleMakeOffer}
+        onChatClick={handleChatClick}
+        onTestDrive={handleTestDrive}
+      />
+
+      <CarDetailModals
+        car={car}
+        showOfferModal={showOfferModal}
+        showOTPModal={showOTPModal}
+        showTestDriveModal={showTestDriveModal}
+        onCloseOfferModal={() => setShowOfferModal(false)}
+        onCloseOTPModal={() => setShowOTPModal(false)}
+        onCloseTestDriveModal={() => setShowTestDriveModal(false)}
+        onOTPSuccess={handleOTPSuccess}
+        onOfferSubmit={handleOfferSubmit}
+        onTestDriveScheduled={handleTestDriveScheduled}
+      />
+    </>
+  );
+};
+
+export default CarDetailContainer;

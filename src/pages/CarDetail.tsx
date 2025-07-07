@@ -1,32 +1,14 @@
 
-import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
-import { mockAccessories } from '@/data/accessoryMockData';
 import { Car } from '@/types/car';
-import OfferModal from '@/components/modals/OfferModal';
-import OTPModal from '@/components/modals/OTPModal';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
-import { useToast } from '@/hooks/use-toast';
-import { useChatManager } from '@/hooks/useChatManager';
-import CarImageGallery from '@/components/car/CarImageGallery';
-import CarOverview from '@/components/car/CarOverview';
-import CarSpecifications from '@/components/car/CarSpecifications';
-import SellerCard from '@/components/car/SellerCard';
-import CarActions from '@/components/car/CarActions';
+import CarDetailContainer from '@/components/car/CarDetailContainer';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { navigateToChat } = useChatManager();
   const car: Car | undefined = mockCars.find((car) => car.id === id);
-  const [showOfferModal, setShowOfferModal] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
-  const { toast } = useToast();
 
   if (!car) {
     return (
@@ -42,148 +24,9 @@ const CarDetail = () => {
     );
   }
 
-  const handleMakeOffer = () => {
-    if (!isVerified) {
-      setShowOTPModal(true);
-    } else {
-      setShowOfferModal(true);
-    }
-  };
-
-  const handleOTPSuccess = () => {
-    setIsVerified(true);
-    setShowOTPModal(false);
-    setShowOfferModal(true);
-  };
-
-  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
-    console.log('Offer submitted:', offer);
-    setOfferStatus('pending');
-    
-    // Simulate offer acceptance after 3 seconds
-    setTimeout(() => {
-      setOfferStatus('accepted');
-      toast({
-        title: "Offer Accepted! 🎉",
-        description: "Great news! The seller has accepted your offer. You can now chat with them.",
-      });
-    }, 3000);
-
-    toast({
-      title: "Offer submitted!",
-      description: "Your offer has been sent to the seller.",
-    });
-    setShowOfferModal(false);
-  };
-
-  const handleChatClick = () => {
-    if (offerStatus === 'none') {
-      toast({
-        title: "Make an offer first",
-        description: "You need to make an offer before you can chat with the seller.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (offerStatus === 'pending') {
-      toast({
-        title: "Waiting for seller response",
-        description: "Please wait for the seller to respond to your offer before chatting.",
-      });
-      return;
-    }
-    
-    if (offerStatus === 'accepted') {
-      // Navigate to chat page with the car ID
-      navigateToChat(car.id);
-    }
-  };
-
-  const handleTestDrive = () => {
-    toast({
-      title: "Test Drive Request",
-      description: `Test drive request sent for ${car.title}`,
-    });
-    console.log('Test drive requested for car:', car.id);
-    setShowTestDriveModal(true);
-  };
-
-  const handleTestDriveScheduled = (booking: any) => {
-    toast({
-      title: "Test Drive Scheduled! 🚗",
-      description: `Your test drive is confirmed for ${booking.date} at ${booking.timeSlot}`,
-    });
-  };
-
   return (
     <ResponsiveLayout>
-      <div className="desktop-page-container pb-32 md:pb-6">
-        <CarImageGallery
-          images={car.images}
-          title={car.title}
-          featured={car.featured}
-          verified={car.verified}
-        />
-
-        {/* Car Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 grid-gap-standard desktop-content-spacing">
-          {/* Left Column - Car Overview */}
-          <div>
-            <CarOverview
-              title={car.title}
-              price={car.price}
-              rentPrice={car.rentPrice}
-              description={car.description}
-            />
-
-            <CarSpecifications
-              year={car.year}
-              transmission={car.transmission}
-              fuelType={car.fuelType}
-              location={car.location}
-              seller={car.seller}
-            />
-          </div>
-
-          {/* Right Column - Seller & Actions */}
-          <div>
-            <SellerCard seller={car.seller} />
-
-            {/* Actions Section with extra bottom padding on mobile */}
-            <div className="mb-8 md:mb-0">
-              <CarActions
-                offerStatus={offerStatus}
-                onMakeOffer={handleMakeOffer}
-                onChatClick={handleChatClick}
-                onTestDrive={handleTestDrive}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <OfferModal
-        isOpen={showOfferModal}
-        onClose={() => setShowOfferModal(false)}
-        car={car}
-        onSubmit={handleOfferSubmit}
-      />
-
-      <OTPModal
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
-        onSuccess={handleOTPSuccess}
-        phoneNumber="+91 98765 43210"
-        purpose="make an offer"
-      />
-
-      <TestDriveModal
-        isOpen={showTestDriveModal}
-        onClose={() => setShowTestDriveModal(false)}
-        car={car}
-        onScheduled={handleTestDriveScheduled}
-      />
+      <CarDetailContainer car={car} />
     </ResponsiveLayout>
   );
 };
