@@ -22,7 +22,7 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
   }, []);
 
   return (
-    <div className="flex-1 w-full overflow-hidden">
+    <div className="flex-1 w-full overflow-hidden mobile-content-safe">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center component-spacing gap-4">
         <div>
           <h2 className="heading-2">Search Results</h2>
@@ -32,7 +32,7 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
         <select 
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:w-auto bg-white"
+          className="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:w-auto bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
         >
           <option value="">Sort by: Relevance</option>
           <option value="price_asc">Price: Low to High</option>
@@ -42,11 +42,11 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
         </select>
       </div>
       
-      {/* Search Results Grid - Fixed responsive layout */}
+      {/* Search Results Grid - Fixed responsive layout with proper spacing */}
       {cars.length > 0 ? (
         <div className="w-full overflow-hidden">
           {isMobile ? (
-            <div className="space-y-4">
+            <div className="space-y-4 pb-8">
               {cars.map((car) => (
                 <MobileCarCard 
                   key={car.id} 
@@ -61,7 +61,7 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
               ))}
             </div>
           ) : (
-            <div className="cards-equal-height grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap w-full">
+            <div className="cards-equal-height grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap w-full pb-8">
               {cars.map((car) => (
                 <CarCard 
                   key={car.id} 
