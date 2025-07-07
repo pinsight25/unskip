@@ -42,9 +42,9 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
     });
   };
 
-  const clearLocation = () => {
-    setSelectedLocation('');
+  const clearSearch = () => {
     setSearchQuery('');
+    setSelectedLocation('');
     onFilterChange({
       query: '',
       type: 'all',
@@ -57,7 +57,7 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
     <div className="bg-white py-6 lg:py-8 border-b border-gray-100">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
         <div className="space-y-6">
-          {/* Search Bar */}
+          {/* Search Bar with integrated clear button */}
           <div className="flex gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -65,9 +65,17 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
                 placeholder="Search by make, model, or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
+                className="pl-12 pr-12 h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
             <Button 
               onClick={handleSearch}
@@ -80,22 +88,11 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
 
           {/* Popular Areas */}
           <div className="space-y-4 max-w-5xl mx-auto">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center sm:justify-between">
               <span className="text-base text-gray-700 font-semibold flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
                 Popular Areas in Chennai
               </span>
-              {selectedLocation && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearLocation}
-                  className="text-primary hover:text-primary/80 font-semibold hover:bg-primary/10 h-8 px-4 text-sm"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Clear
-                </Button>
-              )}
             </div>
             
             {/* Responsive horizontal scrollable pills */}
@@ -120,9 +117,15 @@ const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
 
             {/* Selected location indicator */}
             {selectedLocation && (
-              <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-6 py-4 rounded-lg border border-primary/20 max-w-lg">
+              <div className="flex items-center gap-3 text-sm text-primary bg-primary/5 px-6 py-4 rounded-lg border border-primary/20 max-w-lg mx-auto sm:mx-0">
                 <MapPin className="h-5 w-5" />
                 <span>Showing cars in: <strong className="text-base">{selectedLocation}</strong></span>
+                <button
+                  onClick={clearSearch}
+                  className="ml-auto text-primary hover:text-primary/80"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
             )}
           </div>

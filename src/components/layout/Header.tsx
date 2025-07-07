@@ -55,34 +55,34 @@ const Header = () => {
     <header className={`sticky top-0 lg:fixed lg:top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
-      <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
+      <div className="w-full max-w-7xl mx-auto px-4 lg:px-8">
         {/* Header Layout */}
         <div className="flex h-16 items-center justify-between">
           <Logo />
 
-          {/* Desktop Navigation - Only visible on md+ screens */}
+          {/* Desktop Navigation */}
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center space-x-3">
-            {/* Desktop Actions - Always rendered but conditionally shown */}
+          <div className="flex items-center space-x-8">
+            {/* Desktop Actions */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Chat Icon - Only visible on mobile with improved badge positioning */}
+            {/* Mobile Chat Icon with improved badge positioning */}
             <Link
               to="/chats"
-              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target relative"
+              className="md:hidden relative p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
             >
               <MessageCircle className="h-5 w-5 text-gray-700" />
               {unreadChats > 0 && (
-                <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-bold border-2 border-white shadow-sm leading-none">
+                <Badge className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold leading-none border-2 border-white">
                   {unreadChats}
                 </Badge>
               )}
             </Link>
 
-            {/* Mobile Menu Button - Only visible on mobile */}
+            {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center touch-target"
+              className="md:hidden p-2 h-10 w-10 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >

@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { MessageCircle, User } from 'lucide-react';
 
 interface HeaderActionsProps {
@@ -9,23 +10,23 @@ interface HeaderActionsProps {
   unreadChats: number;
 }
 
-const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
+const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center space-x-6">
-      {/* Chat Icon - Desktop Only */}
-      <Link to="/chats" className="hidden md:flex relative">
+    <div className="hidden md:flex items-center space-x-8">
+      {/* Chat Icon with improved badge positioning */}
+      <Link to="/chats" className="relative">
         <Button variant="ghost" size="sm" className="p-2 h-10 w-10 hover:bg-gray-100 rounded-lg flex items-center justify-center">
           <MessageCircle className="h-5 w-5" />
           {unreadChats > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] h-5 w-5 rounded-full flex items-center justify-center font-bold border-2 border-white shadow-sm">
+            <Badge className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold leading-none border-2 border-white">
               {unreadChats}
-            </div>
+            </Badge>
           )}
         </Button>
       </Link>
       
       {/* Desktop Profile */}
-      <Link to="/profile" className="hidden md:flex items-center space-x-3 hover:opacity-80 transition-opacity">
+      <Link to="/profile" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
         <Avatar className="h-9 w-9 border border-gray-200">
           <AvatarImage src="" />
           <AvatarFallback className="bg-gray-100 text-gray-600">
@@ -37,7 +38,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Post Car Button */}
       <Link to="/sell">
-        <Button size="sm" className="hidden md:inline-flex bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-6 h-10 text-white shadow-sm text-sm">
+        <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 font-semibold px-6 h-10 text-white shadow-sm text-sm">
           Post Your Car
         </Button>
       </Link>
@@ -45,4 +46,4 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   );
 };
 
-export default HeaderActions;
+export default HeaderActionsDesktop;

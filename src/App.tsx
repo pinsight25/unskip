@@ -11,6 +11,7 @@ import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Saved from "./pages/Saved";
 import Dealers from "./pages/Dealers";
+import DealerInventory from "./pages/DealerInventory";
 import DealerRegister from "./pages/DealerRegister";
 import Chats from "./pages/Chats";
 import ChatDetail from "./pages/ChatDetail";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/dealers" element={<Dealers />} />
+          <Route path="/dealer/:dealerId/inventory" element={<DealerInventory />} />
           <Route path="/dealer-register" element={<DealerRegister />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/chat/:id" element={<ChatDetail />} />
