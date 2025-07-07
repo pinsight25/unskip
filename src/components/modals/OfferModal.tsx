@@ -235,7 +235,12 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
               disabled={!isFormValid() || isSubmitting}
               className="flex-1 h-12 rounded-xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
             >
-              {isSubmitting ? 'Sending...' : 'Send Offer'}
+              {isSubmitting ? 'Sending...' : (
+                <>
+                  <IndianRupee className="h-4 w-4 mr-2" />
+                  Send Offer
+                </>
+              )}
             </Button>
           </div>
 

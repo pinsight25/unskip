@@ -1,5 +1,8 @@
 
 import { Car } from '@/types/car';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import CarImageGallery from '@/components/car/CarImageGallery';
 import CarOverview from '@/components/car/CarOverview';
 import CarSpecifications from '@/components/car/CarSpecifications';
@@ -21,8 +24,26 @@ const CarDetailContent = ({
   onChatClick,
   onTestDrive
 }: CarDetailContentProps) => {
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="desktop-page-container pb-32 md:pb-6">
+      {/* Back Navigation */}
+      <div className="mb-4 md:mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={handleBackClick}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 p-0 h-auto"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-sm md:text-base">Back to listings</span>
+        </Button>
+      </div>
+
       <CarImageGallery
         images={car.images}
         title={car.title}
