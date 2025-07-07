@@ -30,17 +30,17 @@ const SearchFilters = ({
   makes
 }: SearchFiltersProps) => {
   return (
-    <div className="w-full lg:w-72 flex-shrink-0">
-      <Card className="p-4 lg:p-6 sticky top-24">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
+    <div className="w-full">
+      <Card className="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold mb-6 flex items-center">
           <SlidersHorizontal className="h-5 w-5 mr-2" />
           Filters
         </h3>
         
-        <div className="space-y-4 lg:space-y-6">
-          {/* Price Range - Side by side layout */}
+        <div className="space-y-6">
+          {/* Price Range */}
           <div>
-            <h4 className="font-medium mb-2">Price Range</h4>
+            <h4 className="font-medium mb-3 text-gray-900">Price Range</h4>
             <div className="flex gap-2">
               <Input 
                 type="number" 
@@ -61,11 +61,11 @@ const SearchFilters = ({
           
           {/* Make */}
           <div>
-            <h4 className="font-medium mb-2">Make</h4>
+            <h4 className="font-medium mb-3 text-gray-900">Make</h4>
             <select 
               value={selectedMake}
               onChange={(e) => onMakeChange(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
             >
               <option value="">All Makes</option>
               {makes.map(make => (
@@ -76,11 +76,11 @@ const SearchFilters = ({
 
           {/* Year */}
           <div>
-            <h4 className="font-medium mb-2">Year</h4>
+            <h4 className="font-medium mb-3 text-gray-900">Year</h4>
             <select 
               value={selectedYear}
               onChange={(e) => onYearChange(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
             >
               <option value="">Any Year</option>
               <option value="2020">2020 & Newer</option>
@@ -92,17 +92,17 @@ const SearchFilters = ({
           
           {/* Fuel Type */}
           <div>
-            <h4 className="font-medium mb-2">Fuel Type</h4>
-            <div className="space-y-2">
+            <h4 className="font-medium mb-3 text-gray-900">Fuel Type</h4>
+            <div className="space-y-3">
               {['Petrol', 'Diesel', 'CNG', 'Electric'].map((fuel) => (
-                <label key={fuel} className="flex items-center">
+                <label key={fuel} className="flex items-center cursor-pointer">
                   <input 
                     type="checkbox" 
-                    className="mr-2 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="mr-3 rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
                     checked={selectedFuel.includes(fuel)}
                     onChange={() => onFuelToggle(fuel)}
                   />
-                  <span className="text-sm">{fuel}</span>
+                  <span className="text-sm text-gray-700">{fuel}</span>
                 </label>
               ))}
             </div>
@@ -111,7 +111,7 @@ const SearchFilters = ({
           <Button 
             onClick={onClearFilters}
             variant="outline" 
-            className="w-full"
+            className="w-full mt-6"
           >
             Clear Filters
           </Button>

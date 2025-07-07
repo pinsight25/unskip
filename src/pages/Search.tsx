@@ -44,30 +44,51 @@ const Search = () => {
           />
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-6 w-full">
-            <div className="lg:w-72 flex-shrink-0">
-              <SearchFilters
-                priceRange={priceRange}
-                onPriceRangeChange={setPriceRange}
-                selectedMake={selectedMake}
-                onMakeChange={setSelectedMake}
-                selectedYear={selectedYear}
-                onYearChange={setSelectedYear}
-                selectedFuel={selectedFuel}
-                onFuelToggle={handleFuelToggle}
-                onClearFilters={clearFilters}
-                makes={makes}
-              />
-            </div>
+        {/* Desktop Layout */}
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex gap-8">
+            {/* Filters Sidebar - Desktop Only */}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+              <div className="sticky top-24">
+                <SearchFilters
+                  priceRange={priceRange}
+                  onPriceRangeChange={setPriceRange}
+                  selectedMake={selectedMake}
+                  onMakeChange={setSelectedMake}
+                  selectedYear={selectedYear}
+                  onYearChange={setSelectedYear}
+                  selectedFuel={selectedFuel}
+                  onFuelToggle={handleFuelToggle}
+                  onClearFilters={clearFilters}
+                  makes={makes}
+                />
+              </div>
+            </aside>
 
-            <div className="flex-1 min-w-0">
+            {/* Main Content */}
+            <main className="flex-1 min-w-0">
+              {/* Mobile Filters - Show only on mobile */}
+              <div className="lg:hidden mb-6">
+                <SearchFilters
+                  priceRange={priceRange}
+                  onPriceRangeChange={setPriceRange}
+                  selectedMake={selectedMake}
+                  onMakeChange={setSelectedMake}
+                  selectedYear={selectedYear}
+                  onYearChange={setSelectedYear}
+                  selectedFuel={selectedFuel}
+                  onFuelToggle={handleFuelToggle}
+                  onClearFilters={clearFilters}
+                  makes={makes}
+                />
+              </div>
+
               <SearchResults
                 cars={filteredCars}
                 sortBy={sortBy}
                 onSortChange={setSortBy}
               />
-            </div>
+            </main>
           </div>
         </div>
       </div>
