@@ -3,7 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Send, Camera, MoreVertical, Calendar } from 'lucide-react';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { ArrowLeft, Send, MoreVertical, Calendar, Flag, Trash2 } from 'lucide-react';
 import { mockChats, mockMessages, quickReplies } from '@/data/chatMockData';
 import { mockCars } from '@/data/mockData';
 import { ChatMessage } from '@/types/chat';
@@ -114,6 +120,21 @@ const ChatDetail = () => {
     });
   };
 
+  const handleReportChat = () => {
+    toast({
+      title: "Chat Reported",
+      description: "This chat has been reported to our support team.",
+    });
+  };
+
+  const handleDeleteChat = () => {
+    toast({
+      title: "Chat Deleted",
+      description: "This chat has been deleted.",
+    });
+    navigate('/chats');
+  };
+
   if (!chat || !car) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -148,9 +169,23 @@ const ChatDetail = () => {
             <p className="text-xs text-gray-600 truncate">{car.seller.name}</p>
           </div>
           
-          <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100">
-            <MoreVertical className="h-5 w-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleReportChat}>
+                <Flag className="h-4 w-4 mr-2" />
+                Report Chat
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteChat} className="text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Chat
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -231,28 +266,22 @@ const ChatDetail = () => {
 
         {/* Message Input */}
         <div className="p-4 pb-6 md:pb-4">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="p-2 flex-shrink-0 hover:bg-gray-100">
-              <Camera className="h-5 w-5" />
+          <div className="flex items-center gap-2">
+            <Input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              className="flex-1 rounded-full border-gray-300"
+            />
+            <Button 
+              onClick={handleSendMessage}
+              disabled={!newMessage.trim()}
+              size="sm"
+              className="px-4 flex-shrink-0 rounded-full"
+            >
+              <Send className="h-4 w-4" />
             </Button>
-            
-            <div className="flex-1 flex gap-2">
-              <Input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1 rounded-full border-gray-300"
-              />
-              <Button 
-                onClick={handleSendMessage}
-                disabled={!newMessage.trim()}
-                size="sm"
-                className="px-4 flex-shrink-0 rounded-full"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </div>
       </div>
