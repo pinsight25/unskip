@@ -65,7 +65,6 @@ const MobileCarCard = ({
           />
           
           <MobileCarActions 
-            car={car}
             onMakeOffer={() => onMakeOffer(car)}
             onChat={() => onChat(car)}
             onTestDrive={() => onTestDrive(car)}
