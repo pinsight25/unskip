@@ -7,15 +7,82 @@ import { Star, MapPin, Car, Phone, Shield, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dealers = () => {
-  const dealers = [1, 2, 3, 4, 5, 6]; // Mock data
+  const dealers = [
+    {
+      id: 1,
+      name: 'CarMax Motors',
+      rating: 4.8,
+      reviews: 234,
+      location: 'Andheri West, Mumbai',
+      stock: '150+ cars',
+      responseTime: '30 mins',
+      brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
+      verified: true
+    },
+    {
+      id: 2,
+      name: 'Premium Auto Hub',
+      rating: 4.9,
+      reviews: 189,
+      location: 'Bandra East, Mumbai',
+      stock: '120+ cars',
+      responseTime: '15 mins',
+      brands: ['BMW', 'Audi', 'Mercedes'],
+      verified: true
+    },
+    {
+      id: 3,
+      name: 'City Car Center',
+      rating: 4.7,
+      reviews: 156,
+      location: 'Powai, Mumbai',
+      stock: '200+ cars',
+      responseTime: '45 mins',
+      brands: ['Honda', 'Toyota', 'Nissan'],
+      verified: true
+    },
+    {
+      id: 4,
+      name: 'Elite Motors',
+      rating: 4.6,
+      reviews: 98,
+      location: 'Goregaon West, Mumbai',
+      stock: '80+ cars',
+      responseTime: '1 hour',
+      brands: ['Mahindra', 'Ford', 'Renault'],
+      verified: false
+    },
+    {
+      id: 5,
+      name: 'Royal Car Palace',
+      rating: 4.8,
+      reviews: 267,
+      location: 'Thane West, Mumbai',
+      stock: '180+ cars',
+      responseTime: '20 mins',
+      brands: ['Kia', 'Skoda', 'Volkswagen'],
+      verified: true
+    },
+    {
+      id: 6,
+      name: 'Metro Auto Sales',
+      rating: 4.5,
+      reviews: 134,
+      location: 'Malad West, Mumbai',
+      stock: '90+ cars',
+      responseTime: '35 mins',
+      brands: ['Jeep', 'MG', 'Tata'],
+      verified: true
+    }
+  ];
 
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="desktop-page-container">
-          {/* Header with CTA - Desktop generous spacing */}
-          <div className="desktop-header-section">
-            <div className="flex flex-col md:flex-row md:items-center justify-between desktop-content-spacing">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
+          {/* Header with CTA */}
+          <div className="mb-8 lg:mb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 lg:mb-8">
               <div>
                 <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Authorized Dealers</h1>
                 <p className="text-gray-600 text-base md:text-lg">Find trusted dealers near you</p>
@@ -30,13 +97,13 @@ const Dealers = () => {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-4">
-              <select className="border rounded-lg px-4 py-2">
+              <select className="border rounded-lg px-4 py-2 bg-white">
                 <option>All Locations</option>
                 <option>Mumbai</option>
                 <option>Delhi</option>
                 <option>Bangalore</option>
               </select>
-              <select className="border rounded-lg px-4 py-2">
+              <select className="border rounded-lg px-4 py-2 bg-white">
                 <option>All Brands</option>
                 <option>Maruti Suzuki</option>
                 <option>Hyundai</option>
@@ -47,43 +114,45 @@ const Dealers = () => {
           </div>
 
           {/* Dealers Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-gap-standard">
-            {dealers.map((item) => (
-              <Card key={item} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {dealers.map((dealer) => (
+              <Card key={dealer.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-bold text-lg mb-1">CarMax Motors</h3>
+                      <h3 className="font-bold text-lg mb-1">{dealer.name}</h3>
                       <div className="flex items-center text-amber-500 mb-2">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-current" />
+                          <Star key={i} className={`h-4 w-4 ${i < Math.floor(dealer.rating) ? 'fill-current' : ''}`} />
                         ))}
-                        <span className="ml-2 text-gray-600 text-sm">4.8 (234 reviews)</span>
+                        <span className="ml-2 text-gray-600 text-sm">{dealer.rating} ({dealer.reviews} reviews)</span>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-700">
-                      <Shield className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
+                    {dealer.verified && (
+                      <Badge className="bg-green-100 text-green-700">
+                        <Shield className="h-3 w-3 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
                   </div>
 
                   <div className="space-y-3 mb-4">
                     <div className="flex items-center text-gray-600">
                       <MapPin className="h-4 w-4 mr-2" />
-                      <span className="text-sm">Andheri West, Mumbai</span>
+                      <span className="text-sm">{dealer.location}</span>
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Car className="h-4 w-4 mr-2" />
-                      <span className="text-sm">150+ cars in stock</span>
+                      <span className="text-sm">{dealer.stock} in stock</span>
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Phone className="h-4 w-4 mr-2" />
-                      <span className="text-sm">Responds in 30 mins</span>
+                      <span className="text-sm">Responds in {dealer.responseTime}</span>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {['Maruti Suzuki', 'Hyundai', 'Tata'].map((brand) => (
+                    {dealer.brands.map((brand) => (
                       <Badge key={brand} variant="outline" className="text-xs">
                         {brand}
                       </Badge>
@@ -91,7 +160,7 @@ const Dealers = () => {
                   </div>
 
                   <div>
-                    <Link to={`/dealer/${item}/inventory`}>
+                    <Link to={`/dealer/${dealer.id}/inventory`}>
                       <Button className="w-full">View Inventory</Button>
                     </Link>
                   </div>

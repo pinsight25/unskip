@@ -76,7 +76,7 @@ const Saved = () => {
             {savedCars.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {savedCars.map((car) => (
-                  <Card key={car.id} className="overflow-hidden hover-lift cards-equal-height">
+                  <Card key={car.id} className="overflow-hidden hover-lift bg-white">
                     <div className="relative">
                       <img
                         src={car.images[0]}
@@ -97,10 +97,17 @@ const Saved = () => {
                     <div className="p-4 flex flex-col flex-1">
                       <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-gray-900">{car.title}</h3>
                       <p className="text-2xl font-bold text-orange-600 mb-2">{formatPrice(car.price)}</p>
-                      <p className="text-gray-600 text-sm mb-4 flex-1">{car.location}</p>
+                      <p className="text-gray-600 text-sm mb-2">{car.location}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                        <span>{car.year}</span>
+                        <span>•</span>
+                        <span>{car.fuelType}</span>
+                        <span>•</span>
+                        <span>{car.transmission}</span>
+                      </div>
                       <Button 
                         size="default" 
-                        className="w-full touch-target-button"
+                        className="w-full touch-target-button mt-auto"
                         onClick={() => handleMakeOffer(car)}
                       >
                         Make Offer
