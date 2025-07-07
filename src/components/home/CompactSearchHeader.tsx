@@ -13,8 +13,8 @@ interface CompactSearchHeaderProps {
 const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactSearchHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40">
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-2 lg:py-3">
-        {/* Ultra Compact Search Bar */}
+      <div className="w-full max-w-7xl mx-auto mobile-page-container search-results-compact">
+        {/* Compact Search Bar */}
         <div className="flex gap-3 items-center search-header-to-bar">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -36,7 +36,7 @@ const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactS
           </div>
         </div>
 
-        {/* Results Count - Ultra minimal spacing */}
+        {/* Results Count - Minimal spacing */}
         <div className="text-center search-bar-to-results">
           <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-1">
             {resultCount} {resultCount === 1 ? 'Car' : 'Cars'} found

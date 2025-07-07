@@ -36,14 +36,19 @@
   
   /* Mobile-specific ultra tight spacing */
   --spacing-mobile-xs: 0.5rem;  /* 8px */
-  --spacing-mobile-sm: 1rem;    /* 16px - MAX for most mobile gaps */
-  --spacing-mobile-md: 1.5rem;  /* 24px - Only for major sections */
+  --spacing-mobile-sm: 1rem;    /* 16px - Standard mobile section gap */
+  --spacing-mobile-md: 1.5rem;  /* 24px - Between major sections */
   --spacing-mobile-lg: 2rem;    /* 32px - Very rare, only for page sections */
   
+  /* Standardized Mobile Page Spacing */
+  --mobile-page-top: 1rem;      /* 16px - Standard top padding for all pages */
+  --mobile-section-gap: 1.5rem; /* 24px - Between sections */
+  --mobile-element-gap: 1rem;   /* 16px - Between elements */
+  
   /* Search Results Ultra Compact */
-  --search-header-gap: 0.5rem;  /* 8px - Header to search bar */
+  --search-header-gap: 1rem;    /* 16px - Header to search bar */
   --search-results-gap: 1rem;   /* 16px - Search bar to results count */
-  --results-cards-gap: 1rem;    /* 16px - Results count to first card */
+  --results-cards-gap: 1.5rem;  /* 24px - Results count to first card */
   
   /* Border Radius Scale */
   --radius-sm: 0.5rem;      /* 8px - Buttons */
@@ -136,6 +141,30 @@
   color: var(--color-text-tertiary);
 }
 
+/* Standardized Mobile Page Layout */
+.mobile-page-container {
+  padding-top: var(--mobile-page-top);
+  padding-left: var(--spacing-mobile-sm);
+  padding-right: var(--spacing-mobile-sm);
+}
+
+@media (min-width: 1024px) {
+  .mobile-page-container {
+    padding-top: var(--spacing-lg);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+/* Standardized Section Spacing */
+.mobile-section {
+  margin-bottom: var(--mobile-section-gap);
+}
+
+.mobile-element {
+  margin-bottom: var(--mobile-element-gap);
+}
+
 /* Standardized Card Styles */
 .card-standard {
   background: white;
@@ -203,7 +232,7 @@
 .btn-secondary {
   background: white;
   color: var(--color-primary);
-  border: 1px solid var(--color-primary-border);
+  border: 1px solid rgba(255, 107, 53, 0.3);
   border-radius: var(--radius-pill);
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
@@ -269,23 +298,9 @@
   }
 }
 
-/* Ultra-Compact Mobile Spacing Utilities */
-.mobile-section-ultra-tight {
-  margin-top: var(--spacing-mobile-xs);
-  margin-bottom: var(--spacing-mobile-xs);
-}
-
-.mobile-component-ultra-tight {
-  margin-bottom: var(--spacing-mobile-xs);
-}
-
-.mobile-element-ultra-tight {
-  margin-bottom: 0.25rem; /* 4px - Ultra tight */
-}
-
-/* Search Results Ultra Compact Layout */
-.search-results-ultra-compact {
-  padding-top: var(--search-header-gap);
+/* Search Results Compact Layout */
+.search-results-compact {
+  padding-top: var(--mobile-page-top);
 }
 
 .search-header-to-bar {
@@ -301,7 +316,7 @@
 }
 
 @media (min-width: 1024px) {
-  .search-results-ultra-compact {
+  .search-results-compact {
     padding-top: var(--spacing-md);
   }
   
@@ -318,51 +333,25 @@
   }
 }
 
-/* Page Header Ultra Compact */
-.page-header-ultra-compact {
-  padding-top: var(--spacing-mobile-xs);
-  padding-bottom: var(--spacing-mobile-xs);
+/* Page Header Compact */
+.page-header-compact {
+  padding-top: var(--mobile-page-top);
+  padding-bottom: var(--mobile-element-gap);
 }
 
 @media (min-width: 1024px) {
-  .page-header-ultra-compact {
+  .page-header-compact {
     padding-top: var(--spacing-lg);
     padding-bottom: var(--spacing-md);
   }
 }
 
-/* Remove Large Empty Spaces */
-.no-large-gaps {
-  margin: 0;
-  padding: 0;
-}
-
-.compact-section {
-  padding-top: var(--spacing-mobile-xs);
-  padding-bottom: var(--spacing-mobile-xs);
-}
-
-@media (min-width: 1024px) {
-  .compact-section {
-    padding-top: var(--spacing-md);
-    padding-bottom: var(--spacing-md);
-  }
-}
-
 /* Grid Utilities */
-.grid-gap-ultra-compact {
-  gap: var(--spacing-mobile-xs);
-}
-
 .grid-gap-compact {
   gap: var(--spacing-mobile-sm);
 }
 
 @media (min-width: 1024px) {
-  .grid-gap-ultra-compact {
-    gap: var(--spacing-sm);
-  }
-  
   .grid-gap-compact {
     gap: var(--spacing-md);
   }
@@ -438,7 +427,7 @@
 
 /* Subtle Border Utilities */
 .border-subtle {
-  border: 1px solid var(--color-primary-border);
+  border: 1px solid rgba(255, 107, 53, 0.3);
 }
 
 .border-subtle:hover {

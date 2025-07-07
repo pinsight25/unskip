@@ -28,21 +28,23 @@ const Search = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="bg-white w-full overflow-hidden">
-        <SearchHeader
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedMake={selectedMake}
-          selectedFuel={selectedFuel}
-          selectedYear={selectedYear}
-          priceRange={priceRange}
-          onClearFilters={clearFilters}
-          onRemoveMake={() => setSelectedMake('')}
-          onRemoveFuel={handleFuelToggle}
-          onRemoveYear={() => setSelectedYear('')}
-        />
+      <div className="bg-white w-full overflow-hidden -mt-4 lg:-mt-8">
+        <div className="page-header-compact">
+          <SearchHeader
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedMake={selectedMake}
+            selectedFuel={selectedFuel}
+            selectedYear={selectedYear}
+            priceRange={priceRange}
+            onClearFilters={clearFilters}
+            onRemoveMake={() => setSelectedMake('')}
+            onRemoveFuel={handleFuelToggle}
+            onRemoveYear={() => setSelectedYear('')}
+          />
+        </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 py-6">
+        <div className="w-full max-w-7xl mx-auto px-4 mobile-section">
           <div className="flex flex-col lg:flex-row gap-6 w-full">
             <div className="lg:w-72 flex-shrink-0">
               <SearchFilters

@@ -18,9 +18,9 @@ const ResponsiveLayout = ({ children, showFooter = false, fullHeight = false, hi
       {/* Header */}
       <Header />
       
-      {/* Main content with tighter mobile spacing */}
+      {/* Main content with standardized mobile spacing */}
       <main className={`flex-1 pt-16 lg:pt-20 ${hideBottomNav ? 'pb-4 lg:pb-8' : 'pb-20 lg:pb-8'} ${fullHeight ? 'min-h-screen' : ''}`}>
-        <div className="w-full max-w-7xl mx-auto prevent-horizontal-scroll">
+        <div className="w-full max-w-7xl mx-auto prevent-horizontal-scroll mobile-page-container">
           {children}
         </div>
       </main>

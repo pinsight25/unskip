@@ -12,7 +12,7 @@ interface HeaderActionsProps {
 const HeaderActionsDesktop = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   return (
     <div className="hidden lg:flex items-center space-x-6">
-      {/* Chat Icon with Badge - Only this icon, no notification bell */}
+      {/* Chat Icon with Badge */}
       <Link to="/chats" className="relative">
         <Button variant="ghost" size="sm" className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center">
           <MessageCircle className="h-5 w-5" />
