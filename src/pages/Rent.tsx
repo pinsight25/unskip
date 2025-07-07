@@ -176,7 +176,7 @@ const Rent = () => {
                 </label>
                 <Slider
                   value={filters.dailyPriceRange}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, dailyPriceRange: value }))}
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, dailyPriceRange: value as [number, number] }))}
                   max={10000}
                   min={1000}
                   step={500}
@@ -245,7 +245,7 @@ const Rent = () => {
                   variant="outline"
                   onClick={() => setFilters({
                     search: '',
-                    dailyPriceRange: [1000, 10000],
+                    dailyPriceRange: [1000, 10000] as [number, number],
                     duration: 'all',
                     carType: 'all',
                     availableFrom: undefined,
@@ -282,7 +282,7 @@ const Rent = () => {
                 size="lg"
                 onClick={() => setFilters({
                   search: '',
-                  dailyPriceRange: [1000, 10000],
+                  dailyPriceRange: [1000, 10000] as [number, number],
                   duration: 'all',
                   carType: 'all',
                   availableFrom: undefined,
