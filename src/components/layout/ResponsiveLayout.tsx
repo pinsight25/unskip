@@ -23,8 +23,8 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      {/* Main content with proper spacing */}
-      <main className={`flex-1 ${isMobile ? 'pb-20' : 'pt-20'}`}>
+      {/* Main content with proper spacing below header */}
+      <main className={`flex-1 ${isMobile ? 'pt-6 pb-20' : 'pt-24'}`}>
         <div className={isMobile ? 'pb-8' : ''}>
           {children}
         </div>

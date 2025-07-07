@@ -1,3 +1,4 @@
+
 /* CarVibe Design System - Industry Standard Variables and Utilities */
 
 :root {
@@ -34,10 +35,14 @@
   --spacing-2xl: 4rem;      /* 64px */
   
   /* FIXED STANDARDIZED PAGE SPACING */
-  --page-top-mobile: 1rem;     /* 16px - Standard for all mobile pages */
+  --page-top-mobile: 1.5rem;   /* 24px - Increased for proper header spacing */
   --page-top-desktop: 2rem;    /* 32px - Standard for all desktop pages */
   --section-gap: 1.5rem;       /* 24px - Between sections */
   --element-gap: 1rem;         /* 16px - Between elements */
+  
+  /* Header spacing */
+  --header-bottom-spacing-mobile: 1.5rem;  /* 24px */
+  --header-bottom-spacing-desktop: 2rem;   /* 32px */
   
   /* Border Radius Scale */
   --radius-sm: 0.5rem;      /* 8px - Buttons */
@@ -145,6 +150,17 @@
   }
 }
 
+/* Header Spacing Utilities */
+.header-spaced-content {
+  padding-top: var(--header-bottom-spacing-mobile);
+}
+
+@media (min-width: 1024px) {
+  .header-spaced-content {
+    padding-top: var(--header-bottom-spacing-desktop);
+  }
+}
+
 /* Standardized Section Spacing */
 .section-gap {
   margin-bottom: var(--section-gap);
@@ -176,6 +192,37 @@
   .card-padding {
     padding: var(--spacing-md);
   }
+}
+
+/* Modern Button Styles - Consistent for Chat and Test Drive */
+.btn-outline-orange {
+  background: white;
+  color: #FF6B35;
+  border: 1px solid #FF6B35;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-semibold);
+  transition: all 0.2s ease;
+}
+
+.btn-outline-orange:hover {
+  background: #E55A2B;
+  color: white;
+  border-color: #E55A2B;
+}
+
+.btn-outline-green {
+  background: white;
+  color: #10B981;
+  border: 1px solid #10B981;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-semibold);
+  transition: all 0.2s ease;
+}
+
+.btn-outline-green:hover {
+  background: #10B981;
+  color: white;
+  border-color: #10B981;
 }
 
 /* Modern Button Styles - Subtle Borders */
@@ -370,11 +417,11 @@
 /* Mobile-specific bottom padding for scrollable content */
 @media (max-width: 767px) {
   .mobile-page-container-fixed {
-    @apply pb-24; /* Increased bottom padding for mobile */
+    @apply pb-32; /* Increased bottom padding for mobile */
   }
   
   .mobile-safe-bottom {
-    @apply pb-28; /* Extra safe bottom padding */
+    @apply pb-32; /* Extra safe bottom padding */
   }
   
   /* Ensure car listing areas have proper bottom spacing */

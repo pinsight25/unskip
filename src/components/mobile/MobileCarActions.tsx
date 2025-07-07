@@ -54,13 +54,13 @@ const MobileCarActions = ({
         {getOfferButton()}
       </div>
       
-      {/* Secondary Actions with improved spacing */}
+      {/* Secondary Actions with consistent styling */}
       <div className="flex gap-2">
         <Button 
           size="sm" 
-          variant="default"
+          variant="outline"
           onClick={onChat}
-          className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+          className="flex-1 border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600"
         >
           <MessageCircle className="h-4 w-4 mr-1" />
           Chat
@@ -69,7 +69,7 @@ const MobileCarActions = ({
           size="sm" 
           variant="outline" 
           onClick={onTestDrive}
-          className="flex-1"
+          className="flex-1 border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500"
         >
           <Calendar className="h-4 w-4 mr-1" />
           Test Drive
