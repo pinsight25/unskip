@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -9,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EditProfileModal from '@/components/modals/EditProfileModal';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
-import { User, Car, Settings, LogOut, Edit, Trash2, Eye, Clock } from 'lucide-react';
+import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
+import { User, Car, Settings, LogOut, Edit, Trash2, Eye, Clock, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Profile = () => {
@@ -69,7 +69,8 @@ const Profile = () => {
 
   const stats = {
     totalViews: listings.reduce((sum, listing) => sum + listing.views, 0),
-    activeListings: listings.filter(l => l.status === 'active').length
+    activeListings: listings.filter(l => l.status === 'active').length,
+    totalOffers: 4 // Mock number of received offers
   };
 
   const handleEditProfile = (newProfile: typeof profile) => {
@@ -176,8 +177,8 @@ const Profile = () => {
               </div>
             </Card>
 
-            {/* Simplified Stats Section */}
-            <div className="grid grid-cols-2 gap-4 section-gap">
+            {/* Stats Section */}
+            <div className="grid grid-cols-3 gap-4 section-gap">
               <Card className="p-4 text-center">
                 <Eye className="h-6 w-6 text-primary mx-auto mb-2" />
                 <p className="text-2xl font-bold">{stats.totalViews}</p>
@@ -188,13 +189,21 @@ const Profile = () => {
                 <p className="text-2xl font-bold">{stats.activeListings}</p>
                 <p className="text-sm text-gray-600">Active Listings</p>
               </Card>
+              <Card className="p-4 text-center">
+                <MessageCircle className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                <p className="text-2xl font-bold">{stats.totalOffers}</p>
+                <p className="text-sm text-gray-600">Offers Received</p>
+              </Card>
             </div>
 
-            {/* Simplified Tabs */}
+            {/* Tabs */}
             <Tabs defaultValue="listings" className="w-full">
-              <TabsList className="grid w-full grid-cols-1 section-gap">
+              <TabsList className="grid w-full grid-cols-2 section-gap">
                 <TabsTrigger value="listings">
                   My Listings ({stats.activeListings})
+                </TabsTrigger>
+                <TabsTrigger value="offers">
+                  Received Offers ({stats.totalOffers})
                 </TabsTrigger>
               </TabsList>
 
@@ -263,6 +272,11 @@ const Profile = () => {
                     </div>
                   )}
                 </Card>
+              </TabsContent>
+
+              {/* Received Offers Tab */}
+              <TabsContent value="offers">
+                <ReceivedOffersTab />
               </TabsContent>
             </Tabs>
           </div>
