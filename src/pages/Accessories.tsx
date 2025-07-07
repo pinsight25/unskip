@@ -88,17 +88,17 @@ const Accessories = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section - Standardized spacing */}
+        {/* Header Section - Desktop generous spacing */}
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed">
-            <div className="text-center section-gap">
-              <h1 className="heading-1 mb-3">
+          <div className="desktop-page-container">
+            <div className="text-center desktop-header-section">
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">
                 Accessories Marketplace
               </h1>
-              <p className="text-lg text-gray-600 mb-4">
+              <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
                 Enhance your car with premium accessories
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 md:mb-12">
                 <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-4 py-2">
                   🎉 Beta - Free for Limited Time
                 </Badge>
@@ -112,17 +112,17 @@ const Accessories = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="max-w-3xl mx-auto element-gap">
+            <div className="max-w-4xl mx-auto desktop-content-spacing">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   placeholder="Search accessories by name, brand, or car model..."
-                  className="pl-12 pr-4 h-14 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
+                  className="pl-12 pr-4 h-16 md:h-20 text-base md:text-lg border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg transition-all duration-200 hover:shadow-md"
                   value={filters.search}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />
                 <Button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-10 px-6"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 md:h-16 px-6 md:px-8"
                   onClick={() => {}}
                 >
                   Search
@@ -131,7 +131,7 @@ const Accessories = () => {
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-3 pb-4 md:pb-8">
               {accessoryCategories.map((category) => (
                 <Button
                   key={category.id}
@@ -148,12 +148,12 @@ const Accessories = () => {
           </div>
         </div>
 
-        {/* Results Section - Standardized spacing */}
-        <div className="container mx-auto mobile-page-container-fixed">
+        {/* Results Section - Desktop generous spacing */}
+        <div className="desktop-page-container">
           {/* Controls Bar */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 section-gap">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 desktop-header-section">
             <div className="flex items-center gap-6">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                 {filteredAccessories.length} {filteredAccessories.length === 1 ? 'Accessory' : 'Accessories'} Found
               </h2>
               
@@ -199,7 +199,7 @@ const Accessories = () => {
           </div>
 
           {/* Accessories Grid */}
-          <div className={`grid gap-6 ${
+          <div className={`grid grid-gap-standard ${
             viewMode === 'grid' 
               ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
               : 'grid-cols-1'
@@ -215,12 +215,12 @@ const Accessories = () => {
 
           {/* Empty State */}
           {filteredAccessories.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-12 md:py-20">
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="heading-3 text-gray-900 mb-3">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
                 No accessories found
               </h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <p className="text-gray-600 mb-6 max-w-md mx-auto text-base md:text-lg">
                 Try adjusting your search terms or filters to find what you're looking for
               </p>
               <Button

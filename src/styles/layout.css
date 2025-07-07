@@ -11,10 +11,23 @@
 
 @media (min-width: 1024px) {
   .mobile-page-container-fixed {
-    padding-top: 1.5rem;      /* 24px */
-    padding-left: 1.5rem;     /* 24px */
-    padding-right: 1.5rem;    /* 24px */
-    padding-bottom: 2rem;     /* 32px */
+    padding-top: 2rem;         /* 32px - increased for better desktop spacing */
+    padding-left: 2rem;        /* 32px - increased for better desktop spacing */
+    padding-right: 2rem;       /* 32px - increased for better desktop spacing */
+    padding-bottom: 2rem;      /* 32px */
+  }
+}
+
+/* Desktop-specific container with generous spacing */
+.desktop-page-container {
+  padding: 1rem;           /* 16px mobile */
+}
+
+@media (min-width: 1024px) {
+  .desktop-page-container {
+    padding: 2.5rem;        /* 40px desktop - generous spacing */
+    max-width: 1400px;      /* Constrain width on very large screens */
+    margin: 0 auto;         /* Center the container */
   }
 }
 
@@ -25,11 +38,22 @@
 
 @media (min-width: 1024px) {
   .header-spaced-content {
-    padding-top: 1.5rem;
+    padding-top: 2rem;       /* Increased for better desktop spacing */
   }
 }
 
-/* Mobile Compact Header - Fixed for Profile pages */
+/* Desktop Header Section - More generous spacing */
+.desktop-header-section {
+  margin-bottom: 1.5rem;    /* 24px */
+}
+
+@media (min-width: 1024px) {
+  .desktop-header-section {
+    margin-bottom: 3rem;     /* 48px - much more generous desktop spacing */
+  }
+}
+
+/* Mobile Compact Header - Don't touch mobile */
 .mobile-compact-header {
   padding-top: 1.5rem;      /* 24px - increased for better spacing */
   padding-bottom: 1.5rem;   /* 24px - increased for better spacing */
@@ -49,8 +73,31 @@
   margin-bottom: 1.5rem;    /* 24px */
 }
 
+@media (min-width: 1024px) {
+  .section-gap {
+    margin-bottom: 2.5rem;   /* 40px - increased for desktop */
+  }
+}
+
 .element-gap {
   margin-bottom: 1rem;      /* 16px */
+}
+
+@media (min-width: 1024px) {
+  .element-gap {
+    margin-bottom: 1.5rem;   /* 24px - increased for desktop */
+  }
+}
+
+/* Desktop Content Spacing */
+.desktop-content-spacing {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .desktop-content-spacing {
+    margin-bottom: 2rem;     /* 32px generous spacing between sections */
+  }
 }
 
 /* Grid Utilities */
@@ -60,7 +107,7 @@
 
 @media (min-width: 1024px) {
   .grid-gap-standard {
-    gap: 1.5rem;           /* 24px */
+    gap: 2rem;             /* 32px - increased for desktop */
   }
 }
 
@@ -72,8 +119,8 @@
 
 @media (min-width: 1024px) {
   .container-safe {
-    padding-left: 1.5rem;   /* 24px */
-    padding-right: 1.5rem;  /* 24px */
+    padding-left: 2rem;    /* 32px - increased */
+    padding-right: 2rem;   /* 32px - increased */
   }
 }
 
@@ -84,7 +131,7 @@
 
 @media (min-width: 1024px) {
   .desktop-container {
-    padding: 1.5rem;        /* 24px desktop */
+    padding: 2rem;          /* 32px desktop */
   }
 }
 
@@ -124,7 +171,7 @@
   object-position: center;
 }
 
-/* Mobile Bottom Navigation Safe Area */
+/* Mobile Bottom Navigation Safe Area - Don't change mobile */
 @media (max-width: 767px) {
   .mobile-safe-bottom {
     padding-bottom: 5.5rem;  /* 88px - safe for bottom nav */

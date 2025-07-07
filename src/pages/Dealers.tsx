@@ -12,40 +12,42 @@ const Dealers = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="container mx-auto mobile-page-container-fixed">
-          {/* Header with CTA - Standardized spacing */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between section-gap">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">Authorized Dealers</h1>
-              <p className="text-gray-600">Find trusted dealers near you</p>
+        <div className="desktop-page-container">
+          {/* Header with CTA - Desktop generous spacing */}
+          <div className="desktop-header-section">
+            <div className="flex flex-col md:flex-row md:items-center justify-between desktop-content-spacing">
+              <div>
+                <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Authorized Dealers</h1>
+                <p className="text-gray-600 text-base md:text-lg">Find trusted dealers near you</p>
+              </div>
+              <Link to="/dealer-register">
+                <Button className="mt-4 md:mt-0 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 shadow-lg">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Become a Dealer
+                </Button>
+              </Link>
             </div>
-            <Link to="/dealer-register">
-              <Button className="mt-4 md:mt-0 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 shadow-lg">
-                <Plus className="h-4 w-4 mr-2" />
-                Become a Dealer
-              </Button>
-            </Link>
-          </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 section-gap">
-            <select className="border rounded-lg px-4 py-2">
-              <option>All Locations</option>
-              <option>Mumbai</option>
-              <option>Delhi</option>
-              <option>Bangalore</option>
-            </select>
-            <select className="border rounded-lg px-4 py-2">
-              <option>All Brands</option>
-              <option>Maruti Suzuki</option>
-              <option>Hyundai</option>
-              <option>Tata</option>
-            </select>
-            <Button variant="outline">Apply Filters</Button>
+            {/* Filters */}
+            <div className="flex flex-wrap gap-4">
+              <select className="border rounded-lg px-4 py-2">
+                <option>All Locations</option>
+                <option>Mumbai</option>
+                <option>Delhi</option>
+                <option>Bangalore</option>
+              </select>
+              <select className="border rounded-lg px-4 py-2">
+                <option>All Brands</option>
+                <option>Maruti Suzuki</option>
+                <option>Hyundai</option>
+                <option>Tata</option>
+              </select>
+              <Button variant="outline">Apply Filters</Button>
+            </div>
           </div>
 
           {/* Dealers Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-gap-standard">
             {dealers.map((item) => (
               <Card key={item} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="p-6">

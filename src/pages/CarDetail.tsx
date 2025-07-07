@@ -128,7 +128,7 @@ const CarDetail = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="container mx-auto px-4 py-6 pb-32 md:pb-6">
+      <div className="desktop-page-container pb-32 md:pb-6">
         <CarImageGallery
           images={car.images}
           title={car.title}
@@ -137,7 +137,7 @@ const CarDetail = () => {
         />
 
         {/* Car Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 grid-gap-standard desktop-content-spacing">
           {/* Left Column - Car Overview */}
           <div>
             <CarOverview
@@ -174,12 +174,12 @@ const CarDetail = () => {
 
         {/* Recommended Accessories Section */}
         {recommendedAccessories.length > 0 && (
-          <div className="mt-12 border-t border-gray-200 pt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="desktop-header-section border-t border-gray-200 pt-8 md:pt-12">
+            <div className="desktop-content-spacing">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-4">
                 ✨ Recommended Accessories
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-base md:text-lg">
                 Popular upgrades for {car.brand} {car.model}
               </p>
             </div>
@@ -195,15 +195,15 @@ const CarDetail = () => {
               </div>
             </div>
 
-            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-standard">
               {recommendedAccessories.map((accessory) => (
                 <AccessoryCard key={accessory.id} accessory={accessory} viewMode="grid" />
               ))}
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="mt-6 md:mt-8 text-center">
               <Link to={`/accessories?search=${car.brand} ${car.model}`}>
-                <button className="text-primary hover:text-primary/80 font-medium">
+                <button className="text-primary hover:text-primary/80 font-medium text-base md:text-lg">
                   View all accessories for {car.brand} {car.model} →
                 </button>
               </Link>

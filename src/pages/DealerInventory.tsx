@@ -64,9 +64,9 @@ const DealerInventory = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="w-full max-w-7xl mx-auto mobile-page-container-fixed">
+        <div className="desktop-page-container">
           {/* Breadcrumb */}
-          <Breadcrumb className="section-gap">
+          <Breadcrumb className="desktop-content-spacing">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -90,11 +90,11 @@ const DealerInventory = () => {
           </Link>
 
           {/* Dealer Header */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 section-gap shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 desktop-header-section shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <h1 className="text-2xl md:text-3xl font-bold">{dealer.name}</h1>
+                <div className="flex items-center gap-3 mb-4 md:mb-6">
+                  <h1 className="text-2xl md:text-4xl font-bold">{dealer.name}</h1>
                   {dealer.verified && (
                     <Badge className="bg-green-100 text-green-700">
                       <Shield className="h-3 w-3 mr-1" />
@@ -108,31 +108,31 @@ const DealerInventory = () => {
                   />
                 </div>
                 
-                <div className="flex items-center text-amber-500 mb-3">
+                <div className="flex items-center text-amber-500 mb-4 md:mb-6">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-current" />
                   ))}
-                  <span className="ml-2 text-gray-600 text-sm">
+                  <span className="ml-2 text-gray-600 text-sm md:text-base">
                     {dealer.rating} ({dealer.reviewCount} reviews)
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-gray-600">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 text-gray-600 mb-4 md:mb-6">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{dealer.location}</span>
+                    <span className="text-sm md:text-base">{dealer.location}</span>
                   </div>
                   <div className="flex items-center">
                     <CarIcon className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{dealer.carsInStock}+ cars in stock</span>
+                    <span className="text-sm md:text-base">{dealer.carsInStock}+ cars in stock</span>
                   </div>
                   <div className="flex items-center">
                     <Phone className="h-4 w-4 mr-2" />
-                    <span className="text-sm">Responds in {dealer.responseTime}</span>
+                    <span className="text-sm md:text-base">Responds in {dealer.responseTime}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-2">
                   {dealer.brands.map((brand) => (
                     <Badge key={brand} variant="outline" className="text-xs">
                       {brand}
@@ -142,23 +142,23 @@ const DealerInventory = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button variant="outline">Call Now</Button>
-                <Button variant="outline">Get Directions</Button>
+                <Button variant="outline" size="lg">Call Now</Button>
+                <Button variant="outline" size="lg">Get Directions</Button>
               </div>
             </div>
           </div>
 
           {/* Inventory Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center section-gap gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center desktop-header-section gap-4 md:gap-6">
             <div>
-              <h2 className="text-xl font-semibold">Available Inventory</h2>
-              <p className="text-gray-600">{sortedCars.length} cars available</p>
+              <h2 className="text-xl md:text-2xl font-semibold mb-2">Available Inventory</h2>
+              <p className="text-gray-600 text-base md:text-lg">{sortedCars.length} cars available</p>
             </div>
             
             <select 
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="border rounded px-3 py-2 text-sm w-full sm:w-auto"
+              className="border rounded px-3 py-2 text-sm md:text-base w-full sm:w-auto h-12"
             >
               <option value="">Sort by: Featured</option>
               <option value="price_asc">Price: Low to High</option>
@@ -187,7 +187,7 @@ const DealerInventory = () => {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-standard w-full">
                   {sortedCars.map((car) => (
                     <CarCard 
                       key={car.id} 
@@ -199,11 +199,11 @@ const DealerInventory = () => {
                 </div>
               )
             ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">No cars available</h3>
-                <p className="text-gray-600 mb-4">This dealer currently has no cars in stock</p>
+              <div className="text-center py-12 md:py-20">
+                <h3 className="text-lg md:text-xl font-semibold mb-2">No cars available</h3>
+                <p className="text-gray-600 mb-4 text-base md:text-lg">This dealer currently has no cars in stock</p>
                 <Link to="/dealers">
-                  <Button>Browse Other Dealers</Button>
+                  <Button size="lg">Browse Other Dealers</Button>
                 </Link>
               </div>
             )}
@@ -211,7 +211,7 @@ const DealerInventory = () => {
 
           {/* Load More Button */}
           {sortedCars.length > 0 && (
-            <div className="text-center mt-12">
+            <div className="text-center mt-12 md:mt-20">
               <Button variant="outline" size="lg">
                 Load More Cars
               </Button>
