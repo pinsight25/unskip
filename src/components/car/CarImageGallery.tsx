@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Award, Shield, RotateCcw } from 'lucide-react';
+import { Award, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import CarImageModal from './CarImageModal';
 
 interface CarImageGalleryProps {
@@ -33,18 +33,6 @@ const CarImageGallery = ({ images, title, featured, verified }: CarImageGalleryP
         <div 
           className="relative h-64 md:h-96 bg-gray-100 overflow-hidden rounded-lg cursor-pointer"
           onClick={handleImageClick}
-          onTouchStart={(e) => {
-            const touchStart = e.touches[0].clientX;
-            const handleTouchEnd = (endEvent: TouchEvent) => {
-              const touchEnd = endEvent.changedTouches[0].clientX;
-              const diff = touchStart - touchEnd;
-              if (Math.abs(diff) > 50) {
-                handleImageSwipe(diff > 0 ? 'right' : 'left');
-              }
-              document.removeEventListener('touchend', handleTouchEnd);
-            };
-            document.addEventListener('touchend', handleTouchEnd);
-          }}
         >
           <img 
             src={images[currentImageIndex]} 
@@ -89,28 +77,30 @@ const CarImageGallery = ({ images, title, featured, verified }: CarImageGalleryP
         </div>
         
         {/* Image Navigation Arrows - Desktop Only */}
-        <div className="hidden md:flex absolute top-1/2 transform -translate-y-1/2 w-full justify-between px-4 pointer-events-none">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleImageSwipe('left');
-            }}
-            className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto"
-            disabled={currentImageIndex === 0}
-          >
-            <RotateCcw className="h-6 w-6" />
-          </button>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleImageSwipe('right');
-            }}
-            className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto"
-            disabled={currentImageIndex === images.length - 1}
-          >
-            <RotateCcw className="h-6 w-6 transform rotate-180" />
-          </button>
-        </div>
+        {images.length > 1 && (
+          <div className="hidden md:flex absolute top-1/2 transform -translate-y-1/2 w-full justify-between px-4 pointer-events-none">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleImageSwipe('left');
+              }}
+              className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto disabled:opacity-50"
+              disabled={currentImageIndex === 0}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleImageSwipe('right');
+              }}
+              className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto disabled:opacity-50"
+              disabled={currentImageIndex === images.length - 1}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          </div>
+        )}
       </div>
 
       <CarImageModal

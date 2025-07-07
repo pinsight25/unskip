@@ -82,7 +82,7 @@ const HomeResults = ({
   };
 
   return (
-    <section className="pt-6 pb-8 bg-gray-50 min-h-screen">
+    <section className="pt-6 pb-8 bg-gray-50 min-h-screen overflow-y-auto">
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
         
         {/* Mobile Pull to Refresh */}

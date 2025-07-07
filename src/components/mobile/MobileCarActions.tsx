@@ -5,9 +5,9 @@ import { MessageCircle, Calendar, IndianRupee } from 'lucide-react';
 
 interface MobileCarActionsProps {
   offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
-  onMakeOffer: () => void;
-  onChat: () => void;
-  onTestDrive: () => void;
+  onMakeOffer: (e?: React.MouseEvent) => void;
+  onChat: (e?: React.MouseEvent) => void;
+  onTestDrive: (e?: React.MouseEvent) => void;
 }
 
 const MobileCarActions = ({

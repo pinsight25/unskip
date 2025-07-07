@@ -77,7 +77,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-y-auto">
       <HomeHeader
         currentFilters={currentFilters}
         onFilterChange={handleFilterChange}
@@ -89,34 +89,36 @@ const Home = () => {
         resultCount={resultCount}
       />
 
-      {isSearching ? (
-        <SearchResultsView
-          results={results}
-          query={query}
-          savedCars={savedCars}
-          isMobile={isMobile}
-          onSaveCar={handleSaveCar}
-          onMakeOffer={handleMakeOffer}
-          onChat={handleChatClick}
-          onTestDrive={handleTestDriveClick}
-          getOfferStatus={getOfferStatus}
-        />
-      ) : (
-        <HomeResults
-          filteredCars={filteredCars}
-          savedCars={savedCars}
-          currentFilters={currentFilters}
-          isMobile={isMobile}
-          isRefreshing={isRefreshing}
-          offerStatuses={offerStatuses}
-          onSort={handleSort}
-          onSaveCar={handleSaveCar}
-          onMakeOffer={handleMakeOffer}
-          onPullToRefresh={handlePullToRefresh}
-          onFilterChange={handleFilterChange}
-          getOfferStatus={getOfferStatus}
-        />
-      )}
+      <div className="overflow-y-auto">
+        {isSearching ? (
+          <SearchResultsView
+            results={results}
+            query={query}
+            savedCars={savedCars}
+            isMobile={isMobile}
+            onSaveCar={handleSaveCar}
+            onMakeOffer={handleMakeOffer}
+            onChat={handleChatClick}
+            onTestDrive={handleTestDriveClick}
+            getOfferStatus={getOfferStatus}
+          />
+        ) : (
+          <HomeResults
+            filteredCars={filteredCars}
+            savedCars={savedCars}
+            currentFilters={currentFilters}
+            isMobile={isMobile}
+            isRefreshing={isRefreshing}
+            offerStatuses={offerStatuses}
+            onSort={handleSort}
+            onSaveCar={handleSaveCar}
+            onMakeOffer={handleMakeOffer}
+            onPullToRefresh={handlePullToRefresh}
+            onFilterChange={handleFilterChange}
+            getOfferStatus={getOfferStatus}
+          />
+        )}
+      </div>
 
       <HomeModals
         selectedCar={selectedCar}

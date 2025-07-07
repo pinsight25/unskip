@@ -27,11 +27,17 @@ const MobileCarCard = ({
 }: MobileCarCardProps) => {
   const navigate = useNavigate();
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="button"]')) {
+      return;
+    }
     navigate(`/car/${car.id}`);
   };
 
-  const handleSave = () => {
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onSave(car.id);
   };
 
@@ -66,9 +72,18 @@ const MobileCarCard = ({
 
         <MobileCarActions
           offerStatus={offerStatus}
-          onMakeOffer={onMakeOffer}
-          onChat={onChat}
-          onTestDrive={onTestDrive}
+          onMakeOffer={(e) => {
+            e?.stopPropagation();
+            onMakeOffer();
+          }}
+          onChat={(e) => {
+            e?.stopPropagation();
+            onChat();
+          }}
+          onTestDrive={(e) => {
+            e?.stopPropagation();
+            onTestDrive();
+          }}
         />
       </div>
     </Card>
