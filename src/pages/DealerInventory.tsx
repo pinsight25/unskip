@@ -55,9 +55,9 @@ const DealerInventory = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="desktop-page-container">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Breadcrumb - Desktop Only */}
-          <Breadcrumb className="desktop-content-spacing hidden md:block">
+          <Breadcrumb className="py-4 hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -72,10 +72,10 @@ const DealerInventory = () => {
           </Breadcrumb>
 
           {/* Back Button for Mobile */}
-          <div className="md:hidden px-4 py-3">
+          <div className="md:hidden py-3">
             <Link 
               to="/dealers" 
-              className="flex items-center text-primary font-medium element-gap hover:text-primary/80 transition-colors"
+              className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dealers
@@ -97,8 +97,8 @@ const DealerInventory = () => {
 
           {/* Load More Button */}
           {sortedCars.length > 0 && (
-            <div className="text-center mt-12 md:mt-20 px-4 md:px-0">
-              <Button variant="outline" size="lg">
+            <div className="text-center mt-12 md:mt-20 pb-8">
+              <Button variant="outline" size="lg" className="min-h-[48px]">
                 Load More Cars
               </Button>
             </div>

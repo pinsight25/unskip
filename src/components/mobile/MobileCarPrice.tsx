@@ -1,27 +1,42 @@
 
+import { Badge } from '@/components/ui/badge';
+
 interface MobileCarPriceProps {
   price: number;
-  rentalRate?: number;
+  rentalRate?: {
+    daily: number;
+    weekly: number;
+    monthly: number;
+  } | null;
 }
 
 const MobileCarPrice = ({ price, rentalRate }: MobileCarPriceProps) => {
   const formatPrice = (price: number) => {
-    return `₹${price.toLocaleString()}`;
-  };
-
-  const formatRental = (rate: number) => {
-    return `₹${rate.toLocaleString()}/day`;
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-2xl font-bold text-primary">
-        {formatPrice(price)}
-      </span>
+    <div>
+      <div className="flex items-center justify-between">
+        <p className="text-xl font-bold text-primary">
+          {formatPrice(price)}
+        </p>
+        {rentalRate && (
+          <Badge variant="secondary" className="text-xs whitespace-nowrap px-2 py-1">
+            Also for rent
+          </Badge>
+        )}
+      </div>
       {rentalRate && (
-        <span className="small-text text-gray-500 ml-2">
-          or {formatRental(rentalRate)}
-        </span>
+        <div className="text-right mt-1">
+          <p className="text-sm font-semibold text-green-600">
+            ₹{rentalRate.daily.toLocaleString('en-IN')}/day
+          </p>
+        </div>
       )}
     </div>
   );

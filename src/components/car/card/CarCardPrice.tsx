@@ -22,7 +22,7 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
           {formatPrice(car.price)}
         </p>
         {car.isRentAvailable && car.rentPrice && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs whitespace-nowrap px-2 py-1">
             Also for rent
           </Badge>
         )}

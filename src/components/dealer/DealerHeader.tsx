@@ -19,6 +19,15 @@ interface DealerHeaderProps {
 }
 
 const DealerHeader = ({ dealer }: DealerHeaderProps) => {
+  const handleCallNow = () => {
+    window.location.href = 'tel:+919876543210';
+  };
+
+  const handleGetDirections = () => {
+    const encodedLocation = encodeURIComponent(dealer.location);
+    window.open(`https://maps.google.com/?q=${encodedLocation}`, '_blank');
+  };
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg mx-4 md:mx-0 mb-6 p-4 md:p-8 desktop-header-section shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-8">
@@ -77,10 +86,22 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
 
         {/* Action Buttons - Full width on mobile, side by side on desktop */}
         <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-          <Button variant="outline" size="lg" className="w-full md:w-auto min-h-[48px]">
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="w-full md:w-auto min-h-[48px]"
+            onClick={handleCallNow}
+          >
+            <Phone className="h-4 w-4 mr-2" />
             Call Now
           </Button>
-          <Button variant="outline" size="lg" className="w-full md:w-auto min-h-[48px]">
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="w-full md:w-auto min-h-[48px]"
+            onClick={handleGetDirections}
+          >
+            <MapPin className="h-4 w-4 mr-2" />
             Get Directions
           </Button>
         </div>
