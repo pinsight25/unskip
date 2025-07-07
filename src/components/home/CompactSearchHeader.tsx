@@ -15,7 +15,7 @@ const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactS
     <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40">
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
         {/* Compact Search Bar */}
-        <div className="flex gap-4 items-center mb-3">
+        <div className="flex gap-4 items-center mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
@@ -37,8 +37,13 @@ const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactS
         </div>
 
         {/* Results Count */}
-        <div className="text-sm text-gray-600">
-          Showing <span className="font-semibold text-gray-900">{resultCount}</span> {resultCount === 1 ? 'result' : 'results'} for "<span className="font-medium">{query}</span>"
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-gray-900">
+            {resultCount} {resultCount === 1 ? 'Car' : 'Cars'} found
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Showing results for "{query}"
+          </p>
         </div>
       </div>
     </div>

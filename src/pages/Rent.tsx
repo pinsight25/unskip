@@ -1,244 +1,297 @@
 
-import React, { useState, useEffect } from 'react';
-import { Car } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import RentCarCard from '@/components/rent/RentCarCard';
+import { useState, useMemo } from 'react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
-import { Search } from 'lucide-react';
-import { RentCar } from '@/types/rent';
 import { mockRentCars } from '@/data/rentMockData';
-
-interface CarType {
-  id: string;
-  label: string;
-}
-
-interface RentFilters {
-  search: string;
-  carType: string | null;
-  dailyPriceRange: [number, number];
-  duration: 'all' | 'daily' | 'weekly' | 'monthly';
-  availableFrom: Date | undefined;
-  availableTo: Date | undefined;
-  sortBy: 'relevance' | 'price_low' | 'price_high' | 'newest';
-}
+import { RentFilters } from '@/types/rent';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
+import RentCarCard from '@/components/rent/RentCarCard';
+import { Search, Filter, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const Rent = () => {
   const [filters, setFilters] = useState<RentFilters>({
     search: '',
-    carType: null,
-    dailyPriceRange: [0, 5000],
+    dailyPriceRange: [1000, 10000],
     duration: 'all',
+    carType: 'all',
     availableFrom: undefined,
     availableTo: undefined,
-    sortBy: 'relevance',
+    sortBy: 'relevance'
   });
 
-  const [filteredCars, setFilteredCars] = useState<RentCar[]>(mockRentCars);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  useEffect(() => {
-    let filtered = mockRentCars.filter((car) => {
-      const searchRegex = new RegExp(filters.search, 'i');
-      return searchRegex.test(car.title);
-    });
+  const filteredCars = useMemo(() => {
+    let filtered = mockRentCars;
 
-    if (filters.carType) {
-      filtered = filtered.filter((car) => car.rentType === filters.carType);
+    // Search filter
+    if (filters.search) {
+      filtered = filtered.filter(car =>
+        car.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+        car.brand.toLowerCase().includes(filters.search.toLowerCase()) ||
+        car.model.toLowerCase().includes(filters.search.toLowerCase())
+      );
     }
 
-    filtered = filtered.sort((a, b) => {
-      if (filters.sortBy === 'price_low') {
-        return a.rentPrice.daily - b.rentPrice.daily;
-      } else if (filters.sortBy === 'price_high') {
-        return b.rentPrice.daily - a.rentPrice.daily;
-      } else if (filters.sortBy === 'newest') {
-        return b.id.localeCompare(a.id);
-      }
-      return 0;
-    });
+    // Daily price filter
+    filtered = filtered.filter(car => 
+      car.rentPrice.daily >= filters.dailyPriceRange[0] && 
+      car.rentPrice.daily <= filters.dailyPriceRange[1]
+    );
 
-    setFilteredCars(filtered);
+    // Car type filter
+    if (filters.carType !== 'all') {
+      filtered = filtered.filter(car => car.rentType === filters.carType);
+    }
+
+    // Sort
+    switch (filters.sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.rentPrice.daily - b.rentPrice.daily);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.rentPrice.daily - a.rentPrice.daily);
+        break;
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      default:
+        // Relevance - featured first
+        filtered.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return b.views - a.views;
+        });
+    }
+
+    return filtered;
   }, [filters]);
-
-  const carTypes: CarType[] = [
-    { id: 'economy', label: 'Economy' },
-    { id: 'premium', label: 'Premium' },
-    { id: 'luxury', label: 'Luxury' },
-    { id: 'suv', label: 'SUV' },
-  ];
-
-  const formatPrice = (price: number) => {
-    return `₹${price.toLocaleString('en-IN')}`;
-  };
 
   return (
     <ResponsiveLayout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40">
-          <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-6">
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Rent a Car</h1>
-              <p className="text-gray-600">Find the perfect car for your journey</p>
+      <div className="bg-white min-h-screen">
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center mb-8">
+              <h1 className="heading-1 mb-3">
+                Rent Premium Cars
+              </h1>
+              <p className="text-lg text-gray-600 mb-6">
+                Drive your dream car by the day, week, or month
+              </p>
             </div>
 
             {/* Search Bar */}
-            <div className="flex gap-4 max-w-4xl mx-auto mb-6">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="max-w-3xl mx-auto mb-6">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
-                  placeholder="Search by make, model, or location..."
+                  placeholder="Search cars by brand, model, or location..."
+                  className="pl-12 pr-4 h-14 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                  className="pl-12 h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
                 />
               </div>
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 px-8 h-12">
-                Search
-              </Button>
             </div>
 
             {/* Quick Filters */}
-            <div className="flex flex-wrap gap-3 justify-center">
-              {carTypes.map((type) => (
-                <button
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              {[
+                { id: 'all', name: 'All Cars', icon: '🚗' },
+                { id: 'economy', name: 'Economy', icon: '💰' },
+                { id: 'premium', name: 'Premium', icon: '⭐' },
+                { id: 'luxury', name: 'Luxury', icon: '👑' },
+                { id: 'suv', name: 'SUV', icon: '🚙' }
+              ].map((type) => (
+                <Button
                   key={type.id}
-                  onClick={() => setFilters(prev => ({ ...prev, carType: type.id }))}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    filters.carType === type.id
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  variant={filters.carType === type.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFilters(prev => ({ ...prev, carType: type.id as any }))}
+                  className="rounded-full px-4 py-2 min-h-[44px] font-medium"
                 >
-                  {type.label}
-                </button>
+                  <span className="mr-2">{type.icon}</span>
+                  {type.name}
+                </Button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Advanced Filters */}
-        <div className="bg-white border-b border-gray-100 py-4">
-          <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Main Content */}
+        <div className="container mx-auto px-4 py-8">
+          {/* Filters and Results Header */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {filteredCars.length} {filteredCars.length === 1 ? 'car' : 'cars'} available for rent
+              </h2>
+              <p className="text-gray-600">Perfect cars for your next adventure</p>
+            </div>
+
+            <div className="flex items-center gap-4 w-full lg:w-auto">
+              {/* Mobile Filters Toggle */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="lg:hidden"
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+              
+              {/* Sort */}
+              <Select 
+                value={filters.sortBy} 
+                onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value as any }))}
+              >
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Most Relevant</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Desktop Filters */}
+          <div className="hidden lg:block mb-8 p-6 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {/* Price Range */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Daily Price Range
                 </label>
-                <div className="flex gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Min"
-                    value={filters.dailyPriceRange[0]}
-                    onChange={(e) => setFilters(prev => ({ 
-                      ...prev, 
-                      dailyPriceRange: [Number(e.target.value), prev.dailyPriceRange[1]] as [number, number]
-                    }))}
-                    className="text-sm"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Max"
-                    value={filters.dailyPriceRange[1]}
-                    onChange={(e) => setFilters(prev => ({ 
-                      ...prev, 
-                      dailyPriceRange: [prev.dailyPriceRange[0], Number(e.target.value)] as [number, number]
-                    }))}
-                    className="text-sm"
-                  />
+                <Slider
+                  value={filters.dailyPriceRange}
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, dailyPriceRange: value as [number, number] }))}
+                  max={10000}
+                  min={1000}
+                  step={500}
+                  className="mb-2"
+                />
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>₹{filters.dailyPriceRange[0].toLocaleString()}</span>
+                  <span>₹{filters.dailyPriceRange[1].toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Duration */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Duration
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Rental Duration
                 </label>
-                <select
-                  value={filters.duration}
-                  onChange={(e) => setFilters(prev => ({ ...prev, duration: e.target.value as any }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                <Select 
+                  value={filters.duration} 
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, duration: value as any }))}
                 >
-                  <option value="all">Any Duration</option>
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Any Duration</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Available From */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Available From
                 </label>
-                <Input
-                  type="date"
-                  value={filters.availableFrom?.toISOString().split('T')[0] || ''}
-                  onChange={(e) => setFilters(prev => ({ 
-                    ...prev, 
-                    availableFrom: e.target.value ? new Date(e.target.value) : undefined 
-                  }))}
-                  className="text-sm"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !filters.availableFrom && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {filters.availableFrom ? format(filters.availableFrom, "PPP") : "Select date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={filters.availableFrom}
+                      onSelect={(date) => setFilters(prev => ({ ...prev, availableFrom: date }))}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
-              {/* Available To */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Available To
-                </label>
-                <Input
-                  type="date"
-                  value={filters.availableTo?.toISOString().split('T')[0] || ''}
-                  onChange={(e) => setFilters(prev => ({ 
-                    ...prev, 
-                    availableTo: e.target.value ? new Date(e.target.value) : undefined 
-                  }))}
-                  className="text-sm"
-                />
+              {/* Clear Filters */}
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setFilters({
+                    search: '',
+                    dailyPriceRange: [1000, 10000] as [number, number],
+                    duration: 'all',
+                    carType: 'all',
+                    availableFrom: undefined,
+                    availableTo: undefined,
+                    sortBy: 'relevance'
+                  })}
+                  className="w-full"
+                >
+                  Clear Filters
+                </Button>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Results */}
-        <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-6">
-          {/* Results Header */}
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {filteredCars.length} Cars Available for Rent
-              </h2>
-              <p className="text-sm text-gray-600">
-                Starting from {formatPrice(1500)}/day
-              </p>
-            </div>
-            <select
-              value={filters.sortBy}
-              onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as any }))}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <option value="relevance">Sort by Relevance</option>
-              <option value="price_low">Price: Low to High</option>
-              <option value="price_high">Price: High to Low</option>
-              <option value="newest">Newest First</option>
-            </select>
+          {/* Cars Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredCars.map((car) => (
+              <RentCarCard key={car.id} car={car} />
+            ))}
           </div>
 
-          {/* Car Grid */}
-          {filteredCars.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCars.map((car) => (
-                <RentCarCard key={car.id} car={car} />
-              ))}
-            </div>
-          ) : (
+          {/* Empty State */}
+          {filteredCars.length === 0 && (
             <div className="text-center py-16">
-              <Car className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No cars found</h3>
-              <p className="text-gray-600">Try adjusting your filters to see more results</p>
+              <div className="text-8xl mb-6">🔍</div>
+              <h3 className="heading-3 text-gray-900 mb-3">
+                No cars found
+              </h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Try adjusting your search terms or filters to find the perfect rental car
+              </p>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setFilters({
+                  search: '',
+                  dailyPriceRange: [1000, 10000] as [number, number],
+                  duration: 'all',
+                  carType: 'all',
+                  availableFrom: undefined,
+                  availableTo: undefined,
+                  sortBy: 'relevance'
+                })}
+              >
+                Clear All Filters
+              </Button>
             </div>
           )}
         </div>
