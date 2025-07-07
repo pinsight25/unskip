@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
@@ -50,18 +51,18 @@ const Saved = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="bg-white min-h-screen">
+      <div className="bg-gray-50 min-h-screen">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto mobile-page-container-fixed mobile-compact-header">
-            <div className="flex flex-col md:flex-row md:items-center justify-between">
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 border-b border-gray-200">
+          <div className="container mx-auto mobile-page-container-fixed">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="text-center md:text-left">
-                <h1 className="heading-1-compact">Saved Cars</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Saved Cars</h1>
                 <p className="text-base md:text-lg text-gray-600">
                   {savedCars.length} cars in your wishlist
                 </p>
               </div>
-              <Button variant="outline" className="mt-2 md:mt-0 self-center md:self-auto">
+              <Button variant="outline" className="self-center md:self-auto hover-lift">
                 <Search className="h-4 w-4 mr-2" />
                 Find Similar
               </Button>
@@ -70,32 +71,36 @@ const Saved = () => {
         </div>
 
         {/* Content Section */}
-        <div className="container mx-auto mobile-page-container-fixed pb-20 md:pb-8">
-          <div className="max-w-6xl mx-auto">
+        <div className="container mx-auto mobile-page-container-fixed">
+          <div className="max-w-7xl mx-auto">
             {savedCars.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {savedCars.map((car) => (
-                  <Card key={car.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card key={car.id} className="overflow-hidden hover-lift cards-equal-height">
                     <div className="relative">
                       <img
                         src={car.images[0]}
                         alt={car.title}
                         className="w-full aspect-[4/3] object-cover"
+                        loading="lazy"
                       />
                       <button 
-                        className="absolute top-3 right-3 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center"
-                        onClick={() => handleUnsave(car.id)}
+                        className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors touch-target"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUnsave(car.id);
+                        }}
                       >
                         <Heart className="h-5 w-5 fill-red-500 text-red-500" />
                       </button>
                     </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold mb-2 line-clamp-2">{car.title}</h3>
-                      <p className="text-2xl font-bold text-primary mb-2">{formatPrice(car.price)}</p>
-                      <p className="text-gray-600 text-sm mb-4">{car.location}</p>
+                    <div className="p-4 flex flex-col flex-1">
+                      <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-gray-900">{car.title}</h3>
+                      <p className="text-2xl font-bold text-orange-600 mb-2">{formatPrice(car.price)}</p>
+                      <p className="text-gray-600 text-sm mb-4 flex-1">{car.location}</p>
                       <Button 
-                        size="sm" 
-                        className="w-full"
+                        size="default" 
+                        className="w-full touch-target-button"
                         onClick={() => handleMakeOffer(car)}
                       >
                         Make Offer
@@ -105,11 +110,17 @@ const Saved = () => {
                 ))}
               </div>
             ) : (
-              <Card className="p-12 text-center">
+              <Card className="p-12 text-center max-w-md mx-auto">
                 <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No saved cars yet</h3>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">No saved cars yet</h3>
                 <p className="text-gray-600 mb-6">Start saving cars you're interested in to see them here</p>
-                <Button onClick={() => window.location.href = '/'}>Browse Cars</Button>
+                <Button 
+                  size="lg" 
+                  onClick={() => window.location.href = '/'}
+                  className="touch-target-button"
+                >
+                  Browse Cars
+                </Button>
               </Card>
             )}
           </div>

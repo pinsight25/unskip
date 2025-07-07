@@ -3,31 +3,22 @@ import { ReactNode } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import BottomNavigation from '../mobile/BottomNavigation';
-import { useEffect, useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
 }
 
 const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      {/* Main content with proper spacing below header */}
-      <main className={`flex-1 ${isMobile ? 'pt-6 pb-20' : 'pt-24'}`}>
-        <div className={isMobile ? 'pb-8' : ''}>
-          {children}
-        </div>
+      {/* Main content with proper spacing */}
+      <main className={`flex-1 ${isMobile ? 'pt-4 pb-24' : 'pt-8 pb-8'}`}>
+        {children}
       </main>
       
       {/* Desktop Footer */}

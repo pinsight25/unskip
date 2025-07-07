@@ -1,29 +1,31 @@
 
 /* Layout and Spacing Utilities */
 
-/* SINGLE STANDARDIZED PAGE CONTAINER */
+/* STANDARDIZED PAGE CONTAINER - Fixed mobile bottom padding */
 .mobile-page-container-fixed {
-  padding-top: var(--page-top-mobile);
-  padding-left: var(--spacing-sm);
-  padding-right: var(--spacing-sm);
+  padding-top: 1rem;
+  padding-left: 1rem;        /* 16px */
+  padding-right: 1rem;       /* 16px */
+  padding-bottom: 5.5rem;    /* 88px - safe bottom padding for mobile */
 }
 
 @media (min-width: 1024px) {
   .mobile-page-container-fixed {
-    padding-top: var(--page-top-desktop);
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
+    padding-top: 1.5rem;
+    padding-left: 1.5rem;     /* 24px */
+    padding-right: 1.5rem;    /* 24px */
+    padding-bottom: 2rem;     /* 32px */
   }
 }
 
 /* Header Spacing Utilities */
 .header-spaced-content {
-  padding-top: var(--header-bottom-spacing-mobile);
+  padding-top: 1rem;
 }
 
 @media (min-width: 1024px) {
   .header-spaced-content {
-    padding-top: var(--header-bottom-spacing-desktop);
+    padding-top: 1.5rem;
   }
 }
 
@@ -44,34 +46,34 @@
 
 /* Standardized Section Spacing */
 .section-gap {
-  margin-bottom: var(--section-gap);
+  margin-bottom: 1.5rem;    /* 24px */
 }
 
 .element-gap {
-  margin-bottom: var(--element-gap);
+  margin-bottom: 1rem;      /* 16px */
 }
 
 /* Grid Utilities */
 .grid-gap-standard {
-  gap: var(--spacing-sm);
+  gap: 1rem;               /* 16px */
 }
 
 @media (min-width: 1024px) {
   .grid-gap-standard {
-    gap: var(--spacing-md);
+    gap: 1.5rem;           /* 24px */
   }
 }
 
 /* Safe Area and Container */
 .container-safe {
-  padding-left: var(--spacing-sm);
-  padding-right: var(--spacing-sm);
+  padding-left: 1rem;      /* 16px */
+  padding-right: 1rem;     /* 16px */
 }
 
 @media (min-width: 1024px) {
   .container-safe {
-    padding-left: var(--spacing-md);
-    padding-right: var(--spacing-md);
+    padding-left: 1.5rem;   /* 24px */
+    padding-right: 1.5rem;  /* 24px */
   }
 }
 
@@ -111,18 +113,44 @@
   object-position: center;
 }
 
-/* Mobile-specific bottom padding for scrollable content */
+/* Mobile Bottom Navigation Safe Area */
 @media (max-width: 767px) {
-  .mobile-page-container-fixed {
-    @apply pb-32; /* Increased bottom padding for mobile */
-  }
-  
   .mobile-safe-bottom {
-    @apply pb-32; /* Extra safe bottom padding */
+    padding-bottom: 5.5rem;  /* 88px - safe for bottom nav */
   }
   
-  /* Ensure car listing areas have proper bottom spacing */
   .car-listings-container {
-    @apply pb-32;
+    padding-bottom: 5.5rem;  /* 88px - safe for bottom nav */
+  }
+  
+  /* Ensure modals never go below bottom nav */
+  .modal-mobile-safe {
+    margin-bottom: 5.5rem;   /* 88px */
+    max-height: calc(100vh - 11rem); /* Account for header + bottom nav */
+  }
+}
+
+/* Consistent Touch Targets for Mobile */
+@media (max-width: 767px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .touch-target-button {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Hover States for Desktop */
+@media (min-width: 1024px) {
+  .hover-lift {
+    transition: all 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }

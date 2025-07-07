@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CarDetail from "./pages/CarDetail";
 import SellCar from "./pages/SellCar";
+import ListCarForRent from "./pages/ListCarForRent";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Saved from "./pages/Saved";
@@ -21,7 +22,14 @@ import PostAccessory from "./pages/PostAccessory";
 import Rent from "./pages/Rent";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,6 +40,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/sell" element={<SellCar />} />
+          <Route path="/list-car-for-rent" element={<ListCarForRent />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/saved" element={<Saved />} />
@@ -45,7 +54,6 @@ const App = () => (
           <Route path="/accessories/:id" element={<AccessoryDetail />} />
           <Route path="/post-accessory" element={<PostAccessory />} />
           <Route path="/rent" element={<Rent />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
