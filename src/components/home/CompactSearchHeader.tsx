@@ -12,7 +12,7 @@ interface CompactSearchHeaderProps {
 
 const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactSearchHeaderProps) => {
   return (
-    <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40">
+    <div className="bg-white border-b border-gray-200 sticky top-16 lg:top-20 z-40 no-tap-highlight">
       <div className="w-full max-w-7xl mx-auto mobile-page-container search-results-compact">
         {/* Compact Search Bar */}
         <div className="flex gap-3 items-center search-header-to-bar">
@@ -22,13 +22,13 @@ const CompactSearchHeader = ({ query, onSearch, onClear, resultCount }: CompactS
               placeholder="Search cars, brands, or locations..."
               value={query}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-12 pr-12 h-11 lg:h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg"
+              className="pl-12 pr-12 h-11 lg:h-12 text-base border-2 border-gray-200 focus:border-primary bg-white shadow-sm rounded-lg no-tap-highlight"
               onKeyPress={(e) => e.key === 'Enter' && onSearch(query)}
             />
             {query && (
               <button
                 onClick={onClear}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-gray-600 transition-colors bg-gray-100 rounded-full flex items-center justify-center"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-gray-600 transition-colors bg-gray-100 rounded-full flex items-center justify-center no-tap-highlight"
               >
                 <X className="h-4 w-4" />
               </button>

@@ -75,6 +75,21 @@
       user-select: auto !important;
     }
     
+    /* NO-TAP-HIGHLIGHT CLASS - Prevents any green highlights */
+    .no-tap-highlight,
+    .no-tap-highlight *,
+    .no-tap-highlight::before,
+    .no-tap-highlight::after {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-focus-ring-color: transparent !important;
+      outline: none !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+      text-decoration: none !important;
+      background-image: none !important;
+      background-color: transparent !important;
+    }
+    
     /* Specifically target header and navigation elements */
     header, header *, 
     nav, nav *,
@@ -88,42 +103,24 @@
       border: none !important;
     }
     
-    /* ULTRA-SPECIFIC FIX FOR FILTERTABS GREEN LINE ISSUE */
-    .filter-tabs-container,
-    .filter-tabs-container *,
-    .filter-tabs-wrapper,
-    .filter-tabs-wrapper *,
-    .filter-tab-button,
-    .filter-tab-button *,
-    div[class*="sticky"][class*="top-"],
-    div[class*="sticky"][class*="top-"] *,
-    div[class*="bg-white"][class*="border-b"],
-    div[class*="bg-white"][class*="border-b"] * {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-focus-ring-color: transparent !important;
-      outline: none !important;
-      box-shadow: none !important;
-      border-bottom: none !important;
-      text-decoration: none !important;
-      background-image: none !important;
+    /* REMOVE ANY GREEN BACKGROUNDS - Emergency override */
+    * {
+      background-color: inherit !important;
     }
-
-    /* Remove any pseudo-elements that might cause lines */
-    .filter-tabs-container::before,
-    .filter-tabs-container::after,
-    .filter-tabs-wrapper::before,
-    .filter-tabs-wrapper::after,
-    .filter-tab-button::before,
-    .filter-tab-button::after {
-      display: none !important;
-      content: none !important;
+    
+    *[style*="background-color: rgb(34, 197, 94)"],
+    *[style*="bg-green"],
+    .bg-green-500,
+    .bg-green-400,
+    .bg-green-600 {
+      background-color: transparent !important;
+      background: transparent !important;
     }
 
     /* Prevent any focus states on all interactive elements */
     button, button *,
     [role="button"], [role="button"] *,
     a[role="button"], a[role="button"] *,
-    .filter-tab-button, .filter-tab-button *,
     [class*="transition-all"], [class*="transition-all"] * {
       -webkit-tap-highlight-color: transparent !important;
       -webkit-focus-ring-color: transparent !important;
