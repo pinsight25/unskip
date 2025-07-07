@@ -7,6 +7,7 @@ import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import ShareButton from '@/components/ui/ShareButton';
 import { 
   Breadcrumb,
   BreadcrumbList,
@@ -101,6 +102,11 @@ const DealerInventory = () => {
                       Verified
                     </Badge>
                   )}
+                  <ShareButton 
+                    dealerName={dealer.name}
+                    dealerId={dealer.id}
+                    carsCount={dealer.carsInStock}
+                  />
                 </div>
                 
                 <div className="flex items-center text-amber-500 mb-3">

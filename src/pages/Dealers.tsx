@@ -88,14 +88,10 @@ const Dealers = () => {
                     ))}
                   </div>
 
-                  <div className="space-y-2">
+                  <div>
                     <Link to={`/dealer/${item}/inventory`}>
                       <Button className="w-full">View Inventory</Button>
                     </Link>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm">Call Now</Button>
-                      <Button variant="outline" size="sm">Get Directions</Button>
-                    </div>
                   </div>
                 </div>
               </Card>
