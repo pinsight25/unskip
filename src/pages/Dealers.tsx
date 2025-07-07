@@ -129,7 +129,7 @@ const Dealers = () => {
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`h-4 w-4 ${i < Math.floor(dealer.rating) ? 'fill-current' : ''}`} />
                         ))}
-                        <span className="ml-2 text-gray-600 text-sm">{dealer.rating} ({dealer.reviews} reviews)</span>
+                        <span className="ml-2 text-gray-600 text-sm">{dealer.rating}</span>
                       </div>
                     </div>
                     {dealer.verified && (

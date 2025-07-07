@@ -56,7 +56,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
               <Star key={i} className="h-4 w-4 fill-current" />
             ))}
             <span className="ml-2 text-gray-600 text-sm md:text-base">
-              {dealer.rating} ({dealer.reviewCount} reviews)
+              {dealer.rating}
             </span>
           </div>
 
