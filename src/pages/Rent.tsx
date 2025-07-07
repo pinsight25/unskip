@@ -7,16 +7,62 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { mockRentCars } from '@/data/rentMockData';
-import { useUniversalSearch } from '@/hooks/useUniversalSearch';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Car, MapPin, Calendar, Shield, Star, Heart, Filter } from 'lucide-react';
+import { Car as CarType } from '@/types/car';
+
+// Simple search hook specifically for rent cars
+const useRentSearch = (data: CarType[]) => {
+  const [filters, setFilters] = useState({
+    query: '',
+    sortBy: 'relevance' as 'relevance' | 'price-low' | 'price-high' | 'newest'
+  });
+
+  const filteredData = data.filter(car => {
+    if (!filters.query.trim()) return true;
+    const query = filters.query.toLowerCase();
+    return (
+      car.title.toLowerCase().includes(query) ||
+      car.brand.toLowerCase().includes(query) ||
+      car.model.toLowerCase().includes(query) ||
+      car.location.toLowerCase().includes(query)
+    );
+  }).sort((a, b) => {
+    switch (filters.sortBy) {
+      case 'price-low':
+        return (a.rentPrice?.daily || 0) - (b.rentPrice?.daily || 0);
+      case 'price-high':
+        return (b.rentPrice?.daily || 0) - (a.rentPrice?.daily || 0);
+      case 'newest':
+        return b.year - a.year;
+      default:
+        return 0;
+    }
+  });
+
+  const updateFilter = (key: string, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({ query: '', sortBy: 'relevance' });
+  };
+
+  return {
+    filters,
+    filteredData,
+    updateFilter,
+    clearFilters,
+    resultCount: filteredData.length
+  };
+};
 
 const Rent = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [savedCars, setSavedCars] = useState<string[]>([]);
-  const { filters, filteredData, updateFilter, clearFilters, resultCount } = useUniversalSearch(mockRentCars);
+  const { filters, filteredData, updateFilter, clearFilters, resultCount } = useRentSearch(mockRentCars);
 
   const handleSave = (carId: string) => {
     setSavedCars(prev =>
@@ -161,7 +207,7 @@ const Rent = () => {
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <Calendar className="h-4 w-4 mr-2" />
-                          Min {car.policies.minRentalPeriod} day{car.policies.minRentalPeriod > 1 ? 's' : ''}
+                          Min {car.rentPolicies?.minRentalPeriod || 1} day{(car.rentPolicies?.minRentalPeriod || 1) > 1 ? 's' : ''}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
@@ -173,12 +219,12 @@ const Rent = () => {
                         <div className="flex items-baseline justify-between mb-3">
                           <div>
                             <span className="text-2xl font-bold text-blue-600">
-                              {formatPrice(car.rentPrice.daily)}
+                              {formatPrice(car.rentPrice?.daily || 0)}
                             </span>
                             <span className="text-sm text-gray-600 ml-1">/day</span>
                           </div>
                           <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                            {car.rentType}
+                            {car.rentType || 'economy'}
                           </Badge>
                         </div>
                         

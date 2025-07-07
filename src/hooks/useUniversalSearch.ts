@@ -31,20 +31,22 @@ export const useUniversalSearch = (data: Car[] | Accessory[]) => {
     if (filters.query.trim()) {
       const query = filters.query.toLowerCase();
       filtered = filtered.filter(item => {
-        if ('title' in item) {
-          // Car search
+        // Type guard to check if it's a Car
+        if ('title' in item && 'brand' in item && 'model' in item) {
+          const car = item as Car;
           return (
-            item.title.toLowerCase().includes(query) ||
-            item.brand.toLowerCase().includes(query) ||
-            item.model.toLowerCase().includes(query) ||
-            item.location.toLowerCase().includes(query)
+            car.title.toLowerCase().includes(query) ||
+            car.brand.toLowerCase().includes(query) ||
+            car.model.toLowerCase().includes(query) ||
+            car.location.toLowerCase().includes(query)
           );
         } else {
-          // Accessory search
+          // It's an Accessory
+          const accessory = item as Accessory;
           return (
-            item.name.toLowerCase().includes(query) ||
-            item.brand.toLowerCase().includes(query) ||
-            item.category.toLowerCase().includes(query)
+            accessory.name.toLowerCase().includes(query) ||
+            accessory.brand.toLowerCase().includes(query) ||
+            accessory.category.toLowerCase().includes(query)
           );
         }
       });
@@ -52,19 +54,31 @@ export const useUniversalSearch = (data: Car[] | Accessory[]) => {
 
     // Price range filter
     filtered = filtered.filter(item => {
-      const price = 'price' in item ? item.price : item.price;
-      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+      // Type guard for price handling
+      if ('price' in item && typeof item.price === 'number') {
+        const car = item as Car;
+        return car.price >= filters.priceRange[0] && car.price <= filters.priceRange[1];
+      } else if ('price' in item && typeof item.price === 'object') {
+        const accessory = item as Accessory;
+        return accessory.price.min >= filters.priceRange[0] && accessory.price.max <= filters.priceRange[1];
+      }
+      return true;
     });
 
     // Location filter
     if (filters.location) {
       filtered = filtered.filter(item => {
-        const location = 'location' in item ? item.location : item.seller.location;
-        return location.toLowerCase().includes(filters.location.toLowerCase());
+        if ('location' in item) {
+          const car = item as Car;
+          return car.location.toLowerCase().includes(filters.location.toLowerCase());
+        } else {
+          const accessory = item as Accessory;
+          return accessory.location.toLowerCase().includes(filters.location.toLowerCase());
+        }
       });
     }
 
-    // Car-specific filters
+    // Car-specific filters - only apply if we're dealing with cars
     if (data.length > 0 && 'fuelType' in data[0]) {
       const carData = filtered as Car[];
       
@@ -92,12 +106,16 @@ export const useUniversalSearch = (data: Car[] | Accessory[]) => {
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case 'price-low':
-          return a.price - b.price;
+          const priceA = 'price' in a && typeof a.price === 'number' ? a.price : ('price' in a ? (a as Accessory).price.min : 0);
+          const priceB = 'price' in b && typeof b.price === 'number' ? b.price : ('price' in b ? (b as Accessory).price.min : 0);
+          return priceA - priceB;
         case 'price-high':
-          return b.price - a.price;
+          const priceHighA = 'price' in a && typeof a.price === 'number' ? a.price : ('price' in a ? (a as Accessory).price.max : 0);
+          const priceHighB = 'price' in b && typeof b.price === 'number' ? b.price : ('price' in b ? (b as Accessory).price.max : 0);
+          return priceHighB - priceHighA;
         case 'newest':
           if ('year' in a && 'year' in b) {
-            return b.year - a.year;
+            return (b as Car).year - (a as Car).year;
           }
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         default:
