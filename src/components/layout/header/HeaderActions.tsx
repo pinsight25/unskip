@@ -1,8 +1,12 @@
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, User } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MessageCircle, User, LogOut } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
+import SignInModal from '@/components/modals/SignInModal';
 
 interface HeaderActionsProps {
   carsSoldToday: number;
@@ -10,6 +14,13 @@ interface HeaderActionsProps {
 }
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
+  const { user, isSignedIn, signOut } = useUser();
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
   return (
     <div className="hidden lg:flex items-center space-x-6">
       {/* Chat Icon with Badge - Fixed styling */}
@@ -24,16 +35,47 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
         </div>
       </Link>
       
-      {/* Desktop Profile */}
-      <Link to="/profile" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-        <Avatar className="h-10 w-10 border border-gray-200">
-          <AvatarImage src="" />
-          <AvatarFallback className="bg-gray-100 text-gray-600">
-            <User className="h-4 w-4" />
-          </AvatarFallback>
-        </Avatar>
-        <span className="body-text font-medium text-gray-700">Sign In</span>
-      </Link>
+      {/* Profile/Sign In Section */}
+      {isSignedIn && user ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
+              <Avatar className="h-10 w-10 border border-gray-200">
+                <AvatarImage src="" />
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="body-text font-medium text-gray-700">{user.name}</span>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem asChild>
+              <Link to="/profile" className="flex items-center">
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <button 
+          onClick={() => setIsSignInModalOpen(true)}
+          className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+        >
+          <Avatar className="h-10 w-10 border border-gray-200">
+            <AvatarImage src="" />
+            <AvatarFallback className="bg-gray-100 text-gray-600">
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+          <span className="body-text font-medium text-gray-700">Sign In</span>
+        </button>
+      )}
       
       {/* Post Car Button - PRIMARY CTA */}
       <Link to="/sell">
@@ -41,6 +83,11 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           Post Your Car
         </Button>
       </Link>
+
+      <SignInModal 
+        isOpen={isSignInModalOpen}
+        onClose={() => setIsSignInModalOpen(false)}
+      />
     </div>
   );
 };

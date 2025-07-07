@@ -9,22 +9,19 @@ import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
+import SignInModal from '@/components/modals/SignInModal';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
 
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, isSignedIn, signOut } = useUser();
   
-  // Profile state
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
-    phone: '+91 98765 43210',
-    email: 'john.doe@example.com'
-  });
-
   // Modal states
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     listingId: string | null;
@@ -72,11 +69,13 @@ const Profile = () => {
     totalOffers: 4 // Mock number of received offers
   };
 
-  const handleEditProfile = (newProfile: typeof profile) => {
-    setProfile(newProfile);
+  const handleEditProfile = (newProfile: any) => {
+    // In real app, this would update user context
+    console.log('Profile updated:', newProfile);
   };
 
   const handleSignOut = () => {
+    signOut();
     toast({
       title: "Signed Out",
       description: "You have been signed out successfully",
@@ -102,6 +101,31 @@ const Profile = () => {
     }, 1000);
   };
 
+  // Show sign-in prompt for non-signed-in users
+  if (!isSignedIn || !user) {
+    return (
+      <ResponsiveLayout>
+        <div className="bg-white min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-12 text-center">
+            <h1 className="text-3xl font-bold mb-4">Sign In Required</h1>
+            <p className="text-gray-600 mb-8">Please sign in to access your profile</p>
+            <button
+              onClick={() => setIsSignInModalOpen(true)}
+              className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90"
+            >
+              Sign In
+            </button>
+          </div>
+          
+          <SignInModal 
+            isOpen={isSignInModalOpen}
+            onClose={() => setIsSignInModalOpen(false)}
+          />
+        </div>
+      </ResponsiveLayout>
+    );
+  }
+
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
@@ -122,7 +146,7 @@ const Profile = () => {
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
             <ProfileHeader
-              profile={profile}
+              profile={user}
               onEditProfile={() => setIsEditProfileOpen(true)}
               onSignOut={() => setIsSignOutModalOpen(true)}
             />
@@ -162,7 +186,7 @@ const Profile = () => {
       <EditProfileModal
         isOpen={isEditProfileOpen}
         onClose={() => setIsEditProfileOpen(false)}
-        currentProfile={profile}
+        currentProfile={user}
         onSave={handleEditProfile}
       />
 
