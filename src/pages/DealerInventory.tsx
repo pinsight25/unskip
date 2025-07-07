@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Car } from '@/types/car';
@@ -65,8 +66,8 @@ const DealerInventory = () => {
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
         <div className="desktop-page-container">
-          {/* Breadcrumb */}
-          <Breadcrumb className="desktop-content-spacing">
+          {/* Breadcrumb - Desktop Only */}
+          <Breadcrumb className="desktop-content-spacing hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -81,31 +82,37 @@ const DealerInventory = () => {
           </Breadcrumb>
 
           {/* Back Button for Mobile */}
-          <Link 
-            to="/dealers" 
-            className="md:hidden flex items-center text-primary font-medium element-gap hover:text-primary/80 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dealers
-          </Link>
+          <div className="md:hidden px-4 py-3">
+            <Link 
+              to="/dealers" 
+              className="flex items-center text-primary font-medium element-gap hover:text-primary/80 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dealers
+            </Link>
+          </div>
 
           {/* Dealer Header */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 desktop-header-section shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8">
+          <div className="bg-white border border-gray-200 rounded-lg mx-4 md:mx-0 mb-6 p-4 md:p-8 desktop-header-section shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-8">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4 md:mb-6">
-                  <h1 className="text-2xl md:text-4xl font-bold">{dealer.name}</h1>
-                  {dealer.verified && (
-                    <Badge className="bg-green-100 text-green-700">
-                      <Shield className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  )}
-                  <ShareButton 
-                    dealerName={dealer.name}
-                    dealerId={dealer.id}
-                    carsCount={dealer.carsInStock}
-                  />
+                {/* Mobile: Stack dealer name and badges vertically */}
+                <div className="md:flex md:items-center md:gap-3 mb-4 md:mb-6">
+                  <h1 className="text-xl md:text-4xl font-bold mb-3 md:mb-0">{dealer.name}</h1>
+                  <div className="flex items-center gap-2">
+                    {dealer.verified && (
+                      <Badge className="bg-green-100 text-green-700 text-xs">
+                        <Shield className="h-3 w-3 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                    <ShareButton 
+                      dealerName={dealer.name}
+                      dealerId={dealer.id}
+                      carsCount={dealer.carsInStock}
+                      className="text-xs h-8"
+                    />
+                  </div>
                 </div>
                 
                 <div className="flex items-center text-amber-500 mb-4 md:mb-6">
@@ -117,17 +124,17 @@ const DealerInventory = () => {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 text-gray-600 mb-4 md:mb-6">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 text-gray-600 mb-4 md:mb-6">
                   <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
+                    <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="text-sm md:text-base">{dealer.location}</span>
                   </div>
                   <div className="flex items-center">
-                    <CarIcon className="h-4 w-4 mr-2" />
+                    <CarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="text-sm md:text-base">{dealer.carsInStock}+ cars in stock</span>
                   </div>
                   <div className="flex items-center">
-                    <Phone className="h-4 w-4 mr-2" />
+                    <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="text-sm md:text-base">Responds in {dealer.responseTime}</span>
                   </div>
                 </div>
@@ -141,15 +148,20 @@ const DealerInventory = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button variant="outline" size="lg">Call Now</Button>
-                <Button variant="outline" size="lg">Get Directions</Button>
+              {/* Action Buttons - Full width on mobile, side by side on desktop */}
+              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                <Button variant="outline" size="lg" className="w-full md:w-auto min-h-[48px]">
+                  Call Now
+                </Button>
+                <Button variant="outline" size="lg" className="w-full md:w-auto min-h-[48px]">
+                  Get Directions
+                </Button>
               </div>
             </div>
           </div>
 
           {/* Inventory Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center desktop-header-section gap-4 md:gap-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center desktop-header-section gap-4 md:gap-6 px-4 md:px-0">
             <div>
               <h2 className="text-xl md:text-2xl font-semibold mb-2">Available Inventory</h2>
               <p className="text-gray-600 text-base md:text-lg">{sortedCars.length} cars available</p>
@@ -169,7 +181,7 @@ const DealerInventory = () => {
           </div>
 
           {/* Cars Grid */}
-          <div className="w-full">
+          <div className="w-full px-4 md:px-0">
             {sortedCars.length > 0 ? (
               isMobile ? (
                 <div className="space-y-4">
@@ -211,7 +223,7 @@ const DealerInventory = () => {
 
           {/* Load More Button */}
           {sortedCars.length > 0 && (
-            <div className="text-center mt-12 md:mt-20">
+            <div className="text-center mt-12 md:mt-20 px-4 md:px-0">
               <Button variant="outline" size="lg">
                 Load More Cars
               </Button>
