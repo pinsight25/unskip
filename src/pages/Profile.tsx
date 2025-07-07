@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -127,9 +126,9 @@ const Profile = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section */}
+        {/* Header Section - No extra padding since ResponsiveLayout handles it */}
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+          <div className="max-width-container py-6 lg:py-8">
             <div className="text-center">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
               <p className="text-sm md:text-base text-gray-600">
@@ -140,7 +139,7 @@ const Profile = () => {
         </div>
 
         {/* Content Section */}
-        <div className="container mx-auto px-4 lg:px-6 py-4 lg:py-6 pb-24 lg:pb-8">
+        <div className="max-width-container py-6 lg:py-8 pb-24 lg:pb-8">
           <div className="max-w-6xl mx-auto">
             {/* Profile Header */}
             <Card className="p-4 md:p-6 section-gap">

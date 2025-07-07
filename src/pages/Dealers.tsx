@@ -79,9 +79,10 @@ const Dealers = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
-          {/* Header with CTA */}
-          <div className="mb-8 lg:mb-12">
+        {/* Header Section - No extra padding since ResponsiveLayout handles it */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+          <div className="max-width-container-wide py-8 lg:py-12">
+            {/* Header with CTA */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 lg:mb-8">
               <div>
                 <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Authorized Dealers</h1>
@@ -112,7 +113,10 @@ const Dealers = () => {
               <Button variant="outline">Apply Filters</Button>
             </div>
           </div>
+        </div>
 
+        {/* Content Section */}
+        <div className="max-width-container-wide py-6 lg:py-8 pb-24 lg:pb-8">
           {/* Dealers Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dealers.map((dealer) => (

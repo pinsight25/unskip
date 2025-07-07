@@ -51,7 +51,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 lg:fixed lg:top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <div className="w-full max-w-7xl mx-auto container-safe">

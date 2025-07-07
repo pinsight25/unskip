@@ -1,6 +1,17 @@
 
 /* Layout and Spacing Utilities */
 
+/* CRITICAL: Desktop Header Spacing Fix */
+.desktop-header-compensation {
+  padding-top: 5rem; /* 80px - compensates for fixed header */
+}
+
+@media (max-width: 1023px) {
+  .desktop-header-compensation {
+    padding-top: 1rem; /* 16px - mobile doesn't need compensation */
+  }
+}
+
 /* STANDARDIZED PAGE CONTAINER - Fixed mobile bottom padding */
 .mobile-page-container-fixed {
   padding-top: 1rem;
@@ -173,8 +184,6 @@
   display: flex;
   flex-direction: column;
 }
-
-/* ... keep existing code (aspect ratio utilities, image utilities, mobile safe area, touch targets, hover states) */
 
 /* Aspect Ratio Utilities */
 .aspect-ratio-16-9 {
