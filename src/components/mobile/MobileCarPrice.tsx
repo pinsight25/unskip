@@ -1,6 +1,4 @@
 
-import { Badge } from '@/components/ui/badge';
-
 interface MobileCarPriceProps {
   price: number;
   rentalRate?: number;
@@ -18,16 +16,9 @@ const MobileCarPrice = ({ price, rentalRate, isRentAvailable }: MobileCarPricePr
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-2xl font-bold text-primary">
-          {formatPrice(price)}
-        </span>
-        {isRentAvailable && rentalRate && (
-          <Badge className="bg-teal-500 text-white text-xs px-2 py-1 font-medium">
-            Also for rent
-          </Badge>
-        )}
-      </div>
+      <span className="text-2xl font-bold text-primary">
+        {formatPrice(price)}
+      </span>
       {isRentAvailable && rentalRate && (
         <div className="mt-1">
           <span className="text-sm font-semibold text-teal-600">

@@ -24,7 +24,7 @@ const CarImageGallery = ({ images, title, featured, verified }: CarImageGalleryP
   return (
     <div className="relative mb-6">
       <div 
-        className="relative h-64 md:h-96 bg-gray-100 overflow-hidden rounded-lg"
+        className="relative h-64 md:h-80 lg:h-96 bg-gray-100 overflow-hidden rounded-lg"
         onTouchStart={(e) => {
           const touchStart = e.touches[0].clientX;
           const handleTouchEnd = (endEvent: TouchEvent) => {
@@ -76,22 +76,24 @@ const CarImageGallery = ({ images, title, featured, verified }: CarImageGalleryP
       </div>
       
       {/* Image Navigation Arrows - Desktop Only */}
-      <div className="hidden md:flex absolute top-1/2 transform -translate-y-1/2 w-full justify-between px-4">
-        <button 
-          onClick={() => handleImageSwipe('left')}
-          className="bg-white/70 hover:bg-white rounded-full p-2"
-          disabled={currentImageIndex === 0}
-        >
-          <RotateCcw className="h-6 w-6" />
-        </button>
-        <button 
-          onClick={() => handleImageSwipe('right')}
-          className="bg-white/70 hover:bg-white rounded-full p-2"
-          disabled={currentImageIndex === images.length - 1}
-        >
-          <RotateCcw className="h-6 w-6 transform rotate-180" />
-        </button>
-      </div>
+      {images.length > 1 && (
+        <div className="hidden md:flex absolute top-1/2 transform -translate-y-1/2 w-full justify-between px-4 pointer-events-none">
+          <button 
+            onClick={() => handleImageSwipe('left')}
+            className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto transition-colors"
+            disabled={currentImageIndex === 0}
+          >
+            <RotateCcw className="h-6 w-6" />
+          </button>
+          <button 
+            onClick={() => handleImageSwipe('right')}
+            className="bg-white/70 hover:bg-white rounded-full p-2 pointer-events-auto transition-colors"
+            disabled={currentImageIndex === images.length - 1}
+          >
+            <RotateCcw className="h-6 w-6 transform rotate-180" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

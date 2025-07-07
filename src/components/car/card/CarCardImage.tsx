@@ -32,7 +32,7 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
         )}
       </Link>
       
-      {/* Badges positioned in top-left */}
+      {/* Badges positioned in top-left - removed "Also for rent" badge */}
       <div className="absolute top-3 left-3 flex flex-col gap-2">
         {car.featured && (
           <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1">
@@ -47,15 +47,6 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
           </Badge>
         )}
       </div>
-
-      {/* "Also for rent" badge positioned in top-right */}
-      {car.isRentAvailable && car.rentPrice && (
-        <div className="absolute top-3 right-12">
-          <Badge className="bg-teal-500 hover:bg-teal-600 text-white text-xs px-2 py-1 font-medium">
-            Also for rent
-          </Badge>
-        </div>
-      )}
 
       {/* Save Button positioned in top-right corner */}
       <Button

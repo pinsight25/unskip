@@ -32,6 +32,7 @@ const MobileCarCard = ({
     <Card className="mx-4 mb-4 overflow-hidden">
       <CardContent className="p-0">
         <MobileCarImage 
+          carId={car.id}
           images={car.images}
           title={car.title}
           featured={car.featured}
@@ -41,10 +42,8 @@ const MobileCarCard = ({
         />
         
         <div className="p-4">
-          <MobileCarBadges featured={car.featured} verified={car.verified} />
-          
           <Link to={`/car/${car.id}`}>
-            <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+            <h3 className="font-semibold text-lg mb-2 line-clamp-2 hover:text-primary transition-colors">
               {car.title}
             </h3>
           </Link>
