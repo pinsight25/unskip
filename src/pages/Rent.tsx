@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -5,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import RentCarCard from '@/components/rent/RentCarCard';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Search } from 'lucide-react';
+import { RentCar } from '@/types/rent';
+import { mockRentCars } from '@/data/rentMockData';
 
 interface CarType {
   id: string;
@@ -21,59 +24,6 @@ interface RentFilters {
   sortBy: 'relevance' | 'price_low' | 'price_high' | 'newest';
 }
 
-interface Car {
-  id: string;
-  title: string;
-  price: number;
-  carType: string;
-  imageUrl: string;
-}
-
-const mockCars: Car[] = [
-  {
-    id: '1',
-    title: 'Toyota Innova Crysta',
-    price: 2500,
-    carType: 'suv',
-    imageUrl: 'https://example.com/innova.jpg',
-  },
-  {
-    id: '2',
-    title: 'Hyundai i20',
-    price: 1800,
-    carType: 'hatchback',
-    imageUrl: 'https://example.com/i20.jpg',
-  },
-  {
-    id: '3',
-    title: 'Mahindra Thar',
-    price: 3000,
-    carType: 'suv',
-    imageUrl: 'https://example.com/thar.jpg',
-  },
-  {
-    id: '4',
-    title: 'Maruti Suzuki Swift',
-    price: 1600,
-    carType: 'hatchback',
-    imageUrl: 'https://example.com/swift.jpg',
-  },
-  {
-    id: '5',
-    title: 'Tata Nexon',
-    price: 2000,
-    carType: 'suv',
-    imageUrl: 'https://example.com/nexon.jpg',
-  },
-  {
-    id: '6',
-    title: 'Honda City',
-    price: 2200,
-    carType: 'sedan',
-    imageUrl: 'https://example.com/city.jpg',
-  },
-];
-
 const Rent = () => {
   const [filters, setFilters] = useState<RentFilters>({
     search: '',
@@ -85,23 +35,23 @@ const Rent = () => {
     sortBy: 'relevance',
   });
 
-  const [filteredCars, setFilteredCars] = useState<Car[]>(mockCars);
+  const [filteredCars, setFilteredCars] = useState<RentCar[]>(mockRentCars);
 
   useEffect(() => {
-    let filtered = mockCars.filter((car) => {
+    let filtered = mockRentCars.filter((car) => {
       const searchRegex = new RegExp(filters.search, 'i');
       return searchRegex.test(car.title);
     });
 
     if (filters.carType) {
-      filtered = filtered.filter((car) => car.carType === filters.carType);
+      filtered = filtered.filter((car) => car.rentType === filters.carType);
     }
 
     filtered = filtered.sort((a, b) => {
       if (filters.sortBy === 'price_low') {
-        return a.price - b.price;
+        return a.rentPrice.daily - b.rentPrice.daily;
       } else if (filters.sortBy === 'price_high') {
-        return b.price - a.price;
+        return b.rentPrice.daily - a.rentPrice.daily;
       } else if (filters.sortBy === 'newest') {
         return b.id.localeCompare(a.id);
       }
@@ -112,9 +62,10 @@ const Rent = () => {
   }, [filters]);
 
   const carTypes: CarType[] = [
+    { id: 'economy', label: 'Economy' },
+    { id: 'premium', label: 'Premium' },
+    { id: 'luxury', label: 'Luxury' },
     { id: 'suv', label: 'SUV' },
-    { id: 'hatchback', label: 'Hatchback' },
-    { id: 'sedan', label: 'Sedan' },
   ];
 
   const formatPrice = (price: number) => {
