@@ -75,27 +75,33 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Specific fix for FilterTabs component green line issue */
-    .bg-white.border-b.border-gray-100.sticky *,
-    .bg-gray-50 button,
-    .bg-gradient-to-r button {
+    /* SPECIFIC FIX FOR FILTERTABS GREEN LINE ISSUE */
+    .filter-tabs-container,
+    .filter-tabs-container *,
+    .filter-tabs-wrapper,
+    .filter-tabs-wrapper *,
+    .filter-tab-button,
+    .filter-tab-button * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-focus-ring-color: transparent !important;
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    /* Extra targeting for the sticky container that's causing the green line */
+    .filter-tabs-container.sticky,
+    .filter-tabs-container {
       -webkit-tap-highlight-color: transparent !important;
       -webkit-focus-ring-color: transparent !important;
       outline: none !important;
       box-shadow: none !important;
     }
 
-    /* Target FilterTabs container specifically */
-    [class*="sticky"][class*="top-14"],
-    [class*="sticky"][class*="top-16"] {
-      -webkit-tap-highlight-color: transparent !important;
-    }
-
-    /* Remove any browser-generated focus indicators from filter buttons */
-    .bg-gray-50 > button:focus,
-    .bg-gray-50 > button:active,
-    .bg-gradient-to-r:focus,
-    .bg-gradient-to-r:active {
+    /* Target any potential focus states on filter tabs */
+    .filter-tab-button:focus,
+    .filter-tab-button:active,
+    .filter-tab-button:hover {
       outline: none !important;
       -webkit-tap-highlight-color: transparent !important;
       box-shadow: none !important;
