@@ -1,0 +1,121 @@
+
+/* Spacing and Layout Utilities */
+
+/* CRITICAL: Responsive Header Spacing */
+.responsive-header-spacing {
+  padding-top: 4rem; /* 64px - Mobile header height */
+}
+
+@media (min-width: 1024px) {
+  .responsive-header-spacing {
+    padding-top: 5rem; /* 80px - Desktop header height */
+  }
+}
+
+/* CRITICAL: Desktop Header Spacing Fix */
+.desktop-header-compensation {
+  padding-top: 5rem; /* 80px - compensates for fixed header */
+}
+
+@media (max-width: 1023px) {
+  .desktop-header-compensation {
+    padding-top: 1rem; /* 16px - mobile doesn't need compensation */
+  }
+}
+
+/* Header Spacing Utilities */
+.header-spaced-content {
+  padding-top: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .header-spaced-content {
+    padding-top: 2rem;       /* Increased for better desktop spacing */
+  }
+}
+
+/* Desktop Header Section - More generous spacing */
+.desktop-header-section {
+  margin-bottom: 1.5rem;    /* 24px */
+}
+
+@media (min-width: 1024px) {
+  .desktop-header-section {
+    margin-bottom: 2.5rem;   /* 40px - generous but not excessive desktop spacing */
+  }
+}
+
+/* Mobile Compact Header - Don't touch mobile */
+.mobile-compact-header {
+  padding-top: 1.5rem;      /* 24px - increased for better spacing */
+  padding-bottom: 1.5rem;   /* 24px - increased for better spacing */
+  max-height: 100px;        /* Increased from 80px */
+}
+
+@media (max-width: 767px) {
+  .mobile-compact-header {
+    padding-top: 1rem;       /* 16px - increased from 12px */
+    padding-bottom: 1rem;    /* 16px - increased from 12px */
+    max-height: 80px;        /* Increased from 60px */
+  }
+}
+
+/* Standardized Section Spacing */
+.section-gap {
+  margin-bottom: 1.5rem;    /* 24px */
+}
+
+@media (min-width: 1024px) {
+  .section-gap {
+    margin-bottom: 2.5rem;   /* 40px - increased for desktop */
+  }
+}
+
+.element-gap {
+  margin-bottom: 1rem;      /* 16px */
+}
+
+@media (min-width: 1024px) {
+  .element-gap {
+    margin-bottom: 1.5rem;   /* 24px - increased for desktop */
+  }
+}
+
+/* Desktop Content Spacing */
+.desktop-content-spacing {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .desktop-content-spacing {
+    margin-bottom: 2rem;     /* 32px generous spacing between sections */
+  }
+}
+
+/* Grid Utilities */
+.grid-gap-standard {
+  gap: 1rem;               /* 16px */
+}
+
+@media (min-width: 1024px) {
+  .grid-gap-standard {
+    gap: 2rem;             /* 32px - increased for desktop */
+  }
+}
+
+/* Mobile Bottom Navigation Safe Area - Don't change mobile */
+@media (max-width: 767px) {
+  .mobile-safe-bottom {
+    padding-bottom: 5.5rem;  /* 88px - safe for bottom nav */
+  }
+  
+  .car-listings-container {
+    padding-bottom: 5.5rem;  /* 88px - safe for bottom nav */
+  }
+  
+  /* Ensure modals never go below bottom nav */
+  .modal-mobile-safe {
+    margin-bottom: 5.5rem;   /* 88px */
+    max-height: calc(100vh - 11rem); /* Account for header + bottom nav */
+  }
+}

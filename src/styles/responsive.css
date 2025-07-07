@@ -1,0 +1,58 @@
+
+/* Responsive Design Utilities */
+
+/* CRITICAL SCROLLING FIXES */
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Prevent any overflow issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Fix for any full-height containers that might prevent scrolling */
+.container, .section, .page {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Remove any problematic height restrictions */
+.main-content, .page-content {
+  height: auto !important;
+  min-height: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Consistent Touch Targets for Mobile */
+@media (max-width: 767px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .touch-target-button {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Hover States for Desktop */
+@media (min-width: 1024px) {
+  .hover-lift {
+    transition: all 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
