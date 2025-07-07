@@ -90,8 +90,8 @@ const Accessories = () => {
       <div className="bg-white min-h-screen">
         {/* Header Section - Standardized spacing */}
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-gray-100">
-          <div className="container mx-auto px-4 py-6">
-            <div className="text-center mb-6">
+          <div className="container mx-auto mobile-page-container-fixed">
+            <div className="text-center section-gap">
               <h1 className="heading-1 mb-3">
                 Accessories Marketplace
               </h1>
@@ -112,7 +112,7 @@ const Accessories = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="max-w-3xl mx-auto mb-6">
+            <div className="max-w-3xl mx-auto element-gap">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
@@ -149,9 +149,9 @@ const Accessories = () => {
         </div>
 
         {/* Results Section - Standardized spacing */}
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto mobile-page-container-fixed">
           {/* Controls Bar */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 section-gap">
             <div className="flex items-center gap-6">
               <h2 className="text-xl font-bold text-gray-900">
                 {filteredAccessories.length} {filteredAccessories.length === 1 ? 'Accessory' : 'Accessories'} Found

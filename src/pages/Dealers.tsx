@@ -12,9 +12,9 @@ const Dealers = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto mobile-page-container-fixed">
           {/* Header with CTA - Standardized spacing */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between section-gap">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold mb-2">Authorized Dealers</h1>
               <p className="text-gray-600">Find trusted dealers near you</p>
@@ -28,7 +28,7 @@ const Dealers = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex flex-wrap gap-4 section-gap">
             <select className="border rounded-lg px-4 py-2">
               <option>All Locations</option>
               <option>Mumbai</option>

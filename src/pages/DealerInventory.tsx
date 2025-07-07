@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Car } from '@/types/car';
@@ -65,9 +64,9 @@ const DealerInventory = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="w-full max-w-7xl mx-auto px-4 py-6">
+        <div className="w-full max-w-7xl mx-auto mobile-page-container-fixed">
           {/* Breadcrumb */}
-          <Breadcrumb className="mb-6">
+          <Breadcrumb className="section-gap">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -84,14 +83,14 @@ const DealerInventory = () => {
           {/* Back Button for Mobile */}
           <Link 
             to="/dealers" 
-            className="md:hidden flex items-center text-primary font-medium mb-4 hover:text-primary/80 transition-colors"
+            className="md:hidden flex items-center text-primary font-medium element-gap hover:text-primary/80 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dealers
           </Link>
 
           {/* Dealer Header */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 section-gap shadow-sm">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
@@ -150,7 +149,7 @@ const DealerInventory = () => {
           </div>
 
           {/* Inventory Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center section-gap gap-4">
             <div>
               <h2 className="text-xl font-semibold">Available Inventory</h2>
               <p className="text-gray-600">{sortedCars.length} cars available</p>
