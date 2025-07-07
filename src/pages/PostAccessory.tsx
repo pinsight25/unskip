@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -82,7 +83,7 @@ const PostAccessory = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="max-w-4xl mx-auto px-4 lg:px-6 py-6">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Button

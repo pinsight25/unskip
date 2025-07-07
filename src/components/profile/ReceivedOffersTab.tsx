@@ -138,101 +138,103 @@ const ReceivedOffersTab = () => {
   };
 
   return (
-    <Card className="p-4 md:p-6">
-      {offers.length > 0 ? (
-        <div className="space-y-4">
-          {offers.map((offer) => {
-            const percentageDiff = calculatePercentageDiff(offer.offerAmount, offer.askingPrice);
-            
-            return (
-              <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex flex-col gap-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg mb-1">{offer.carTitle}</h3>
-                      <p className="text-sm text-gray-500">Posted {offer.createdAt}</p>
-                    </div>
-                    {getStatusBadge(offer.status)}
-                  </div>
-
-                  {/* Offer Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Asking Price</p>
-                      <p className="font-semibold text-lg">{formatPrice(offer.askingPrice)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Buyer</p>
-                      <p className="font-medium">{offer.buyerName}</p>
-                    </div>
-                  </div>
-
-                  {/* Offer Amount */}
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between">
+    <div className="max-w-4xl mx-auto">
+      <Card className="p-4 md:p-6">
+        {offers.length > 0 ? (
+          <div className="space-y-4">
+            {offers.map((offer) => {
+              const percentageDiff = calculatePercentageDiff(offer.offerAmount, offer.askingPrice);
+              
+              return (
+                <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex flex-col gap-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-sm text-gray-600">Offer Amount</p>
-                        <p className="font-bold text-xl text-primary">{formatPrice(offer.offerAmount)}</p>
+                        <h3 className="font-semibold text-lg mb-1">{offer.carTitle}</h3>
+                        <p className="text-sm text-gray-500">Posted {offer.createdAt}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600">Difference</p>
-                        <p className="text-lg font-semibold">{getPercentageBadge(percentageDiff)}</p>
+                      {getStatusBadge(offer.status)}
+                    </div>
+
+                    {/* Offer Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Asking Price</p>
+                        <p className="font-semibold text-lg">{formatPrice(offer.askingPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Buyer</p>
+                        <p className="font-medium">{offer.buyerName}</p>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col md:flex-row gap-2">
-                    {offer.status === 'pending' && (
-                      <>
-                        <Button
-                          onClick={() => handleAcceptOffer(offer.id)}
-                          className="flex-1 bg-green-600 hover:bg-green-700"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Accept Offer
-                        </Button>
-                        <Button
-                          onClick={() => handleRejectOffer(offer.id)}
-                          variant="outline"
-                          className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
-                        >
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {offer.status === 'accepted' && (
-                      <Button
-                        onClick={() => handleChatWithBuyer(offer)}
-                        className="flex-1"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Chat with Buyer
-                      </Button>
-                    )}
-                    {offer.status === 'rejected' && (
-                      <div className="flex-1 p-2 text-center text-gray-500 text-sm">
-                        Offer rejected on {offer.createdAt}
+                    {/* Offer Amount */}
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Offer Amount</p>
+                          <p className="font-bold text-xl text-primary">{formatPrice(offer.offerAmount)}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-600">Difference</p>
+                          <p className="text-lg font-semibold">{getPercentageBadge(percentageDiff)}</p>
+                        </div>
                       </div>
-                    )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col md:flex-row gap-2">
+                      {offer.status === 'pending' && (
+                        <>
+                          <Button
+                            onClick={() => handleAcceptOffer(offer.id)}
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Accept Offer
+                          </Button>
+                          <Button
+                            onClick={() => handleRejectOffer(offer.id)}
+                            variant="outline"
+                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                          >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                      {offer.status === 'accepted' && (
+                        <Button
+                          onClick={() => handleChatWithBuyer(offer)}
+                          className="flex-1"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Chat with Buyer
+                        </Button>
+                      )}
+                      {offer.status === 'rejected' && (
+                        <div className="flex-1 p-2 text-center text-gray-500 text-sm">
+                          Offer rejected on {offer.createdAt}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="h-8 w-8 text-gray-400" />
+              );
+            })}
           </div>
-          <h3 className="text-xl font-semibold mb-2">No offers received yet</h3>
-          <p className="text-gray-600 mb-6">When buyers make offers on your cars, they'll appear here</p>
-        </div>
-      )}
-    </Card>
+        ) : (
+          <div className="text-center py-12">
+            <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">No offers received yet</h3>
+            <p className="text-gray-600 mb-6">When buyers make offers on your cars, they'll appear here</p>
+          </div>
+        )}
+      </Card>
+    </div>
   );
 };
 

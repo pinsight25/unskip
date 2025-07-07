@@ -88,9 +88,9 @@ const Accessories = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        {/* Header Section - Desktop generous spacing */}
+        {/* Header Section - Desktop contained width */}
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-gray-100">
-          <div className="desktop-page-container">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
             <div className="text-center desktop-header-section">
               <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">
                 Accessories Marketplace
@@ -148,8 +148,8 @@ const Accessories = () => {
           </div>
         </div>
 
-        {/* Results Section - Desktop generous spacing */}
-        <div className="desktop-page-container">
+        {/* Results Section - Desktop contained width */}
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-8">
           {/* Controls Bar */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 desktop-header-section">
             <div className="flex items-center gap-6">
