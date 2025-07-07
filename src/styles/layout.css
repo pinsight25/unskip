@@ -262,16 +262,17 @@
   }
 }
 
-/* Ensure proper scrolling for all pages */
+/* CRITICAL SCROLLING FIXES */
 html, body {
   overflow-x: hidden;
   overflow-y: auto;
+  height: auto;
 }
 
-/* Fix any potential height issues */
 #root {
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Prevent any overflow issues */
@@ -283,4 +284,11 @@ html, body {
 .container, .section, .page {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Remove any problematic height restrictions */
+.main-content, .page-content {
+  height: auto !important;
+  min-height: auto !important;
+  overflow-y: visible !important;
 }

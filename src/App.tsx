@@ -34,29 +34,31 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/sell" element={<SellCar />} />
-          <Route path="/list-car-for-rent" element={<ListCarForRent />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/saved" element={<Saved />} />
-          <Route path="/dealers" element={<Dealers />} />
-          <Route path="/dealer/:dealerId/inventory" element={<DealerInventory />} />
-          <Route path="/dealer-register" element={<DealerRegister />} />
-          <Route path="/chats" element={<Chats />} />
-          <Route path="/chat/:id" element={<ChatDetail />} />
-          <Route path="/car/:id" element={<CarDetail />} />
-          <Route path="/accessories" element={<Accessories />} />
-          <Route path="/accessories/:id" element={<AccessoryDetail />} />
-          <Route path="/post-accessory" element={<PostAccessory />} />
-          <Route path="/rent" element={<Rent />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="min-h-screen">
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/sell" element={<SellCar />} />
+            <Route path="/list-car-for-rent" element={<ListCarForRent />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/saved" element={<Saved />} />
+            <Route path="/dealers" element={<Dealers />} />
+            <Route path="/dealer/:dealerId/inventory" element={<DealerInventory />} />
+            <Route path="/dealer-register" element={<DealerRegister />} />
+            <Route path="/chats" element={<Chats />} />
+            <Route path="/chat/:id" element={<ChatDetail />} />
+            <Route path="/car/:id" element={<CarDetail />} />
+            <Route path="/accessories" element={<Accessories />} />
+            <Route path="/accessories/:id" element={<AccessoryDetail />} />
+            <Route path="/post-accessory" element={<PostAccessory />} />
+            <Route path="/rent" element={<Rent />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );

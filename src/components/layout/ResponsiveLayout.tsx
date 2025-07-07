@@ -18,7 +18,9 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
       
       {/* Main content with responsive header spacing */}
       <main className={`responsive-header-spacing ${isMobile ? 'pb-24' : 'pb-8'}`}>
-        {children}
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
       </main>
       
       {/* Desktop Footer */}

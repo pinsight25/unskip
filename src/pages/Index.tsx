@@ -5,7 +5,9 @@ import Home from '@/pages/Home';
 const Index = () => {
   return (
     <ResponsiveLayout>
-      <Home />
+      <div className="w-full">
+        <Home />
+      </div>
     </ResponsiveLayout>
   );
 };

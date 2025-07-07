@@ -9,8 +9,10 @@
   }
 
   html, body {
-    height: 100%;
+    height: auto;
+    min-height: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
     margin: 0;
     padding: 0;
   }
@@ -26,8 +28,8 @@
 
   #root {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   /* Enhanced Typography with Consistent Sizing */
