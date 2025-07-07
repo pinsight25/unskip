@@ -28,8 +28,8 @@ const Search = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="bg-white w-full overflow-hidden -mt-4 lg:-mt-8">
-        <div className="page-header-compact">
+      <div className="bg-white w-full overflow-hidden">
+        <div className="mb-4">
           <SearchHeader
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -44,7 +44,7 @@ const Search = () => {
           />
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 mobile-section">
+        <div className="w-full max-w-7xl mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-6 w-full">
             <div className="lg:w-72 flex-shrink-0">
               <SearchFilters
