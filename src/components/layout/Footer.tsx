@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 const Footer = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* About Section */}
+      <div className="w-full max-w-7xl mx-auto py-12 px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          {/* About Section - Left */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -35,8 +35,8 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
+          {/* Quick Links - Center */}
+          <div className="space-y-4 md:text-center">
             <h3 className="text-lg font-semibold text-gray-900">Quick Links</h3>
             <div className="space-y-3">
               {[
@@ -56,20 +56,20 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Contact */}
-          <div className="space-y-4">
+          {/* Contact - Right */}
+          <div className="space-y-4 md:text-right">
             <h3 className="text-lg font-semibold text-gray-900">Contact Us</h3>
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 md:justify-end">
                 <Phone className="h-4 w-4 text-orange-500 flex-shrink-0" />
                 <span className="text-sm text-gray-700 font-medium">WhatsApp Support</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 md:justify-end">
                 <Mail className="h-4 w-4 text-orange-500 flex-shrink-0" />
                 <span className="text-sm text-gray-700 font-medium">hello@unskip.com</span>
               </div>
               
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-4 pt-2 md:justify-end">
                 <Button variant="outline" size="sm" className="h-9 w-9 p-0 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-colors">
                   <Facebook className="h-4 w-4" />
                 </Button>
@@ -85,9 +85,9 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Copyright Section - Bottom Bar */}
       <div className="border-t border-gray-200 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-4">
+        <div className="w-full max-w-7xl mx-auto py-4 px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <p className="text-gray-600 text-sm text-center md:text-left">
               © 2025 Unskip. All rights reserved.
