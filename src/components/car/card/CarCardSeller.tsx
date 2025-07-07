@@ -26,7 +26,7 @@ const CarCardSeller = ({ seller }: CarCardSellerProps) => {
             {seller.rating > 0 && (
               <div className="flex items-center text-amber-500">
                 <Star className="h-3 w-3 fill-current mr-1" />
-                <span className="font-medium">{seller.rating}.0</span>
+                <span className="font-medium">{seller.rating}</span>
               </div>
             )}
             <div className="flex items-center text-green-600">
