@@ -1,5 +1,6 @@
 
 import { Car } from '@/types/car';
+import { Badge } from '@/components/ui/badge';
 
 interface CarCardPriceProps {
   car: Car;
@@ -16,13 +17,22 @@ const CarCardPrice = ({ car }: CarCardPriceProps) => {
 
   return (
     <div>
-      <p className="text-2xl font-bold text-primary mb-2">
-        {formatPrice(car.price)}
-      </p>
-      {car.isRentAvailable && car.rentPrice && (
-        <p className="text-sm font-semibold text-teal-600">
-          ₹{car.rentPrice.daily.toLocaleString('en-IN')}/day
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-2xl font-bold text-primary">
+          {formatPrice(car.price)}
         </p>
+        {car.isRentAvailable && car.rentPrice && (
+          <Badge variant="secondary" className="text-xs">
+            Also for rent
+          </Badge>
+        )}
+      </div>
+      {car.isRentAvailable && car.rentPrice && (
+        <div className="text-right">
+          <p className="small-text font-semibold text-green-600">
+            ₹{car.rentPrice.daily.toLocaleString('en-IN')}/day
+          </p>
+        </div>
       )}
     </div>
   );

@@ -31,7 +31,7 @@ const CarDetailContent = ({
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="desktop-page-container pb-32 md:pb-6">
       {/* Back Navigation */}
       <div className="mb-4 md:mb-6">
         <Button 
@@ -44,23 +44,24 @@ const CarDetailContent = ({
         </Button>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="block md:hidden">
-        <CarImageGallery
-          images={car.images}
-          title={car.title}
-          featured={car.featured}
-          verified={car.verified}
-        />
+      <CarImageGallery
+        images={car.images}
+        title={car.title}
+        featured={car.featured}
+        verified={car.verified}
+      />
 
-        <CarOverview
-          title={car.title}
-          price={car.price}
-          rentPrice={car.rentPrice}
-          description={car.description}
-        />
+      {/* Car Details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 grid-gap-standard desktop-content-spacing">
+        {/* Left Column - Car Overview */}
+        <div>
+          <CarOverview
+            title={car.title}
+            price={car.price}
+            rentPrice={car.rentPrice}
+            description={car.description}
+          />
 
-        <div className="mb-6">
           <CarSpecifications
             year={car.year}
             transmission={car.transmission}
@@ -70,50 +71,12 @@ const CarDetailContent = ({
           />
         </div>
 
-        <SellerCard seller={car.seller} />
+        {/* Right Column - Seller & Actions */}
+        <div>
+          <SellerCard seller={car.seller} />
 
-        <div className="pb-8">
-          <CarActions
-            offerStatus={offerStatus}
-            onMakeOffer={onMakeOffer}
-            onChatClick={onChatClick}
-            onTestDrive={onTestDrive}
-          />
-        </div>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:block">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Image Gallery */}
-          <div>
-            <CarImageGallery
-              images={car.images}
-              title={car.title}
-              featured={car.featured}
-              verified={car.verified}
-            />
-          </div>
-
-          {/* Right Column - Car Details */}
-          <div className="space-y-6">
-            <CarOverview
-              title={car.title}
-              price={car.price}
-              rentPrice={car.rentPrice}
-              description={car.description}
-            />
-
-            <CarSpecifications
-              year={car.year}
-              transmission={car.transmission}
-              fuelType={car.fuelType}
-              location={car.location}
-              seller={car.seller}
-            />
-
-            <SellerCard seller={car.seller} />
-
+          {/* Actions Section with extra bottom padding on mobile */}
+          <div className="mb-8 md:mb-0">
             <CarActions
               offerStatus={offerStatus}
               onMakeOffer={onMakeOffer}

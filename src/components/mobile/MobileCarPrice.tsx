@@ -2,29 +2,26 @@
 interface MobileCarPriceProps {
   price: number;
   rentalRate?: number;
-  isRentAvailable?: boolean;
 }
 
-const MobileCarPrice = ({ price, rentalRate, isRentAvailable }: MobileCarPriceProps) => {
+const MobileCarPrice = ({ price, rentalRate }: MobileCarPriceProps) => {
   const formatPrice = (price: number) => {
-    return `₹${price.toLocaleString('en-IN')}`;
+    return `₹${price.toLocaleString()}`;
   };
 
   const formatRental = (rate: number) => {
-    return `₹${rate.toLocaleString('en-IN')}/day`;
+    return `₹${rate.toLocaleString()}/day`;
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
       <span className="text-2xl font-bold text-primary">
         {formatPrice(price)}
       </span>
-      {isRentAvailable && rentalRate && (
-        <div className="mt-1">
-          <span className="text-sm font-semibold text-teal-600">
-            {formatRental(rentalRate)}
-          </span>
-        </div>
+      {rentalRate && (
+        <span className="small-text text-gray-500 ml-2">
+          or {formatRental(rentalRate)}
+        </span>
       )}
     </div>
   );
