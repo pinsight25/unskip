@@ -32,7 +32,7 @@ const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
   return (
     <div className="bg-white border-b border-gray-100 sticky top-14 md:top-16 z-40 shadow-sm">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6 py-4">
-        {/* Mobile-Optimized Toggle Tabs */}
+        {/* Mobile-Optimized Toggle Tabs with Original Design */}
         <div className="flex justify-around bg-gray-50 p-2 rounded-xl max-w-2xl mx-auto md:grid md:grid-cols-3 md:gap-2">
           {filterTypes.map((filter) => {
             const Icon = filter.icon;
