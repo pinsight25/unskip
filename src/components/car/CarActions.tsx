@@ -1,5 +1,6 @@
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { DollarSign, MessageCircle, CalendarDays } from 'lucide-react';
 
 interface CarActionsProps {
@@ -10,20 +11,47 @@ interface CarActionsProps {
 }
 
 const CarActions = ({ offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarActionsProps) => {
-  const getChatButtonText = () => {
+  const getChatButtonConfig = () => {
     switch (offerStatus) {
       case 'none':
-        return 'Make offer to chat';
+        return {
+          text: 'Make offer to chat',
+          disabled: true,
+          variant: 'outline' as const,
+          className: 'border-gray-300 text-gray-500'
+        };
       case 'pending':
-        return 'Waiting for response';
+        return {
+          text: 'Offer pending...',
+          disabled: true,
+          variant: 'outline' as const,
+          className: 'border-orange-300 text-orange-600'
+        };
       case 'accepted':
-        return 'Chat with seller';
+        return {
+          text: 'Chat with seller',
+          disabled: false,
+          variant: 'outline' as const,
+          className: 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white'
+        };
       case 'rejected':
-        return 'Offer rejected';
+        return {
+          text: 'Offer rejected',
+          disabled: true,
+          variant: 'outline' as const,
+          className: 'border-red-300 text-red-600'
+        };
       default:
-        return 'Chat';
+        return {
+          text: 'Chat',
+          disabled: false,
+          variant: 'outline' as const,
+          className: 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white'
+        };
     }
   };
+
+  const chatConfig = getChatButtonConfig();
 
   return (
     <div className="space-y-3">
@@ -32,18 +60,20 @@ const CarActions = ({ offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarA
         onClick={onMakeOffer}
       >
         <DollarSign className="h-4 w-4 mr-2" />
-        Make an Offer
+        {offerStatus === 'pending' ? 'Offer Sent' : offerStatus === 'accepted' ? 'Offer Accepted' : 'Make an Offer'}
       </Button>
+      
       <div className="grid grid-cols-2 gap-3">
         <Button 
-          variant="outline"
+          variant={chatConfig.variant}
           onClick={onChatClick}
-          disabled={offerStatus === 'pending' || offerStatus === 'rejected'}
-          className="border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all duration-200"
+          disabled={chatConfig.disabled}
+          className={`transition-all duration-200 ${chatConfig.className}`}
         >
           <MessageCircle className="h-4 w-4 mr-2" />
-          {getChatButtonText()}
+          {chatConfig.text}
         </Button>
+        
         <Button 
           variant="outline"
           onClick={onTestDrive}
@@ -53,6 +83,14 @@ const CarActions = ({ offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarA
           Test Drive
         </Button>
       </div>
+      
+      {offerStatus === 'accepted' && (
+        <div className="mt-2">
+          <Badge className="bg-green-100 text-green-800 border-green-200 w-full justify-center">
+            ✅ Ready to chat with seller
+          </Badge>
+        </div>
+      )}
     </div>
   );
 };

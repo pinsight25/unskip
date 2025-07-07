@@ -15,7 +15,6 @@ import CarOverview from '@/components/car/CarOverview';
 import CarSpecifications from '@/components/car/CarSpecifications';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
-import AccessoryCard from '@/components/accessories/AccessoryCard';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,16 +41,6 @@ const CarDetail = () => {
       </ResponsiveLayout>
     );
   }
-
-  // Get recommended accessories for this car
-  const recommendedAccessories = mockAccessories
-    .filter(accessory => 
-      accessory.compatibility.some(model => 
-        model.toLowerCase().includes(car.brand.toLowerCase()) ||
-        model.toLowerCase().includes(car.model.toLowerCase())
-      ) || accessory.compatibility.includes('Universal fit - All cars')
-    )
-    .slice(0, 6);
 
   const handleMakeOffer = () => {
     if (!isVerified) {
@@ -106,6 +95,7 @@ const CarDetail = () => {
     }
     
     if (offerStatus === 'accepted') {
+      // Navigate to chat page with the car ID
       navigateToChat(car.id);
     }
   };
@@ -171,45 +161,6 @@ const CarDetail = () => {
             </div>
           </div>
         </div>
-
-        {/* Recommended Accessories Section */}
-        {recommendedAccessories.length > 0 && (
-          <div className="desktop-header-section border-t border-gray-200 pt-8 md:pt-12">
-            <div className="desktop-content-spacing">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-4">
-                ✨ Recommended Accessories
-              </h2>
-              <p className="text-gray-600 text-base md:text-lg">
-                Popular upgrades for {car.brand} {car.model}
-              </p>
-            </div>
-
-            {/* Mobile: Horizontal scroll, Desktop: Grid */}
-            <div className="md:hidden">
-              <div className="flex space-x-4 overflow-x-auto pb-4">
-                {recommendedAccessories.map((accessory) => (
-                  <div key={accessory.id} className="flex-shrink-0 w-64">
-                    <AccessoryCard accessory={accessory} viewMode="grid" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-standard">
-              {recommendedAccessories.map((accessory) => (
-                <AccessoryCard key={accessory.id} accessory={accessory} viewMode="grid" />
-              ))}
-            </div>
-
-            <div className="mt-6 md:mt-8 text-center">
-              <Link to={`/accessories?search=${car.brand} ${car.model}`}>
-                <button className="text-primary hover:text-primary/80 font-medium text-base md:text-lg">
-                  View all accessories for {car.brand} {car.model} →
-                </button>
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
 
       <OfferModal

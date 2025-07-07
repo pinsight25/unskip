@@ -1,40 +1,81 @@
 
-import { Card } from '@/components/ui/card';
-import { Star } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Phone, MessageCircle, MapPin, Calendar, Star } from 'lucide-react';
+import { Seller } from '@/types/car';
 
 interface SellerCardProps {
-  seller: {
-    id: string;
-    name: string;
-    rating?: number;
-  };
+  seller: Seller;
 }
 
 const SellerCard = ({ seller }: SellerCardProps) => {
   return (
     <Card className="mb-6">
-      <div className="p-4">
-        <h4 className="text-lg font-semibold mb-3">Seller Information</h4>
-        <div className="flex items-center space-x-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-700 font-semibold">{seller.name.charAt(0).toUpperCase()}</span>
-          </div>
-          <div>
-            <p className="font-medium">{seller.name}</p>
-            <p className="text-sm text-gray-500">Member since March 2023</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1">
-            {seller.rating && (
-              <>
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-gray-700 font-medium">{seller.rating}</span>
-              </>
+      <CardContent className="p-6">
+        <div className="flex items-start space-x-4">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+            {seller.avatar ? (
+              <img src={seller.avatar} alt={seller.name} className="w-16 h-16 rounded-full object-cover" />
+            ) : (
+              <span className="text-xl font-semibold text-gray-600">
+                {seller.name.charAt(0)}
+              </span>
             )}
           </div>
+          
+          <div className="flex-1">
+            <div className="flex items-center space-x-2 mb-2">
+              <h3 className="text-lg font-semibold">{seller.name}</h3>
+              {seller.verified && (
+                <Badge className="bg-green-100 text-green-800 border-green-200">
+                  Verified
+                </Badge>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-1 mb-2">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className={`h-4 w-4 ${
+                      i < Math.floor(seller.rating) 
+                        ? 'text-yellow-400 fill-current' 
+                        : 'text-gray-300'
+                    }`} 
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-gray-600">
+                {seller.rating} • {seller.totalSales} sales
+              </span>
+            </div>
+            
+            <div className="space-y-1 text-sm text-gray-600">
+              <div className="flex items-center space-x-1">
+                <MapPin className="h-3 w-3" />
+                <span>{seller.location}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Calendar className="h-3 w-3" />
+                <span>Member since {seller.memberSince}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Button variant="outline" size="sm" className="flex items-center justify-center">
+            <Phone className="h-4 w-4 mr-1" />
+            Call
+          </Button>
+          <Button variant="outline" size="sm" className="flex items-center justify-center">
+            <MessageCircle className="h-4 w-4 mr-1" />
+            WhatsApp
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   );
 };
