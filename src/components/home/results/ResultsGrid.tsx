@@ -1,7 +1,7 @@
 
 import { Car } from '@/types/car';
-import CarCard from '@/components/car/CarCard';
-import MobileCarCard from '@/components/mobile/MobileCarCard';
+import CompactCarCard from '@/components/car/CompactCarCard';
+import CompactMobileCarCard from '@/components/mobile/CompactMobileCarCard';
 import { Button } from '@/components/ui/button';
 
 interface ResultsGridProps {
@@ -27,21 +27,18 @@ const ResultsGrid = ({
 }: ResultsGridProps) => {
   return (
     <>
-      <div className="md:grid md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
+      <div className="md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-4">
         {cars.map((car) => (
           isMobile ? (
-            <MobileCarCard 
+            <CompactMobileCarCard 
               key={car.id} 
               car={car} 
               onSave={onSaveCar}
               isSaved={savedCars.includes(car.id)}
               onMakeOffer={() => onMakeOffer(car)}
-              onChat={() => onChat(car)}
-              onTestDrive={() => onTestDrive(car)}
-              offerStatus={getOfferStatus(car.id)}
             />
           ) : (
-            <CarCard 
+            <CompactCarCard 
               key={car.id} 
               car={car} 
               onSave={onSaveCar}
@@ -53,8 +50,8 @@ const ResultsGrid = ({
 
       {/* Load More - Desktop with proper spacing */}
       {cars.length > 0 && !isMobile && (
-        <div className="text-center mt-12 pb-8">
-          <Button variant="outline" size="default" className="h-12 px-12 text-[15px] font-medium">
+        <div className="text-center mt-8 pb-8">
+          <Button variant="outline" size="default" className="h-10 px-8 text-sm font-medium">
             Load More Cars
           </Button>
         </div>
