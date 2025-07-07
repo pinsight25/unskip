@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { CheckCircle, XCircle, MessageCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { CheckCircle, XCircle, MessageCircle, Car, Calendar, User, TrendingUp, TrendingDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -116,123 +115,232 @@ const ReceivedOffersTab = () => {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      accepted: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800'
+      pending: { className: 'bg-yellow-100 text-yellow-800 border-yellow-200', text: 'Pending' },
+      accepted: { className: 'bg-green-100 text-green-800 border-green-200', text: 'Accepted' },
+      rejected: { className: 'bg-red-100 text-red-800 border-red-200', text: 'Rejected' }
     };
     
+    const variant = variants[status as keyof typeof variants];
     return (
-      <Badge className={variants[status as keyof typeof variants]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <Badge className={`${variant.className} border text-xs font-medium px-3 py-1`}>
+        {variant.text}
       </Badge>
     );
   };
 
   const getPercentageBadge = (percentage: number) => {
     if (percentage > 0) {
-      return <span className="text-green-600 font-medium">+{percentage}%</span>;
+      return (
+        <div className="flex items-center text-green-600 font-semibold">
+          <TrendingUp className="h-4 w-4 mr-1" />
+          +{percentage}%
+        </div>
+      );
     } else if (percentage < 0) {
-      return <span className="text-red-600 font-medium">{percentage}%</span>;
+      return (
+        <div className="flex items-center text-red-600 font-semibold">
+          <TrendingDown className="h-4 w-4 mr-1" />
+          {percentage}%
+        </div>
+      );
     }
-    return <span className="text-gray-600 font-medium">0%</span>;
+    return <span className="text-gray-600 font-semibold">0%</span>;
   };
 
   return (
-    <Card className="p-4 md:p-6">
+    <div className="space-y-4">
       {offers.length > 0 ? (
-        <div className="space-y-4">
-          {offers.map((offer) => {
-            const percentageDiff = calculatePercentageDiff(offer.offerAmount, offer.askingPrice);
-            
-            return (
-              <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex flex-col gap-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg mb-1">{offer.carTitle}</h3>
-                      <p className="text-sm text-gray-500">Posted {offer.createdAt}</p>
+        offers.map((offer) => {
+          const percentageDiff = calculatePercentageDiff(offer.offerAmount, offer.askingPrice);
+          
+          return (
+            <Card key={offer.id} className="hover:shadow-md transition-shadow duration-200">
+              <CardContent className="p-6">
+                {/* Desktop Layout */}
+                <div className="hidden md:block">
+                  <div className="grid grid-cols-12 gap-6">
+                    {/* Car Thumbnail */}
+                    <div className="col-span-2">
+                      <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <Car className="h-8 w-8 text-gray-400" />
+                      </div>
                     </div>
-                    {getStatusBadge(offer.status)}
-                  </div>
 
-                  {/* Offer Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Asking Price</p>
-                      <p className="font-semibold text-lg">{formatPrice(offer.askingPrice)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Buyer</p>
-                      <p className="font-medium">{offer.buyerName}</p>
-                    </div>
-                  </div>
+                    {/* Left Column - Car Info */}
+                    <div className="col-span-5 space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-lg text-gray-900 mb-1">{offer.carTitle}</h3>
+                          <div className="flex items-center text-sm text-gray-500">
+                            <Calendar className="h-4 w-4 mr-1" />
+                            Posted {offer.createdAt}
+                          </div>
+                        </div>
+                        {getStatusBadge(offer.status)}
+                      </div>
 
-                  {/* Offer Amount */}
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-sm text-gray-600">Asking Price</p>
+                          <p className="font-semibold text-lg">{formatPrice(offer.askingPrice)}</p>
+                        </div>
+                        <div className="bg-primary/5 p-3 rounded-lg border border-primary/10">
+                          <p className="text-sm text-gray-600 mb-1">Offer Amount</p>
+                          <p className="font-bold text-xl text-primary">{formatPrice(offer.offerAmount)}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Column - Buyer Info */}
+                    <div className="col-span-3 space-y-3">
                       <div>
-                        <p className="text-sm text-gray-600">Offer Amount</p>
-                        <p className="font-bold text-xl text-primary">{formatPrice(offer.offerAmount)}</p>
+                        <div className="flex items-center text-sm text-gray-600 mb-1">
+                          <User className="h-4 w-4 mr-1" />
+                          Buyer Information
+                        </div>
+                        <p className="font-semibold text-lg">{offer.buyerName}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600">Difference</p>
-                        <p className="text-lg font-semibold">{getPercentageBadge(percentageDiff)}</p>
+
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Price Difference</p>
+                        {getPercentageBadge(percentageDiff)}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col md:flex-row gap-2">
-                    {offer.status === 'pending' && (
-                      <>
+                    {/* Action Buttons */}
+                    <div className="col-span-2 flex flex-col justify-center">
+                      {offer.status === 'pending' && (
+                        <div className="space-y-2">
+                          <Button
+                            onClick={() => handleAcceptOffer(offer.id)}
+                            className="w-full bg-green-600 hover:bg-green-700 text-sm"
+                            size="sm"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Accept
+                          </Button>
+                          <Button
+                            onClick={() => handleRejectOffer(offer.id)}
+                            variant="outline"
+                            className="w-full text-red-600 border-red-200 hover:bg-red-50 text-sm"
+                            size="sm"
+                          >
+                            <XCircle className="h-4 w-4 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                      {offer.status === 'accepted' && (
                         <Button
-                          onClick={() => handleAcceptOffer(offer.id)}
-                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          onClick={() => handleChatWithBuyer(offer)}
+                          className="w-full"
+                          size="sm"
                         >
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Accept Offer
+                          <MessageCircle className="h-4 w-4 mr-1" />
+                          Chat
                         </Button>
-                        <Button
-                          onClick={() => handleRejectOffer(offer.id)}
-                          variant="outline"
-                          className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
-                        >
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {offer.status === 'accepted' && (
-                      <Button
-                        onClick={() => handleChatWithBuyer(offer)}
-                        className="flex-1"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Chat with Buyer
-                      </Button>
-                    )}
-                    {offer.status === 'rejected' && (
-                      <div className="flex-1 p-2 text-center text-gray-500 text-sm">
-                        Offer rejected on {offer.createdAt}
-                      </div>
-                    )}
+                      )}
+                      {offer.status === 'rejected' && (
+                        <div className="text-center text-gray-500 text-xs p-2">
+                          Offer rejected
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+
+                {/* Mobile Layout - Keep existing mobile design */}
+                <div className="block md:hidden">
+                  <div className="flex flex-col gap-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{offer.carTitle}</h3>
+                        <p className="text-sm text-gray-500">Posted {offer.createdAt}</p>
+                      </div>
+                      {getStatusBadge(offer.status)}
+                    </div>
+
+                    {/* Offer Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Asking Price</p>
+                        <p className="font-semibold text-lg">{formatPrice(offer.askingPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Buyer</p>
+                        <p className="font-medium">{offer.buyerName}</p>
+                      </div>
+                    </div>
+
+                    {/* Offer Amount */}
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Offer Amount</p>
+                          <p className="font-bold text-xl text-primary">{formatPrice(offer.offerAmount)}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-600">Difference</p>
+                          <p className="text-lg font-semibold">{getPercentageBadge(percentageDiff)}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col md:flex-row gap-2">
+                      {offer.status === 'pending' && (
+                        <>
+                          <Button
+                            onClick={() => handleAcceptOffer(offer.id)}
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Accept Offer
+                          </Button>
+                          <Button
+                            onClick={() => handleRejectOffer(offer.id)}
+                            variant="outline"
+                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                          >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                      {offer.status === 'accepted' && (
+                        <Button
+                          onClick={() => handleChatWithBuyer(offer)}
+                          className="flex-1"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Chat with Buyer
+                        </Button>
+                      )}
+                      {offer.status === 'rejected' && (
+                        <div className="flex-1 p-2 text-center text-gray-500 text-sm">
+                          Offer rejected on {offer.createdAt}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })
       ) : (
-        <div className="text-center py-12">
-          <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="h-8 w-8 text-gray-400" />
-          </div>
-          <h3 className="text-xl font-semibold mb-2">No offers received yet</h3>
-          <p className="text-gray-600 mb-6">When buyers make offers on your cars, they'll appear here</p>
-        </div>
+        <Card>
+          <CardContent className="text-center py-12">
+            <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">No offers received yet</h3>
+            <p className="text-gray-600 mb-6">When buyers make offers on your cars, they'll appear here</p>
+          </CardContent>
+        </Card>
       )}
-    </Card>
+    </div>
   );
 };
 
