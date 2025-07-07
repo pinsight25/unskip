@@ -10,6 +10,7 @@ import TestDriveModal from '@/components/modals/TestDriveModal';
 import ChatHeader from '@/components/chat/ChatHeader';
 import ChatMessages from '@/components/chat/ChatMessages';
 import ChatInput from '@/components/chat/ChatInput';
+import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 
 const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -117,36 +118,43 @@ const ChatDetail = () => {
 
   if (!chat || !car) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center p-6">
-          <h2 className="text-xl font-semibold mb-2">Chat not found</h2>
-          <Button onClick={handleBack}>Back to Chats</Button>
+      <ResponsiveLayout>
+        <div className="flex items-center justify-center h-screen bg-gray-50">
+          <div className="text-center p-6">
+            <h2 className="text-xl font-semibold mb-2">Chat not found</h2>
+            <Button onClick={handleBack}>Back to Chats</Button>
+          </div>
         </div>
-      </div>
+      </ResponsiveLayout>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <ChatHeader
-        car={car}
-        onBack={handleBack}
-        onReportChat={handleReportChat}
-        onDeleteChat={handleDeleteChat}
-      />
+    <ResponsiveLayout>
+      {/* Desktop: Centered chat container with max width */}
+      <div className="h-[calc(100vh-8rem)] lg:h-[calc(100vh-10rem)] max-w-4xl mx-auto lg:my-8 lg:rounded-lg lg:shadow-lg lg:border lg:border-gray-200 bg-white overflow-hidden">
+        <div className="flex flex-col h-full">
+          <ChatHeader
+            car={car}
+            onBack={handleBack}
+            onReportChat={handleReportChat}
+            onDeleteChat={handleDeleteChat}
+          />
 
-      <ChatMessages
-        messages={messages}
-        isTyping={isTyping}
-      />
+          <ChatMessages
+            messages={messages}
+            isTyping={isTyping}
+          />
 
-      <ChatInput
-        newMessage={newMessage}
-        onMessageChange={setNewMessage}
-        onSendMessage={handleSendMessage}
-        onQuickReply={handleQuickReply}
-        onShowTestDrive={() => setShowTestDriveModal(true)}
-      />
+          <ChatInput
+            newMessage={newMessage}
+            onMessageChange={setNewMessage}
+            onSendMessage={handleSendMessage}
+            onQuickReply={handleQuickReply}
+            onShowTestDrive={() => setShowTestDriveModal(true)}
+          />
+        </div>
+      </div>
 
       <TestDriveModal
         isOpen={showTestDriveModal}
@@ -154,7 +162,7 @@ const ChatDetail = () => {
         car={car}
         onScheduled={handleTestDriveScheduled}
       />
-    </div>
+    </ResponsiveLayout>
   );
 };
 
