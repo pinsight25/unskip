@@ -58,53 +58,87 @@
     }
   }
 
-  /* Targeted outline prevention for mobile debugging issues */
+  /* COMPREHENSIVE MOBILE TAP HIGHLIGHT PREVENTION */
   @media (max-width: 767px) {
-    /* Specifically target header and navigation elements to prevent green lines */
-    header *,
-    nav *,
-    .mobile-menu * {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-focus-ring-color: transparent;
+    /* Global prevention of all tap highlights and focus rings */
+    * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-focus-ring-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
     }
     
-    /* Prevent unwanted tap highlights on mobile buttons */
-    button,
-    [role="button"],
-    a[role="button"] {
-      -webkit-tap-highlight-color: transparent;
+    /* Allow text selection for inputs and content areas */
+    input, textarea, [contenteditable] {
+      -webkit-user-select: auto !important;
+      user-select: auto !important;
     }
-
-    /* SPECIFIC FIX FOR FILTERTABS GREEN LINE ISSUE */
-    .filter-tabs-container,
-    .filter-tabs-container *,
-    .filter-tabs-wrapper,
-    .filter-tabs-wrapper *,
-    .filter-tab-button,
-    .filter-tab-button * {
+    
+    /* Specifically target header and navigation elements */
+    header, header *, 
+    nav, nav *,
+    .mobile-menu, .mobile-menu *,
+    [class*="sticky"], [class*="sticky"] *,
+    [class*="fixed"], [class*="fixed"] * {
       -webkit-tap-highlight-color: transparent !important;
       -webkit-focus-ring-color: transparent !important;
       outline: none !important;
       box-shadow: none !important;
       border: none !important;
     }
+    
+    /* ULTRA-SPECIFIC FIX FOR FILTERTABS GREEN LINE ISSUE */
+    .filter-tabs-container,
+    .filter-tabs-container *,
+    .filter-tabs-wrapper,
+    .filter-tabs-wrapper *,
+    .filter-tab-button,
+    .filter-tab-button *,
+    div[class*="sticky"][class*="top-"],
+    div[class*="sticky"][class*="top-"] *,
+    div[class*="bg-white"][class*="border-b"],
+    div[class*="bg-white"][class*="border-b"] * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-focus-ring-color: transparent !important;
+      outline: none !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+      text-decoration: none !important;
+      background-image: none !important;
+    }
 
-    /* Extra targeting for the sticky container that's causing the green line */
-    .filter-tabs-container.sticky,
-    .filter-tabs-container {
+    /* Remove any pseudo-elements that might cause lines */
+    .filter-tabs-container::before,
+    .filter-tabs-container::after,
+    .filter-tabs-wrapper::before,
+    .filter-tabs-wrapper::after,
+    .filter-tab-button::before,
+    .filter-tab-button::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    /* Prevent any focus states on all interactive elements */
+    button, button *,
+    [role="button"], [role="button"] *,
+    a[role="button"], a[role="button"] *,
+    .filter-tab-button, .filter-tab-button *,
+    [class*="transition-all"], [class*="transition-all"] * {
       -webkit-tap-highlight-color: transparent !important;
       -webkit-focus-ring-color: transparent !important;
       outline: none !important;
       box-shadow: none !important;
     }
 
-    /* Target any potential focus states on filter tabs */
-    .filter-tab-button:focus,
-    .filter-tab-button:active,
-    .filter-tab-button:hover {
+    /* Target any potential focus states */
+    *:focus, *:active, *:hover,
+    *:focus *, *:active *, *:hover * {
       outline: none !important;
       -webkit-tap-highlight-color: transparent !important;
       box-shadow: none !important;
+      text-decoration: none !important;
+      border-bottom: none !important;
     }
   }
 
