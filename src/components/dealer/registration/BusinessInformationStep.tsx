@@ -2,7 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
 
 interface BusinessInformationStepProps {
@@ -16,13 +16,6 @@ const BusinessInformationStep = ({ formData, onInputChange }: BusinessInformatio
     'Kia', 'BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Skoda',
     'Ford', 'Renault', 'Nissan', 'MG', 'Jeep', 'Citroen'
   ];
-
-  const handleBrandChange = (brand: string, checked: boolean) => {
-    const updatedBrands = checked
-      ? [...formData.brandsDealWith, brand]
-      : formData.brandsDealWith.filter(b => b !== brand);
-    onInputChange('brandsDealWith', updatedBrands);
-  };
 
   return (
     <div className="space-y-6">
@@ -105,21 +98,13 @@ const BusinessInformationStep = ({ formData, onInputChange }: BusinessInformatio
       <div>
         <Label className="text-base font-medium">Brands Dealt With *</Label>
         <p className="text-sm text-gray-600 mb-3">Select all brands you deal with</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {availableBrands.map((brand) => (
-            <div key={brand} className="flex items-center space-x-2">
-              <Checkbox
-                id={brand}
-                checked={formData.brandsDealWith.includes(brand)}
-                onCheckedChange={(checked) => handleBrandChange(brand, !!checked)}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={brand} className="text-sm font-normal cursor-pointer">
-                {brand}
-              </Label>
-            </div>
-          ))}
-        </div>
+        <MultiSelect
+          options={availableBrands}
+          selected={formData.brandsDealWith}
+          onChange={(selected) => onInputChange('brandsDealWith', selected)}
+          placeholder="Select brands (multiple allowed)"
+          className="max-w-md"
+        />
         {formData.brandsDealWith.length === 0 && (
           <p className="text-sm text-red-500 mt-2">Please select at least one brand</p>
         )}
