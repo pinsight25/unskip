@@ -25,9 +25,9 @@ const DealerRegister = () => {
     handleSubmit,
   } = useDealerRegistrationForm();
 
-  const handleTermsChange = (checked: boolean | 'indeterminate') => {
-    // Ensure we only pass a boolean value
-    handleInputChange('agreeToTerms', checked === true);
+  // Fix: accept only boolean, since DocumentUploadStep already converts to boolean
+  const handleTermsChange = (checked: boolean) => {
+    handleInputChange('agreeToTerms', checked);
   };
 
   const renderCurrentStep = () => {
