@@ -1,5 +1,5 @@
 
-import { getCarsForSale, unifiedSellers } from './unifiedCarData';
+import { getCarsForSale, unifiedSellers } from './index';
 
 export const mockSellers = unifiedSellers;
 export const mockCars = getCarsForSale();

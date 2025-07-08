@@ -1,0 +1,192 @@
+
+import { Car } from '@/types/car';
+import { sellers } from '../sellers';
+
+export const suvCars: Car[] = [
+  {
+    id: '2',
+    title: '2020 Hyundai Creta SX',
+    brand: 'Hyundai',
+    model: 'Creta',
+    year: 2020,
+    price: 1450000,
+    images: [
+      'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
+      'https://images.unsplash.com/photo-1494976688430-30aacd673f5c?w=800'
+    ],
+    mileage: 35000,
+    fuelType: 'Petrol',
+    transmission: 'Automatic',
+    ownership: 1,
+    location: 'Anna Nagar, Chennai',
+    landmark: 'Opposite Metro Station',
+    color: 'Silver',
+    description: 'Premium SUV in excellent condition. All features working perfectly.',
+    seller: sellers[1],
+    registrationYear: 2020,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-12-20',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-12-05',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
+    isRentAvailable: true,
+    rentPrice: {
+      daily: 3200,
+      weekly: 20000,
+      monthly: 65000
+    },
+    rentPolicies: {
+      securityDeposit: 25000,
+      fuelPolicy: 'full-to-full',
+      kmLimit: 250,
+      insuranceIncluded: true,
+      minRentalPeriod: 1
+    },
+    rentType: 'premium',
+    features: ['Sunroof', 'Automatic AC', 'Touchscreen', 'Reverse Camera', 'Leather Seats'],
+    verified: true,
+    featured: true,
+    views: 456,
+    createdAt: '2024-01-10T14:20:00Z'
+  },
+  {
+    id: '5',
+    title: '2022 Mahindra XUV700',
+    brand: 'Mahindra',
+    model: 'XUV700',
+    year: 2022,
+    price: 1850000,
+    images: [
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800',
+      'https://images.unsplash.com/photo-1570733117311-d990c3816c47?w=800'
+    ],
+    mileage: 12000,
+    fuelType: 'Diesel',
+    transmission: 'Automatic',
+    ownership: 1,
+    location: 'OMR, Chennai',
+    color: 'Red',
+    description: 'Latest model XUV700 with all premium features. Excellent condition.',
+    seller: sellers[0],
+    registrationYear: 2022,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2025-03-15',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-12-22',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
+    verified: true,
+    featured: true,
+    views: 312,
+    createdAt: '2024-01-12T11:20:00Z'
+  },
+  {
+    id: '7',
+    title: '2019 Toyota Innova Crysta',
+    brand: 'Toyota',
+    model: 'Innova Crysta',
+    year: 2019,
+    price: 1650000,
+    images: [
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800',
+      'https://images.unsplash.com/photo-1570733117311-d990c3816c47?w=800'
+    ],
+    mileage: 38000,
+    fuelType: 'Diesel',
+    transmission: 'Manual',
+    ownership: 1,
+    location: 'Tambaram, Chennai',
+    color: 'White',
+    description: 'Perfect family MPV with excellent reliability. Well maintained.',
+    seller: sellers[2],
+    registrationYear: 2019,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-07-20',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-08-10',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
+    isRentAvailable: true,
+    rentPrice: {
+      daily: 3000,
+      weekly: 19000,
+      monthly: 60000
+    },
+    rentPolicies: {
+      securityDeposit: 22000,
+      fuelPolicy: 'full-to-full',
+      kmLimit: 250,
+      insuranceIncluded: true,
+      minRentalPeriod: 1
+    },
+    rentType: 'suv',
+    features: ['7 Seater', 'Captain Seats', 'Dual AC', 'Touchscreen', 'Reliable Engine'],
+    verified: true,
+    featured: false,
+    views: 189,
+    createdAt: '2024-01-09T13:45:00Z'
+  },
+  {
+    id: '8',
+    title: '2021 Kia Seltos HTX',
+    brand: 'Kia',
+    model: 'Seltos',
+    year: 2021,
+    price: 1350000,
+    images: [
+      'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
+      'https://images.unsplash.com/photo-1494976688430-30aacd673f5c?w=800'
+    ],
+    mileage: 22000,
+    fuelType: 'Petrol',
+    transmission: 'Automatic',
+    ownership: 1,
+    location: 'Chromepet, Chennai',
+    color: 'Grey',
+    description: 'Stylish compact SUV with modern features. Single owner.',
+    seller: sellers[3],
+    registrationYear: 2021,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-10-05',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-10-01',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
+    isRentAvailable: true,
+    rentPrice: {
+      daily: 2600,
+      weekly: 16500,
+      monthly: 52000
+    },
+    rentPolicies: {
+      securityDeposit: 18000,
+      fuelPolicy: 'full-to-full',
+      kmLimit: 200,
+      insuranceIncluded: true,
+      minRentalPeriod: 1
+    },
+    rentType: 'premium',
+    features: ['UVO Connect', 'Air Purifier', 'Wireless Charging', 'Bose Audio', 'LED Headlights'],
+    verified: true,
+    featured: false,
+    views: 145,
+    createdAt: '2024-01-07T16:10:00Z'
+  }
+];

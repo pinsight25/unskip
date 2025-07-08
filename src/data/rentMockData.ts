@@ -1,4 +1,5 @@
-import { getCarsForRent, unifiedSellers } from './unifiedCarData';
+
+import { getCarsForRent, unifiedSellers } from './index';
 import { RentCar, RentSeller } from '@/types/rent';
 
 // Convert unified sellers to rent sellers
