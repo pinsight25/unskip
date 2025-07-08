@@ -150,5 +150,6 @@ export const useDealerRegistrationForm = () => {
     nextStep,
     prevStep,
     handleSubmit,
+    setFormData,
   };
 };

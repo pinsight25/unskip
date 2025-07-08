@@ -7,7 +7,7 @@ import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
 interface DocumentUploadStepProps {
   formData: DealerFormData;
   onFileUpload: (field: string, files: FileList | null) => void;
-  onTermsChange: (checked: boolean) => void;
+  onTermsChange: (checked: boolean | 'indeterminate') => void;
 }
 
 const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentUploadStepProps) => {
@@ -87,7 +87,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
             <Checkbox
               id="agreeToTerms"
               checked={formData.agreeToTerms}
-              onCheckedChange={(checked) => onTermsChange(checked === true)}
+              onCheckedChange={onTermsChange}
               className="h-4 w-4"
             />
             <Label htmlFor="agreeToTerms" className="text-sm cursor-pointer">

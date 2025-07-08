@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft } from 'lucide-react';
 import { useDealerRegistrationForm } from '@/hooks/useDealerRegistrationForm';
+import { updateFormField } from '@/utils/formHelpers';
 import BusinessInformationStep from '@/components/dealer/registration/BusinessInformationStep';
 import LegalLocationStep from '@/components/dealer/registration/LegalLocationStep';
 import DocumentUploadStep from '@/components/dealer/registration/DocumentUploadStep';
@@ -24,11 +25,11 @@ const DealerRegister = () => {
     nextStep,
     prevStep,
     handleSubmit,
+    setFormData,
   } = useDealerRegistrationForm();
 
-  // Fix: accept only boolean for handleTermsChange
-  const handleTermsChange = (checked: boolean) => {
-    handleInputChange('agreeToTerms', checked);
+  const handleTermsChange = (checked: boolean | 'indeterminate') => {
+    setFormData(prev => updateFormField(prev, 'agreeToTerms', checked));
   };
 
   const renderCurrentStep = () => {
