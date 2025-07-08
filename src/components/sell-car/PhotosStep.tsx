@@ -12,14 +12,14 @@ const PhotosStep = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
           <div 
             key={index} 
-            className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 hover:border-primary/50 cursor-pointer relative transition-colors group"
+            className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 hover:border-primary/50 cursor-pointer relative transition-colors group"
           >
             <div className="text-center">
-              <Camera className="h-5 w-5 text-gray-400 mx-auto mb-1 group-hover:text-primary/70" />
+              <Camera className="h-4 w-4 text-gray-400 mx-auto mb-1 group-hover:text-primary/70" />
               <span className="text-xs text-gray-500 block">
                 {index === 1 ? 'Cover' : `Photo ${index}`}
               </span>

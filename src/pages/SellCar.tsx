@@ -107,7 +107,7 @@ const SellCar = () => {
   return (
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 lg:px-6 xl:px-8 pb-44 md:pb-8">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6 pb-44 md:pb-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -119,7 +119,7 @@ const SellCar = () => {
 
           {/* Form Content */}
           <Card className="shadow-lg">
-            <CardContent className="p-6 md:p-8">
+            <CardContent className="p-6">
               {renderStep()}
             </CardContent>
           </Card>
