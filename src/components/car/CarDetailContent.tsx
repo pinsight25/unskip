@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import CarImageGallery from '@/components/car/CarImageGallery';
 import CarOverview from '@/components/car/CarOverview';
-import CarSpecifications from '@/components/car/CarSpecifications';
+import CompactVehicleInfo from '@/components/car/CompactVehicleInfo';
+import CarDetailTabs from '@/components/car/CarDetailTabs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
 import RentalTerms from '@/components/car/RentalTerms';
@@ -47,7 +48,7 @@ const CarDetailContent = ({
         </div>
 
         {/* Desktop 2-column layout, Mobile stacked */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Image Gallery */}
           <div className="lg:sticky lg:top-4 lg:self-start">
             <CarImageGallery
@@ -59,7 +60,7 @@ const CarDetailContent = ({
           </div>
 
           {/* Right Column - Car Details */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <CarOverview
               title={car.title}
               price={car.price}
@@ -67,21 +68,29 @@ const CarDetailContent = ({
               description={car.description}
             />
 
-            <CarSpecifications
-              year={car.year}
-              transmission={car.transmission}
-              fuelType={car.fuelType}
-              mileage={car.mileage}
-              color={car.color}
-              location={car.location}
-              landmark={car.landmark}
+            {/* Compact Vehicle Info */}
+            <CompactVehicleInfo
               ownership={car.ownership}
               registrationYear={car.registrationYear}
               registrationState={car.registrationState}
               insurance={car.insurance}
               serviceHistory={car.serviceHistory}
               rtoTransferSupport={car.rtoTransferSupport}
-              seller={car.seller}
+              location={car.location}
+              landmark={car.landmark}
+            />
+
+            {/* Tabbed Detail View */}
+            <CarDetailTabs
+              description={car.description}
+              location={car.location}
+              landmark={car.landmark}
+              features={car.features}
+              insurance={car.insurance}
+              serviceHistory={car.serviceHistory}
+              registrationYear={car.registrationYear}
+              registrationState={car.registrationState}
+              rtoTransferSupport={car.rtoTransferSupport}
             />
 
             {car.isRentAvailable && car.rentPolicies && (

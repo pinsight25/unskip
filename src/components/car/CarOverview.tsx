@@ -11,7 +11,7 @@ interface CarOverviewProps {
   description: string;
 }
 
-const CarOverview = ({ title, price, rentPrice, description }: CarOverviewProps) => {
+const CarOverview = ({ title, price, rentPrice }: CarOverviewProps) => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-2">{title}</h1>
@@ -23,7 +23,6 @@ const CarOverview = ({ title, price, rentPrice, description }: CarOverviewProps)
           </span>
         )}
       </div>
-      <p className="text-gray-700 mb-6">{description}</p>
     </div>
   );
 };
