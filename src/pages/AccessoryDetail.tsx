@@ -84,6 +84,16 @@ const AccessoryDetail = () => {
     });
   };
 
+  const getConditionColor = (condition: string) => {
+    switch (condition?.toLowerCase()) {
+      case 'new': return 'bg-green-500 text-white';
+      case 'like-new': return 'bg-blue-500 text-white';
+      case 'good': return 'bg-yellow-500 text-white';
+      case 'fair': return 'bg-orange-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
+
   // Get related accessories (same category, different products)
   const relatedAccessories = mockAccessories
     .filter(acc => acc.category === accessory.category && acc.id !== accessory.id)
@@ -157,6 +167,9 @@ const AccessoryDetail = () => {
                 {accessory.featured && (
                   <Badge className="bg-amber-500 text-white">⭐ Featured</Badge>
                 )}
+                <Badge className={`${getConditionColor('new')}`}>
+                  New Condition
+                </Badge>
                 {accessory.seller.verified && (
                   <Badge className="bg-green-500 text-white">
                     <Shield className="h-3 w-3 mr-1" />
@@ -168,6 +181,9 @@ const AccessoryDetail = () => {
                   className={accessory.availability === 'in-stock' ? 'bg-green-500 text-white' : ''}
                 >
                   {accessory.availability === 'in-stock' ? 'In Stock' : 'On Order'}
+                </Badge>
+                <Badge className="bg-blue-500 text-white">
+                  Installation Available
                 </Badge>
               </div>
 
@@ -201,25 +217,25 @@ const AccessoryDetail = () => {
               </ul>
             </div>
 
-            {/* Compatibility */}
+            {/* Compatibility - Enhanced */}
             <div>
-              <h3 className="font-semibold text-lg mb-3">Compatible With</h3>
-              <div className="flex flex-wrap gap-2">
+              <h3 className="font-semibold text-lg mb-3">Compatible Car Models</h3>
+              <div className="grid grid-cols-2 gap-2">
                 {accessory.compatibility.map((model, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm">
+                  <Badge key={index} variant="secondary" className="text-sm justify-center py-2">
                     {model}
                   </Badge>
                 ))}
               </div>
             </div>
 
-            {/* Product Details */}
+            {/* Product Details - Enhanced */}
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center">
                 <Wrench className="h-4 w-4 text-gray-500 mr-2" />
                 <div>
                   <p className="text-xs text-gray-500">Installation</p>
-                  <p className="text-sm font-medium capitalize">{accessory.installation}</p>
+                  <p className="text-sm font-medium">Available</p>
                 </div>
               </div>
               <div className="flex items-center">

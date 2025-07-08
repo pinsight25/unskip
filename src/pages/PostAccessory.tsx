@@ -1,82 +1,88 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, X, ArrowLeft, Camera } from 'lucide-react';
-import { accessoryCategories } from '@/data/accessoryMockData';
+import { ArrowLeft } from 'lucide-react';
+import { useAccessoryForm } from '@/hooks/useAccessoryForm';
+import BasicInformationStep from '@/components/accessory/post/BasicInformationStep';
+import DetailsCompatibilityStep from '@/components/accessory/post/DetailsCompatibilityStep';
+import PhotosContactStep from '@/components/accessory/post/PhotosContactStep';
 
 const PostAccessory = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState(1);
+  const { formData, updateFormData, validateStep } = useAccessoryForm();
   
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    category: '',
-    priceMin: '',
-    priceMax: '',
-    brand: '',
-    compatibility: [] as string[],
-    condition: '',
-    warranty: '',
-    location: '',
-    phone: '',
-    email: ''
-  });
-  
-  const [newModel, setNewModel] = useState('');
-  const [images, setImages] = useState<string[]>([]);
+  const totalSteps = 3;
 
-  const popularCarModels = [
-    'Swift', 'Baleno', 'WagonR', 'Alto', 'Verna', 'Creta', 'i20', 'Grand i10',
-    'City', 'Amaze', 'Jazz', 'Thar', 'XUV300', 'Seltos', 'Sonet', 'Venue'
-  ];
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const addCompatibleModel = (model: string) => {
-    if (model && !formData.compatibility.includes(model)) {
-      setFormData(prev => ({
-        ...prev,
-        compatibility: [...prev.compatibility, model]
-      }));
-      setNewModel('');
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
     }
   };
 
-  const removeCompatibleModel = (model: string) => {
-    setFormData(prev => ({
-      ...prev,
-      compatibility: prev.compatibility.filter(m => m !== model)
-    }));
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name || !formData.category || !formData.priceMin) {
+  const handlePhoneVerification = () => {
+    toast({
+      title: "OTP Sent",
+      description: "Please check your phone for verification code",
+    });
+    // Simulate verification
+    setTimeout(() => {
+      updateFormData('phoneVerified', true);
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive"
+        title: "Phone Verified",
+        description: "Your phone number has been verified successfully",
       });
-      return;
-    }
+    }, 2000);
+  };
 
+  const handleSubmit = () => {
     toast({
       title: "Accessory Posted Successfully!",
       description: "Your accessory listing is now live and buyers can contact you.",
     });
-    
     navigate('/accessories');
+  };
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <BasicInformationStep
+            formData={formData}
+            onUpdate={updateFormData}
+          />
+        );
+      case 2:
+        return (
+          <DetailsCompatibilityStep
+            formData={formData}
+            onUpdate={updateFormData}
+          />
+        );
+      case 3:
+        return (
+          <PhotosContactStep
+            formData={formData}
+            onUpdate={updateFormData}
+            onPhoneVerification={handlePhoneVerification}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -94,266 +100,55 @@ const PostAccessory = () => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="heading-2">Post Your Accessory</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Post Your Accessory</h1>
               <p className="text-gray-600">Sell your car accessories to thousands of buyers</p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-5">
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Product Name *</label>
-                    <Input
-                      placeholder="e.g., Premium Leather Seat Covers"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      required
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Brand</label>
-                    <Input
-                      placeholder="e.g., 3M, Bosch, etc."
-                      value={formData.brand}
-                      onChange={(e) => handleInputChange('brand', e.target.value)}
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                </div>
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</span>
+              <Badge variant="outline">{Math.round((currentStep / totalSteps) * 100)}% Complete</Badge>
+            </div>
+            <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Description</label>
-                  <Textarea
-                    placeholder="Describe your accessory, its condition, features, etc."
-                    rows={4}
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    className="w-full max-w-lg"
-                  />
-                </div>
+          {/* Form Content */}
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              {renderCurrentStep()}
+            </CardContent>
+          </Card>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Category *</label>
-                    <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                      <SelectTrigger className="w-full max-w-md">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {accessoryCategories.filter(cat => cat.id !== 'all').map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            <span className="flex items-center gap-2">
-                              <span>{category.icon}</span>
-                              {category.name}
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Condition</label>
-                    <Select value={formData.condition} onValueChange={(value) => handleInputChange('condition', value)}>
-                      <SelectTrigger className="w-full max-w-md">
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="new">New</SelectItem>
-                        <SelectItem value="like-new">Like New</SelectItem>
-                        <SelectItem value="good">Good</SelectItem>
-                        <SelectItem value="fair">Fair</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Photos */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Photos</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-sm text-gray-600 mb-4">
-                  <p>Upload up to 2 photos of your accessory. First photo will be the main image.</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  {[1, 2].map((index) => (
-                    <div key={index} className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer relative">
-                      <div className="text-center">
-                        <Camera className="h-6 w-6 text-gray-400 mx-auto mb-1" />
-                        <span className="text-xs text-gray-500">
-                          Add Photo {index}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-center space-x-4 p-4 bg-blue-50 rounded-lg">
-                  <Upload className="h-5 w-5 text-blue-600" />
-                  <span className="text-sm text-blue-800">Drag & drop photos here or click to browse</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pricing */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Pricing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Minimum Price (₹) *</label>
-                    <Input
-                      type="number"
-                      placeholder="1000"
-                      value={formData.priceMin}
-                      onChange={(e) => handleInputChange('priceMin', e.target.value)}
-                      required
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Maximum Price (₹)</label>
-                    <Input
-                      type="number"
-                      placeholder="5000"
-                      value={formData.priceMax}
-                      onChange={(e) => handleInputChange('priceMax', e.target.value)}
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Compatibility */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Car Compatibility</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Compatible Car Models</label>
-                  <div className="flex gap-2 mb-3">
-                    <Input
-                      placeholder="Enter car model"
-                      value={newModel}
-                      onChange={(e) => setNewModel(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCompatibleModel(newModel))}
-                      className="w-full max-w-md"
-                    />
-                    <Button type="button" onClick={() => addCompatibleModel(newModel)}>
-                      Add
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {popularCarModels.map((model) => (
-                      <Button
-                        key={model}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addCompatibleModel(model)}
-                        disabled={formData.compatibility.includes(model)}
-                      >
-                        {model}
-                      </Button>
-                    ))}
-                  </div>
-
-                  {formData.compatibility.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Selected Models:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.compatibility.map((model) => (
-                          <Badge key={model} variant="secondary" className="flex items-center gap-1">
-                            {model}
-                            <X
-                              className="h-3 w-3 cursor-pointer"
-                              onClick={() => removeCompatibleModel(model)}
-                            />
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Phone Number *</label>
-                    <Input
-                      placeholder="+91 98765 43210"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      required
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Email</label>
-                    <Input
-                      type="email"
-                      placeholder="your@email.com"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full max-w-md"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Location</label>
-                  <Input
-                    placeholder="City, Area"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="w-full max-w-md"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Submit Button */}
-            <div className="flex gap-4 flex-col sm:flex-row">
-              <Button type="submit" size="lg" className="w-full sm:w-auto">
+          {/* Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
+            <Button 
+              variant="outline" 
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+              className="w-full sm:w-auto px-6 py-2"
+            >
+              Previous
+            </Button>
+            {currentStep === totalSteps ? (
+              <Button 
+                onClick={handleSubmit} 
+                className="w-full sm:w-auto bg-primary px-6 py-2"
+                disabled={!validateStep(currentStep)}
+              >
                 Post Accessory
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                onClick={() => navigate('/accessories')}
-                className="w-full sm:w-auto"
+            ) : (
+              <Button 
+                onClick={handleNext} 
+                className="w-full sm:w-auto bg-primary px-6 py-2"
+                disabled={!validateStep(currentStep)}
               >
-                Cancel
+                Next
               </Button>
-            </div>
-          </form>
+            )}
+          </div>
         </div>
       </div>
     </ResponsiveLayout>
