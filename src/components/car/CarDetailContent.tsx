@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import CarImageGallery from '@/components/car/CarImageGallery';
 import CarOverview from '@/components/car/CarOverview';
-import CompactVehicleInfo from '@/components/car/CompactVehicleInfo';
-import CarDetailTabs from '@/components/car/CarDetailTabs';
+import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
+import BasicSpecs from '@/components/car/BasicSpecs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
 import RentalTerms from '@/components/car/RentalTerms';
@@ -68,29 +68,21 @@ const CarDetailContent = ({
               description={car.description}
             />
 
-            {/* Compact Vehicle Info */}
-            <CompactVehicleInfo
+            <SimpleVehicleInfo
               ownership={car.ownership}
-              registrationYear={car.registrationYear}
-              registrationState={car.registrationState}
-              insurance={car.insurance}
-              serviceHistory={car.serviceHistory}
-              rtoTransferSupport={car.rtoTransferSupport}
+              year={car.year}
+              mileage={car.mileage}
               location={car.location}
               landmark={car.landmark}
+              insurance={car.insurance}
+              serviceHistory={car.serviceHistory}
             />
 
-            {/* Tabbed Detail View */}
-            <CarDetailTabs
-              description={car.description}
-              location={car.location}
-              landmark={car.landmark}
-              features={car.features}
-              insurance={car.insurance}
-              serviceHistory={car.serviceHistory}
-              registrationYear={car.registrationYear}
-              registrationState={car.registrationState}
-              rtoTransferSupport={car.rtoTransferSupport}
+            <BasicSpecs
+              year={car.year}
+              fuelType={car.fuelType}
+              transmission={car.transmission}
+              mileage={car.mileage}
             />
 
             {car.isRentAvailable && car.rentPolicies && (
