@@ -106,19 +106,19 @@ const ListCarForRent = () => {
   return (
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 max-w-2xl pb-20 md:pb-8">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6 xl:px-8 pb-20 md:pb-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <h1 className="text-2xl font-bold">List Your Car for Rent</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">List Your Car for Rent</h1>
               <Badge variant="outline">Step {currentStep} of 5</Badge>
             </div>
             <Progress value={(currentStep / 5) * 100} className="h-2" />
           </div>
 
           {/* Form Content */}
-          <Card>
-            <CardContent className="p-6">
+          <Card className="shadow-lg">
+            <CardContent className="p-6 md:p-8">
               {renderStep()}
             </CardContent>
           </Card>
@@ -129,6 +129,7 @@ const ListCarForRent = () => {
               variant="outline" 
               onClick={handlePrevious}
               disabled={currentStep === 1}
+              className="px-6 py-2"
             >
               Previous
             </Button>
@@ -136,13 +137,13 @@ const ListCarForRent = () => {
             {currentStep === 5 ? (
               <Button 
                 onClick={handleSubmit} 
-                className="bg-primary"
+                className="bg-primary px-6 py-2"
                 disabled={!formData.termsAccepted}
               >
                 List for Rent
               </Button>
             ) : (
-              <Button onClick={handleNext} className="bg-primary">
+              <Button onClick={handleNext} className="bg-primary px-6 py-2">
                 Next
               </Button>
             )}

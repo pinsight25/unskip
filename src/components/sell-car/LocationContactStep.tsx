@@ -17,12 +17,16 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Location & Contact</h2>
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Location & Contact</h2>
+        <p className="text-sm text-gray-600">Where is your car located and how can buyers reach you?</p>
+      </div>
+      
       <div className="space-y-4">
-        <div>
-          <Label>Area *</Label>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Area *</Label>
           <Select value={formData.area} onValueChange={(value) => setFormData({ ...formData, area: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select your area" />
             </SelectTrigger>
             <SelectContent>
@@ -33,52 +37,54 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
           </Select>
         </div>
 
-        <div>
-          <Label>Landmark (Optional)</Label>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Landmark (Optional)</Label>
           <Input 
             placeholder="Near Landmark Mall, Opposite Metro Station"
             value={formData.landmark}
             onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-            className="mt-1"
+            className="h-10"
           />
         </div>
 
-        <div>
-          <Label>Phone Number *</Label>
-          <div className="flex items-center space-x-2 mt-1">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Phone Number *</Label>
+          <div className="flex items-center space-x-2">
             <Input 
               type="tel" 
               placeholder="+91 9876543210"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="flex-1"
+              className="flex-1 h-10"
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={handlePhoneVerification}
               disabled={formData.phoneVerified || !formData.phone}
+              className="px-4 py-2"
             >
               {formData.phoneVerified ? 'Verified' : 'Verify'}
             </Button>
           </div>
           {formData.phoneVerified && (
-            <div className="flex items-center mt-1 text-sm text-green-600">
+            <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
-              Phone number verified
+              <span className="text-xs">Phone number verified</span>
             </div>
           )}
         </div>
 
-        <div>
-          <Label>Description (Optional)</Label>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Description (Optional)</Label>
           <Textarea 
-            placeholder="Tell buyers about your car's condition, service history, etc."
+            placeholder="Tell buyers about your car's condition, service history, recent maintenance, etc."
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="mt-1"
-            rows={4}
+            rows={3}
+            className="resize-none"
           />
+          <p className="text-xs text-gray-500">A good description helps buyers understand your car better</p>
         </div>
       </div>
     </div>

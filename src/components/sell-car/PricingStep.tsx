@@ -14,41 +14,45 @@ interface PricingStepProps {
 const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps) => {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Pricing</h2>
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Pricing</h2>
+        <p className="text-sm text-gray-600">Set your asking price and preferences</p>
+      </div>
+      
       <div className="space-y-4">
-        <div>
-          <Label>Asking Price *</Label>
-          <div className="flex items-center mt-1">
-            <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Asking Price *</Label>
+          <div className="flex items-center">
+            <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
             <Input 
               type="number" 
               placeholder="650000"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="flex-1"
+              className="flex-1 h-10"
             />
           </div>
           {formData.price && !validatePrice(formData.price).valid && (
-            <div className="flex items-center mt-1 text-sm text-orange-600">
-              <AlertCircle className="h-4 w-4 mr-1" />
-              {validatePrice(formData.price).message}
+            <div className="flex items-center text-sm text-orange-600">
+              <AlertCircle className="h-4 w-4 mr-1 flex-shrink-0" />
+              <span className="text-xs">{validatePrice(formData.price).message}</span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
           <Switch 
             checked={formData.acceptOffers}
             onCheckedChange={(checked) => setFormData({ ...formData, acceptOffers: checked })}
           />
-          <Label>Accept offers below asking price?</Label>
+          <Label className="text-sm">Accept offers below asking price?</Label>
         </div>
 
         {formData.acceptOffers && (
-          <div className="ml-6">
-            <Label>Minimum acceptable percentage</Label>
+          <div className="ml-6 space-y-2">
+            <Label className="text-sm font-medium">Minimum acceptable percentage</Label>
             <Select value={formData.offerPercentage} onValueChange={(value) => setFormData({ ...formData, offerPercentage: value })}>
-              <SelectTrigger className="mt-1 w-32">
+              <SelectTrigger className="h-10 w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -61,46 +65,48 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
           </div>
         )}
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
           <Switch 
             checked={formData.isRentAvailable}
             onCheckedChange={(checked) => setFormData({ ...formData, isRentAvailable: checked })}
           />
-          <Label>Also available for rent?</Label>
+          <Label className="text-sm">Also available for rent?</Label>
         </div>
 
         {formData.isRentAvailable && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6">
-            <div>
-              <Label>Daily Rate *</Label>
-              <div className="flex items-center mt-1">
-                <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
+          <div className="ml-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Daily Rate *</Label>
+              <div className="flex items-center">
+                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
                 <Input 
                   type="number" 
                   placeholder="1500"
                   value={formData.dailyRate}
                   onChange={(e) => setFormData({ ...formData, dailyRate: e.target.value })}
+                  className="h-10"
                 />
                 <span className="ml-2 text-sm text-gray-500">/day</span>
               </div>
             </div>
-            <div>
-              <Label>Weekly Rate</Label>
-              <div className="flex items-center mt-1">
-                <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Weekly Rate</Label>
+              <div className="flex items-center">
+                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
                 <Input 
                   type="number" 
                   placeholder="9000"
                   value={formData.weeklyRate}
                   onChange={(e) => setFormData({ ...formData, weeklyRate: e.target.value })}
+                  className="h-10"
                 />
                 <span className="ml-2 text-sm text-gray-500">/week</span>
               </div>
             </div>
-            <div>
-              <Label>Minimum Rental Period</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Minimum Rental Period</Label>
               <Select value={formData.minRentalPeriod} onValueChange={(value) => setFormData({ ...formData, minRentalPeriod: value })}>
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="h-10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -111,15 +117,16 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>Security Deposit</Label>
-              <div className="flex items-center mt-1">
-                <IndianRupee className="h-5 w-5 text-gray-500 mr-2" />
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Security Deposit</Label>
+              <div className="flex items-center">
+                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
                 <Input 
                   type="number" 
                   placeholder="10000"
                   value={formData.securityDeposit}
                   onChange={(e) => setFormData({ ...formData, securityDeposit: e.target.value })}
+                  className="h-10"
                 />
               </div>
             </div>

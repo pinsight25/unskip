@@ -17,12 +17,16 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Car Details</h2>
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Car Details</h2>
+        <p className="text-sm text-gray-600">Tell us about your car's basic information</p>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Make *</Label>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Make *</Label>
           <Select value={formData.make} onValueChange={(value) => setFormData({ ...formData, make: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select make" />
             </SelectTrigger>
             <SelectContent>
@@ -32,10 +36,11 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Model *</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Model *</Label>
           <Select value={formData.model} onValueChange={(value) => setFormData({ ...formData, model: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
             <SelectContent>
@@ -45,10 +50,11 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Variant/Trim</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Variant/Trim</Label>
           <Select value={formData.variant} onValueChange={(value) => setFormData({ ...formData, variant: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select variant" />
             </SelectTrigger>
             <SelectContent>
@@ -58,20 +64,22 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Year *</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Year *</Label>
           <Input 
             type="number" 
             placeholder="2020"
             value={formData.year}
             onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-            className="mt-1"
+            className="h-10"
           />
         </div>
-        <div>
-          <Label>Fuel Type *</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Fuel Type *</Label>
           <Select value={formData.fuelType} onValueChange={(value) => setFormData({ ...formData, fuelType: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select fuel type" />
             </SelectTrigger>
             <SelectContent>
@@ -82,10 +90,11 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Transmission *</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Transmission *</Label>
           <Select value={formData.transmission} onValueChange={(value) => setFormData({ ...formData, transmission: value })}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="h-10">
               <SelectValue placeholder="Select transmission" />
             </SelectTrigger>
             <SelectContent>
@@ -94,8 +103,9 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label>Mileage (km) *</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Mileage (km) *</Label>
           <Input 
             type="number" 
             placeholder="50000"
@@ -103,22 +113,23 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
             onChange={(e) => {
               setFormData({ ...formData, mileage: e.target.value });
             }}
-            className="mt-1"
+            className="h-10"
           />
           {formData.mileage && !validateMileage(formData.mileage).valid && (
             <div className="flex items-center mt-1 text-sm text-orange-600">
-              <AlertCircle className="h-4 w-4 mr-1" />
-              {validateMileage(formData.mileage).message}
+              <AlertCircle className="h-4 w-4 mr-1 flex-shrink-0" />
+              <span className="text-xs">{validateMileage(formData.mileage).message}</span>
             </div>
           )}
         </div>
-        <div>
-          <Label>Color</Label>
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Color</Label>
           <Input 
             placeholder="White"
             value={formData.color}
             onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-            className="mt-1"
+            className="h-10"
           />
         </div>
       </div>

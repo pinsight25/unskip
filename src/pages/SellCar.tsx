@@ -107,19 +107,19 @@ const SellCar = () => {
   return (
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 lg:px-6 xl:px-8 pb-44 md:pb-8">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6 xl:px-8 pb-44 md:pb-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <h1 className="text-3xl md:text-4xl font-bold">Sell Your Car</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
               <Badge variant="outline">Step {currentStep} of 5</Badge>
             </div>
             <Progress value={(currentStep / 5) * 100} className="h-2" />
           </div>
 
           {/* Form Content */}
-          <Card>
-            <CardContent className="p-6">
+          <Card className="shadow-lg">
+            <CardContent className="p-6 md:p-8">
               {renderStep()}
             </CardContent>
           </Card>
@@ -130,6 +130,7 @@ const SellCar = () => {
               variant="outline" 
               onClick={handlePrevious}
               disabled={currentStep === 1}
+              className="px-6 py-2"
             >
               Previous
             </Button>
@@ -137,13 +138,13 @@ const SellCar = () => {
             {currentStep === 5 ? (
               <Button 
                 onClick={handleSubmit} 
-                className="bg-primary"
+                className="bg-primary px-6 py-2"
                 disabled={!formData.termsAccepted}
               >
                 Post for Free
               </Button>
             ) : (
-              <Button onClick={handleNext} className="bg-primary">
+              <Button onClick={handleNext} className="bg-primary px-6 py-2">
                 Next
               </Button>
             )}
