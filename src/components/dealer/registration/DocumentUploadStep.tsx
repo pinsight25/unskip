@@ -87,7 +87,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
             <Checkbox
               id="agreeToTerms"
               checked={formData.agreeToTerms}
-              onCheckedChange={(checked) => onTermsChange(!!checked)}
+              onCheckedChange={(checked) => onTermsChange(checked === true)}
               className="h-4 w-4"
             />
             <Label htmlFor="agreeToTerms" className="text-sm cursor-pointer">
