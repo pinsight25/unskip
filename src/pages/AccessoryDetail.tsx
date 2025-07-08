@@ -1,25 +1,17 @@
+
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockAccessories } from '@/data/accessoryMockData';
 import { Accessory } from '@/types/accessory';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Heart, 
-  Share2, 
-  Star, 
-  MapPin, 
-  Shield, 
-  MessageCircle, 
-  Phone,
-  CheckCircle,
-  Clock,
-  RotateCcw,
-  Wrench
-} from 'lucide-react';
+import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
+import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
+import AccessoryDetails from '@/components/accessory/detail/AccessoryDetails';
+import AccessoryActions from '@/components/accessory/detail/AccessoryActions';
+import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
+import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories';
 
 const AccessoryDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +39,16 @@ const AccessoryDetail = () => {
       return `₹${price.min.toLocaleString('en-IN')}`;
     }
     return `₹${price.min.toLocaleString('en-IN')} - ₹${price.max.toLocaleString('en-IN')}`;
+  };
+
+  const getConditionColor = (condition: string) => {
+    switch (condition?.toLowerCase()) {
+      case 'new': return 'bg-green-500 text-white';
+      case 'like-new': return 'bg-blue-500 text-white';
+      case 'good': return 'bg-yellow-500 text-white';
+      case 'fair': return 'bg-orange-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
   };
 
   const handleSave = () => {
@@ -84,16 +86,6 @@ const AccessoryDetail = () => {
     });
   };
 
-  const getConditionColor = (condition: string) => {
-    switch (condition?.toLowerCase()) {
-      case 'new': return 'bg-green-500 text-white';
-      case 'like-new': return 'bg-blue-500 text-white';
-      case 'good': return 'bg-yellow-500 text-white';
-      case 'fair': return 'bg-orange-500 text-white';
-      default: return 'bg-gray-500 text-white';
-    }
-  };
-
   // Get related accessories (same category, different products)
   const relatedAccessories = mockAccessories
     .filter(acc => acc.category === accessory.category && acc.id !== accessory.id)
@@ -111,209 +103,33 @@ const AccessoryDetail = () => {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Image Gallery */}
-          <div className="space-y-4">
-            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-              <img
-                src={accessory.images[selectedImage]}
-                alt={accessory.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {accessory.images.length > 1 && (
-              <div className="flex space-x-2">
-                {accessory.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-primary' : 'border-gray-200'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${accessory.name} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <AccessoryImageGallery
+            images={accessory.images}
+            name={accessory.name}
+            selectedImage={selectedImage}
+            onImageSelect={setSelectedImage}
+          />
 
-          {/* Product Info */}
           <div className="space-y-6">
-            {/* Header */}
-            <div>
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-                    {accessory.name}
-                  </h1>
-                  <p className="text-lg text-gray-600 font-medium">{accessory.brand}</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleSave}>
-                    <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+            <AccessoryInfo
+              accessory={accessory}
+              isSaved={isSaved}
+              onSave={handleSave}
+              onShare={handleShare}
+              formatPrice={formatPrice}
+              getConditionColor={getConditionColor}
+            />
 
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {accessory.featured && (
-                  <Badge className="bg-amber-500 text-white">⭐ Featured</Badge>
-                )}
-                <Badge className={`${getConditionColor('new')}`}>
-                  New Condition
-                </Badge>
-                {accessory.seller.verified && (
-                  <Badge className="bg-green-500 text-white">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Verified Seller
-                  </Badge>
-                )}
-                <Badge 
-                  variant={accessory.availability === 'in-stock' ? 'default' : 'secondary'}
-                  className={accessory.availability === 'in-stock' ? 'bg-green-500 text-white' : ''}
-                >
-                  {accessory.availability === 'in-stock' ? 'In Stock' : 'On Order'}
-                </Badge>
-                <Badge className="bg-blue-500 text-white">
-                  Installation Available
-                </Badge>
-              </div>
+            <AccessoryDetails accessory={accessory} />
 
-              {/* Price */}
-              <div className="mb-4">
-                <p className="text-3xl font-bold text-primary mb-1">
-                  {formatPrice(accessory.price)}
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                    {accessory.rating} ({accessory.reviewCount} reviews)
-                  </div>
-                  <div>
-                    {accessory.views} views
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Key Features */}
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Key Features</h3>
-              <ul className="space-y-2">
-                {accessory.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Compatibility - Enhanced */}
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Compatible Car Models</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {accessory.compatibility.map((model, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm justify-center py-2">
-                    {model}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Product Details - Enhanced */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <Wrench className="h-4 w-4 text-gray-500 mr-2" />
-                <div>
-                  <p className="text-xs text-gray-500">Installation</p>
-                  <p className="text-sm font-medium">Available</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Shield className="h-4 w-4 text-gray-500 mr-2" />
-                <div>
-                  <p className="text-xs text-gray-500">Warranty</p>
-                  <p className="text-sm font-medium">{accessory.warranty}</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <RotateCcw className="h-4 w-4 text-gray-500 mr-2" />
-                <div>
-                  <p className="text-xs text-gray-500">Return Policy</p>
-                  <p className="text-sm font-medium">{accessory.returnPolicy}</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 text-gray-500 mr-2" />
-                <div>
-                  <p className="text-xs text-gray-500">Response Time</p>
-                  <p className="text-sm font-medium">{accessory.seller.responseTime}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button 
-                variant="default" 
-                className="bg-primary hover:bg-primary/90 text-white font-medium"
-                onClick={handleChat}
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Chat
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleCall}
-              >
-                <Phone className="h-4 w-4 mr-2" />
-                Call
-              </Button>
-            </div>
+            <AccessoryActions
+              onChat={handleChat}
+              onCall={handleCall}
+            />
           </div>
         </div>
 
-        {/* Seller Card */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-lg mb-4">Seller Information</h3>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary">
-                    {accessory.seller.shopName.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-lg">{accessory.seller.shopName}</h4>
-                  <p className="text-gray-600">{accessory.seller.name}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                      {accessory.seller.rating} rating
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {accessory.seller.location}
-                    </div>
-                    <div>
-                      {accessory.seller.totalSales} sales
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <AccessorySellerCard seller={accessory.seller} />
 
         {/* Description */}
         <Card className="mb-8">
@@ -323,33 +139,10 @@ const AccessoryDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Related Products */}
-        {relatedAccessories.length > 0 && (
-          <div>
-            <h3 className="font-semibold text-xl mb-6">Similar Products</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {relatedAccessories.map((related) => (
-                <Link key={related.id} to={`/accessories/${related.id}`}>
-                  <Card className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-3">
-                      <img
-                        src={related.images[0]}
-                        alt={related.name}
-                        className="w-full aspect-square object-cover rounded-lg mb-2"
-                      />
-                      <h4 className="font-medium text-sm line-clamp-2 mb-1">
-                        {related.name}
-                      </h4>
-                      <p className="text-primary font-semibold text-sm">
-                        {formatPrice(related.price)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        <RelatedAccessories
+          accessories={relatedAccessories}
+          formatPrice={formatPrice}
+        />
       </div>
     </ResponsiveLayout>
   );

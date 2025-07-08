@@ -3,19 +3,14 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Heart, MessageCircle, Shield } from 'lucide-react';
+import { Heart, MapPin, Star } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
-import { useToast } from '@/hooks/use-toast';
 
 interface AccessoryCardProps {
   accessory: Accessory;
-  onSave?: (id: string) => void;
-  isSaved?: boolean;
 }
 
-const AccessoryCard = ({ accessory, onSave, isSaved = false }: AccessoryCardProps) => {
-  const { toast } = useToast();
-
+const AccessoryCard = ({ accessory }: AccessoryCardProps) => {
   const formatPrice = (price: { min: number; max: number }) => {
     if (price.min === price.max) {
       return `₹${price.min.toLocaleString('en-IN')}`;
@@ -33,97 +28,75 @@ const AccessoryCard = ({ accessory, onSave, isSaved = false }: AccessoryCardProp
     }
   };
 
-  const handleSave = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onSave?.(accessory.id);
-  };
-
-  const handleChat = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toast({
-      title: "Starting Chat",
-      description: `Connecting you with ${accessory.seller.shopName}`,
-    });
-  };
-
   return (
-    <Link to={`/accessories/${accessory.id}`}>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
-        <div className="relative">
-          <img
-            src={accessory.images[0]}
-            alt={accessory.name}
-            className="w-full h-48 object-cover"
-          />
-          <div className="absolute top-2 left-2 flex gap-2">
-            {accessory.featured && (
-              <Badge className="bg-amber-500 text-white text-xs">⭐ Featured</Badge>
-            )}
-            <Badge className={`text-xs ${getConditionColor('new')}`}>
-              New
-            </Badge>
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-4">
+        <Link to={`/accessories/${accessory.id}`}>
+          <div className="aspect-square mb-3 overflow-hidden rounded-lg">
+            <img
+              src={accessory.images[0]}
+              alt={accessory.name}
+              className="w-full h-full object-cover hover:scale-105 transition-transform"
+            />
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute top-2 right-2 p-1 bg-white/80 hover:bg-white"
-            onClick={handleSave}
-          >
-            <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
-          </Button>
-        </div>
+          
+          <div className="space-y-2">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-1">
+              <Badge className="bg-green-500 text-white text-xs">New</Badge>
+              {accessory.featured && (
+                <Badge className="bg-amber-500 text-white text-xs">Featured</Badge>
+              )}
+            </div>
 
-        <CardContent className="p-4">
-          <div className="mb-2">
-            <h3 className="font-semibold text-lg line-clamp-2 mb-1">{accessory.name}</h3>
-            <p className="text-sm text-gray-600 mb-2">{accessory.brand}</p>
-            
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xl font-bold text-primary">
-                {formatPrice(accessory.price)}
-              </p>
-              <div className="flex items-center text-sm text-gray-600">
-                <Star className="h-3 w-3 text-yellow-500 mr-1" />
+            {/* Title and Brand */}
+            <div>
+              <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+                {accessory.name}
+              </h3>
+              <p className="text-xs text-gray-600">{accessory.brand}</p>
+            </div>
+
+            {/* Price */}
+            <p className="font-bold text-primary">
+              {formatPrice(accessory.price)}
+            </p>
+
+            {/* Compatibility */}
+            <p className="text-xs text-gray-600">
+              Fits: {accessory.compatibility.slice(0, 3).join(', ')}
+              {accessory.compatibility.length > 3 && ` +${accessory.compatibility.length - 3} more`}
+            </p>
+
+            {/* Location and Rating */}
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex items-center">
+                <MapPin className="h-3 w-3 mr-1" />
+                {accessory.location}
+              </div>
+              <div className="flex items-center">
+                <Star className="h-3 w-3 mr-1 text-yellow-500" />
                 {accessory.rating}
               </div>
             </div>
           </div>
+        </Link>
 
-          {/* Compatibility Info */}
-          <div className="mb-3">
-            <p className="text-xs text-gray-500 mb-1">Fits:</p>
-            <p className="text-sm font-medium text-gray-700 line-clamp-1">
-              {accessory.compatibility.slice(0, 3).join(', ')}
-              {accessory.compatibility.length > 3 && ` +${accessory.compatibility.length - 3} more`}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-            <div className="flex items-center">
-              <MapPin className="h-3 w-3 mr-1" />
-              {accessory.location}
-            </div>
-            {accessory.seller.verified && (
-              <div className="flex items-center text-green-600">
-                <Shield className="h-3 w-3 mr-1" />
-                Verified
-              </div>
-            )}
-          </div>
-
-          <Button
-            onClick={handleChat}
-            className="w-full bg-primary hover:bg-primary/90 text-white"
-            size="sm"
-          >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            Chat with Seller
-          </Button>
-        </CardContent>
-      </Card>
-    </Link>
+        {/* Action Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <Heart className="h-3 w-3 mr-1" />
+          Save
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

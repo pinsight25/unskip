@@ -25,9 +25,8 @@ const DealerRegister = () => {
     handleSubmit,
   } = useDealerRegistrationForm();
 
-  // Fix: accept only boolean, since DocumentUploadStep already converts to boolean
-  const handleTermsChange = (checked: boolean) => {
-    handleInputChange('agreeToTerms', checked);
+  const handleTermsChange = (checked: boolean | 'indeterminate') => {
+    updateFormData('agreeToTerms', checked === true);
   };
 
   const renderCurrentStep = () => {
@@ -77,28 +76,30 @@ const DealerRegister = () => {
               <p className="text-gray-600">Join our network of trusted automotive dealers</p>
             </div>
 
-            <Card className="p-6 md:p-8">
-              {/* Progress Bar */}
-              <div className="mb-8">
-                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>Step {currentStep} of {totalSteps}</span>
-                  <span>{Math.round(progress)}% Complete</span>
+            <Card className="shadow-lg">
+              <CardContent className="p-6">
+                {/* Progress Bar */}
+                <div className="mb-8">
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Step {currentStep} of {totalSteps}</span>
+                    <span>{Math.round(progress)}% Complete</span>
+                  </div>
+                  <Progress value={progress} className="w-full" />
                 </div>
-                <Progress value={progress} className="w-full" />
-              </div>
 
-              {/* Step Content */}
-              {renderCurrentStep()}
+                {/* Step Content */}
+                {renderCurrentStep()}
 
-              {/* Navigation Buttons */}
-              <RegistrationNavigation
-                currentStep={currentStep}
-                totalSteps={totalSteps}
-                onPrevStep={prevStep}
-                onNextStep={nextStep}
-                onSubmit={handleSubmit}
-                canProceed={validateStep(currentStep)}
-              />
+                {/* Navigation Buttons */}
+                <RegistrationNavigation
+                  currentStep={currentStep}
+                  totalSteps={totalSteps}
+                  onPrevStep={prevStep}
+                  onNextStep={nextStep}
+                  onSubmit={handleSubmit}
+                  canProceed={validateStep(currentStep)}
+                />
+              </CardContent>
             </Card>
           </div>
         </div>
