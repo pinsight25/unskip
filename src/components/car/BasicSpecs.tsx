@@ -1,5 +1,6 @@
 
 import { Calendar, Fuel, Settings, Gauge } from 'lucide-react';
+import { formatMileage } from '@/utils/carHelpers';
 
 interface BasicSpecsProps {
   year: number;
@@ -27,7 +28,7 @@ const BasicSpecs = ({ year, fuelType, transmission, mileage }: BasicSpecsProps) 
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Gauge className="h-4 w-4 text-gray-500" />
-          <span>{(mileage/1000).toFixed(0)}k km</span>
+          <span>{formatMileage(mileage)}</span>
         </div>
       </div>
     </div>

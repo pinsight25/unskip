@@ -1,5 +1,6 @@
 
-import { MapPin } from 'lucide-react';
+import LocationDisplay from '@/components/shared/LocationDisplay';
+import { getOwnershipText, formatMileage } from '@/utils/carHelpers';
 
 interface SimpleVehicleInfoProps {
   ownership: number;
@@ -26,15 +27,6 @@ const SimpleVehicleInfo = ({
   insurance,
   serviceHistory
 }: SimpleVehicleInfoProps) => {
-  const getOwnershipText = (ownership: number) => {
-    if (ownership === 1) return '1st Owner';
-    if (ownership === 2) return '2nd Owner';
-    if (ownership === 3) return '3rd Owner';
-    return `${ownership}th Owner`;
-  };
-
-  const displayLocation = landmark ? `${location}, ${landmark}` : location;
-
   return (
     <div className="bg-gray-50 rounded-lg p-4 space-y-3">
       <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -42,7 +34,7 @@ const SimpleVehicleInfo = ({
         <span className="text-gray-400">•</span>
         <span>{year}</span>
         <span className="text-gray-400">•</span>
-        <span>{(mileage/1000).toFixed(0)}k km</span>
+        <span>{formatMileage(mileage)}</span>
       </div>
 
       <div className="flex items-center gap-4 text-sm text-green-600">
@@ -60,9 +52,12 @@ const SimpleVehicleInfo = ({
         )}
       </div>
 
-      <div className="flex items-center gap-1 text-gray-600 pt-2 border-t">
-        <MapPin className="h-3 w-3" />
-        <span className="text-sm">{displayLocation}</span>
+      <div className="pt-2 border-t">
+        <LocationDisplay 
+          location={location} 
+          landmark={landmark}
+          className="text-gray-600"
+        />
       </div>
     </div>
   );
