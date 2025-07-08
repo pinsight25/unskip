@@ -1,4 +1,3 @@
-
 export interface Car {
   id: string;
   title: string;
@@ -35,6 +34,18 @@ export interface Car {
   featured: boolean;
   views: number;
   createdAt: string;
+  // New Indian car buyer fields
+  registrationYear?: number;
+  registrationState?: string;
+  insurance?: {
+    validTill: string;
+    type: 'Comprehensive' | 'Third Party';
+  };
+  serviceHistory?: {
+    lastServiceDate?: string;
+    authorizedCenter: boolean;
+  };
+  rtoTransferSupport: boolean;
 }
 
 export interface Seller {

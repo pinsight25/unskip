@@ -76,6 +76,17 @@ export const unifiedCars: Car[] = [
     color: 'White',
     description: 'Well maintained Swift with complete service history. Single owner, non-accidental.',
     seller: unifiedSellers[0],
+    registrationYear: 2019,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-08-15',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2024-01-10',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 1800,
@@ -116,6 +127,17 @@ export const unifiedCars: Car[] = [
     color: 'Silver',
     description: 'Premium SUV in excellent condition. All features working perfectly.',
     seller: unifiedSellers[1],
+    registrationYear: 2020,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-12-20',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-12-05',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 3200,
@@ -150,11 +172,22 @@ export const unifiedCars: Car[] = [
     mileage: 45000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
-    ownership: 1,
+    ownership: 2,
     location: 'Adyar, Chennai',
     color: 'Black',
     description: 'Reliable sedan with automatic transmission. Great for city driving.',
     seller: unifiedSellers[0],
+    registrationYear: 2018,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-06-30',
+      type: 'Third Party'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-10-15',
+      authorizedCenter: false
+    },
+    rtoTransferSupport: false,
     verified: false,
     featured: false,
     views: 123,
@@ -179,6 +212,17 @@ export const unifiedCars: Car[] = [
     color: 'Blue',
     description: 'Electric SUV with excellent range. Perfect for eco-conscious buyers.',
     seller: unifiedSellers[3],
+    registrationYear: 2021,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-11-25',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-11-20',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 2800,
@@ -218,6 +262,17 @@ export const unifiedCars: Car[] = [
     color: 'Red',
     description: 'Latest model XUV700 with all premium features. Excellent condition.',
     seller: unifiedSellers[0],
+    registrationYear: 2022,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2025-03-15',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-12-22',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     verified: true,
     featured: true,
     views: 312,
@@ -242,6 +297,17 @@ export const unifiedCars: Car[] = [
     color: 'Black',
     description: 'Luxury sedan in pristine condition. Full service history available.',
     seller: unifiedSellers[1],
+    registrationYear: 2020,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-09-10',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-09-15',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 6500,
@@ -281,6 +347,17 @@ export const unifiedCars: Car[] = [
     color: 'White',
     description: 'Perfect family MPV with excellent reliability. Well maintained.',
     seller: unifiedSellers[2],
+    registrationYear: 2019,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-07-20',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-08-10',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 3000,
@@ -320,6 +397,17 @@ export const unifiedCars: Car[] = [
     color: 'Grey',
     description: 'Stylish compact SUV with modern features. Single owner.',
     seller: unifiedSellers[3],
+    registrationYear: 2021,
+    registrationState: 'TN - Tamil Nadu',
+    insurance: {
+      validTill: '2024-10-05',
+      type: 'Comprehensive'
+    },
+    serviceHistory: {
+      lastServiceDate: '2023-10-01',
+      authorizedCenter: true
+    },
+    rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 2600,

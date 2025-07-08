@@ -1,3 +1,4 @@
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +14,11 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
   const makes = ['Maruti Suzuki', 'Hyundai', 'Honda', 'Toyota', 'Mahindra', 'Tata', 'Ford', 'Volkswagen', 'BMW', 'Mercedes'];
   const models = ['Swift', 'i20', 'City', 'Innova', 'XUV700', 'Harrier', 'EcoSport', 'Polo', 'X1', 'C-Class'];
   const variants = ['Base', 'Mid', 'Top', 'VXI', 'ZXI', 'SX', 'VDI', 'Diesel', 'Petrol'];
+  const registrationStates = [
+    'TN - Tamil Nadu', 'KA - Karnataka', 'AP - Andhra Pradesh', 'TS - Telangana',
+    'MH - Maharashtra', 'DL - Delhi', 'UP - Uttar Pradesh', 'GJ - Gujarat',
+    'RJ - Rajasthan', 'WB - West Bengal', 'HR - Haryana', 'PB - Punjab'
+  ];
 
   return (
     <div className="space-y-5">
@@ -68,7 +74,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           </div>
           
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Year *</Label>
+            <Label className="text-sm font-medium">Manufacturing Year *</Label>
             <Input 
               type="number" 
               placeholder="2020"
@@ -76,6 +82,34 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
               onChange={(e) => setFormData({ ...formData, year: e.target.value })}
               className="h-10 w-full max-w-md"
             />
+          </div>
+        </div>
+
+        {/* New Registration Fields */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Registration Year *</Label>
+            <Input 
+              type="number" 
+              placeholder="2020"
+              value={formData.registrationYear}
+              onChange={(e) => setFormData({ ...formData, registrationYear: e.target.value })}
+              className="h-10 w-full max-w-md"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Registration State *</Label>
+            <Select value={formData.registrationState} onValueChange={(value) => setFormData({ ...formData, registrationState: value })}>
+              <SelectTrigger className="h-10 w-full max-w-md">
+                <SelectValue placeholder="Select state" />
+              </SelectTrigger>
+              <SelectContent>
+                {registrationStates.map((state) => (
+                  <SelectItem key={state} value={state}>{state}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         

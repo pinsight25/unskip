@@ -75,6 +75,12 @@ const CarDetailContent = ({
               color={car.color}
               location={car.location}
               landmark={car.landmark}
+              ownership={car.ownership}
+              registrationYear={car.registrationYear}
+              registrationState={car.registrationState}
+              insurance={car.insurance}
+              serviceHistory={car.serviceHistory}
+              rtoTransferSupport={car.rtoTransferSupport}
               seller={car.seller}
             />
 
