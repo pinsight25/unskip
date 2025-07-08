@@ -8,9 +8,10 @@ import { Accessory } from '@/types/accessory';
 
 interface AccessoryCardProps {
   accessory: Accessory;
+  viewMode?: 'grid' | 'list';
 }
 
-const AccessoryCard = ({ accessory }: AccessoryCardProps) => {
+const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => {
   const formatPrice = (price: { min: number; max: number }) => {
     if (price.min === price.max) {
       return `₹${price.min.toLocaleString('en-IN')}`;

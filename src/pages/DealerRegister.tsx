@@ -1,6 +1,7 @@
+
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft } from 'lucide-react';
 import { useDealerRegistrationForm } from '@/hooks/useDealerRegistrationForm';
@@ -26,7 +27,7 @@ const DealerRegister = () => {
   } = useDealerRegistrationForm();
 
   const handleTermsChange = (checked: boolean | 'indeterminate') => {
-    updateFormData('agreeToTerms', checked === true);
+    handleInputChange('agreeToTerms', checked === true);
   };
 
   const renderCurrentStep = () => {
