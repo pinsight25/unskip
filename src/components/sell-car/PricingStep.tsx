@@ -64,13 +64,13 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="accept-offers"
               checked={formData.acceptOffers}
               onCheckedChange={(checked) => setFormData({ ...formData, acceptOffers: checked })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="accept-offers" className="text-sm cursor-pointer">Accept offers below asking price?</Label>
           </div>
           
           {formData.acceptOffers && (
-            <div className="ml-8 space-y-2">
+            <div className="ml-7 space-y-2">
               <Label className="text-sm font-medium">Minimum acceptable offer</Label>
               <Select value={formData.offerPercentage} onValueChange={(value) => setFormData({ ...formData, offerPercentage: value })}>
                 <SelectTrigger className="h-10 w-full max-w-md">
@@ -93,13 +93,13 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="rent-available"
               checked={formData.isRentAvailable}
               onCheckedChange={(checked) => setFormData({ ...formData, isRentAvailable: checked })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="rent-available" className="text-sm cursor-pointer">Also available for rent?</Label>
           </div>
           
           {formData.isRentAvailable && (
-            <div className="ml-8 space-y-2">
+            <div className="ml-7 space-y-2">
               <Label className="text-sm font-medium">Daily Rate *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
@@ -130,7 +130,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 insuranceValidTill: checked ? new Date().toISOString().split('T')[0] : '',
                 insuranceType: checked ? 'Comprehensive' : ''
               })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="insurance-valid" className="text-sm cursor-pointer">Insurance valid</Label>
           </div>
@@ -144,7 +144,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 lastServiceDate: checked ? new Date().toISOString().split('T')[0] : '',
                 authorizedServiceCenter: checked
               })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="service-history" className="text-sm cursor-pointer">Complete service history</Label>
           </div>
@@ -154,7 +154,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="rc-transfer"
               checked={formData.rtoTransferSupport}
               onCheckedChange={(checked) => setFormData({ ...formData, rtoTransferSupport: checked })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="rc-transfer" className="text-sm cursor-pointer">Will help with RC transfer</Label>
           </div>
@@ -164,7 +164,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="no-accident"
               checked={formData.noAccidentHistory || false}
               onCheckedChange={(checked) => setFormData({ ...formData, noAccidentHistory: checked })}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="no-accident" className="text-sm cursor-pointer">No accident history</Label>
           </div>
@@ -181,7 +181,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="power-steering"
               checked={formData.features?.powerSteering || false}
               onCheckedChange={(checked) => handleFeatureChange('powerSteering', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="power-steering" className="text-sm cursor-pointer">Power Steering</Label>
           </div>
@@ -191,7 +191,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="air-conditioning"
               checked={formData.features?.airConditioning || false}
               onCheckedChange={(checked) => handleFeatureChange('airConditioning', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="air-conditioning" className="text-sm cursor-pointer">AC</Label>
           </div>
@@ -201,7 +201,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="power-windows"
               checked={formData.features?.powerWindows || false}
               onCheckedChange={(checked) => handleFeatureChange('powerWindows', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="power-windows" className="text-sm cursor-pointer">Power Windows</Label>
           </div>
@@ -211,7 +211,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="music-system"
               checked={formData.features?.musicSystem || false}
               onCheckedChange={(checked) => handleFeatureChange('musicSystem', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="music-system" className="text-sm cursor-pointer">Music System</Label>
           </div>
@@ -221,7 +221,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="alloy-wheels"
               checked={formData.features?.alloyWheels || false}
               onCheckedChange={(checked) => handleFeatureChange('alloyWheels', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="alloy-wheels" className="text-sm cursor-pointer">Alloy Wheels</Label>
           </div>
@@ -231,7 +231,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               id="reverse-camera"
               checked={formData.features?.reverseCamera || false}
               onCheckedChange={(checked) => handleFeatureChange('reverseCamera', checked as boolean)}
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
             <Label htmlFor="reverse-camera" className="text-sm cursor-pointer">Reverse Camera</Label>
           </div>
