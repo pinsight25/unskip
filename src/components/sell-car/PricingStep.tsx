@@ -59,16 +59,18 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="accept-offers"
               checked={formData.acceptOffers}
               onCheckedChange={(checked) => setFormData({ ...formData, acceptOffers: checked })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Accept offers below asking price?</Label>
+            <Label htmlFor="accept-offers" className="text-sm cursor-pointer">Accept offers below asking price?</Label>
           </div>
           
           {formData.acceptOffers && (
-            <div className="ml-6 space-y-2">
+            <div className="ml-8 space-y-2">
               <Label className="text-sm font-medium">Minimum acceptable offer</Label>
               <Select value={formData.offerPercentage} onValueChange={(value) => setFormData({ ...formData, offerPercentage: value })}>
                 <SelectTrigger className="h-10 w-full max-w-md">
@@ -86,16 +88,18 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="rent-available"
               checked={formData.isRentAvailable}
-            onCheckedChange={(checked) => setFormData({ ...formData, isRentAvailable: checked })}
+              onCheckedChange={(checked) => setFormData({ ...formData, isRentAvailable: checked })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Also available for rent?</Label>
+            <Label htmlFor="rent-available" className="text-sm cursor-pointer">Also available for rent?</Label>
           </div>
           
           {formData.isRentAvailable && (
-            <div className="ml-6 space-y-2">
+            <div className="ml-8 space-y-2">
               <Label className="text-sm font-medium">Daily Rate *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
@@ -117,44 +121,52 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         <h3 className="text-lg font-medium">Vehicle Details</h3>
         
         <div className="grid grid-cols-1 gap-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="insurance-valid"
               checked={formData.insuranceValidTill ? true : false}
               onCheckedChange={(checked) => setFormData({ 
                 ...formData, 
                 insuranceValidTill: checked ? new Date().toISOString().split('T')[0] : '',
                 insuranceType: checked ? 'Comprehensive' : ''
               })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Insurance valid</Label>
+            <Label htmlFor="insurance-valid" className="text-sm cursor-pointer">Insurance valid</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="service-history"
               checked={formData.lastServiceDate ? true : false}
               onCheckedChange={(checked) => setFormData({ 
                 ...formData, 
                 lastServiceDate: checked ? new Date().toISOString().split('T')[0] : '',
                 authorizedServiceCenter: checked
               })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Complete service history</Label>
+            <Label htmlFor="service-history" className="text-sm cursor-pointer">Complete service history</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="rc-transfer"
               checked={formData.rtoTransferSupport}
               onCheckedChange={(checked) => setFormData({ ...formData, rtoTransferSupport: checked })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Will help with RC transfer</Label>
+            <Label htmlFor="rc-transfer" className="text-sm cursor-pointer">Will help with RC transfer</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="no-accident"
               checked={formData.noAccidentHistory || false}
               onCheckedChange={(checked) => setFormData({ ...formData, noAccidentHistory: checked })}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">No accident history</Label>
+            <Label htmlFor="no-accident" className="text-sm cursor-pointer">No accident history</Label>
           </div>
         </div>
       </div>
@@ -164,52 +176,64 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         <h3 className="text-lg font-medium">Key Features</h3>
         
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="power-steering"
               checked={formData.features?.powerSteering || false}
               onCheckedChange={(checked) => handleFeatureChange('powerSteering', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Power Steering</Label>
+            <Label htmlFor="power-steering" className="text-sm cursor-pointer">Power Steering</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="air-conditioning"
               checked={formData.features?.airConditioning || false}
               onCheckedChange={(checked) => handleFeatureChange('airConditioning', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">AC</Label>
+            <Label htmlFor="air-conditioning" className="text-sm cursor-pointer">AC</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="power-windows"
               checked={formData.features?.powerWindows || false}
               onCheckedChange={(checked) => handleFeatureChange('powerWindows', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Power Windows</Label>
+            <Label htmlFor="power-windows" className="text-sm cursor-pointer">Power Windows</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="music-system"
               checked={formData.features?.musicSystem || false}
               onCheckedChange={(checked) => handleFeatureChange('musicSystem', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Music System</Label>
+            <Label htmlFor="music-system" className="text-sm cursor-pointer">Music System</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="alloy-wheels"
               checked={formData.features?.alloyWheels || false}
               onCheckedChange={(checked) => handleFeatureChange('alloyWheels', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Alloy Wheels</Label>
+            <Label htmlFor="alloy-wheels" className="text-sm cursor-pointer">Alloy Wheels</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Checkbox
+              id="reverse-camera"
               checked={formData.features?.reverseCamera || false}
               onCheckedChange={(checked) => handleFeatureChange('reverseCamera', checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label className="text-sm">Reverse Camera</Label>
+            <Label htmlFor="reverse-camera" className="text-sm cursor-pointer">Reverse Camera</Label>
           </div>
         </div>
         
