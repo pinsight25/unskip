@@ -1,6 +1,7 @@
 export const toBoolean = (value: unknown): boolean => {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'string') return value === 'true';
+  if (value === 'indeterminate') return false; // Handle Radix checkbox indeterminate state
   return Boolean(value);
 };
 
@@ -17,4 +18,4 @@ export const updateFormField = <T extends Record<string, any>>(
     return { ...formData, [field]: toBoolean(value) };
   }
   return { ...formData, [field]: value };
-}; 
+};
