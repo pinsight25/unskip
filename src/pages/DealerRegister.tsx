@@ -26,6 +26,7 @@ const DealerRegister = () => {
   } = useDealerRegistrationForm();
 
   const handleTermsChange = (checked: boolean | 'indeterminate') => {
+    // Ensure we only pass a boolean value
     handleInputChange('agreeToTerms', checked === true);
   };
 
