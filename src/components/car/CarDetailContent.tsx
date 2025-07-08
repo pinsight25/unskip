@@ -1,3 +1,4 @@
+
 import { Car } from '@/types/car';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ import CarOverview from '@/components/car/CarOverview';
 import CarSpecifications from '@/components/car/CarSpecifications';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
+import RentalTerms from '@/components/car/RentalTerms';
 
 interface CarDetailContentProps {
   car: Car;
@@ -69,9 +71,16 @@ const CarDetailContent = ({
               year={car.year}
               transmission={car.transmission}
               fuelType={car.fuelType}
+              mileage={car.mileage}
+              color={car.color}
               location={car.location}
+              landmark={car.landmark}
               seller={car.seller}
             />
+
+            {car.isRentAvailable && car.rentPolicies && (
+              <RentalTerms rentPolicies={car.rentPolicies} />
+            )}
 
             <SellerCard seller={car.seller} />
 

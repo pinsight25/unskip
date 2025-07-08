@@ -1,3 +1,4 @@
+
 export interface Car {
   id: string;
   title: string;
@@ -13,6 +14,8 @@ export interface Car {
   location: string;
   description: string;
   seller: Seller;
+  color?: string;
+  landmark?: string;
   isRentAvailable?: boolean;
   rentPrice?: {
     daily: number;
