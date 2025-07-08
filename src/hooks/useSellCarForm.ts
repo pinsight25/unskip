@@ -9,21 +9,35 @@ export const useSellCarForm = () => {
     year: '',
     registrationYear: '',
     registrationState: '',
+    numberOfOwners: '1',
+    seatingCapacity: '5',
     fuelType: '',
     transmission: '',
     mileage: '',
     color: '',
     price: '',
+    acceptOffers: true, // Smart default ON
+    offerPercentage: '70', // Smart default 70%
     insuranceValidTill: '',
-    insuranceType: '',
+    insuranceType: 'Comprehensive', // Smart default
     lastServiceDate: '',
     authorizedServiceCenter: false,
-    rtoTransferSupport: false,
+    rtoTransferSupport: true, // Smart default checked
     isRentAvailable: false,
     dailyRate: '',
     weeklyRate: '',
-    minRentalPeriod: '1',
     securityDeposit: '',
+    // Car Features
+    features: {
+      sunroof: false,
+      alloyWheels: false,
+      reverseCamera: false,
+      pushStart: false,
+      musicSystem: false,
+      powerSteering: false,
+      powerWindows: false,
+      airConditioning: false,
+    },
     photos: [] as string[],
     coverPhotoIndex: 0,
     area: '',
@@ -31,8 +45,6 @@ export const useSellCarForm = () => {
     phone: '',
     phoneVerified: false,
     description: '',
-    acceptOffers: false,
-    offerPercentage: '10',
     termsAccepted: false
   });
 

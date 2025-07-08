@@ -85,7 +85,6 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           </div>
         </div>
 
-        {/* New Registration Fields */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="text-sm font-medium">Registration Year *</Label>
@@ -108,6 +107,39 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
                 {registrationStates.map((state) => (
                   <SelectItem key={state} value={state}>{state}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Number of Owners *</Label>
+            <Select value={formData.numberOfOwners} onValueChange={(value) => setFormData({ ...formData, numberOfOwners: value })}>
+              <SelectTrigger className="h-10 w-full max-w-md">
+                <SelectValue placeholder="Select owners" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4+</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Seating Capacity *</Label>
+            <Select value={formData.seatingCapacity} onValueChange={(value) => setFormData({ ...formData, seatingCapacity: value })}>
+              <SelectTrigger className="h-10 w-full max-w-md">
+                <SelectValue placeholder="Select capacity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2">2 Seater</SelectItem>
+                <SelectItem value="4">4 Seater</SelectItem>
+                <SelectItem value="5">5 Seater</SelectItem>
+                <SelectItem value="7">7 Seater</SelectItem>
+                <SelectItem value="8">8 Seater</SelectItem>
               </SelectContent>
             </Select>
           </div>
