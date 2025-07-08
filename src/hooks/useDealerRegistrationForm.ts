@@ -61,7 +61,7 @@ export const useDealerRegistrationForm = () => {
     return gstRegex.test(gst);
   };
 
-  const handleInputChange = (field: string, value: string | string[]) => {
+  const handleInputChange = (field: string, value: string | string[] | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

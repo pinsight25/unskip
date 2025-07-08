@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
@@ -27,7 +26,7 @@ const DealerRegister = () => {
   } = useDealerRegistrationForm();
 
   const handleTermsChange = (checked: boolean) => {
-    handleInputChange('agreeToTerms', checked.toString());
+    handleInputChange('agreeToTerms', checked);
   };
 
   const renderCurrentStep = () => {
