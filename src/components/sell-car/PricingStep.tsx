@@ -13,7 +13,7 @@ interface PricingStepProps {
 
 const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold mb-2">Pricing</h2>
         <p className="text-sm text-gray-600">Set your asking price and preferences</p>
@@ -74,60 +74,64 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         </div>
 
         {formData.isRentAvailable && (
-          <div className="ml-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Daily Rate *</Label>
-              <div className="flex items-center">
-                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
-                <Input 
-                  type="number" 
-                  placeholder="1500"
-                  value={formData.dailyRate}
-                  onChange={(e) => setFormData({ ...formData, dailyRate: e.target.value })}
-                  className="h-10"
-                />
-                <span className="ml-2 text-sm text-gray-500">/day</span>
+          <div className="ml-6 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Daily Rate *</Label>
+                <div className="flex items-center">
+                  <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
+                  <Input 
+                    type="number" 
+                    placeholder="1500"
+                    value={formData.dailyRate}
+                    onChange={(e) => setFormData({ ...formData, dailyRate: e.target.value })}
+                    className="h-10"
+                  />
+                  <span className="ml-2 text-sm text-gray-500">/day</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Weekly Rate</Label>
+                <div className="flex items-center">
+                  <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
+                  <Input 
+                    type="number" 
+                    placeholder="9000"
+                    value={formData.weeklyRate}
+                    onChange={(e) => setFormData({ ...formData, weeklyRate: e.target.value })}
+                    className="h-10"
+                  />
+                  <span className="ml-2 text-sm text-gray-500">/week</span>
+                </div>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Weekly Rate</Label>
-              <div className="flex items-center">
-                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
-                <Input 
-                  type="number" 
-                  placeholder="9000"
-                  value={formData.weeklyRate}
-                  onChange={(e) => setFormData({ ...formData, weeklyRate: e.target.value })}
-                  className="h-10"
-                />
-                <span className="ml-2 text-sm text-gray-500">/week</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Minimum Rental Period</Label>
+                <Select value={formData.minRentalPeriod} onValueChange={(value) => setFormData({ ...formData, minRentalPeriod: value })}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 day</SelectItem>
+                    <SelectItem value="3">3 days</SelectItem>
+                    <SelectItem value="7">1 week</SelectItem>
+                    <SelectItem value="30">1 month</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Minimum Rental Period</Label>
-              <Select value={formData.minRentalPeriod} onValueChange={(value) => setFormData({ ...formData, minRentalPeriod: value })}>
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1 day</SelectItem>
-                  <SelectItem value="3">3 days</SelectItem>
-                  <SelectItem value="7">1 week</SelectItem>
-                  <SelectItem value="30">1 month</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Security Deposit</Label>
-              <div className="flex items-center">
-                <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
-                <Input 
-                  type="number" 
-                  placeholder="10000"
-                  value={formData.securityDeposit}
-                  onChange={(e) => setFormData({ ...formData, securityDeposit: e.target.value })}
-                  className="h-10"
-                />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Security Deposit</Label>
+                <div className="flex items-center">
+                  <IndianRupee className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
+                  <Input 
+                    type="number" 
+                    placeholder="10000"
+                    value={formData.securityDeposit}
+                    onChange={(e) => setFormData({ ...formData, securityDeposit: e.target.value })}
+                    className="h-10"
+                  />
+                </div>
               </div>
             </div>
           </div>

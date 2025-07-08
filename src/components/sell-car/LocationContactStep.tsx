@@ -16,35 +16,37 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
   const areas = ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'Porur', 'Tambaram', 'Chrompet'];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold mb-2">Location & Contact</h2>
         <p className="text-sm text-gray-600">Where is your car located and how can buyers reach you?</p>
       </div>
       
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Area *</Label>
-          <Select value={formData.area} onValueChange={(value) => setFormData({ ...formData, area: value })}>
-            <SelectTrigger className="h-10">
-              <SelectValue placeholder="Select your area" />
-            </SelectTrigger>
-            <SelectContent>
-              {areas.map((area) => (
-                <SelectItem key={area} value={area}>{area}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Area *</Label>
+            <Select value={formData.area} onValueChange={(value) => setFormData({ ...formData, area: value })}>
+              <SelectTrigger className="h-10">
+                <SelectValue placeholder="Select your area" />
+              </SelectTrigger>
+              <SelectContent>
+                {areas.map((area) => (
+                  <SelectItem key={area} value={area}>{area}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Landmark (Optional)</Label>
-          <Input 
-            placeholder="Near Landmark Mall, Opposite Metro Station"
-            value={formData.landmark}
-            onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-            className="h-10"
-          />
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Landmark (Optional)</Label>
+            <Input 
+              placeholder="Near Landmark Mall, Opposite Metro Station"
+              value={formData.landmark}
+              onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+              className="h-10"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
