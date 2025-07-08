@@ -23,6 +23,7 @@ export const useSellCarForm = () => {
     lastServiceDate: '',
     authorizedServiceCenter: false,
     rtoTransferSupport: true, // Smart default checked
+    noAccidentHistory: false, // New field
     isRentAvailable: false,
     dailyRate: '',
     weeklyRate: '',
