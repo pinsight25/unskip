@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,7 +26,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           <div className="space-y-2">
             <Label className="text-sm font-medium">Make *</Label>
             <Select value={formData.make} onValueChange={(value) => setFormData({ ...formData, make: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select make" />
               </SelectTrigger>
               <SelectContent>
@@ -41,7 +40,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           <div className="space-y-2">
             <Label className="text-sm font-medium">Model *</Label>
             <Select value={formData.model} onValueChange={(value) => setFormData({ ...formData, model: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
@@ -57,7 +56,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           <div className="space-y-2">
             <Label className="text-sm font-medium">Variant/Trim</Label>
             <Select value={formData.variant} onValueChange={(value) => setFormData({ ...formData, variant: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select variant" />
               </SelectTrigger>
               <SelectContent>
@@ -75,7 +74,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
               placeholder="2020"
               value={formData.year}
               onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-              className="h-10"
+              className="h-10 w-full max-w-md"
             />
           </div>
         </div>
@@ -84,7 +83,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           <div className="space-y-2">
             <Label className="text-sm font-medium">Fuel Type *</Label>
             <Select value={formData.fuelType} onValueChange={(value) => setFormData({ ...formData, fuelType: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select fuel type" />
               </SelectTrigger>
               <SelectContent>
@@ -99,7 +98,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
           <div className="space-y-2">
             <Label className="text-sm font-medium">Transmission *</Label>
             <Select value={formData.transmission} onValueChange={(value) => setFormData({ ...formData, transmission: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select transmission" />
               </SelectTrigger>
               <SelectContent>
@@ -120,7 +119,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
               onChange={(e) => {
                 setFormData({ ...formData, mileage: e.target.value });
               }}
-              className="h-10"
+              className="h-10 w-full max-w-md"
             />
             {formData.mileage && !validateMileage(formData.mileage).valid && (
               <div className="flex items-center mt-1 text-sm text-orange-600">
@@ -136,7 +135,7 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
               placeholder="White"
               value={formData.color}
               onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-              className="h-10"
+              className="h-10 w-full max-w-md"
             />
           </div>
         </div>

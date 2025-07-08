@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -83,7 +82,7 @@ const PostAccessory = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
-        <div className="max-w-4xl mx-auto px-4 lg:px-6 py-6">
+        <div className="max-w-2xl mx-auto px-4 lg:px-6 py-6">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Button
@@ -100,7 +99,7 @@ const PostAccessory = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-5">
             {/* Basic Information */}
             <Card>
               <CardHeader>
@@ -115,6 +114,7 @@ const PostAccessory = () => {
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       required
+                      className="w-full max-w-md"
                     />
                   </div>
                   
@@ -124,6 +124,7 @@ const PostAccessory = () => {
                       placeholder="e.g., 3M, Bosch, etc."
                       value={formData.brand}
                       onChange={(e) => handleInputChange('brand', e.target.value)}
+                      className="w-full max-w-md"
                     />
                   </div>
                 </div>
@@ -135,6 +136,7 @@ const PostAccessory = () => {
                     rows={4}
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
+                    className="w-full max-w-lg"
                   />
                 </div>
 
@@ -142,7 +144,7 @@ const PostAccessory = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2">Category *</label>
                     <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full max-w-md">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -161,7 +163,7 @@ const PostAccessory = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2">Condition</label>
                     <Select value={formData.condition} onValueChange={(value) => handleInputChange('condition', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full max-w-md">
                         <SelectValue placeholder="Select condition" />
                       </SelectTrigger>
                       <SelectContent>
@@ -188,7 +190,7 @@ const PostAccessory = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   {[1, 2].map((index) => (
-                    <div key={index} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer relative">
+                    <div key={index} className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer relative">
                       <div className="text-center">
                         <Camera className="h-6 w-6 text-gray-400 mx-auto mb-1" />
                         <span className="text-xs text-gray-500">
@@ -221,6 +223,7 @@ const PostAccessory = () => {
                       value={formData.priceMin}
                       onChange={(e) => handleInputChange('priceMin', e.target.value)}
                       required
+                      className="w-full max-w-md"
                     />
                   </div>
                   <div>
@@ -230,6 +233,7 @@ const PostAccessory = () => {
                       placeholder="5000"
                       value={formData.priceMax}
                       onChange={(e) => handleInputChange('priceMax', e.target.value)}
+                      className="w-full max-w-md"
                     />
                   </div>
                 </div>
@@ -250,6 +254,7 @@ const PostAccessory = () => {
                       value={newModel}
                       onChange={(e) => setNewModel(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCompatibleModel(newModel))}
+                      className="w-full max-w-md"
                     />
                     <Button type="button" onClick={() => addCompatibleModel(newModel)}>
                       Add
@@ -305,6 +310,7 @@ const PostAccessory = () => {
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       required
+                      className="w-full max-w-md"
                     />
                   </div>
                   
@@ -315,6 +321,7 @@ const PostAccessory = () => {
                       placeholder="your@email.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
+                      className="w-full max-w-md"
                     />
                   </div>
                 </div>
@@ -325,14 +332,15 @@ const PostAccessory = () => {
                     placeholder="City, Area"
                     value={formData.location}
                     onChange={(e) => handleInputChange('location', e.target.value)}
+                    className="w-full max-w-md"
                   />
                 </div>
               </CardContent>
             </Card>
 
             {/* Submit Button */}
-            <div className="flex gap-4">
-              <Button type="submit" size="lg" className="flex-1">
+            <div className="flex gap-4 flex-col sm:flex-row">
+              <Button type="submit" size="lg" className="w-full sm:w-auto">
                 Post Accessory
               </Button>
               <Button
@@ -340,6 +348,7 @@ const PostAccessory = () => {
                 variant="outline"
                 size="lg"
                 onClick={() => navigate('/accessories')}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>

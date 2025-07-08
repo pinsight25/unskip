@@ -1,4 +1,3 @@
-
 import { useHomeState } from '@/hooks/useHomeState';
 import { useHomeSearch } from '@/hooks/useHomeSearch';
 import HomeHeader from '@/components/home/HomeHeader';
@@ -131,7 +130,7 @@ const Home = () => {
         resultCount={resultCount}
       />
 
-      <div>
+      <div className="max-w-7xl mx-auto px-4">
         {isSearching ? (
           <SearchResultsView
             results={results}

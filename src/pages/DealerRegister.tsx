@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -133,6 +132,7 @@ const DealerRegister = () => {
               value={formData.businessName}
               onChange={(e) => handleInputChange('businessName', e.target.value)}
               placeholder="Your dealership name"
+              className="w-full max-w-md"
             />
           </div>
           <div>
@@ -142,6 +142,7 @@ const DealerRegister = () => {
               value={formData.contactPerson}
               onChange={(e) => handleInputChange('contactPerson', e.target.value)}
               placeholder="Owner/Manager name"
+              className="w-full max-w-md"
             />
           </div>
           <div>
@@ -152,6 +153,7 @@ const DealerRegister = () => {
               onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, ''))}
               placeholder="+91 98765 43210"
               maxLength={15}
+              className="w-full max-w-md"
             />
           </div>
           <div>
@@ -162,6 +164,7 @@ const DealerRegister = () => {
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="contact@yourbusiness.com"
+              className="w-full max-w-md"
             />
           </div>
           <div className="md:col-span-2">
@@ -197,6 +200,7 @@ const DealerRegister = () => {
               onChange={(e) => handleInputChange('gstNumber', e.target.value.toUpperCase())}
               placeholder="22AAAAA0000A1Z5"
               maxLength={15}
+              className="w-full max-w-md"
             />
             {formData.gstNumber && !validateGST(formData.gstNumber) && (
               <p className="text-sm text-red-500 mt-1">Please enter a valid GST number</p>
@@ -225,6 +229,7 @@ const DealerRegister = () => {
               onChange={(e) => handleInputChange('shopAddress', e.target.value)}
               placeholder="Complete shop address with landmarks"
               rows={3}
+              className="w-full max-w-lg"
             />
           </div>
           <div>
@@ -235,6 +240,7 @@ const DealerRegister = () => {
               onChange={(e) => handleInputChange('pincode', e.target.value.replace(/\D/g, ''))}
               placeholder="400001"
               maxLength={6}
+              className="w-full max-w-md"
             />
           </div>
           <div>
@@ -244,6 +250,7 @@ const DealerRegister = () => {
               value={formData.operatingHours}
               onChange={(e) => handleInputChange('operatingHours', e.target.value)}
               placeholder="9:00 AM - 7:00 PM"
+              className="w-full max-w-md"
             />
           </div>
         </div>
@@ -258,7 +265,7 @@ const DealerRegister = () => {
         <div className="space-y-4">
           <div>
             <Label htmlFor="gstCertificate">GST Certificate *</Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
               <input
                 id="gstCertificate"
                 type="file"
@@ -266,8 +273,8 @@ const DealerRegister = () => {
                 onChange={(e) => handleFileUpload('gstCertificate', e.target.files)}
                 className="hidden"
               />
-              <label htmlFor="gstCertificate" className="cursor-pointer">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <label htmlFor="gstCertificate" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm text-gray-600">
                   {formData.documents.gstCertificate ? 
                     `Selected: ${formData.documents.gstCertificate.name}` : 
@@ -280,7 +287,7 @@ const DealerRegister = () => {
 
           <div>
             <Label htmlFor="shopLicense">Shop License/Registration *</Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
               <input
                 id="shopLicense"
                 type="file"
@@ -288,8 +295,8 @@ const DealerRegister = () => {
                 onChange={(e) => handleFileUpload('shopLicense', e.target.files)}
                 className="hidden"
               />
-              <label htmlFor="shopLicense" className="cursor-pointer">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <label htmlFor="shopLicense" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm text-gray-600">
                   {formData.documents.shopLicense ? 
                     `Selected: ${formData.documents.shopLicense.name}` : 
@@ -302,7 +309,7 @@ const DealerRegister = () => {
 
           <div>
             <Label htmlFor="ownerIdProof">Owner ID Proof *</Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
               <input
                 id="ownerIdProof"
                 type="file"
@@ -310,8 +317,8 @@ const DealerRegister = () => {
                 onChange={(e) => handleFileUpload('ownerIdProof', e.target.files)}
                 className="hidden"
               />
-              <label htmlFor="ownerIdProof" className="cursor-pointer">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <label htmlFor="ownerIdProof" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm text-gray-600">
                   {formData.documents.ownerIdProof ? 
                     `Selected: ${formData.documents.ownerIdProof.name}` : 
@@ -324,7 +331,7 @@ const DealerRegister = () => {
 
           <div>
             <Label htmlFor="shopPhotos">Shop Photos (Optional)</Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
               <input
                 id="shopPhotos"
                 type="file"
@@ -333,8 +340,8 @@ const DealerRegister = () => {
                 onChange={(e) => handleFileUpload('shopPhotos', e.target.files)}
                 className="hidden"
               />
-              <label htmlFor="shopPhotos" className="cursor-pointer">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <label htmlFor="shopPhotos" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
+                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm text-gray-600">
                   {formData.documents.shopPhotos.length > 0 ? 
                     `Selected: ${formData.documents.shopPhotos.length} photos` : 
@@ -364,7 +371,7 @@ const DealerRegister = () => {
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20">
         <div className="container mx-auto px-4 py-6">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             <div className="mb-8">
               <button
                 onClick={() => navigate('/dealers')}
@@ -393,26 +400,25 @@ const DealerRegister = () => {
               {currentStep === 3 && renderStep3()}
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8">
                 <Button
                   variant="outline"
                   onClick={prevStep}
                   disabled={currentStep === 1}
-                  className="flex items-center"
+                  className="w-full sm:w-auto flex items-center"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Previous
                 </Button>
-                
                 {currentStep < totalSteps ? (
-                  <Button onClick={nextStep} className="flex items-center">
+                  <Button onClick={nextStep} className="w-full sm:w-auto flex items-center">
                     Next
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 ) : (
                   <Button 
                     onClick={handleSubmit} 
-                    className="flex items-center bg-green-600 hover:bg-green-700"
+                    className="w-full sm:w-auto flex items-center bg-green-600 hover:bg-green-700"
                     disabled={!validateStep(3)}
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockAccessories } from '@/data/accessoryMockData';
@@ -92,7 +91,7 @@ const AccessoryDetail = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 pb-32 md:pb-6">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
           <Link to="/accessories" className="hover:text-primary">Accessories</Link>

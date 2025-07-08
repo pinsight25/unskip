@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
@@ -90,7 +89,7 @@ const Rent = () => {
       <div className="bg-gray-50 min-h-screen">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-          <div className="container mx-auto mobile-page-container-fixed">
+          <div className="max-w-7xl mx-auto px-4 mobile-page-container-fixed">
             <div className="text-center py-8">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Rent Cars by the Day
@@ -125,7 +124,7 @@ const Rent = () => {
         </div>
 
         {/* Results Section */}
-        <div className="container mx-auto mobile-page-container-fixed">
+        <div className="max-w-7xl mx-auto px-4 mobile-page-container-fixed">
           <div className="max-w-7xl mx-auto">
             {/* Results Header */}
             <div className="flex items-center justify-between mb-6">

@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -29,7 +28,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               placeholder="650000"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="flex-1 h-10"
+              className="flex-1 h-10 w-full max-w-md"
             />
           </div>
           {formData.price && !validatePrice(formData.price).valid && (
@@ -85,7 +84,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                     placeholder="1500"
                     value={formData.dailyRate}
                     onChange={(e) => setFormData({ ...formData, dailyRate: e.target.value })}
-                    className="h-10"
+                    className="h-10 w-full max-w-md"
                   />
                   <span className="ml-2 text-sm text-gray-500">/day</span>
                 </div>
@@ -99,7 +98,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                     placeholder="9000"
                     value={formData.weeklyRate}
                     onChange={(e) => setFormData({ ...formData, weeklyRate: e.target.value })}
-                    className="h-10"
+                    className="h-10 w-full max-w-md"
                   />
                   <span className="ml-2 text-sm text-gray-500">/week</span>
                 </div>
@@ -129,7 +128,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                     placeholder="10000"
                     value={formData.securityDeposit}
                     onChange={(e) => setFormData({ ...formData, securityDeposit: e.target.value })}
-                    className="h-10"
+                    className="h-10 w-full max-w-md"
                   />
                 </div>
               </div>

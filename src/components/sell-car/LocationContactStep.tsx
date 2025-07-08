@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,7 +26,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
           <div className="space-y-2">
             <Label className="text-sm font-medium">Area *</Label>
             <Select value={formData.area} onValueChange={(value) => setFormData({ ...formData, area: value })}>
-              <SelectTrigger className="h-10">
+              <SelectTrigger className="h-10 w-full max-w-md">
                 <SelectValue placeholder="Select your area" />
               </SelectTrigger>
               <SelectContent>
@@ -44,7 +43,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
               placeholder="Near Landmark Mall, Opposite Metro Station"
               value={formData.landmark}
               onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-              className="h-10"
+              className="h-10 w-full max-w-md"
             />
           </div>
         </div>
@@ -57,7 +56,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
               placeholder="+91 9876543210"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="flex-1 h-10"
+              className="flex-1 h-10 w-full max-w-md"
             />
             <Button 
               variant="outline" 
@@ -84,7 +83,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={3}
-            className="resize-none"
+            className="resize-none w-full max-w-lg"
           />
           <p className="text-xs text-gray-500">A good description helps buyers understand your car better</p>
         </div>

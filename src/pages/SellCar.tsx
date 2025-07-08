@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,12 +12,14 @@ import PricingStep from '@/components/sell-car/PricingStep';
 import PhotosStep from '@/components/sell-car/PhotosStep';
 import LocationContactStep from '@/components/sell-car/LocationContactStep';
 import ReviewStep from '@/components/sell-car/ReviewStep';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const SellCar = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const { formData, setFormData, validatePrice, validateMileage } = useSellCarForm();
+  const isMobile = useIsMobile();
 
   const handleNext = () => {
     if (currentStep < 5) {
@@ -83,7 +84,21 @@ const SellCar = () => {
           />
         );
       case 3:
-        return <PhotosStep />;
+        if (isMobile) {
+          return (
+            <div className="bg-white rounded-lg p-6 pb-40">
+              <PhotosStep />
+            </div>
+          );
+        } else {
+          return (
+            <Card className="shadow-lg">
+              <CardContent className="p-6">
+                <PhotosStep />
+              </CardContent>
+            </Card>
+          );
+        }
       case 4:
         return (
           <LocationContactStep 
@@ -106,49 +121,48 @@ const SellCar = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="pt-16 md:pt-20 min-h-screen bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 lg:px-6 pb-44 md:pb-8">
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
-              <Badge variant="outline">Step {currentStep} of 5</Badge>
-            </div>
-            <Progress value={(currentStep / 5) * 100} className="h-2" />
+      <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-32 responsive-header-spacing">
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
+            <Badge variant="outline">Step {currentStep} of 5</Badge>
           </div>
+          <Progress value={(currentStep / 5) * 100} className="h-2" />
+        </div>
 
-          {/* Form Content */}
+        {/* Form Content */}
+        {currentStep === 3 ? renderStep() : (
           <Card className="shadow-lg">
             <CardContent className="p-6">
               {renderStep()}
             </CardContent>
           </Card>
+        )}
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-6 mb-12">
+        {/* Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
+          <Button 
+            variant="outline" 
+            onClick={handlePrevious}
+            disabled={currentStep === 1}
+            className="w-full sm:w-auto px-6 py-2"
+          >
+            Previous
+          </Button>
+          {currentStep === 5 ? (
             <Button 
-              variant="outline" 
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className="px-6 py-2"
+              onClick={handleSubmit} 
+              className="w-full sm:w-auto bg-primary px-6 py-2"
+              disabled={!formData.termsAccepted}
             >
-              Previous
+              Post for Free
             </Button>
-            
-            {currentStep === 5 ? (
-              <Button 
-                onClick={handleSubmit} 
-                className="bg-primary px-6 py-2"
-                disabled={!formData.termsAccepted}
-              >
-                Post for Free
-              </Button>
-            ) : (
-              <Button onClick={handleNext} className="bg-primary px-6 py-2">
-                Next
-              </Button>
-            )}
-          </div>
+          ) : (
+            <Button onClick={handleNext} className="w-full sm:w-auto bg-primary px-6 py-2">
+              Next
+            </Button>
+          )}
         </div>
       </div>
     </ResponsiveLayout>

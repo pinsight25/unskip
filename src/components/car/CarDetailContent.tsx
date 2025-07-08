@@ -1,4 +1,3 @@
-
 import { Car } from '@/types/car';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +31,7 @@ const CarDetailContent = ({
 
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 pb-32 md:pb-6">
+      <div className="max-w-3xl mx-auto px-4 pb-32 md:pb-6">
         {/* Back Navigation */}
         <div className="mb-4 md:mb-6 pt-4">
           <Button 

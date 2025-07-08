@@ -1,4 +1,3 @@
-
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockCars } from '@/data/mockData';
 import { useCarSearch } from '@/hooks/useCarSearch';
@@ -67,27 +66,29 @@ const Search = () => {
 
             {/* Main Content */}
             <main className="flex-1 min-w-0">
-              {/* Mobile Filters - Show only on mobile */}
-              <div className="lg:hidden mb-6">
-                <SearchFilters
-                  priceRange={priceRange}
-                  onPriceRangeChange={setPriceRange}
-                  selectedMake={selectedMake}
-                  onMakeChange={setSelectedMake}
-                  selectedYear={selectedYear}
-                  onYearChange={setSelectedYear}
-                  selectedFuel={selectedFuel}
-                  onFuelToggle={handleFuelToggle}
-                  onClearFilters={clearFilters}
-                  makes={makes}
+              <div className="max-w-7xl mx-auto">
+                {/* Mobile Filters - Show only on mobile */}
+                <div className="lg:hidden mb-6">
+                  <SearchFilters
+                    priceRange={priceRange}
+                    onPriceRangeChange={setPriceRange}
+                    selectedMake={selectedMake}
+                    onMakeChange={setSelectedMake}
+                    selectedYear={selectedYear}
+                    onYearChange={setSelectedYear}
+                    selectedFuel={selectedFuel}
+                    onFuelToggle={handleFuelToggle}
+                    onClearFilters={clearFilters}
+                    makes={makes}
+                  />
+                </div>
+
+                <SearchResults
+                  cars={filteredCars}
+                  sortBy={sortBy}
+                  onSortChange={setSortBy}
                 />
               </div>
-
-              <SearchResults
-                cars={filteredCars}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-              />
             </main>
           </div>
         </div>

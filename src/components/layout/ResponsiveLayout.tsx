@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import Header from './Header';
 import Footer from './Footer';
@@ -15,18 +14,11 @@ const ResponsiveLayout = ({ children }: ResponsiveLayoutProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      {/* Main content with responsive header spacing */}
-      <main className={`responsive-header-spacing ${isMobile ? 'pb-24' : 'pb-8'}`}>
-        <div className="max-w-7xl mx-auto">
-          {children}
-        </div>
+      <main className="flex-1 responsive-header-spacing">
+        {children}
       </main>
-      
-      {/* Desktop Footer */}
       {!isMobile && <Footer />}
-      
-      {/* Mobile Bottom Navigation */}
+      {isMobile && <div className="h-16" />}
       {isMobile && <BottomNavigation />}
     </div>
   );

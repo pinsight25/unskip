@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Car } from '@/types/car';
@@ -62,7 +61,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
 
   return (
     <>
-      <Card className="group cards-equal-height overflow-hidden w-full max-w-[350px] mx-auto">
+      <Card className="group cards-equal-height overflow-hidden w-full max-w-[350px] min-w-[260px] mx-auto">
         <CardContent className="p-0 flex flex-col h-full">
           <CarCardImage car={car} isSaved={isSaved} onSave={handleSave} />
 
@@ -70,7 +69,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
             {/* Title & Price */}
             <div className="element-spacing">
               <Link to={`/car/${car.id}`} className="block">
-                <h3 className="heading-4 hover:text-primary transition-colors line-clamp-2 mb-2">
+                <h3 className="heading-4 hover:text-primary transition-colors mb-2">
                   {car.title}
                 </h3>
               </Link>
