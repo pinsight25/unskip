@@ -14,6 +14,8 @@ const Profile = () => {
   const { user, isSignedIn, signOut } = useUser();
   const isMobile = useIsMobile();
   
+  console.log('Profile page render:', { user, isSignedIn, isMobile });
+  
   // Modal states
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
@@ -99,6 +101,7 @@ const Profile = () => {
 
   // Show sign-in prompt for non-signed-in users
   if (!isSignedIn || !user) {
+    console.log('Showing sign-in prompt');
     return (
       <>
         <SignInPrompt onSignIn={() => setIsSignInModalOpen(true)} />
@@ -121,6 +124,7 @@ const Profile = () => {
     );
   }
 
+  console.log('Showing profile content');
   return (
     <>
       <ProfileContent

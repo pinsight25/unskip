@@ -10,7 +10,7 @@ const BottomNavigation = () => {
   const navItems = [
     { icon: Home, label: 'Home', path: '/', active: location.pathname === '/' },
     { icon: Search, label: 'Search', path: '/search', active: location.pathname === '/search' },
-    { icon: Plus, label: 'Sell', path: '/sell', active: location.pathname === '/sell', isPrimary: true },
+    { icon: Plus, label: 'Sell', path: '/sell-car', active: location.pathname === '/sell-car' || location.pathname === '/sell', isPrimary: true },
     { icon: Heart, label: 'Saved', path: '/saved', active: location.pathname === '/saved', badge: savedCount },
     { icon: User, label: 'Profile', path: '/profile', active: location.pathname === '/profile' }
   ];

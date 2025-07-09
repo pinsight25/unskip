@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { CheckCircle, XCircle, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useChatManager } from '@/hooks/useChatManager';
 
 interface Offer {
   id: string;
@@ -22,6 +22,7 @@ interface Offer {
 const ReceivedOffersTab = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { navigateToChat } = useChatManager();
   
   const [offers, setOffers] = useState<Offer[]>([
     {
@@ -110,8 +111,8 @@ const ReceivedOffersTab = () => {
   };
 
   const handleChatWithBuyer = (offer: Offer) => {
-    // Navigate to chat with specific buyer
-    navigate(`/chat/buyer-${offer.id}`);
+    // Use the chat manager to navigate to the correct chat route
+    navigateToChat(offer.carId, `buyer${offer.id}`);
   };
 
   const getStatusBadge = (status: string) => {

@@ -34,7 +34,8 @@ export const useChatManager = () => {
 
   const navigateToChat = (carId: string, userId: string = 'buyer1') => {
     const chat = createOrGetChat(carId, userId);
-    navigate(`/chat/${chat.id}`);
+    // Fixed route - use /chats/ (with 's') to match the route definition
+    navigate(`/chats/${chat.id}`);
   };
 
   const getChatId = (carId: string, userId: string = 'buyer1') => {
