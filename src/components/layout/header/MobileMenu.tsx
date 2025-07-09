@@ -128,7 +128,7 @@ const MobileMenu = ({
 
       <SignInModal 
         isOpen={isSignInModalOpen}
-        onClose={() => setIsSignInModalModal(false)}
+        onClose={() => setIsSignInModalOpen(false)}
       />
     </>
   );
