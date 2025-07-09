@@ -8,9 +8,11 @@ interface PostAccessoryHeaderProps {
   currentStep: number;
   totalSteps: number;
   onBack: () => void;
+  activeCount: number;
+  limit: number;
 }
 
-const PostAccessoryHeader = ({ currentStep, totalSteps, onBack }: PostAccessoryHeaderProps) => {
+const PostAccessoryHeader = ({ currentStep, totalSteps, onBack, activeCount, limit }: PostAccessoryHeaderProps) => {
   return (
     <>
       {/* Header */}
@@ -26,6 +28,9 @@ const PostAccessoryHeader = ({ currentStep, totalSteps, onBack }: PostAccessoryH
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Post Your Accessory</h1>
           <p className="text-gray-600">Sell your car accessories to thousands of buyers</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Active Listings: {activeCount}/{limit}
+          </p>
         </div>
       </div>
 

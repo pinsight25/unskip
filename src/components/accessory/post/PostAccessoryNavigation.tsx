@@ -8,6 +8,7 @@ interface PostAccessoryNavigationProps {
   onNext: () => void;
   onSubmit: () => void;
   canProceed: boolean;
+  isLimitReached: boolean;
 }
 
 const PostAccessoryNavigation = ({
@@ -16,7 +17,8 @@ const PostAccessoryNavigation = ({
   onPrevious,
   onNext,
   onSubmit,
-  canProceed
+  canProceed,
+  isLimitReached
 }: PostAccessoryNavigationProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
@@ -32,7 +34,7 @@ const PostAccessoryNavigation = ({
         <Button 
           onClick={onSubmit} 
           className="w-full sm:w-auto bg-primary px-6 py-2"
-          disabled={!canProceed}
+          disabled={!canProceed || isLimitReached}
         >
           Post Accessory
         </Button>
