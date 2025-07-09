@@ -9,7 +9,6 @@ import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
 import BasicSpecs from '@/components/car/BasicSpecs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
-import CarFeatures from '@/components/car/CarFeatures';
 import CarCondition from '@/components/car/CarCondition';
 import CarRegistration from '@/components/car/CarRegistration';
 
@@ -69,7 +68,7 @@ const CarDetailContent = ({
               rentPrice={car.rentPrice}
               description={car.description}
               variant={car.variant}
-              ownership={car.ownership}
+              ownership={car.ownershipNumber}
               noAccidentHistory={car.noAccidentHistory}
               verified={car.verified}
               featured={car.featured}
@@ -89,20 +88,23 @@ const CarDetailContent = ({
             <SellerCard seller={car.seller} />
 
             <SimpleVehicleInfo
-              ownership={car.ownership}
+              ownership={car.ownershipNumber}
               year={car.year}
-              mileage={car.mileage}
+              mileage={car.kilometersDriven}
               location={car.location}
               landmark={car.landmark}
-              insurance={car.insurance}
-              serviceHistory={car.serviceHistory}
+              insuranceValid={car.insuranceValid}
+              insuranceValidTill={car.insuranceValidTill}
+              insuranceType={car.insuranceType}
+              lastServiceDate={car.lastServiceDate}
+              serviceAtAuthorized={car.serviceAtAuthorized}
             />
 
             <BasicSpecs
               year={car.year}
               fuelType={car.fuelType}
               transmission={car.transmission}
-              mileage={car.mileage}
+              mileage={car.kilometersDriven}
               color={car.color}
               seatingCapacity={car.seatingCapacity}
             />
@@ -119,9 +121,12 @@ const CarDetailContent = ({
               noAccidentHistory={car.noAccidentHistory}
               acceptOffers={car.acceptOffers}
               offerPercentage={car.offerPercentage}
-              insurance={car.insurance}
-              serviceHistory={car.serviceHistory}
-              rtoTransferSupport={car.rtoTransferSupport}
+              insuranceValid={car.insuranceValid}
+              insuranceValidTill={car.insuranceValidTill}
+              insuranceType={car.insuranceType}
+              lastServiceDate={car.lastServiceDate}
+              serviceAtAuthorized={car.serviceAtAuthorized}
+              rcTransferSupport={car.rcTransferSupport}
             />
 
             {/* Mobile Actions - Bottom */}

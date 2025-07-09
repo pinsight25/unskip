@@ -15,10 +15,10 @@ export const suvCars: Car[] = [
       'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
       'https://images.unsplash.com/photo-1494976688430-30aacd673f5c?w=800'
     ],
-    mileage: 35000,
+    kilometersDriven: 35000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
-    ownership: 1,
+    ownershipNumber: 1,
     location: 'Anna Nagar, Chennai',
     landmark: 'Opposite Metro Station',
     color: 'Silver',
@@ -30,15 +30,12 @@ export const suvCars: Car[] = [
     noAccidentHistory: true,
     acceptOffers: true,
     offerPercentage: 75,
-    insurance: {
-      validTill: '2024-12-20',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-12-05',
-      authorizedCenter: true
-    },
-    rtoTransferSupport: true,
+    insuranceValid: true,
+    insuranceValidTill: '2024-12-20',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-12-05',
+    serviceAtAuthorized: true,
+    rcTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 3200,
@@ -70,10 +67,10 @@ export const suvCars: Car[] = [
       'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800',
       'https://images.unsplash.com/photo-1570733117311-d990c3816c47?w=800'
     ],
-    mileage: 12000,
+    kilometersDriven: 12000,
     fuelType: 'Diesel',
     transmission: 'Automatic',
-    ownership: 1,
+    ownershipNumber: 1,
     location: 'OMR, Chennai',
     color: 'Red',
     seatingCapacity: 7,
@@ -84,15 +81,12 @@ export const suvCars: Car[] = [
     noAccidentHistory: true,
     acceptOffers: true,
     offerPercentage: 80,
-    insurance: {
-      validTill: '2025-03-15',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-12-22',
-      authorizedCenter: true
-    },
-    rtoTransferSupport: true,
+    insuranceValid: true,
+    insuranceValidTill: '2025-03-15',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-12-22',
+    serviceAtAuthorized: true,
+    rcTransferSupport: true,
     verified: true,
     featured: true,
     views: 312,
@@ -109,25 +103,26 @@ export const suvCars: Car[] = [
       'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800',
       'https://images.unsplash.com/photo-1570733117311-d990c3816c47?w=800'
     ],
-    mileage: 38000,
+    kilometersDriven: 38000,
     fuelType: 'Diesel',
     transmission: 'Manual',
-    ownership: 1,
+    ownershipNumber: 1,
     location: 'Tambaram, Chennai',
     color: 'White',
+    seatingCapacity: 8,
     description: 'Perfect family MPV with excellent reliability. Well maintained.',
     seller: sellers[2],
     registrationYear: 2019,
     registrationState: 'TN - Tamil Nadu',
-    insurance: {
-      validTill: '2024-07-20',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-08-10',
-      authorizedCenter: true
-    },
-    rtoTransferSupport: true,
+    noAccidentHistory: true,
+    acceptOffers: false,
+    offerPercentage: 0,
+    insuranceValid: true,
+    insuranceValidTill: '2024-07-20',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-08-10',
+    serviceAtAuthorized: true,
+    rcTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 3000,
@@ -142,7 +137,6 @@ export const suvCars: Car[] = [
       minRentalPeriod: 1
     },
     rentType: 'suv',
-    features: ['7 Seater', 'Captain Seats', 'Dual AC', 'Touchscreen', 'Reliable Engine'],
     verified: true,
     featured: false,
     views: 189,
@@ -159,25 +153,26 @@ export const suvCars: Car[] = [
       'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
       'https://images.unsplash.com/photo-1494976688430-30aacd673f5c?w=800'
     ],
-    mileage: 22000,
+    kilometersDriven: 22000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
-    ownership: 1,
+    ownershipNumber: 1,
     location: 'Chromepet, Chennai',
     color: 'Grey',
+    seatingCapacity: 5,
     description: 'Stylish compact SUV with modern features. Single owner.',
     seller: sellers[3],
     registrationYear: 2021,
     registrationState: 'TN - Tamil Nadu',
-    insurance: {
-      validTill: '2024-10-05',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-10-01',
-      authorizedCenter: true
-    },
-    rtoTransferSupport: true,
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 70,
+    insuranceValid: true,
+    insuranceValidTill: '2024-10-05',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-10-01',
+    serviceAtAuthorized: true,
+    rcTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
       daily: 2600,
@@ -192,7 +187,6 @@ export const suvCars: Car[] = [
       minRentalPeriod: 1
     },
     rentType: 'premium',
-    features: ['UVO Connect', 'Air Purifier', 'Wireless Charging', 'Bose Audio', 'LED Headlights'],
     verified: true,
     featured: false,
     views: 145,
