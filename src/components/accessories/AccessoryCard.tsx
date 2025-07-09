@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MapPin, Star } from 'lucide-react';
+import { Heart, MapPin } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryCardProps {
@@ -17,16 +17,6 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
       return `₹${price.min.toLocaleString('en-IN')}`;
     }
     return `₹${price.min.toLocaleString('en-IN')} - ₹${price.max.toLocaleString('en-IN')}`;
-  };
-
-  const getConditionColor = (condition: string) => {
-    switch (condition?.toLowerCase()) {
-      case 'new': return 'bg-green-500 text-white';
-      case 'like-new': return 'bg-blue-500 text-white';
-      case 'good': return 'bg-yellow-500 text-white';
-      case 'fair': return 'bg-orange-500 text-white';
-      default: return 'bg-gray-500 text-white';
-    }
   };
 
   return (
@@ -69,15 +59,11 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
               {accessory.compatibility.length > 3 && ` +${accessory.compatibility.length - 3} more`}
             </p>
 
-            {/* Location and Rating */}
+            {/* Location */}
             <div className="flex items-center justify-between text-xs text-gray-500">
               <div className="flex items-center">
                 <MapPin className="h-3 w-3 mr-1" />
                 {accessory.location}
-              </div>
-              <div className="flex items-center">
-                <Star className="h-3 w-3 mr-1 text-yellow-500" />
-                {accessory.rating}
               </div>
             </div>
           </div>

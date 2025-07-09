@@ -1,7 +1,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Share2, Star, CheckCircle, Shield } from 'lucide-react';
+import { Heart, Share2, CheckCircle, Shield } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryInfoProps {
@@ -73,10 +73,6 @@ const AccessoryInfo = ({
             {formatPrice(accessory.price)}
           </p>
           <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Star className="h-4 w-4 text-yellow-500 mr-1" />
-              {accessory.rating} ({accessory.reviewCount} reviews)
-            </div>
             <div>
               {accessory.views} views
             </div>

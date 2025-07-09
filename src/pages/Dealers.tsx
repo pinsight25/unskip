@@ -3,7 +3,7 @@ import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, Car, Phone, Shield, Plus } from 'lucide-react';
+import { MapPin, Car, Phone, Shield, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dealers = () => {
@@ -11,8 +11,6 @@ const Dealers = () => {
     {
       id: 1,
       name: 'CarMax Motors',
-      rating: 4.8,
-      reviews: 234,
       location: 'Andheri West, Mumbai',
       stock: '150+ cars',
       responseTime: '30 mins',
@@ -22,8 +20,6 @@ const Dealers = () => {
     {
       id: 2,
       name: 'Premium Auto Hub',
-      rating: 4.9,
-      reviews: 189,
       location: 'Bandra East, Mumbai',
       stock: '120+ cars',
       responseTime: '15 mins',
@@ -33,8 +29,6 @@ const Dealers = () => {
     {
       id: 3,
       name: 'City Car Center',
-      rating: 4.7,
-      reviews: 156,
       location: 'Powai, Mumbai',
       stock: '200+ cars',
       responseTime: '45 mins',
@@ -44,8 +38,6 @@ const Dealers = () => {
     {
       id: 4,
       name: 'Elite Motors',
-      rating: 4.6,
-      reviews: 98,
       location: 'Goregaon West, Mumbai',
       stock: '80+ cars',
       responseTime: '1 hour',
@@ -55,8 +47,6 @@ const Dealers = () => {
     {
       id: 5,
       name: 'Royal Car Palace',
-      rating: 4.8,
-      reviews: 267,
       location: 'Thane West, Mumbai',
       stock: '180+ cars',
       responseTime: '20 mins',
@@ -66,8 +56,6 @@ const Dealers = () => {
     {
       id: 6,
       name: 'Metro Auto Sales',
-      rating: 4.5,
-      reviews: 134,
       location: 'Malad West, Mumbai',
       stock: '90+ cars',
       responseTime: '35 mins',
@@ -125,12 +113,6 @@ const Dealers = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="font-bold text-lg mb-1">{dealer.name}</h3>
-                      <div className="flex items-center text-amber-500 mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-4 w-4 ${i < Math.floor(dealer.rating) ? 'fill-current' : ''}`} />
-                        ))}
-                        <span className="ml-2 text-gray-600 text-sm">{dealer.rating}</span>
-                      </div>
                     </div>
                     {dealer.verified && (
                       <Badge className="bg-green-100 text-green-700">

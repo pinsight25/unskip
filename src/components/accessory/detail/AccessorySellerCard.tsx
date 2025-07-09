@@ -1,6 +1,6 @@
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { AccessorySeller } from '@/types/accessory';
 
 interface AccessorySellerCardProps {
@@ -23,10 +23,6 @@ const AccessorySellerCard = ({ seller }: AccessorySellerCardProps) => {
               <h4 className="font-semibold text-lg">{seller.shopName}</h4>
               <p className="text-gray-600">{seller.name}</p>
               <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                  {seller.rating} rating
-                </div>
                 <div className="flex items-center">
                   <MapPin className="h-4 w-4 mr-1" />
                   {seller.location}

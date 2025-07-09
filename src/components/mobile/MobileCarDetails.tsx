@@ -1,6 +1,5 @@
 
-import { Calendar, Gauge, Fuel, MapPin, Star, Shield, Settings } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Calendar, Gauge, Fuel, MapPin, Shield, Settings } from 'lucide-react';
 
 interface MobileCarDetailsProps {
   year: number;
@@ -12,7 +11,6 @@ interface MobileCarDetailsProps {
     name: string;
     type: 'dealer' | 'individual';
     verified: boolean;
-    rating?: number;
     activeTime?: string;
   };
 }
@@ -73,14 +71,8 @@ const MobileCarDetails = ({
                 <Shield className="h-3 w-3 text-green-600 flex-shrink-0" />
               )}
             </div>
-            {/* Rating and Active Time - Better Alignment */}
+            {/* Active Time - Better Alignment */}
             <div className="flex items-center gap-3">
-              {seller.rating && (
-                <div className="flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  <span className="text-xs font-medium text-gray-700">{seller.rating}</span>
-                </div>
-              )}
               {seller.activeTime && (
                 <span className="text-xs text-gray-500">Active {seller.activeTime}</span>
               )}

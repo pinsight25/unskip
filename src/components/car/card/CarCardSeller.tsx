@@ -1,5 +1,5 @@
 
-import { Star, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Seller } from '@/types/car';
 
 interface CarCardSellerProps {
@@ -23,11 +23,6 @@ const CarCardSeller = ({ seller }: CarCardSellerProps) => {
             )}
           </div>
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              <span className="text-xs text-gray-600">{seller.rating}</span>
-            </div>
-            <span className="text-xs text-gray-500">•</span>
             <span className="text-xs text-gray-500">
               {seller.type === 'dealer' ? 'Dealer' : 'Individual'}
             </span>

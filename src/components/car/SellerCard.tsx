@@ -2,7 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Phone, MessageCircle, MapPin, Calendar, Star } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Calendar } from 'lucide-react';
 import { Seller } from '@/types/car';
 
 interface SellerCardProps {
@@ -42,24 +42,6 @@ const SellerCard = ({ seller }: SellerCardProps) => {
                   Verified
                 </Badge>
               )}
-            </div>
-            
-            <div className="flex items-center space-x-1 mb-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`h-4 w-4 ${
-                      i < Math.floor(seller.rating) 
-                        ? 'text-yellow-400 fill-current' 
-                        : 'text-gray-300'
-                    }`} 
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-gray-600">
-                {seller.rating}
-              </span>
             </div>
             
             <div className="space-y-1 text-sm text-gray-600">

@@ -2,14 +2,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ShareButton from '@/components/ui/ShareButton';
-import { Star, MapPin, Car as CarIcon, Phone, Shield } from 'lucide-react';
+import { MapPin, Car as CarIcon, Phone, Shield } from 'lucide-react';
 
 interface DealerHeaderProps {
   dealer: {
     id: string;
     name: string;
-    rating: number;
-    reviewCount: number;
     location: string;
     carsInStock: number;
     responseTime: string;
@@ -49,15 +47,6 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
                 className="text-xs h-8"
               />
             </div>
-          </div>
-          
-          <div className="flex items-center text-amber-500 mb-4 md:mb-6">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-4 w-4 fill-current" />
-            ))}
-            <span className="ml-2 text-gray-600 text-sm md:text-base">
-              {dealer.rating}
-            </span>
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 text-gray-600 mb-4 md:mb-6">
