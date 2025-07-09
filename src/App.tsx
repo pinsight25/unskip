@@ -13,7 +13,13 @@ import DealerRegister from '@/pages/DealerRegister';
 import DealerInventory from '@/pages/DealerInventory';
 import SellCar from '@/pages/SellCar';
 import PostAccessory from '@/pages/PostAccessory';
+import Accessories from '@/pages/Accessories';
+import AccessoryDetail from '@/pages/AccessoryDetail';
 import Search from '@/pages/Search';
+import Saved from '@/pages/Saved';
+import Profile from '@/pages/Profile';
+import Chats from '@/pages/Chats';
+import ChatDetail from '@/pages/ChatDetail';
 
 const queryClient = new QueryClient();
 
@@ -32,8 +38,15 @@ function App() {
                   <Route path="/dealers/:dealerId" element={<DealerInventory />} />
                   <Route path="/dealer/register" element={<DealerRegister />} />
                   <Route path="/sell-car" element={<SellCar />} />
+                  <Route path="/sell" element={<SellCar />} />
                   <Route path="/post-accessory" element={<PostAccessory />} />
+                  <Route path="/accessories" element={<Accessories />} />
+                  <Route path="/accessory/:id" element={<AccessoryDetail />} />
                   <Route path="/search" element={<Search />} />
+                  <Route path="/saved" element={<Saved />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/chats" element={<Chats />} />
+                  <Route path="/chats/:chatId" element={<ChatDetail />} />
                 </Routes>
               </ResponsiveLayout>
               <Toaster />

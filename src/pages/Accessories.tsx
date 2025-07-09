@@ -3,7 +3,6 @@ import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockAccessories } from '@/data/accessoryMockData';
 import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
 import AccessoryHeader from '@/components/accessories/AccessoryHeader';
@@ -102,52 +101,50 @@ const Accessories = () => {
   };
 
   return (
-    <ResponsiveLayout>
-      <div className="bg-white min-h-screen">
-        {/* Header Section */}
-        <div className="bg-white">
-          {/* Back Button - Show conditionally */}
-          {showBackButton && (
-            <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 pt-6">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-            </div>
-          )}
+    <div className="bg-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-white">
+        {/* Back Button - Show conditionally */}
+        {showBackButton && (
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 pt-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
+        )}
 
-          <AccessoryHeader
-            filters={filters}
-            onSearchChange={handleSearchChange}
-            onCategoryFilter={handleCategoryFilter}
-          />
-        </div>
-
-        {/* Results Section */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
-          {/* Controls Bar */}
-          <AccessoryFiltersComponent
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            filters={filters}
-            onSortChange={handleSortChange}
-            filteredCount={filteredAccessories.length}
-          />
-
-          {/* Results Grid */}
-          <AccessoryResults
-            accessories={filteredAccessories}
-            viewMode={viewMode}
-            onClearFilters={handleClearFilters}
-          />
-        </div>
+        <AccessoryHeader
+          filters={filters}
+          onSearchChange={handleSearchChange}
+          onCategoryFilter={handleCategoryFilter}
+        />
       </div>
-    </ResponsiveLayout>
+
+      {/* Results Section */}
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
+        {/* Controls Bar */}
+        <AccessoryFiltersComponent
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          filters={filters}
+          onSortChange={handleSortChange}
+          filteredCount={filteredAccessories.length}
+        />
+
+        {/* Results Grid */}
+        <AccessoryResults
+          accessories={filteredAccessories}
+          viewMode={viewMode}
+          onClearFilters={handleClearFilters}
+        />
+      </div>
+    </div>
   );
 };
 
