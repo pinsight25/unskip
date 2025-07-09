@@ -92,27 +92,15 @@ const CarDetailContent = ({
 
           {/* Right Column - Seller and Actions */}
           <div className="space-y-4">
-            {/* Quick Actions - Desktop Top */}
-            <div className="hidden lg:block">
-              <CarActions
-                offerStatus={offerStatus}
-                onMakeOffer={onMakeOffer}
-                onChatClick={onChatClick}
-                onTestDrive={onTestDrive}
-              />
-            </div>
-
             <SellerCard seller={car.seller} />
 
-            {/* Mobile Actions - Bottom */}
-            <div className="lg:hidden">
-              <CarActions
-                offerStatus={offerStatus}
-                onMakeOffer={onMakeOffer}
-                onChatClick={onChatClick}
-                onTestDrive={onTestDrive}
-              />
-            </div>
+            {/* Action buttons - Now below seller card */}
+            <CarActions
+              offerStatus={offerStatus}
+              onMakeOffer={onMakeOffer}
+              onChatClick={onChatClick}
+              onTestDrive={onTestDrive}
+            />
           </div>
         </div>
       </div>
