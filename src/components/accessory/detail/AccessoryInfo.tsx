@@ -1,7 +1,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Share2, CheckCircle, Shield } from 'lucide-react';
+import { Heart, Share2, Shield } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryInfoProps {
@@ -80,20 +80,7 @@ const AccessoryInfo = ({
         </div>
       </div>
 
-      {/* Key Features */}
-      <div>
-        <h3 className="font-semibold text-lg mb-3">Key Features</h3>
-        <ul className="space-y-2">
-          {accessory.features.map((feature, index) => (
-            <li key={index} className="flex items-start">
-              <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-700">{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Compatibility */}
+      {/* Compatible Models - moved from separate section */}
       <div>
         <h3 className="font-semibold text-lg mb-3">Compatible Car Models</h3>
         <div className="grid grid-cols-2 gap-2">

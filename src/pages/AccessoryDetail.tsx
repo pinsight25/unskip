@@ -9,7 +9,6 @@ import { useToast } from '@/hooks/use-toast';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
 import AccessoryDetails from '@/components/accessory/detail/AccessoryDetails';
-import AccessoryActions from '@/components/accessory/detail/AccessoryActions';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
 import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories';
 
@@ -93,7 +92,7 @@ const AccessoryDetail = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="max-w-3xl mx-auto px-4 py-6 pb-32 md:pb-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
           <Link to="/accessories" className="hover:text-primary">Accessories</Link>
@@ -101,43 +100,48 @@ const AccessoryDetail = () => {
           <span className="text-gray-900">{accessory.name}</span>
         </nav>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <AccessoryImageGallery
-            images={accessory.images}
-            name={accessory.name}
-            selectedImage={selectedImage}
-            onImageSelect={setSelectedImage}
-          />
+        {/* Main Content - Desktop 2-column, Mobile stacked */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Left Column - Images and Main Info (2/3 width on desktop) */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <AccessoryImageGallery
+                images={accessory.images}
+                name={accessory.name}
+                selectedImage={selectedImage}
+                onImageSelect={setSelectedImage}
+              />
 
-          <div className="space-y-6">
-            <AccessoryInfo
-              accessory={accessory}
-              isSaved={isSaved}
-              onSave={handleSave}
-              onShare={handleShare}
-              formatPrice={formatPrice}
-              getConditionColor={getConditionColor}
-            />
+              <AccessoryInfo
+                accessory={accessory}
+                isSaved={isSaved}
+                onSave={handleSave}
+                onShare={handleShare}
+                formatPrice={formatPrice}
+                getConditionColor={getConditionColor}
+              />
+            </div>
 
             <AccessoryDetails accessory={accessory} />
 
-            <AccessoryActions
+            {/* Description */}
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-lg mb-4">Description</h3>
+                <p className="text-gray-700 leading-relaxed">{accessory.description}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Seller Info with Contact Actions (1/3 width on desktop) */}
+          <div className="lg:col-span-1">
+            <AccessorySellerCard 
+              seller={accessory.seller} 
               onChat={handleChat}
               onCall={handleCall}
             />
           </div>
         </div>
-
-        <AccessorySellerCard seller={accessory.seller} />
-
-        {/* Description */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-lg mb-4">Description</h3>
-            <p className="text-gray-700 leading-relaxed">{accessory.description}</p>
-          </CardContent>
-        </Card>
 
         <RelatedAccessories
           accessories={relatedAccessories}

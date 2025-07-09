@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MapPin } from 'lucide-react';
+import { Eye, MapPin } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryCardProps {
@@ -77,10 +77,11 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            window.location.href = `/accessories/${accessory.id}`;
           }}
         >
-          <Heart className="h-3 w-3 mr-1" />
-          Save
+          <Eye className="h-3 w-3 mr-1" />
+          View Details
         </Button>
       </CardContent>
     </Card>
