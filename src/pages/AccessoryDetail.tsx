@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { mockAccessories } from '@/data/accessoryMockData';
 import { Accessory } from '@/types/accessory';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -22,15 +21,13 @@ const AccessoryDetail = () => {
 
   if (!accessory) {
     return (
-      <ResponsiveLayout>
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Accessory Not Found</h2>
-            <p className="text-gray-600">Sorry, the accessory you are looking for could not be found.</p>
-            <Link to="/accessories" className="text-blue-500">Go back to accessories</Link>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Accessory Not Found</h2>
+          <p className="text-gray-600">Sorry, the accessory you are looking for could not be found.</p>
+          <Link to="/accessories" className="text-blue-500">Go back to accessories</Link>
         </div>
-      </ResponsiveLayout>
+      </div>
     );
   }
 
@@ -82,73 +79,71 @@ const AccessoryDetail = () => {
     .slice(0, 4);
 
   return (
-    <ResponsiveLayout>
-      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
-        {/* Back Button and Breadcrumb */}
-        <div className="flex items-center space-x-4 mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link to="/accessories" className="hover:text-primary">Accessories</Link>
-            <span>/</span>
-            <span className="text-gray-900">{accessory.name}</span>
-          </nav>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
+      {/* Back Button and Breadcrumb */}
+      <div className="flex items-center space-x-4 mb-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <nav className="flex items-center space-x-2 text-sm text-gray-600">
+          <Link to="/accessories" className="hover:text-primary">Accessories</Link>
+          <span>/</span>
+          <span className="text-gray-900">{accessory.name}</span>
+        </nav>
+      </div>
 
-        {/* Main Content - Improved Desktop Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          {/* Left Column - Images and Product Info (2/3 width) */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AccessoryImageGallery
-                images={accessory.images}
-                name={accessory.name}
-                selectedImage={selectedImage}
-                onImageSelect={setSelectedImage}
-                featured={accessory.featured}
-                verified={accessory.seller.verified}
-              />
+      {/* Main Content - Improved Desktop Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Left Column - Images and Product Info (2/3 width) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AccessoryImageGallery
+              images={accessory.images}
+              name={accessory.name}
+              selectedImage={selectedImage}
+              onImageSelect={setSelectedImage}
+              featured={accessory.featured}
+              verified={accessory.seller.verified}
+            />
 
-              <AccessoryInfo
-                accessory={accessory}
-                onShare={handleShare}
-                formatPrice={formatPrice}
-                getConditionColor={getConditionColor}
-              />
-            </div>
-
-            {/* Description */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-lg mb-4">Description</h3>
-                <p className="text-gray-700 leading-relaxed">{accessory.description}</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Seller Info (1/3 width) */}
-          <div className="lg:col-span-1 space-y-6">
-            <AccessorySellerCard 
-              seller={accessory.seller} 
-              onChat={handleChat}
-              onCall={handleCall}
+            <AccessoryInfo
+              accessory={accessory}
+              onShare={handleShare}
+              formatPrice={formatPrice}
+              getConditionColor={getConditionColor}
             />
           </div>
+
+          {/* Description */}
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-4">Description</h3>
+              <p className="text-gray-700 leading-relaxed">{accessory.description}</p>
+            </CardContent>
+          </Card>
         </div>
 
-        <RelatedAccessories
-          accessories={relatedAccessories}
-          formatPrice={formatPrice}
-        />
+        {/* Right Column - Seller Info (1/3 width) */}
+        <div className="lg:col-span-1 space-y-6">
+          <AccessorySellerCard 
+            seller={accessory.seller} 
+            onChat={handleChat}
+            onCall={handleCall}
+          />
+        </div>
       </div>
-    </ResponsiveLayout>
+
+      <RelatedAccessories
+        accessories={relatedAccessories}
+        formatPrice={formatPrice}
+      />
+    </div>
   );
 };
 

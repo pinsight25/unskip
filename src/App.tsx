@@ -41,7 +41,7 @@ function App() {
                   <Route path="/sell" element={<SellCar />} />
                   <Route path="/post-accessory" element={<PostAccessory />} />
                   <Route path="/accessories" element={<Accessories />} />
-                  <Route path="/accessory/:id" element={<AccessoryDetail />} />
+                  <Route path="/accessories/:id" element={<AccessoryDetail />} />
                   <Route path="/search" element={<Search />} />
                   <Route path="/saved" element={<Saved />} />
                   <Route path="/profile" element={<Profile />} />
