@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Camera, Plus, CheckCircle } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 import { useUser } from '@/contexts/UserContext';
-import { toBoolean } from '@/utils/formHelpers';
+import { updateFormField, toBoolean } from '@/utils/formHelpers';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
@@ -23,7 +23,9 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
   const handlePhoneVerification = () => {
     onPhoneVerification();
     setTimeout(() => {
-      onUpdate('phoneVerified', true);
+      // Use updateFormField for boolean field
+      const updatedData = updateFormField(formData, 'phoneVerified', true);
+      onUpdate('phoneVerified', updatedData.phoneVerified);
     }, 2000);
   };
 
