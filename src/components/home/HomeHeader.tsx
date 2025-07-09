@@ -48,14 +48,9 @@ const HomeHeader = ({
       {/* Search Section */}
       <div className="pb-6">
         <SearchFilters 
-          currentFilters={currentFilters}
-          onFilterChange={onFilterChange}
-          onTypeChange={onTypeChange}
-          isSearching={isSearching}
-          searchQuery={searchQuery}
-          onSearch={onSearch || (() => {})}
-          onClearSearch={onClearSearch || (() => {})}
-          resultCount={resultCount}
+          onFilterChange={onFilterChange} 
+          onSearch={onSearch}
+          hideContent={isSearching}
         />
       </div>
       
