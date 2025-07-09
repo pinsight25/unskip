@@ -68,12 +68,12 @@ const CarDetailContent = ({
               price={car.price}
               rentPrice={car.rentPrice}
               description={car.description}
-              // variant={car.variant}
+              variant={car.variant}
               ownership={car.ownership}
-              // noAccidentHistory={car.noAccidentHistory}
+              noAccidentHistory={car.noAccidentHistory}
               verified={car.verified}
               featured={car.featured}
-              // seatingCapacity={car.seatingCapacity}
+              seatingCapacity={car.seatingCapacity}
             />
 
             {/* Quick Actions - Desktop Top */}
@@ -98,33 +98,31 @@ const CarDetailContent = ({
               serviceHistory={car.serviceHistory}
             />
 
-            {/* <CarFeatures features={car.features} /> */}
-
             <BasicSpecs
               year={car.year}
               fuelType={car.fuelType}
               transmission={car.transmission}
               mileage={car.mileage}
               color={car.color}
-              // seatingCapacity={car.seatingCapacity}
+              seatingCapacity={car.seatingCapacity}
             />
 
-            {/* <CarRegistration
+            <CarRegistration
               registrationYear={car.registrationYear}
               registrationState={car.registrationState}
               year={car.year}
               variant={car.variant}
               seatingCapacity={car.seatingCapacity}
-            /> */}
+            />
 
-            {/* <CarCondition
+            <CarCondition
               noAccidentHistory={car.noAccidentHistory}
               acceptOffers={car.acceptOffers}
               offerPercentage={car.offerPercentage}
               insurance={car.insurance}
               serviceHistory={car.serviceHistory}
               rtoTransferSupport={car.rtoTransferSupport}
-            /> */}
+            />
 
             {/* Mobile Actions - Bottom */}
             <div className="lg:hidden">

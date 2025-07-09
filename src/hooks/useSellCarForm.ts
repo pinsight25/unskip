@@ -14,7 +14,7 @@ export const useSellCarForm = () => {
     seatingCapacity: '5',
     fuelType: '',
     transmission: '',
-    mileage: '',
+    kilometersDriven: '',
     color: '',
     price: '',
     acceptOffers: true, // Smart default ON
@@ -29,17 +29,6 @@ export const useSellCarForm = () => {
     dailyRate: '',
     weeklyRate: '',
     securityDeposit: '',
-    // Car Features
-    features: {
-      sunroof: false,
-      alloyWheels: false,
-      reverseCamera: false,
-      pushStart: false,
-      musicSystem: false,
-      powerSteering: false,
-      powerWindows: false,
-      airConditioning: false,
-    },
     photos: [] as string[],
     coverPhotoIndex: 0,
     area: '',
@@ -57,10 +46,10 @@ export const useSellCarForm = () => {
     return { valid: true, message: '' };
   };
 
-  const validateMileage = (mileage: string) => {
-    const mileageNum = Number(mileage);
-    if (mileageNum > 300000) return { valid: false, message: 'Mileage seems unusually high' };
-    if (mileageNum < 100 && formData.year && Number(formData.year) < 2023) return { valid: false, message: 'Mileage seems too low for car age' };
+  const validateKilometersDriven = (kilometers: string) => {
+    const kmNum = Number(kilometers);
+    if (kmNum > 300000) return { valid: false, message: 'Kilometers driven seems unusually high' };
+    if (kmNum < 100 && formData.year && Number(formData.year) < 2023) return { valid: false, message: 'Kilometers driven seems too low for car age' };
     return { valid: true, message: '' };
   };
 
@@ -68,6 +57,6 @@ export const useSellCarForm = () => {
     formData,
     setFormData,
     validatePrice,
-    validateMileage
+    validateKilometersDriven
   };
 };

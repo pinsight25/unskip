@@ -1,6 +1,6 @@
 
 import { Calendar, Fuel, Settings, Gauge, Palette, Users } from 'lucide-react';
-import { formatMileage } from '@/utils/carHelpers';
+import { formatKilometersDriven } from '@/utils/carHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface BasicSpecsProps {
@@ -54,8 +54,8 @@ const BasicSpecs = ({
           <div className="flex items-center gap-2 text-sm">
             <Gauge className="h-4 w-4 text-gray-500" />
             <div>
-              <div className="text-gray-600">Mileage</div>
-              <div className="font-medium">{formatMileage(mileage)}</div>
+              <div className="text-gray-600">Kilometers Driven</div>
+              <div className="font-medium">{formatKilometersDriven(mileage)}</div>
             </div>
           </div>
           

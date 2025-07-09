@@ -21,7 +21,7 @@ const SellCar = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const { formData, setFormData, validatePrice, validateMileage } = useSellCarForm();
+  const { formData, setFormData, validatePrice, validateKilometersDriven } = useSellCarForm();
   const isMobile = useIsMobile();
 
   const handleNext = () => {
@@ -75,7 +75,7 @@ const SellCar = () => {
           <CarDetailsStep 
             formData={formData}
             setFormData={setFormData}
-            validateMileage={validateMileage}
+            validateKilometersDriven={validateKilometersDriven}
           />
         );
       case 2:

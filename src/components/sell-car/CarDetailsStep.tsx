@@ -3,14 +3,15 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle } from 'lucide-react';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface CarDetailsStepProps {
   formData: any;
   setFormData: (data: any) => void;
-  validateMileage: (mileage: string) => { valid: boolean; message: string };
+  validateKilometersDriven: (kilometers: string) => { valid: boolean; message: string };
 }
 
-const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsStepProps) => {
+const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: CarDetailsStepProps) => {
   const makes = ['Maruti Suzuki', 'Hyundai', 'Honda', 'Toyota', 'Mahindra', 'Tata', 'Ford', 'Volkswagen', 'BMW', 'Mercedes'];
   const models = ['Swift', 'i20', 'City', 'Innova', 'XUV700', 'Harrier', 'EcoSport', 'Polo', 'X1', 'C-Class'];
   const variants = ['Base', 'Mid', 'Top', 'VXI', 'ZXI', 'SX', 'VDI', 'Diesel', 'Petrol'];
@@ -177,20 +178,20 @@ const CarDetailsStep = ({ formData, setFormData, validateMileage }: CarDetailsSt
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Mileage (km) *</Label>
+            <Label className="text-sm font-medium">Kilometers Driven *</Label>
             <Input 
               type="number" 
               placeholder="50000"
-              value={formData.mileage}
+              value={formData.kilometersDriven}
               onChange={(e) => {
-                setFormData({ ...formData, mileage: e.target.value });
+                setFormData({ ...formData, kilometersDriven: e.target.value });
               }}
               className="h-10 w-full max-w-md"
             />
-            {formData.mileage && !validateMileage(formData.mileage).valid && (
+            {formData.kilometersDriven && !validateKilometersDriven(formData.kilometersDriven).valid && (
               <div className="flex items-center mt-1 text-sm text-orange-600">
                 <AlertCircle className="h-4 w-4 mr-1 flex-shrink-0" />
-                <span className="text-xs">{validateMileage(formData.mileage).message}</span>
+                <span className="text-xs">{validateKilometersDriven(formData.kilometersDriven).message}</span>
               </div>
             )}
           </div>
