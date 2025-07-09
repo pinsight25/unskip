@@ -2,9 +2,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Phone, CheckCircle, Edit } from 'lucide-react';
+import { Shield, Phone, CheckCircle, Edit, User, Loader } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface MobileOTPModalProps {
   isOpen: boolean;
@@ -14,13 +17,34 @@ interface MobileOTPModalProps {
   purpose: string;
 }
 
+const cities = [
+  'Chennai',
+  'Mumbai', 
+  'Delhi',
+  'Bangalore',
+  'Hyderabad',
+  'Pune',
+  'Kolkata'
+];
+
 const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpose }: MobileOTPModalProps) => {
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
   const [phoneNumber, setPhoneNumber] = useState(initialPhone);
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
+  
+  // Profile form state
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    city: ''
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  const { signIn } = useUser();
+  const { toast } = useToast();
 
   const handleSendOTP = () => {
     if (phoneNumber.length >= 10) {
@@ -39,14 +63,47 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
       if (otp === '123456') {
         setIsVerified(true);
         setTimeout(() => {
-          onSuccess();
-          onClose();
-          resetModal();
+          setStep('profile');
+          setIsVerifying(false);
+          setIsVerified(false);
         }, 1500);
       } else {
         setError('Invalid OTP. Please try again.');
+        setIsVerifying(false);
       }
-      setIsVerifying(false);
+    }, 1000);
+  };
+
+  const handleCompleteProfile = async () => {
+    if (!profileData.name.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+    if (!profileData.city) {
+      setError('Please select your city');
+      return;
+    }
+
+    setIsSaving(true);
+    setError('');
+
+    setTimeout(() => {
+      // Sign in with actual profile data
+      signIn(phoneNumber, {
+        name: profileData.name.trim(),
+        email: profileData.email.trim(),
+        city: profileData.city
+      });
+      
+      toast({
+        title: "Welcome!",
+        description: "Your profile has been created successfully.",
+      });
+      
+      onSuccess();
+      onClose();
+      resetModal();
+      setIsSaving(false);
     }, 1000);
   };
 
@@ -57,6 +114,8 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
     setIsVerified(false);
     setError('');
     setIsVerifying(false);
+    setProfileData({ name: '', email: '', city: '' });
+    setIsSaving(false);
   };
 
   const handleClose = () => {
@@ -79,7 +138,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
             <h3 className="text-xl font-semibold mb-4">Verification Successful!</h3>
-            <p className="text-muted-foreground text-lg">You can now contact the seller.</p>
+            <p className="text-muted-foreground text-lg">Setting up your profile...</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -92,12 +151,17 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
         <DialogHeader>
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-              <Shield className="h-5 w-5 text-primary" />
+              {step === 'profile' ? <User className="h-5 w-5 text-primary" /> : <Shield className="h-5 w-5 text-primary" />}
             </div>
-            <DialogTitle className="text-lg">Verify Your Phone</DialogTitle>
+            <DialogTitle className="text-lg">
+              {step === 'profile' ? 'Complete Your Profile' : 'Verify Your Phone'}
+            </DialogTitle>
           </div>
           <p className="text-sm text-muted-foreground mt-2">
-            To ensure safe transactions, we need to verify your phone number before you can {purpose}.
+            {step === 'profile' 
+              ? 'Just a few details to get started'
+              : `To ensure safe transactions, we need to verify your phone number before you can ${purpose}.`
+            }
           </p>
         </DialogHeader>
 
@@ -129,7 +193,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 Send OTP
               </Button>
             </>
-          ) : (
+          ) : step === 'otp' ? (
             <>
               <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
@@ -184,6 +248,76 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                   className="w-full h-12 text-base"
                 >
                   Edit Phone Number
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block text-gray-700">Full Name *</label>
+                  <Input
+                    value={profileData.name}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter your full name"
+                    className="h-12"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block text-gray-700">Email (Optional)</label>
+                  <Input
+                    type="email"
+                    value={profileData.email}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="your.email@example.com"
+                    className="h-12"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block text-gray-700">City *</label>
+                  <Select value={profileData.city} onValueChange={(value) => setProfileData(prev => ({ ...prev, city: value }))}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select your city" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border shadow-lg">
+                      {cities.map((city) => (
+                        <SelectItem key={city} value={city} className="hover:bg-gray-50">
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {error && (
+                  <p className="text-sm text-red-600">{error}</p>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleCompleteProfile} 
+                  disabled={isSaving || !profileData.name.trim() || !profileData.city}
+                  className="w-full h-12 text-base font-semibold"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader className="h-4 w-4 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Complete Profile'
+                  )}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleClose} 
+                  className="w-full h-12 text-base"
+                  disabled={isSaving}
+                >
+                  Cancel
                 </Button>
               </div>
             </>
