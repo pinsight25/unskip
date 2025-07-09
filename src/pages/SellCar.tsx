@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useSellCarForm } from '@/hooks/useSellCarForm';
 import CarDetailsStep from '@/components/sell-car/CarDetailsStep';
 import PricingStep from '@/components/sell-car/PricingStep';
@@ -121,65 +121,63 @@ const SellCar = () => {
   };
 
   return (
-    <ResponsiveLayout>
-      <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-32 responsive-header-spacing">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Button>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
-            <Badge variant="outline">Step {currentStep} of 5</Badge>
-          </div>
-          <Progress value={(currentStep / 5) * 100} className="h-2" />
-        </div>
-
-        {/* Form Content */}
-        {currentStep === 3 ? renderStep() : (
-          <Card className="shadow-lg">
-            <CardContent className="p-6">
-              {renderStep()}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Navigation Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
-          <Button 
-            variant="outline" 
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="w-full sm:w-auto px-6 py-2"
-          >
-            Previous
-          </Button>
-          {currentStep === 5 ? (
-            <Button 
-              onClick={handleSubmit} 
-              className="w-full sm:w-auto bg-primary px-6 py-2"
-              disabled={!formData.termsAccepted}
-            >
-              Post for Free
-            </Button>
-          ) : (
-            <Button onClick={handleNext} className="w-full sm:w-auto bg-primary px-6 py-2">
-              Next
-            </Button>
-          )}
-        </div>
+    <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-32 responsive-header-spacing">
+      {/* Back Button */}
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
       </div>
-    </ResponsiveLayout>
+
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
+          <Badge variant="outline">Step {currentStep} of 5</Badge>
+        </div>
+        <Progress value={(currentStep / 5) * 100} className="h-2" />
+      </div>
+
+      {/* Form Content */}
+      {currentStep === 3 ? renderStep() : (
+        <Card className="shadow-lg">
+          <CardContent className="p-6">
+            {renderStep()}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
+        <Button 
+          variant="outline" 
+          onClick={handlePrevious}
+          disabled={currentStep === 1}
+          className="w-full sm:w-auto px-6 py-2"
+        >
+          Previous
+        </Button>
+        {currentStep === 5 ? (
+          <Button 
+            onClick={handleSubmit} 
+            className="w-full sm:w-auto bg-primary px-6 py-2"
+            disabled={!formData.termsAccepted}
+          >
+            Post for Free
+          </Button>
+        ) : (
+          <Button onClick={handleNext} className="w-full sm:w-auto bg-primary px-6 py-2">
+            Next
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 
