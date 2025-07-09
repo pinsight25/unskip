@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, X } from 'lucide-react';
-import CitySelector from '@/components/common/CitySelector';
+import { useCity } from '@/contexts/CityContext';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
@@ -33,7 +33,7 @@ const popularAreasByCity: Record<string, string[]> = {
 const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [selectedCity, setSelectedCity] = useState<string>('Chennai'); // Default to Chennai
+  const { selectedCity } = useCity();
   
   const currentPopularAreas = popularAreasByCity[selectedCity] || popularAreasByCity.Chennai;
 
@@ -65,26 +65,6 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
         priceRange: [0, 5000000],
         location: newLocation,
         city: selectedCity
-      });
-    }
-  };
-
-  const handleCityChange = (city: string) => {
-    // Handle "all-cities" value
-    const actualCity = city === 'all-cities' ? '' : city;
-    setSelectedCity(actualCity);
-    setSelectedLocation(''); // Clear location when city changes
-    setSearchQuery('');
-    
-    if (onSearch) {
-      onSearch('');
-    } else {
-      onFilterChange({
-        query: '',
-        type: 'all',
-        priceRange: [0, 5000000],
-        location: '',
-        city: actualCity
       });
     }
   };
@@ -138,23 +118,13 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             </Button>
           </div>
 
-          {/* City Selector */}
-          {!hideContent && (
-            <div className="flex justify-center">
-              <CitySelector 
-                selectedCity={selectedCity || 'all-cities'}
-                onCityChange={handleCityChange}
-              />
-            </div>
-          )}
-
           {/* Popular Areas - Mobile horizontal scroll, Desktop wrapped */}
           {!hideContent && (
             <div className="space-y-2 lg:space-y-3">
               <div className="flex items-center justify-start max-w-5xl mx-auto">
                 <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
-                  Popular Areas in {selectedCity || 'All Cities'}
+                  Popular Areas in {selectedCity}
                 </span>
               </div>
               

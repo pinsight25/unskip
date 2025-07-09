@@ -6,6 +6,7 @@ import { mockChats } from '@/data/chatMockData';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import HeaderActions from './header/HeaderActions';
+import HeaderCitySelector from './header/HeaderCitySelector';
 import MobileMenu from './header/MobileMenu';
 
 const Header = () => {
@@ -61,9 +62,19 @@ const Header = () => {
           {/* Desktop Navigation */}
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center space-x-4 lg:space-x-8">
+          <div className="flex items-center space-x-4 lg:space-x-6">
+            {/* City Selector - Hidden on mobile */}
+            <div className="hidden md:block">
+              <HeaderCitySelector />
+            </div>
+
             {/* Desktop Actions */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
+
+            {/* Mobile City Selector */}
+            <div className="md:hidden">
+              <HeaderCitySelector />
+            </div>
 
             {/* Mobile Chat Icon with proper badge positioning */}
             <Link

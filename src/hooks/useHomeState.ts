@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import { useToast } from '@/hooks/use-toast';
+import { useCity } from '@/contexts/CityContext';
 
 interface SearchFiltersType {
   query: string;
@@ -21,7 +22,7 @@ export const useHomeState = () => {
     type: 'all',
     priceRange: [0, 5000000],
     location: '',
-    city: 'Chennai' // Default to Chennai
+    city: ''
   });
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
@@ -30,6 +31,7 @@ export const useHomeState = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
+  const { selectedCity } = useCity();
 
   // Check if mobile
   useEffect(() => {
@@ -42,6 +44,13 @@ export const useHomeState = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Update filters when city changes from header
+  useEffect(() => {
+    const newFilters = { ...currentFilters, city: selectedCity };
+    setCurrentFilters(newFilters);
+    applyFilters(newFilters);
+  }, [selectedCity]);
+
   // FUNCTIONAL SEARCH AND FILTERING
   const applyFilters = (filters: SearchFiltersType) => {
     let filtered = cars;
@@ -51,8 +60,8 @@ export const useHomeState = () => {
       filtered = filtered.filter(car => car.seller.type === filters.type);
     }
     
-    // City filtering - Handle "all-cities" value
-    if (filters.city && filters.city !== 'all-cities') {
+    // City filtering - Use selected city from context
+    if (filters.city) {
       filtered = filtered.filter(car => 
         car.location.toLowerCase().includes(filters.city.toLowerCase())
       );
