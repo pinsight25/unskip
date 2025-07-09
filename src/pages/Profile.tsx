@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileContent from '@/components/profile/ProfileContent';
 import ProfileModals from '@/components/profile/ProfileModals';
 import SignInPrompt from '@/components/profile/SignInPrompt';
@@ -11,6 +12,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isSignedIn, signOut } = useUser();
+  const isMobile = useIsMobile();
   
   // Modal states
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -113,6 +115,7 @@ const Profile = () => {
           onEditProfile={handleEditProfile}
           onSignOut={handleSignOut}
           onConfirmDeleteListing={confirmDeleteListing}
+          isMobile={isMobile}
         />
       </>
     );
@@ -142,6 +145,7 @@ const Profile = () => {
         onEditProfile={handleEditProfile}
         onSignOut={handleSignOut}
         onConfirmDeleteListing={confirmDeleteListing}
+        isMobile={isMobile}
       />
     </>
   );
