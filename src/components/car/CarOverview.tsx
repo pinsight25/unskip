@@ -1,5 +1,4 @@
 
-import CarPriceSection from './CarPriceSection';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Award, CheckCircle, Users } from 'lucide-react';
 
@@ -38,16 +37,11 @@ const CarOverview = ({
     return `${ownership}th Owner`;
   };
 
-  const displayTitle = variant ? `${title} ${variant}` : title;
+  // If no title is provided, we're only showing badges
+  const isBadgesOnly = !title && !price;
 
   return (
     <div className="space-y-4">
-      <CarPriceSection 
-        title={displayTitle}
-        price={price}
-        rentPrice={rentPrice}
-      />
-      
       {/* Key Badges */}
       <div className="flex flex-wrap gap-2">
         <Badge className="bg-green-100 text-green-800 border-green-200 text-sm px-3 py-1">
@@ -83,9 +77,12 @@ const CarOverview = ({
         )}
       </div>
       
-      <div>
-        <p className="text-gray-700 text-sm leading-relaxed">{description}</p>
-      </div>
+      {/* Description - only show if not badges-only mode */}
+      {!isBadgesOnly && description && (
+        <div>
+          <p className="text-gray-700 text-sm leading-relaxed">{description}</p>
+        </div>
+      )}
     </div>
   );
 };

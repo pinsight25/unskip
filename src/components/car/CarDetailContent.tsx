@@ -4,8 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import CarImageGallery from '@/components/car/CarImageGallery';
+import CarPriceSection from '@/components/car/CarPriceSection';
 import CarOverview from '@/components/car/CarOverview';
-import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
 import CarDetailTabs from '@/components/car/CarDetailTabs';
@@ -31,6 +31,8 @@ const CarDetailContent = ({
     navigate('/');
   };
 
+  const displayTitle = car.variant ? `${car.title} ${car.variant}` : car.title;
+
   return (
     <div className="bg-white">
       <div className="max-w-7xl mx-auto px-4 pb-32 md:pb-6">
@@ -48,7 +50,7 @@ const CarDetailContent = ({
 
         {/* Desktop 3-column layout, Mobile stacked */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Image Gallery (Desktop: 2 columns width) */}
+          {/* Left Column - Image Gallery and Details */}
           <div className="lg:col-span-2 lg:sticky lg:top-4 lg:self-start space-y-4">
             <CarImageGallery
               images={car.images}
@@ -57,17 +59,18 @@ const CarDetailContent = ({
               verified={car.verified}
             />
             
-            {/* Tabbed Details - Now under image gallery */}
-            <CarDetailTabs car={car} />
-          </div>
-
-          {/* Right Column - Car Overview and Actions */}
-          <div className="space-y-4">
-            <CarOverview
-              title={car.title}
+            {/* Car Title and Price - Now above toggles */}
+            <CarPriceSection 
+              title={displayTitle}
               price={car.price}
               rentPrice={car.rentPrice}
-              description={car.description}
+            />
+
+            {/* Car Overview Badges */}
+            <CarOverview
+              title=""
+              price={0}
+              description=""
               variant={car.variant}
               ownership={car.ownershipNumber}
               noAccidentHistory={car.noAccidentHistory}
@@ -75,7 +78,20 @@ const CarDetailContent = ({
               featured={car.featured}
               seatingCapacity={car.seatingCapacity}
             />
+            
+            {/* Tabbed Details */}
+            <CarDetailTabs car={car} />
 
+            {/* Description */}
+            {car.description && (
+              <div>
+                <p className="text-gray-700 text-sm leading-relaxed">{car.description}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Seller and Actions */}
+          <div className="space-y-4">
             {/* Quick Actions - Desktop Top */}
             <div className="hidden lg:block">
               <CarActions
@@ -87,19 +103,6 @@ const CarDetailContent = ({
             </div>
 
             <SellerCard seller={car.seller} />
-
-            <SimpleVehicleInfo
-              ownership={car.ownershipNumber}
-              year={car.year}
-              mileage={car.kilometersDriven}
-              location={car.location}
-              landmark={car.landmark}
-              insuranceValid={car.insuranceValid}
-              insuranceValidTill={car.insuranceValidTill}
-              insuranceType={car.insuranceType}
-              lastServiceDate={car.lastServiceDate}
-              serviceAtAuthorized={car.serviceAtAuthorized}
-            />
 
             {/* Mobile Actions - Bottom */}
             <div className="lg:hidden">
