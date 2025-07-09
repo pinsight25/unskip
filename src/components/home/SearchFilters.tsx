@@ -70,7 +70,9 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
   };
 
   const handleCityChange = (city: string) => {
-    setSelectedCity(city);
+    // Handle "all-cities" value
+    const actualCity = city === 'all-cities' ? '' : city;
+    setSelectedCity(actualCity);
     setSelectedLocation(''); // Clear location when city changes
     setSearchQuery('');
     
@@ -82,7 +84,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
         type: 'all',
         priceRange: [0, 5000000],
         location: '',
-        city: city
+        city: actualCity
       });
     }
   };
@@ -140,7 +142,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
           {!hideContent && (
             <div className="flex justify-center">
               <CitySelector 
-                selectedCity={selectedCity}
+                selectedCity={selectedCity || 'all-cities'}
                 onCityChange={handleCityChange}
               />
             </div>
@@ -152,7 +154,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
               <div className="flex items-center justify-start max-w-5xl mx-auto">
                 <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
-                  Popular Areas in {selectedCity || 'Chennai'}
+                  Popular Areas in {selectedCity || 'All Cities'}
                 </span>
               </div>
               
@@ -175,12 +177,10 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                       </button>
                     );
                   })}
-                  {/* Extra padding at the end for better UX */}
                   <div className="w-4 flex-shrink-0" />
                 </div>
               </div>
 
-              {/* Desktop: Wrapped layout */}
               <div className="max-w-5xl mx-auto hidden lg:block">
                 <div className="flex flex-wrap gap-3 justify-start pb-2">
                   {currentPopularAreas.map((location) => {

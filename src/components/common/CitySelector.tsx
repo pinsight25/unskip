@@ -30,7 +30,9 @@ const CitySelector = ({ selectedCity, onCityChange, className = '' }: CitySelect
           <SelectValue placeholder="Select City" />
         </SelectTrigger>
         <SelectContent className="bg-white border shadow-lg">
-          <SelectItem value="">All Cities</SelectItem>
+          <SelectItem value="all-cities" className="hover:bg-gray-50">
+            All Cities
+          </SelectItem>
           {cities.map((city) => (
             <SelectItem key={city} value={city} className="hover:bg-gray-50">
               {city}

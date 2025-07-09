@@ -51,8 +51,8 @@ export const useHomeState = () => {
       filtered = filtered.filter(car => car.seller.type === filters.type);
     }
     
-    // City filtering - NEW
-    if (filters.city) {
+    // City filtering - Handle "all-cities" value
+    if (filters.city && filters.city !== 'all-cities') {
       filtered = filtered.filter(car => 
         car.location.toLowerCase().includes(filters.city.toLowerCase())
       );
