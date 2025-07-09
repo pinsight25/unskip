@@ -1,5 +1,8 @@
 
 import { useState, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockAccessories } from '@/data/accessoryMockData';
 import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
@@ -8,6 +11,10 @@ import AccessoryFiltersComponent from '@/components/accessories/AccessoryFilters
 import AccessoryResults from '@/components/accessories/AccessoryResults';
 
 const Accessories = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const showBackButton = location.state?.from || document.referrer;
+
   const [filters, setFilters] = useState<AccessoryFilters>({
     search: '',
     category: 'all',
@@ -98,11 +105,28 @@ const Accessories = () => {
     <ResponsiveLayout>
       <div className="bg-white min-h-screen">
         {/* Header Section */}
-        <AccessoryHeader
-          filters={filters}
-          onSearchChange={handleSearchChange}
-          onCategoryFilter={handleCategoryFilter}
-        />
+        <div className="bg-white">
+          {/* Back Button - Show conditionally */}
+          {showBackButton && (
+            <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 pt-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </div>
+          )}
+
+          <AccessoryHeader
+            filters={filters}
+            onSearchChange={handleSearchChange}
+            onCategoryFilter={handleCategoryFilter}
+          />
+        </div>
 
         {/* Results Section */}
         <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">

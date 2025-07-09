@@ -30,9 +30,6 @@ const AccessorySellerCard = ({ seller, onChat, onCall }: AccessorySellerCardProp
                   <MapPin className="h-4 w-4 mr-1" />
                   {seller.location}
                 </div>
-                <div>
-                  {seller.totalSales} sales
-                </div>
               </div>
             </div>
           </div>

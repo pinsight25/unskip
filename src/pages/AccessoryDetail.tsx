@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { mockAccessories } from '@/data/accessoryMockData';
 import { Accessory } from '@/types/accessory';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft } from 'lucide-react';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
@@ -13,6 +15,7 @@ import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories
 
 const AccessoryDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const accessory: Accessory | undefined = mockAccessories.find((acc) => acc.id === id);
   const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
@@ -81,12 +84,23 @@ const AccessoryDetail = () => {
   return (
     <ResponsiveLayout>
       <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-          <Link to="/accessories" className="hover:text-primary">Accessories</Link>
-          <span>/</span>
-          <span className="text-gray-900">{accessory.name}</span>
-        </nav>
+        {/* Back Button and Breadcrumb */}
+        <div className="flex items-center space-x-4 mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <nav className="flex items-center space-x-2 text-sm text-gray-600">
+            <Link to="/accessories" className="hover:text-primary">Accessories</Link>
+            <span>/</span>
+            <span className="text-gray-900">{accessory.name}</span>
+          </nav>
+        </div>
 
         {/* Main Content - Improved Desktop Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -98,6 +112,8 @@ const AccessoryDetail = () => {
                 name={accessory.name}
                 selectedImage={selectedImage}
                 onImageSelect={setSelectedImage}
+                featured={accessory.featured}
+                verified={accessory.seller.verified}
               />
 
               <AccessoryInfo

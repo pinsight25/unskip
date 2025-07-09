@@ -1,3 +1,7 @@
+
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockCars } from '@/data/mockData';
 import { useCarSearch } from '@/hooks/useCarSearch';
@@ -6,6 +10,7 @@ import SearchFilters from '@/components/search/SearchFilters';
 import SearchResults from '@/components/search/SearchResults';
 
 const Search = () => {
+  const navigate = useNavigate();
   const {
     searchQuery,
     setSearchQuery,
@@ -28,6 +33,19 @@ const Search = () => {
   return (
     <ResponsiveLayout>
       <div className="bg-white w-full overflow-hidden">
+        {/* Back Button */}
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </div>
+
         <div className="mb-4">
           <SearchHeader
             searchQuery={searchQuery}

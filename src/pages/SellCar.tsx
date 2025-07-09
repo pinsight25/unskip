@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft } from 'lucide-react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { useSellCarForm } from '@/hooks/useSellCarForm';
 import CarDetailsStep from '@/components/sell-car/CarDetailsStep';
@@ -123,6 +125,19 @@ const SellCar = () => {
   return (
     <ResponsiveLayout>
       <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-32 responsive-header-spacing">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Button>
+        </div>
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
