@@ -126,7 +126,7 @@ const CarDetailContent = ({
               insuranceType={car.insuranceType}
               lastServiceDate={car.lastServiceDate}
               serviceAtAuthorized={car.serviceAtAuthorized}
-              rcTransferSupport={car.rcTransferSupport}
+              rtoTransferSupport={car.rtoTransferSupport}
             />
 
             {/* Mobile Actions - Bottom */}
