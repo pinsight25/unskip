@@ -1,65 +1,51 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserProvider } from '@/contexts/UserContext';
+import { OfferProvider } from '@/contexts/OfferContext';
+import { Toaster } from '@/components/ui/toaster';
+import Home from '@/pages/Home';
+import CarDetail from '@/pages/CarDetail';
+import Dealers from '@/pages/Dealers';
+import DealerRegister from '@/pages/DealerRegister';
+import DealerInventory from '@/pages/DealerInventory';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
+import Chat from '@/pages/Chat';
+import SellCar from '@/pages/SellCar';
+import AccessoryPost from '@/pages/AccessoryPost';
+import Search from '@/pages/Search';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { UserProvider } from "@/contexts/UserContext";
-import Index from "./pages/Index";
-import CarDetail from "./pages/CarDetail";
-import SellCar from "./pages/SellCar";
-import Search from "./pages/Search";
-import Profile from "./pages/Profile";
-import Saved from "./pages/Saved";
-import Dealers from "./pages/Dealers";
-import DealerInventory from "./pages/DealerInventory";
-import DealerRegister from "./pages/DealerRegister";
-import Chats from "./pages/Chats";
-import ChatDetail from "./pages/ChatDetail";
-import Accessories from "./pages/Accessories";
-import AccessoryDetail from "./pages/AccessoryDetail";
-import PostAccessory from "./pages/PostAccessory";
-import NotFound from "./pages/NotFound";
+const queryClient = new QueryClient();
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
       <UserProvider>
-        <div className="min-h-screen">
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <OfferProvider>
+          <Router>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/sell" element={<SellCar />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/saved" element={<Saved />} />
-              <Route path="/dealers" element={<Dealers />} />
-              <Route path="/dealer/:dealerId/inventory" element={<DealerInventory />} />
-              <Route path="/dealer-register" element={<DealerRegister />} />
-              <Route path="/chats" element={<Chats />} />
-              <Route path="/chat/:id" element={<ChatDetail />} />
+              <Route path="/" element={<Home />} />
               <Route path="/car/:id" element={<CarDetail />} />
-              <Route path="/accessories" element={<Accessories />} />
-              <Route path="/accessories/:id" element={<AccessoryDetail />} />
-              <Route path="/post-accessory" element={<PostAccessory />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/dealers" element={<Dealers />} />
+              <Route path="/dealers/:dealerId" element={<DealerInventory />} />
+              <Route path="/dealer/register" element={<DealerRegister />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/chat/:chatId" element={<Chat />} />
+              <Route path="/sell-car" element={<SellCar />} />
+              <Route path="/post-accessory" element={<AccessoryPost />} />
+              <Route path="/search" element={<Search />} />
             </Routes>
-          </BrowserRouter>
-        </div>
+          </Router>
+          <Toaster />
+        </OfferProvider>
       </UserProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </QueryClientProvider>
+  );
+}
 
 export default App;

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Car } from '@/types/car';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
+import { useOfferContext } from '@/contexts/OfferContext';
 import CarDetailContent from './CarDetailContent';
 import CarDetailModals from './CarDetailModals';
 
@@ -14,6 +15,7 @@ interface CarDetailContainerProps {
 const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   const navigate = useNavigate();
   const { navigateToChat } = useChatManager();
+  const { makeOffer } = useOfferContext();
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
@@ -37,6 +39,10 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     console.log('Offer submitted:', offer);
+    
+    // Mark offer as made in context
+    makeOffer(car.id);
+    
     setOfferStatus('pending');
     
     // Simulate offer acceptance after 3 seconds
@@ -56,23 +62,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleChatClick = () => {
-    if (offerStatus === 'none') {
-      toast({
-        title: "Make an offer first",
-        description: "You need to make an offer before you can chat with the seller.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (offerStatus === 'pending') {
-      toast({
-        title: "Waiting for seller response",
-        description: "Please wait for the seller to respond to your offer before chatting.",
-      });
-      return;
-    }
-    
     if (offerStatus === 'accepted') {
       // Navigate to chat page with the car ID
       navigateToChat(car.id);
@@ -80,11 +69,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleTestDrive = () => {
-    toast({
-      title: "Test Drive Request",
-      description: `Test drive request sent for ${car.title}`,
-    });
-    console.log('Test drive requested for car:', car.id);
     setShowTestDriveModal(true);
   };
 

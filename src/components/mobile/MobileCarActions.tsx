@@ -2,8 +2,11 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Calendar, IndianRupee } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useOfferContext } from '@/contexts/OfferContext';
 
 interface MobileCarActionsProps {
+  carId: string;
   offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
   onMakeOffer: (e?: React.MouseEvent) => void;
   onChat: (e?: React.MouseEvent) => void;
@@ -11,11 +14,39 @@ interface MobileCarActionsProps {
 }
 
 const MobileCarActions = ({
+  carId,
   offerStatus,
   onMakeOffer,
   onChat,
   onTestDrive
 }: MobileCarActionsProps) => {
+  const { toast } = useToast();
+  const { hasOffered } = useOfferContext();
+
+  const handleChatClick = (e?: React.MouseEvent) => {
+    if (!hasOffered(carId)) {
+      toast({
+        title: "Make an offer first",
+        description: "You need to make an offer before you can chat with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    onChat(e);
+  };
+
+  const handleTestDriveClick = (e?: React.MouseEvent) => {
+    if (!hasOffered(carId)) {
+      toast({
+        title: "Make an offer first",
+        description: "Please make an offer before booking a test drive with the seller.",
+        variant: "destructive",
+      });
+      return;
+    }
+    onTestDrive(e);
+  };
+
   const getOfferButton = () => {
     switch (offerStatus) {
       case 'pending':
@@ -49,17 +80,7 @@ const MobileCarActions = ({
     }
   };
 
-  const getChatButtonConfig = () => {
-    const isDisabled = offerStatus === 'none' || offerStatus === 'pending' || offerStatus === 'rejected';
-    return {
-      disabled: isDisabled,
-      className: isDisabled 
-        ? 'border-gray-300 text-gray-500' 
-        : 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
-    };
-  };
-
-  const chatConfig = getChatButtonConfig();
+  const offered = hasOffered(carId);
 
   return (
     <div className="space-y-3 pb-4">
@@ -73,9 +94,13 @@ const MobileCarActions = ({
         <Button 
           size="sm" 
           variant="outline"
-          onClick={onChat}
-          disabled={chatConfig.disabled}
-          className={`flex-1 ${chatConfig.className}`}
+          onClick={handleChatClick}
+          disabled={!offered}
+          className={`flex-1 ${
+            offered 
+              ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
+              : 'border-gray-300 text-gray-500'
+          }`}
         >
           <MessageCircle className="h-4 w-4 mr-1" />
           Chat
@@ -83,8 +108,13 @@ const MobileCarActions = ({
         <Button 
           size="sm" 
           variant="outline" 
-          onClick={onTestDrive}
-          className="flex-1 border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500"
+          onClick={handleTestDriveClick}
+          disabled={!offered}
+          className={`flex-1 ${
+            offered
+              ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500'
+              : 'border-gray-300 text-gray-500'
+          }`}
         >
           <Calendar className="h-4 w-4 mr-1" />
           Test Drive

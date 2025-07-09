@@ -96,6 +96,7 @@ const CarDetailContent = ({
 
             {/* Action buttons - Now below seller card */}
             <CarActions
+              carId={car.id}
               offerStatus={offerStatus}
               onMakeOffer={onMakeOffer}
               onChatClick={onChatClick}

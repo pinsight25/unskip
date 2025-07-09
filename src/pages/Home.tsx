@@ -7,12 +7,15 @@ import SearchResultsView from '@/components/home/SearchResultsView';
 import TestDriveModal from '@/components/modals/TestDriveModal';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
+import { useOfferContext } from '@/contexts/OfferContext';
 import { useState } from 'react';
 import { Car } from '@/types/car';
 
 const Home = () => {
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
+
+  const { makeOffer } = useOfferContext();
 
   const {
     filteredCars,
@@ -32,7 +35,7 @@ const Home = () => {
     handleSaveCar,
     handleMakeOffer,
     handleOTPSuccess,
-    handleOfferSubmit,
+    handleOfferSubmit: originalHandleOfferSubmit,
     handlePullToRefresh,
     getOfferStatus
   } = useHomeState();
@@ -48,6 +51,13 @@ const Home = () => {
 
   const { toast } = useToast();
   const { navigateToChat } = useChatManager();
+
+  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    if (selectedCar) {
+      makeOffer(selectedCar.id);
+    }
+    originalHandleOfferSubmit(offer);
+  };
 
   const handleChatClick = (car: any) => {
     const status = getOfferStatus(car.id);

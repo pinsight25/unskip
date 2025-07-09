@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import MobileCarImage from './MobileCarImage';
@@ -70,6 +69,7 @@ const MobileCarCard = ({
         />
 
         <MobileCarActions
+          carId={car.id}
           offerStatus={offerStatus}
           onMakeOffer={(e) => {
             e?.stopPropagation();
