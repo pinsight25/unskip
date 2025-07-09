@@ -18,20 +18,20 @@ const TabNavigation = ({ activeTab, onTabChange }: TabNavigationProps) => {
   ] as const;
 
   return (
-    <div className="flex gap-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
+    <div className="flex gap-2 bg-gray-100 p-1 rounded-lg overflow-x-auto">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         return (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id as TabType)}
-            className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all duration-200 flex-1 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all duration-200 flex-1 justify-center ${
               activeTab === tab.id
                 ? 'bg-orange-500 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
             }`}
           >
-            <Icon className="h-3 w-3 flex-shrink-0" />
+            <Icon className="h-4 w-4 flex-shrink-0" />
             <span className="hidden sm:inline text-xs sm:text-sm">{tab.label}</span>
           </button>
         );
