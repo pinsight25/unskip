@@ -36,8 +36,8 @@ function App() {
                   <Route path="/search" element={<Search />} />
                 </Routes>
               </ResponsiveLayout>
+              <Toaster />
             </Router>
-            <Toaster />
           </CityProvider>
         </OfferProvider>
       </UserProvider>
