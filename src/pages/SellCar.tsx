@@ -106,7 +106,7 @@ const SellCar = () => {
         return (
           <LocationContactStep 
             formData={formData}
-            setFormData={setFormData}
+            onUpdate={(updates) => setFormData(prev => ({ ...prev, ...updates }))}
             handlePhoneVerification={handlePhoneVerification}
           />
         );

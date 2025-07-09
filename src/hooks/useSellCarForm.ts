@@ -2,8 +2,52 @@
 import { useState } from 'react';
 import { updateFormField } from '@/utils/formHelpers';
 
+export type SellCarFormData = {
+  make: string;
+  model: string;
+  variant: string;
+  year: string;
+  registrationYear: string;
+  registrationState: string;
+  numberOfOwners: string;
+  seatingCapacity: string;
+  fuelType: string;
+  transmission: string;
+  kilometersDriven: string;
+  color: string;
+  price: string;
+  acceptOffers: boolean;
+  offerPercentage: string;
+  insuranceValidTill: string;
+  insuranceType: string;
+  lastServiceDate: string;
+  authorizedServiceCenter: boolean;
+  rtoTransferSupport: boolean;
+  noAccidentHistory: boolean;
+  isRentAvailable: boolean;
+  dailyRate: string;
+  weeklyRate: string;
+  securityDeposit: string;
+  photos: string[];
+  coverPhotoIndex: number;
+  city: string;
+  area: string;
+  landmark: string;
+  phone: string;
+  phoneVerified: boolean;
+  description: string;
+  termsAccepted: boolean;
+  // Additional fields for LocationContactStep
+  address: string;
+  sellerName: string;
+  email: string;
+  additionalInfo: string;
+  whatsappContact: boolean;
+  verifiedSeller: boolean;
+};
+
 export const useSellCarForm = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SellCarFormData>({
     make: '',
     model: '',
     variant: '',
@@ -37,7 +81,14 @@ export const useSellCarForm = () => {
     phone: '',
     phoneVerified: false,
     description: '',
-    termsAccepted: false
+    termsAccepted: false,
+    // Additional fields for LocationContactStep
+    address: '',
+    sellerName: '',
+    email: '',
+    additionalInfo: '',
+    whatsappContact: false,
+    verifiedSeller: false,
   });
 
   const validatePrice = (price: string) => {

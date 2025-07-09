@@ -6,7 +6,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SellCarFormData } from '@/types/car';
+// Define SellCarFormData type locally to match formData structure
+type SellCarFormData = {
+  city: string;
+  area: string;
+  address: string;
+  sellerName: string;
+  phone: string;
+  email: string;
+  additionalInfo: string;
+  whatsappContact: boolean;
+  verifiedSeller: boolean;
+  // Add any other fields used in the form
+};
 import { updateFormField } from '@/utils/formHelpers';
 
 interface LocationContactStepProps {
@@ -140,7 +152,7 @@ const LocationContactStep = ({ formData, onUpdate }: LocationContactStepProps) =
               <Checkbox
                 id="whatsappContact"
                 checked={formData.whatsappContact}
-                onCheckedChange={(checked) => onUpdate(updateFormField({}, 'whatsappContact', checked))}
+                onCheckedChange={(checked) => onUpdate(updateFormField(formData, 'whatsappContact', checked))}
               />
               <Label htmlFor="whatsappContact" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
@@ -152,7 +164,7 @@ const LocationContactStep = ({ formData, onUpdate }: LocationContactStepProps) =
               <Checkbox
                 id="verifiedSeller"
                 checked={formData.verifiedSeller}
-                onCheckedChange={(checked) => onUpdate(updateFormField({}, 'verifiedSeller', checked))}
+                onCheckedChange={(checked) => onUpdate(updateFormField(formData, 'verifiedSeller', checked))}
               />
               <Label htmlFor="verifiedSeller" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />

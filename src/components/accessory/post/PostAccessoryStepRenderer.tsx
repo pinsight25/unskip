@@ -3,11 +3,12 @@ import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 import BasicInformationStep from './BasicInformationStep';
 import DetailsCompatibilityStep from './DetailsCompatibilityStep';
 import PhotosContactStep from './PhotosContactStep';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface PostAccessoryStepRendererProps {
   currentStep: number;
   formData: AccessoryFormData;
-  onUpdate: (field: keyof AccessoryFormData, value: any) => void;
+  onUpdate: (updates: Partial<AccessoryFormData>) => void;
   onPhoneVerification: () => void;
 }
 
@@ -22,14 +23,14 @@ const PostAccessoryStepRenderer = ({
       return (
         <BasicInformationStep
           formData={formData}
-          onUpdate={onUpdate}
+          onUpdate={(field, value) => onUpdate(updateFormField(formData, field, value))}
         />
       );
     case 2:
       return (
         <DetailsCompatibilityStep
           formData={formData}
-          onUpdate={onUpdate}
+          onUpdate={(field, value) => onUpdate(updateFormField(formData, field, value))}
         />
       );
     case 3:

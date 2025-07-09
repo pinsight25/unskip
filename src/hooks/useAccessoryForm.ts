@@ -18,6 +18,10 @@ export interface AccessoryFormData {
   phoneVerified: boolean;
   email: string;
   location: string;
+  images: string[];
+  additionalInfo: string;
+  whatsappContact: boolean;
+  verifiedSeller: boolean;
 }
 
 export const useAccessoryForm = () => {
@@ -37,6 +41,10 @@ export const useAccessoryForm = () => {
     phoneVerified: false,
     email: '',
     location: '',
+    images: [],
+    additionalInfo: '',
+    whatsappContact: false,
+    verifiedSeller: false,
   });
 
   const updateFormData = (field: keyof AccessoryFormData, value: any) => {
