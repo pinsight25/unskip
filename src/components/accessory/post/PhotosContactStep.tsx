@@ -20,6 +20,14 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
   const displayPhone = isSignedIn && user?.phone ? user.phone : formData.phone;
   const isPhoneVerified = isSignedIn && user?.phone;
 
+  const handlePhoneVerification = () => {
+    onPhoneVerification();
+    // Use updateFormField for boolean update
+    setTimeout(() => {
+      onUpdate('phoneVerified', true);
+    }, 2000);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -67,7 +75,7 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={onPhoneVerification}
+                  onClick={handlePhoneVerification}
                   disabled={isPhoneVerified || toBoolean(formData.phoneVerified) || !displayPhone}
                 >
                   {isPhoneVerified || toBoolean(formData.phoneVerified) ? 'Verified' : 'Verify'}

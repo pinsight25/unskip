@@ -38,6 +38,11 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
   const displayPhone = isSignedIn && user?.phone ? user.phone : formData.phone;
   const isPhoneVerified = isSignedIn && user?.phone;
 
+  const handlePhoneVerificationClick = () => {
+    handlePhoneVerification();
+    // The phoneVerified update will be handled by the parent component using updateFormField
+  };
+
   return (
     <div className="space-y-5">
       <div>
@@ -109,14 +114,14 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             <Button 
               variant="outline" 
               size="sm"
-              onClick={handlePhoneVerification}
-              disabled={isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean) || !displayPhone}
+              onClick={handlePhoneVerificationClick}
+              disabled={isPhoneVerified || toBoolean(formData.phoneVerified) || !displayPhone}
               className="px-4 py-2"
             >
-              {isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean) ? 'Verified' : 'Verify'}
+              {isPhoneVerified || toBoolean(formData.phoneVerified) ? 'Verified' : 'Verify'}
             </Button>
           </div>
-          {(isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean)) && (
+          {(isPhoneVerified || toBoolean(formData.phoneVerified)) && (
             <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
               <span className="text-xs">Phone number verified</span>
