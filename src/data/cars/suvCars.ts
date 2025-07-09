@@ -8,6 +8,7 @@ export const suvCars: Car[] = [
     title: '2020 Hyundai Creta SX',
     brand: 'Hyundai',
     model: 'Creta',
+    variant: 'SX',
     year: 2020,
     price: 1450000,
     images: [
@@ -21,10 +22,14 @@ export const suvCars: Car[] = [
     location: 'Anna Nagar, Chennai',
     landmark: 'Opposite Metro Station',
     color: 'Silver',
+    seatingCapacity: 5,
     description: 'Premium SUV in excellent condition. All features working perfectly.',
     seller: sellers[1],
     registrationYear: 2020,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 75,
     insurance: {
       validTill: '2024-12-20',
       type: 'Comprehensive'
@@ -48,7 +53,6 @@ export const suvCars: Car[] = [
       minRentalPeriod: 1
     },
     rentType: 'premium',
-    features: ['Sunroof', 'Automatic AC', 'Touchscreen', 'Reverse Camera', 'Leather Seats'],
     verified: true,
     featured: true,
     views: 456,
@@ -59,6 +63,7 @@ export const suvCars: Car[] = [
     title: '2022 Mahindra XUV700',
     brand: 'Mahindra',
     model: 'XUV700',
+    variant: 'AX7',
     year: 2022,
     price: 1850000,
     images: [
@@ -71,10 +76,14 @@ export const suvCars: Car[] = [
     ownership: 1,
     location: 'OMR, Chennai',
     color: 'Red',
+    seatingCapacity: 7,
     description: 'Latest model XUV700 with all premium features. Excellent condition.',
     seller: sellers[0],
     registrationYear: 2022,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 80,
     insurance: {
       validTill: '2025-03-15',
       type: 'Comprehensive'

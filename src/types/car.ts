@@ -1,8 +1,10 @@
+
 export interface Car {
   id: string;
   title: string;
   brand: string;
   model: string;
+  variant?: string;
   year: number;
   price: number;
   images: string[];
@@ -15,6 +17,7 @@ export interface Car {
   seller: Seller;
   color?: string;
   landmark?: string;
+  seatingCapacity?: number;
   isRentAvailable?: boolean;
   rentPrice?: {
     daily: number;
@@ -29,14 +32,16 @@ export interface Car {
     minRentalPeriod: number;
   };
   rentType?: 'economy' | 'premium' | 'luxury' | 'suv';
-  features?: string[];
   verified: boolean;
   featured: boolean;
   views: number;
   createdAt: string;
-  // New Indian car buyer fields
+  // Fields from Sell Car form
   registrationYear?: number;
   registrationState?: string;
+  noAccidentHistory?: boolean;
+  acceptOffers?: boolean;
+  offerPercentage?: number;
   insurance?: {
     validTill: string;
     type: 'Comprehensive' | 'Third Party';

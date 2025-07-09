@@ -8,6 +8,7 @@ export const economyCars: Car[] = [
     title: '2019 Maruti Swift VDI',
     brand: 'Maruti',
     model: 'Swift',
+    variant: 'VDI',
     year: 2019,
     price: 650000,
     images: [
@@ -21,10 +22,14 @@ export const economyCars: Car[] = [
     location: 'T. Nagar, Chennai',
     landmark: 'Near Landmark Mall',
     color: 'White',
+    seatingCapacity: 5,
     description: 'Well maintained Swift with complete service history. Single owner, non-accidental.',
     seller: sellers[0],
     registrationYear: 2019,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 70,
     insurance: {
       validTill: '2024-08-15',
       type: 'Comprehensive'
@@ -48,7 +53,6 @@ export const economyCars: Car[] = [
       minRentalPeriod: 1
     },
     rentType: 'economy',
-    features: ['AC', 'Power Steering', 'Music System', 'Clean Interior'],
     verified: true,
     featured: true,
     views: 234,
@@ -59,6 +63,7 @@ export const economyCars: Car[] = [
     title: '2018 Honda City VX',
     brand: 'Honda',
     model: 'City',
+    variant: 'VX',
     year: 2018,
     price: 950000,
     images: [
@@ -71,10 +76,14 @@ export const economyCars: Car[] = [
     ownership: 2,
     location: 'Adyar, Chennai',
     color: 'Black',
+    seatingCapacity: 5,
     description: 'Reliable sedan with automatic transmission. Great for city driving.',
     seller: sellers[0],
     registrationYear: 2018,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: false,
+    acceptOffers: false,
+    offerPercentage: 0,
     insurance: {
       validTill: '2024-06-30',
       type: 'Third Party'

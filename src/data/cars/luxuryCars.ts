@@ -8,6 +8,7 @@ export const luxuryCars: Car[] = [
     title: '2021 Tata Nexon EV',
     brand: 'Tata',
     model: 'Nexon EV',
+    variant: 'XZ+',
     year: 2021,
     price: 1200000,
     images: [
@@ -20,10 +21,14 @@ export const luxuryCars: Car[] = [
     ownership: 1,
     location: 'Velachery, Chennai',
     color: 'Blue',
+    seatingCapacity: 5,
     description: 'Electric SUV with excellent range. Perfect for eco-conscious buyers.',
     seller: sellers[3],
     registrationYear: 2021,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 70,
     insurance: {
       validTill: '2024-11-25',
       type: 'Comprehensive'
@@ -47,7 +52,6 @@ export const luxuryCars: Car[] = [
       minRentalPeriod: 1
     },
     rentType: 'premium',
-    features: ['Electric', 'Fast Charging', 'Connected Car', 'Premium Audio', 'Digital Cluster'],
     verified: true,
     featured: false,
     views: 189,
@@ -58,6 +62,7 @@ export const luxuryCars: Car[] = [
     title: '2020 BMW 3 Series',
     brand: 'BMW',
     model: '3 Series',
+    variant: '320d',
     year: 2020,
     price: 3200000,
     images: [
@@ -70,10 +75,14 @@ export const luxuryCars: Car[] = [
     ownership: 1,
     location: 'ECR, Chennai',
     color: 'Black',
+    seatingCapacity: 5,
     description: 'Luxury sedan in pristine condition. Full service history available.',
     seller: sellers[1],
     registrationYear: 2020,
     registrationState: 'TN - Tamil Nadu',
+    noAccidentHistory: true,
+    acceptOffers: true,
+    offerPercentage: 85,
     insurance: {
       validTill: '2024-09-10',
       type: 'Comprehensive'
@@ -97,7 +106,6 @@ export const luxuryCars: Car[] = [
       minRentalPeriod: 2
     },
     rentType: 'luxury',
-    features: ['Premium Sound', 'Heated Seats', 'Navigation', 'Ambient Lighting', 'Premium Interior'],
     verified: true,
     featured: true,
     views: 567,
