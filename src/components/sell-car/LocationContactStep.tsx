@@ -1,9 +1,11 @@
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
 
 interface LocationContactStepProps {
   formData: any;
@@ -12,7 +14,28 @@ interface LocationContactStepProps {
 }
 
 const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }: LocationContactStepProps) => {
-  const areas = ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'Porur', 'Tambaram', 'Chrompet'];
+  const { user, isSignedIn } = useUser();
+  
+  const cities = [
+    'Chennai', 'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune', 'Kolkata', 
+    'Ahmedabad', 'Jaipur', 'Surat', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore'
+  ];
+
+  const getAreasByCity = (city: string) => {
+    const areaMap: Record<string, string[]> = {
+      'Chennai': ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'Porur', 'Tambaram', 'Chrompet'],
+      'Mumbai': ['Bandra', 'Andheri', 'Powai', 'Malad', 'Thane', 'Borivali', 'Kandivali', 'Goregaon'],
+      'Delhi': ['Connaught Place', 'Karol Bagh', 'Lajpat Nagar', 'Janakpuri', 'Rohini', 'Dwarka', 'Saket'],
+      'Bangalore': ['Koramangala', 'Indiranagar', 'Whitefield', 'Electronic City', 'Marathahalli', 'JP Nagar'],
+    };
+    return areaMap[city] || ['Central Area', 'North Area', 'South Area', 'East Area', 'West Area'];
+  };
+
+  const areas = formData.city ? getAreasByCity(formData.city) : [];
+
+  // Pre-fill phone if user is signed in
+  const displayPhone = isSignedIn && user?.phone ? user.phone : formData.phone;
+  const isPhoneVerified = isSignedIn && user?.phone;
 
   return (
     <div className="space-y-5">
@@ -24,10 +47,33 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
       <div className="space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Area *</Label>
-            <Select value={formData.area} onValueChange={(value) => setFormData({ ...formData, area: value })}>
+            <Label className="text-sm font-medium">City *</Label>
+            <Select 
+              value={formData.city} 
+              onValueChange={(value) => {
+                setFormData({ ...formData, city: value, area: '' }); // Reset area when city changes
+              }}
+            >
               <SelectTrigger className="h-10 w-full max-w-md">
-                <SelectValue placeholder="Select your area" />
+                <SelectValue placeholder="Select your city" />
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city}>{city}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Area *</Label>
+            <Select 
+              value={formData.area} 
+              onValueChange={(value) => setFormData({ ...formData, area: value })}
+              disabled={!formData.city}
+            >
+              <SelectTrigger className="h-10 w-full max-w-md">
+                <SelectValue placeholder={formData.city ? "Select your area" : "Select city first"} />
               </SelectTrigger>
               <SelectContent>
                 {areas.map((area) => (
@@ -36,16 +82,16 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
               </SelectContent>
             </Select>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Landmark (Optional)</Label>
-            <Input 
-              placeholder="Near Landmark Mall, Opposite Metro Station"
-              value={formData.landmark}
-              onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-              className="h-10 w-full max-w-md"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Landmark (Optional)</Label>
+          <Input 
+            placeholder="Near Landmark Mall, Opposite Metro Station"
+            value={formData.landmark}
+            onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+            className="h-10 w-full max-w-md"
+          />
         </div>
 
         <div className="space-y-2">
@@ -54,21 +100,22 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             <Input 
               type="tel" 
               placeholder="+91 9876543210"
-              value={formData.phone}
+              value={displayPhone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               className="flex-1 h-10 w-full max-w-md"
+              disabled={isSignedIn && user?.phone}
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={handlePhoneVerification}
-              disabled={formData.phoneVerified || !formData.phone}
+              disabled={isPhoneVerified || formData.phoneVerified || !displayPhone}
               className="px-4 py-2"
             >
-              {formData.phoneVerified ? 'Verified' : 'Verify'}
+              {isPhoneVerified || formData.phoneVerified ? 'Verified' : 'Verify'}
             </Button>
           </div>
-          {formData.phoneVerified && (
+          {(isPhoneVerified || formData.phoneVerified) && (
             <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
               <span className="text-xs">Phone number verified</span>

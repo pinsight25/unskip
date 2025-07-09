@@ -2,8 +2,9 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Camera, Plus } from 'lucide-react';
+import { Camera, Plus, CheckCircle } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
+import { useUser } from '@/contexts/UserContext';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
@@ -12,6 +13,12 @@ interface PhotosContactStepProps {
 }
 
 const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosContactStepProps) => {
+  const { user, isSignedIn } = useUser();
+  
+  // Pre-fill phone if user is signed in
+  const displayPhone = isSignedIn && user?.phone ? user.phone : formData.phone;
+  const isPhoneVerified = isSignedIn && user?.phone;
+
   return (
     <div className="space-y-6">
       <div>
@@ -51,19 +58,26 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
                 <Input
                   id="phone"
                   placeholder="+91 98765 43210"
-                  value={formData.phone}
+                  value={displayPhone}
                   onChange={(e) => onUpdate('phone', e.target.value)}
                   className="flex-1"
+                  disabled={isSignedIn && user?.phone}
                 />
                 <Button 
                   type="button" 
                   variant="outline"
                   onClick={onPhoneVerification}
-                  disabled={formData.phoneVerified}
+                  disabled={isPhoneVerified || formData.phoneVerified || !displayPhone}
                 >
-                  {formData.phoneVerified ? 'Verified' : 'Verify'}
+                  {isPhoneVerified || formData.phoneVerified ? 'Verified' : 'Verify'}
                 </Button>
               </div>
+              {(isPhoneVerified || formData.phoneVerified) && (
+                <div className="flex items-center text-sm text-green-600 mt-1">
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  <span className="text-xs">Phone number verified</span>
+                </div>
+              )}
             </div>
 
             <div>

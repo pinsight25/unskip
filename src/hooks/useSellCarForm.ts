@@ -31,6 +31,7 @@ export const useSellCarForm = () => {
     securityDeposit: '',
     photos: [] as string[],
     coverPhotoIndex: 0,
+    city: '', // New city field
     area: '',
     landmark: '',
     phone: '',

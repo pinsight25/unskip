@@ -18,7 +18,11 @@ export interface DealerFormData {
   establishmentYear: string;
   websiteUrl: string;
   googleMapsLink: string;
-  operatingHours: string;
+  operatingHours: {
+    openingTime: string;
+    closingTime: string;
+    is24x7: boolean;
+  };
   documents: {
     gstCertificate: File | null;
     shopLicense: File | null;
@@ -43,7 +47,11 @@ export const useDealerRegistrationForm = () => {
     establishmentYear: '',
     websiteUrl: '',
     googleMapsLink: '',
-    operatingHours: '',
+    operatingHours: {
+      openingTime: '',
+      closingTime: '',
+      is24x7: false,
+    },
     documents: {
       gstCertificate: null,
       shopLicense: null,
@@ -94,8 +102,10 @@ export const useDealerRegistrationForm = () => {
         return formData.businessName && formData.contactPerson && formData.phone && 
                formData.email && formData.businessCategory && formData.brandsDealWith.length > 0;
       case 2:
+        const hoursValid = formData.operatingHours.is24x7 || 
+                          (formData.operatingHours.openingTime && formData.operatingHours.closingTime);
         return formData.gstNumber && validateGST(formData.gstNumber) && formData.shopAddress && 
-               formData.pincode && formData.establishmentYear;
+               formData.pincode && formData.establishmentYear && hoursValid;
       case 3:
         return formData.documents.gstCertificate && formData.documents.shopLicense && 
                formData.documents.shopPhotos.length > 0 && formData.agreeToTerms;

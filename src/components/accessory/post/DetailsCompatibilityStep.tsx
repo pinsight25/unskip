@@ -6,12 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { X } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 
 interface DetailsCompatibilityStepProps {
   formData: AccessoryFormData;
-  onUpdate: (field: keyof AccessoryFormData, value: string | string[]) => void;
+  onUpdate: (field: keyof AccessoryFormData, value: string | string[] | boolean) => void;
 }
 
 const DetailsCompatibilityStep = ({ formData, onUpdate }: DetailsCompatibilityStepProps) => {
@@ -20,6 +21,14 @@ const DetailsCompatibilityStep = ({ formData, onUpdate }: DetailsCompatibilitySt
   const popularCarModels = [
     'Swift', 'Baleno', 'WagonR', 'Alto', 'Verna', 'Creta', 'i20', 'Grand i10',
     'City', 'Amaze', 'Jazz', 'Thar', 'XUV300', 'Seltos', 'Sonet', 'Venue'
+  ];
+
+  const warrantyOptions = [
+    { value: 'no-warranty', label: 'No Warranty' },
+    { value: '3-months', label: '3 Months' },
+    { value: '6-months', label: '6 Months' },
+    { value: '1-year', label: '1 Year' },
+    { value: '2-years', label: '2 Years' }
   ];
 
   const addCompatibleModel = (model: string) => {
@@ -49,19 +58,48 @@ const DetailsCompatibilityStep = ({ formData, onUpdate }: DetailsCompatibilitySt
             />
           </div>
 
-          <div>
-            <Label htmlFor="condition">Condition *</Label>
-            <Select value={formData.condition} onValueChange={(value) => onUpdate('condition', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select condition" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="like-new">Like New</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
-                <SelectItem value="fair">Fair</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="condition">Condition *</Label>
+              <Select value={formData.condition} onValueChange={(value) => onUpdate('condition', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select condition" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="like-new">Like New</SelectItem>
+                  <SelectItem value="good">Good</SelectItem>
+                  <SelectItem value="fair">Fair</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="warranty">Warranty Period</Label>
+              <Select value={formData.warranty} onValueChange={(value) => onUpdate('warranty', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select warranty period" />
+                </SelectTrigger>
+                <SelectContent>
+                  {warrantyOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="installation"
+              checked={formData.installationAvailable}
+              onCheckedChange={(checked) => onUpdate('installationAvailable', checked)}
+            />
+            <Label htmlFor="installation" className="text-sm">
+              Installation Service Available
+            </Label>
           </div>
 
           <div>

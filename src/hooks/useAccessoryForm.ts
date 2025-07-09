@@ -11,13 +11,13 @@ export interface AccessoryFormData {
   description: string;
   condition: string;
   compatibility: string[];
+  warranty: string; // New field
+  installationAvailable: boolean; // New field
   photos: string[];
   phone: string;
   phoneVerified: boolean;
   email: string;
   location: string;
-  warranty: string;
-  installationAvailable: boolean;
 }
 
 export const useAccessoryForm = () => {
@@ -30,13 +30,13 @@ export const useAccessoryForm = () => {
     description: '',
     condition: '',
     compatibility: [],
+    warranty: '', // New field
+    installationAvailable: false, // New field
     photos: [],
     phone: '',
     phoneVerified: false,
     email: '',
     location: '',
-    warranty: '',
-    installationAvailable: false,
   });
 
   const updateFormData = (field: keyof AccessoryFormData, value: any) => {

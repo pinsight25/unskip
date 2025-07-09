@@ -14,7 +14,7 @@ export const updateFormField = <T extends Record<string, any>>(
   const booleanFields = [
     'agreeToTerms', 'termsAccepted', 'isRentAvailable', 'acceptOffers',
     'insuranceValid', 'serviceHistory', 'rtoTransferSupport', 'noAccidentHistory',
-    'authorizedServiceCenter', 'phoneVerified'
+    'authorizedServiceCenter', 'phoneVerified', 'installationAvailable'
   ];
   if (booleanFields.includes(field as string)) {
     return { ...formData, [field]: toBoolean(value) };
