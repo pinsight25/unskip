@@ -22,7 +22,6 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
 
   const handlePhoneVerification = () => {
     onPhoneVerification();
-    // Use updateFormField for boolean update
     setTimeout(() => {
       onUpdate('phoneVerified', true);
     }, 2000);

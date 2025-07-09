@@ -114,14 +114,14 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             <Button 
               variant="outline" 
               size="sm"
-              onClick={handlePhoneVerificationClick}
-              disabled={isPhoneVerified || toBoolean(formData.phoneVerified) || !displayPhone}
+              onClick={() => setFormData((prev: any) => updateFormField(prev, 'phoneVerified', true))}
+              disabled={isPhoneVerified || !!formData.phoneVerified || !displayPhone}
               className="px-4 py-2"
             >
-              {isPhoneVerified || toBoolean(formData.phoneVerified) ? 'Verified' : 'Verify'}
+              {isPhoneVerified || !!formData.phoneVerified ? 'Verified' : 'Verify'}
             </Button>
           </div>
-          {(isPhoneVerified || toBoolean(formData.phoneVerified)) && (
+          {(isPhoneVerified || !!formData.phoneVerified) && (
             <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
               <span className="text-xs">Phone number verified</span>
