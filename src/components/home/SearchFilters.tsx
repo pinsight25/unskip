@@ -1,8 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, X } from 'lucide-react';
+import { Search, MapPin, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCity } from '@/contexts/CityContext';
 
 interface SearchFiltersProps {
@@ -33,9 +33,32 @@ const popularAreasByCity: Record<string, string[]> = {
 const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
   const { selectedCity } = useCity();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const currentPopularAreas = popularAreasByCity[selectedCity] || popularAreasByCity.Chennai;
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
 
   const handleSearch = () => {
     if (onSearch) {
@@ -118,7 +141,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             </Button>
           </div>
 
-          {/* Popular Areas - Mobile horizontal scroll, Desktop wrapped */}
+          {/* Popular Areas - Horizontal scroll for both mobile and desktop */}
           {!hideContent && (
             <div className="space-y-2 lg:space-y-3">
               <div className="flex items-center justify-start max-w-5xl mx-auto">
@@ -128,16 +151,42 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                 </span>
               </div>
               
-              {/* Mobile: Horizontal scroll container */}
-              <div className="max-w-5xl mx-auto lg:hidden">
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+              {/* Horizontal scroll container for all screen sizes */}
+              <div className="max-w-5xl mx-auto relative">
+                {/* Left scroll arrow - desktop only */}
+                {showLeftArrow && (
+                  <button
+                    onClick={scrollLeft}
+                    className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-white shadow-lg border border-gray-200 rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-gray-600" />
+                  </button>
+                )}
+
+                {/* Right scroll arrow - desktop only */}
+                {showRightArrow && (
+                  <button
+                    onClick={scrollRight}
+                    className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-white shadow-lg border border-gray-200 rounded-full items-center justify-center hover:bg-gray-50 transition-colors"
+                  >
+                    <ChevronRight className="h-5 w-5 text-gray-600" />
+                  </button>
+                )}
+
+                {/* Scrollable areas container */}
+                <div 
+                  ref={scrollContainerRef}
+                  onScroll={handleScroll}
+                  className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1 lg:px-12" 
+                  style={{ WebkitOverflowScrolling: 'touch' }}
+                >
                   {currentPopularAreas.map((location) => {
                     const isSelected = selectedLocation === location;
                     return (
                       <button
                         key={location}
                         onClick={() => handleLocationClick(location)}
-                        className={`flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] ${
+                        className={`flex-shrink-0 px-4 lg:px-5 py-2 lg:py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] lg:min-h-[44px] ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
                             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
@@ -148,27 +197,6 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                     );
                   })}
                   <div className="w-4 flex-shrink-0" />
-                </div>
-              </div>
-
-              <div className="max-w-5xl mx-auto hidden lg:block">
-                <div className="flex flex-wrap gap-3 justify-start pb-2">
-                  {currentPopularAreas.map((location) => {
-                    const isSelected = selectedLocation === location;
-                    return (
-                      <button
-                        key={location}
-                        onClick={() => handleLocationClick(location)}
-                        className={`flex-shrink-0 px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[44px] ${
-                          isSelected 
-                            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
-                        }`}
-                      >
-                        {location}
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
 
