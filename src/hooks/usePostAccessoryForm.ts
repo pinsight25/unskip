@@ -51,11 +51,18 @@ export const usePostAccessoryForm = () => {
     navigate('/accessories');
   };
 
+  // Create a wrapper function that matches the expected signature
+  const handleUpdate = (updates: Partial<typeof formData>) => {
+    Object.entries(updates).forEach(([key, value]) => {
+      updateFormData(key as keyof typeof formData, value);
+    });
+  };
+
   return {
     currentStep,
     totalSteps,
     formData,
-    updateFormData,
+    updateFormData: handleUpdate,
     validateStep,
     handleNext,
     handlePrevious,

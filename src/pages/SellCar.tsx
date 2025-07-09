@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -107,7 +106,6 @@ const SellCar = () => {
           <LocationContactStep 
             formData={formData}
             onUpdate={(updates) => setFormData(prev => ({ ...prev, ...updates }))}
-            handlePhoneVerification={handlePhoneVerification}
           />
         );
       case 5:
