@@ -9,6 +9,9 @@ import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
 import BasicSpecs from '@/components/car/BasicSpecs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
+import CarFeatures from '@/components/car/CarFeatures';
+import CarCondition from '@/components/car/CarCondition';
+import CarRegistration from '@/components/car/CarRegistration';
 
 interface CarDetailContentProps {
   car: Car;
@@ -65,6 +68,12 @@ const CarDetailContent = ({
               price={car.price}
               rentPrice={car.rentPrice}
               description={car.description}
+              // variant={car.variant}
+              ownership={car.ownership}
+              // noAccidentHistory={car.noAccidentHistory}
+              verified={car.verified}
+              featured={car.featured}
+              // seatingCapacity={car.seatingCapacity}
             />
 
             {/* Quick Actions - Desktop Top */}
@@ -89,12 +98,33 @@ const CarDetailContent = ({
               serviceHistory={car.serviceHistory}
             />
 
+            {/* <CarFeatures features={car.features} /> */}
+
             <BasicSpecs
               year={car.year}
               fuelType={car.fuelType}
               transmission={car.transmission}
               mileage={car.mileage}
+              color={car.color}
+              // seatingCapacity={car.seatingCapacity}
             />
+
+            {/* <CarRegistration
+              registrationYear={car.registrationYear}
+              registrationState={car.registrationState}
+              year={car.year}
+              variant={car.variant}
+              seatingCapacity={car.seatingCapacity}
+            /> */}
+
+            {/* <CarCondition
+              noAccidentHistory={car.noAccidentHistory}
+              acceptOffers={car.acceptOffers}
+              offerPercentage={car.offerPercentage}
+              insurance={car.insurance}
+              serviceHistory={car.serviceHistory}
+              rtoTransferSupport={car.rtoTransferSupport}
+            /> */}
 
             {/* Mobile Actions - Bottom */}
             <div className="lg:hidden">
