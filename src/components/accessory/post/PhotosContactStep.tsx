@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Camera, Plus, CheckCircle } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 import { useUser } from '@/contexts/UserContext';
-import { updateFormField, toBoolean } from '@/utils/formHelpers';
+import { toBoolean } from '@/utils/formHelpers';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
