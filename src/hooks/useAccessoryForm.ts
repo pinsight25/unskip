@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { updateFormField } from '@/utils/formHelpers';
 
 export interface AccessoryFormData {
   name: string;
@@ -39,7 +40,7 @@ export const useAccessoryForm = () => {
   });
 
   const updateFormData = (field: keyof AccessoryFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => updateFormField(prev, field, value));
   };
 
   const validateStep = (step: number): boolean => {

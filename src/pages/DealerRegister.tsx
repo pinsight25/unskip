@@ -99,7 +99,7 @@ const DealerRegister = () => {
                   onPrevStep={prevStep}
                   onNextStep={nextStep}
                   onSubmit={handleSubmit}
-                  canProceed={validateStep(currentStep)}
+                  canProceed={!!validateStep(currentStep)}
                 />
               </CardContent>
             </Card>

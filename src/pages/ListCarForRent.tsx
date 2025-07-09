@@ -12,6 +12,7 @@ import PricingStep from '@/components/sell-car/PricingStep';
 import PhotosStep from '@/components/sell-car/PhotosStep';
 import LocationContactStep from '@/components/sell-car/LocationContactStep';
 import ReviewStep from '@/components/sell-car/ReviewStep';
+import { updateFormField } from '@/utils/formHelpers';
 
 const ListCarForRent = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const ListCarForRent = () => {
       description: "Please check your phone for verification code",
     });
     setTimeout(() => {
-      setFormData({ ...formData, phoneVerified: true });
+      setFormData(prev => updateFormField(prev, 'phoneVerified', true));
       toast({
         title: "Phone Verified",
         description: "Your phone number has been verified successfully",

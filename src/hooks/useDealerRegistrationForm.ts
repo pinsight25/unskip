@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { updateFormField } from '@/utils/formHelpers';
 
 export interface DealerFormData {
   businessName: string;
@@ -62,7 +63,7 @@ export const useDealerRegistrationForm = () => {
   };
 
   const handleInputChange = (field: keyof DealerFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => updateFormField(prev, field, value));
   };
 
   const handleFileUpload = (field: string, files: FileList | null) => {

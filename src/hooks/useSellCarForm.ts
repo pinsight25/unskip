@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { updateFormField } from '@/utils/formHelpers';
 
 export const useSellCarForm = () => {
   const [formData, setFormData] = useState({
