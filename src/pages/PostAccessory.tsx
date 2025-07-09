@@ -1,12 +1,14 @@
-
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePostAccessoryForm } from '@/hooks/usePostAccessoryForm';
 import PostAccessoryHeader from '@/components/accessory/post/PostAccessoryHeader';
 import PostAccessoryStepRenderer from '@/components/accessory/post/PostAccessoryStepRenderer';
 import PostAccessoryNavigation from '@/components/accessory/post/PostAccessoryNavigation';
+import { getAccessoryLimit } from '@/constants/limits';
+import { useToast } from '@/hooks/use-toast';
 
 const PostAccessory = () => {
+  const { toast } = useToast();
   const {
     currentStep,
     totalSteps,
@@ -17,8 +19,27 @@ const PostAccessory = () => {
     handlePrevious,
     handleBack,
     handlePhoneVerification,
-    handleSubmit,
+    handleSubmit: originalHandleSubmit,
   } = usePostAccessoryForm();
+
+  // Mock active accessory listings count - will be replaced with real data from Supabase
+  const activeAccessoryListings = 7; // Mock count
+  const userType = 'regular'; // Mock user type - will come from user context
+  const accessoryLimit = getAccessoryLimit(userType);
+
+  const handleSubmit = () => {
+    // Check accessory listing limit before submission
+    if (activeAccessoryListings >= accessoryLimit) {
+      toast({
+        title: "Listing Limit Reached",
+        description: `You've reached your free limit of ${accessoryLimit} accessory listings. Remove an old listing to post a new one.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    originalHandleSubmit();
+  };
 
   return (
     <ResponsiveLayout>
@@ -28,6 +49,8 @@ const PostAccessory = () => {
             currentStep={currentStep}
             totalSteps={totalSteps}
             onBack={handleBack}
+            activeCount={activeAccessoryListings}
+            limit={accessoryLimit}
           />
 
           {/* Form Content */}
@@ -49,6 +72,7 @@ const PostAccessory = () => {
             onNext={handleNext}
             onSubmit={handleSubmit}
             canProceed={validateStep(currentStep)}
+            isLimitReached={activeAccessoryListings >= accessoryLimit}
           />
         </div>
       </div>

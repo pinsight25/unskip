@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import LocationContactStep from '@/components/sell-car/LocationContactStep';
 import ReviewStep from '@/components/sell-car/ReviewStep';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { updateFormField } from '@/utils/formHelpers';
+import { FREE_LIMITS, getCarLimit } from '@/constants/limits';
 
 const SellCar = () => {
   const navigate = useNavigate();
@@ -22,6 +22,11 @@ const SellCar = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { formData, setFormData, validatePrice, validateKilometersDriven } = useSellCarForm();
   const isMobile = useIsMobile();
+
+  // Mock active car listings count - will be replaced with real data from Supabase
+  const activeCarListings = 3; // Mock count
+  const userType = 'regular'; // Mock user type - will come from user context
+  const carLimit = getCarLimit(userType);
 
   const handleNext = () => {
     if (currentStep < 5) {
@@ -51,6 +56,16 @@ const SellCar = () => {
   };
 
   const handleSubmit = () => {
+    // Check car listing limit before submission
+    if (activeCarListings >= carLimit) {
+      toast({
+        title: "Listing Limit Reached",
+        description: `You've reached your free limit of ${carLimit} car listings. Remove an old listing to post a new one.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!formData.termsAccepted) {
       toast({
         title: "Terms Required",
@@ -139,7 +154,12 @@ const SellCar = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
-          <Badge variant="outline">Step {currentStep} of 5</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">Step {currentStep} of 5</Badge>
+            <Badge variant={activeCarListings >= carLimit - 1 ? "destructive" : "secondary"} className="text-xs">
+              {activeCarListings}/{carLimit} cars
+            </Badge>
+          </div>
         </div>
         <Progress value={(currentStep / 5) * 100} className="h-2" />
       </div>
@@ -167,9 +187,9 @@ const SellCar = () => {
           <Button 
             onClick={handleSubmit} 
             className="w-full sm:w-auto bg-primary px-6 py-2"
-            disabled={!formData.termsAccepted}
+            disabled={!formData.termsAccepted || activeCarListings >= carLimit}
           >
-            Post for Free
+            {activeCarListings >= carLimit ? "Limit Reached" : "Post for Free"}
           </Button>
         ) : (
           <Button onClick={handleNext} className="w-full sm:w-auto bg-primary px-6 py-2">

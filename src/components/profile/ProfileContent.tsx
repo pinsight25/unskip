@@ -1,9 +1,9 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
+import { getCarLimit, getAccessoryLimit } from '@/constants/limits';
 
 interface ProfileContentProps {
   user: any;
@@ -26,6 +26,18 @@ const ProfileContent = ({
   onSignOut,
   onDeleteListing
 }: ProfileContentProps) => {
+  // Mock data - will be replaced with real data from Supabase
+  const userType = 'regular';
+  const activeAccessoryListings = 7; // Mock count
+  const carLimit = getCarLimit(userType);
+  const accessoryLimit = getAccessoryLimit(userType);
+
+  const getCountColor = (current: number, limit: number) => {
+    if (current >= limit) return 'text-red-600';
+    if (current >= limit - 1) return 'text-orange-600';
+    return 'text-gray-900';
+  };
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header Section */}
@@ -57,10 +69,20 @@ const ProfileContent = ({
           <Tabs defaultValue="listings" className="w-full">
             <TabsList className="grid w-full grid-cols-2 section-gap">
               <TabsTrigger value="listings">
-                My Listings ({stats.activeListings})
+                <span className="flex items-center gap-2">
+                  My Cars
+                  <span className={getCountColor(stats.activeListings, carLimit)}>
+                    ({stats.activeListings}/{carLimit})
+                  </span>
+                </span>
               </TabsTrigger>
               <TabsTrigger value="offers">
-                Received Offers ({stats.totalOffers})
+                <span className="flex items-center gap-2">
+                  Accessories
+                  <span className={getCountColor(activeAccessoryListings, accessoryLimit)}>
+                    ({activeAccessoryListings}/{accessoryLimit})
+                  </span>
+                </span>
               </TabsTrigger>
             </TabsList>
 
