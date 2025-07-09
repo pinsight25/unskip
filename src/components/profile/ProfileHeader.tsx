@@ -15,17 +15,22 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ profile, onEditProfile, onSignOut }: ProfileHeaderProps) => {
+  // Add null check for profile
+  if (!profile) {
+    return null;
+  }
+
   return (
     <Card className="p-4 md:p-6 section-gap">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
         <Avatar className="h-20 w-20 md:h-24 md:w-24">
           <AvatarFallback className="text-xl md:text-2xl">
-            {profile.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+            {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 text-center md:text-left">
-          <h2 className="text-xl md:text-2xl font-bold mb-2">{profile.name}</h2>
+          <h2 className="text-xl md:text-2xl font-bold mb-2">{profile.name || 'User'}</h2>
           <p className="text-gray-600 mb-4">Member since March 2024</p>
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             <Button 

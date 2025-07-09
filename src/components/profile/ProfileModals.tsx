@@ -41,12 +41,15 @@ const ProfileModals = ({
 }: ProfileModalsProps) => {
   return (
     <>
-      <EditProfileModal
-        isOpen={isEditProfileOpen}
-        onClose={() => setIsEditProfileOpen(false)}
-        currentProfile={user}
-        onSave={onEditProfile}
-      />
+      {/* Only render EditProfileModal if user exists */}
+      {user && (
+        <EditProfileModal
+          isOpen={isEditProfileOpen}
+          onClose={() => setIsEditProfileOpen(false)}
+          currentProfile={user}
+          onSave={onEditProfile}
+        />
+      )}
 
       <DeleteConfirmModal
         isOpen={isSignOutModalOpen}

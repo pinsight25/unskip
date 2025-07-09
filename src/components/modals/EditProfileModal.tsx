@@ -2,66 +2,65 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Camera } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader } from 'lucide-react';
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentProfile: {
-    name: string;
-    phone: string;
-    email: string;
-  };
-  onSave: (profile: { name: string; phone: string; email: string }) => void;
+  currentProfile: any;
+  onSave: (profile: any) => void;
 }
 
+const cities = [
+  'Chennai',
+  'Mumbai', 
+  'Delhi',
+  'Bangalore',
+  'Hyderabad',
+  'Pune',
+  'Kolkata'
+];
+
 const EditProfileModal = ({ isOpen, onClose, currentProfile, onSave }: EditProfileModalProps) => {
-  const [name, setName] = useState(currentProfile.name);
-  const [phone, setPhone] = useState(currentProfile.phone);
-  const [email, setEmail] = useState(currentProfile.email);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  // Add null checks and provide default values
+  const [formData, setFormData] = useState({
+    name: currentProfile?.name || '',
+    email: currentProfile?.email || '',
+    city: currentProfile?.city || ''
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  // Don't render if currentProfile is null
+  if (!currentProfile) {
+    return null;
+  }
 
   const handleSave = async () => {
-    if (!name.trim()) {
-      toast({
-        title: "Name Required",
-        description: "Please enter your name",
-        variant: "destructive",
-      });
+    if (!formData.name.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+    if (!formData.city) {
+      setError('Please select your city');
       return;
     }
 
-    if (!phone.trim() || phone.length < 10) {
-      toast({
-        title: "Invalid Phone",
-        description: "Please enter a valid phone number",
-        variant: "destructive",
-      });
-      return;
-    }
+    setIsSaving(true);
+    setError('');
 
-    setIsLoading(true);
-    
     setTimeout(() => {
-      onSave({ name: name.trim(), phone: phone.trim(), email: email.trim() });
-      setIsLoading(false);
+      onSave(formData);
       onClose();
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully",
-      });
+      setIsSaving(false);
     }, 1000);
   };
 
   const handleClose = () => {
-    setName(currentProfile.name);
-    setPhone(currentProfile.phone);
-    setEmail(currentProfile.email);
     onClose();
+    setError('');
   };
 
   return (
@@ -71,63 +70,73 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile, onSave }: EditProfi
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {/* Profile Photo */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="relative">
-              <Avatar className="h-20 w-20">
-                <AvatarFallback className="text-2xl">
-                  {name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
-                <Camera className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-sm text-muted-foreground">Click to change photo</p>
+        <div className="space-y-4 py-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block text-gray-700">Full Name *</label>
+            <Input
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="Enter your full name"
+              className="h-12"
+            />
           </div>
 
-          {/* Form Fields */}
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Full Name *</label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-              />
-            </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block text-gray-700">Email</label>
+            <Input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              placeholder="your.email@example.com"
+              className="h-12"
+            />
+          </div>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">Phone Number *</label>
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                placeholder="+91 98765 43210"
-                maxLength={15}
-              />
-            </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block text-gray-700">City *</label>
+            <Select value={formData.city} onValueChange={(value) => setFormData(prev => ({ ...prev, city: value }))}>
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="Select your city" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border shadow-lg">
+                {cities.map((city) => (
+                  <SelectItem key={city} value={city} className="hover:bg-gray-50">
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">Email (Optional)</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your.email@example.com"
-              />
-            </div>
+          {error && (
+            <p className="text-sm text-red-600">{error}</p>
+          )}
+
+          <div className="flex space-x-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={handleClose} 
+              className="flex-1 h-12"
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              disabled={isSaving || !formData.name.trim() || !formData.city}
+              className="flex-1 h-12"
+            >
+              {isSaving ? (
+                <>
+                  <Loader className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
           </div>
         </div>
-
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClose} disabled={isLoading}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
