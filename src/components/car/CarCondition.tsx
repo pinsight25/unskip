@@ -6,24 +6,24 @@ import { Shield, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 interface CarConditionProps {
   noAccidentHistory?: boolean;
   acceptOffers?: boolean;
-  offerPercentage?: string;
-  insurance?: {
-    validTill: string;
-    type: 'Comprehensive' | 'Third Party';
-  };
-  serviceHistory?: {
-    lastServiceDate?: string;
-    authorizedCenter: boolean;
-  };
-  rtoTransferSupport: boolean;
+  offerPercentage?: number;
+  insuranceValid?: boolean;
+  insuranceValidTill?: string;
+  insuranceType?: 'Comprehensive' | 'Third Party';
+  lastServiceDate?: string;
+  serviceAtAuthorized?: boolean;
+  rtoTransferSupport?: boolean;
 }
 
 const CarCondition = ({ 
   noAccidentHistory, 
   acceptOffers, 
   offerPercentage,
-  insurance,
-  serviceHistory,
+  insuranceValid,
+  insuranceValidTill,
+  insuranceType,
+  lastServiceDate,
+  serviceAtAuthorized,
   rtoTransferSupport 
 }: CarConditionProps) => {
   const formatDate = (dateString: string) => {
@@ -62,37 +62,39 @@ const CarCondition = ({
         </div>
 
         {/* Service History */}
-        {serviceHistory && (
+        {(lastServiceDate || serviceAtAuthorized !== undefined) && (
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <FileText className="h-4 w-4 text-purple-600" />
               <span className="font-medium text-sm text-purple-800">Service History</span>
             </div>
             <div className="space-y-1 text-sm text-purple-700">
-              {serviceHistory.lastServiceDate && (
-                <p>Last Service: {formatDate(serviceHistory.lastServiceDate)}</p>
+              {lastServiceDate && (
+                <p>Last Service: {formatDate(lastServiceDate)}</p>
               )}
-              <p>Service Center: {serviceHistory.authorizedCenter ? 'Authorized' : 'Local'}</p>
+              {serviceAtAuthorized !== undefined && (
+                <p>Service Center: {serviceAtAuthorized ? 'Authorized' : 'Local'}</p>
+              )}
             </div>
           </div>
         )}
 
         {/* Insurance */}
-        {insurance && (
+        {(insuranceValid && insuranceValidTill && insuranceType) && (
           <div className="bg-blue-50 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-blue-600" />
               <span className="font-medium text-sm text-blue-800">Insurance Details</span>
             </div>
             <div className="space-y-1 text-sm text-blue-700">
-              <p>Type: {insurance.type}</p>
-              <p>Valid until: {formatDate(insurance.validTill)}</p>
+              <p>Type: {insuranceType}</p>
+              <p>Valid until: {formatDate(insuranceValidTill)}</p>
             </div>
           </div>
         )}
 
         {/* Offers */}
-        {acceptOffers && (
+        {acceptOffers && offerPercentage && (
           <div className="bg-green-50 rounded-lg p-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-600" />

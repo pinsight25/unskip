@@ -1,6 +1,6 @@
 
 import LocationDisplay from '@/components/shared/LocationDisplay';
-import { getOwnershipText, formatMileage } from '@/utils/carHelpers';
+import { getOwnershipText, formatKilometersDriven } from '@/utils/carHelpers';
 
 interface SimpleVehicleInfoProps {
   ownership: number;
@@ -8,14 +8,11 @@ interface SimpleVehicleInfoProps {
   mileage: number;
   location: string;
   landmark?: string;
-  insurance?: {
-    validTill: string;
-    type: 'Comprehensive' | 'Third Party';
-  };
-  serviceHistory?: {
-    lastServiceDate?: string;
-    authorizedCenter: boolean;
-  };
+  insuranceValid?: boolean;
+  insuranceValidTill?: string;
+  insuranceType?: 'Comprehensive' | 'Third Party';
+  lastServiceDate?: string;
+  serviceAtAuthorized?: boolean;
 }
 
 const SimpleVehicleInfo = ({
@@ -24,8 +21,11 @@ const SimpleVehicleInfo = ({
   mileage,
   location,
   landmark,
-  insurance,
-  serviceHistory
+  insuranceValid,
+  insuranceValidTill,
+  insuranceType,
+  lastServiceDate,
+  serviceAtAuthorized
 }: SimpleVehicleInfoProps) => {
   return (
     <div className="bg-gray-50 rounded-lg p-4 space-y-3">
@@ -34,17 +34,17 @@ const SimpleVehicleInfo = ({
         <span className="text-gray-400">•</span>
         <span>{year}</span>
         <span className="text-gray-400">•</span>
-        <span>{formatMileage(mileage)}</span>
+        <span>{formatKilometersDriven(mileage)}</span>
       </div>
 
       <div className="flex items-center gap-4 text-sm text-green-600">
-        {insurance && (
+        {insuranceValid && (
           <div className="flex items-center gap-1">
             <span>✓</span>
             <span>Insurance Valid</span>
           </div>
         )}
-        {serviceHistory && (
+        {(lastServiceDate || serviceAtAuthorized !== undefined) && (
           <div className="flex items-center gap-1">
             <span>✓</span>
             <span>Complete Service History</span>

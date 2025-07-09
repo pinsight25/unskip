@@ -16,9 +16,11 @@ export const luxuryCars: Car[] = [
       'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800'
     ],
     mileage: 15000,
+    kilometersDriven: 15000,
     fuelType: 'Electric',
     transmission: 'Automatic',
     ownership: 1,
+    ownershipNumber: 1,
     location: 'Velachery, Chennai',
     color: 'Blue',
     seatingCapacity: 5,
@@ -29,14 +31,11 @@ export const luxuryCars: Car[] = [
     noAccidentHistory: true,
     acceptOffers: true,
     offerPercentage: 70,
-    insurance: {
-      validTill: '2024-11-25',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-11-20',
-      authorizedCenter: true
-    },
+    insuranceValid: true,
+    insuranceValidTill: '2024-11-25',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-11-20',
+    serviceAtAuthorized: true,
     rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
@@ -70,9 +69,11 @@ export const luxuryCars: Car[] = [
       'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800'
     ],
     mileage: 25000,
+    kilometersDriven: 25000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     ownership: 1,
+    ownershipNumber: 1,
     location: 'ECR, Chennai',
     color: 'Black',
     seatingCapacity: 5,
@@ -83,14 +84,11 @@ export const luxuryCars: Car[] = [
     noAccidentHistory: true,
     acceptOffers: true,
     offerPercentage: 85,
-    insurance: {
-      validTill: '2024-09-10',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-09-15',
-      authorizedCenter: true
-    },
+    insuranceValid: true,
+    insuranceValidTill: '2024-09-10',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2023-09-15',
+    serviceAtAuthorized: true,
     rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {

@@ -8,10 +8,12 @@ export interface Car {
   year: number;
   price: number;
   images: string[];
-  mileage: number;
+  mileage: number; // Keep for backward compatibility
+  kilometersDriven: number; // New field name we're using
   fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
   transmission: 'Manual' | 'Automatic';
-  ownership: number;
+  ownership: number; // Keep for backward compatibility  
+  ownershipNumber: number; // New field name we're using
   location: string;
   description: string;
   seller: Seller;
@@ -36,12 +38,19 @@ export interface Car {
   featured: boolean;
   views: number;
   createdAt: string;
-  // Fields from Sell Car form
+  // Fields from Sell Car form - flat structure to match components
   registrationYear?: number;
   registrationState?: string;
   noAccidentHistory?: boolean;
   acceptOffers?: boolean;
   offerPercentage?: number;
+  insuranceValid?: boolean;
+  insuranceValidTill?: string;
+  insuranceType?: 'Comprehensive' | 'Third Party';
+  lastServiceDate?: string;
+  serviceAtAuthorized?: boolean;
+  rtoTransferSupport?: boolean;
+  // Legacy nested structures for backward compatibility
   insurance?: {
     validTill: string;
     type: 'Comprehensive' | 'Third Party';
@@ -50,7 +59,6 @@ export interface Car {
     lastServiceDate?: string;
     authorizedCenter: boolean;
   };
-  rtoTransferSupport: boolean;
 }
 
 export interface Seller {

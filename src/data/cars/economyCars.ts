@@ -16,9 +16,11 @@ export const economyCars: Car[] = [
       'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'
     ],
     mileage: 28000,
+    kilometersDriven: 28000,
     fuelType: 'Diesel',
     transmission: 'Manual',
     ownership: 1,
+    ownershipNumber: 1,
     location: 'T. Nagar, Chennai',
     landmark: 'Near Landmark Mall',
     color: 'White',
@@ -30,14 +32,11 @@ export const economyCars: Car[] = [
     noAccidentHistory: true,
     acceptOffers: true,
     offerPercentage: 70,
-    insurance: {
-      validTill: '2024-08-15',
-      type: 'Comprehensive'
-    },
-    serviceHistory: {
-      lastServiceDate: '2024-01-10',
-      authorizedCenter: true
-    },
+    insuranceValid: true,
+    insuranceValidTill: '2024-08-15',
+    insuranceType: 'Comprehensive',
+    lastServiceDate: '2024-01-10',
+    serviceAtAuthorized: true,
     rtoTransferSupport: true,
     isRentAvailable: true,
     rentPrice: {
@@ -71,9 +70,11 @@ export const economyCars: Car[] = [
       'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800'
     ],
     mileage: 45000,
+    kilometersDriven: 45000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     ownership: 2,
+    ownershipNumber: 2,
     location: 'Adyar, Chennai',
     color: 'Black',
     seatingCapacity: 5,
@@ -84,14 +85,11 @@ export const economyCars: Car[] = [
     noAccidentHistory: false,
     acceptOffers: false,
     offerPercentage: 0,
-    insurance: {
-      validTill: '2024-06-30',
-      type: 'Third Party'
-    },
-    serviceHistory: {
-      lastServiceDate: '2023-10-15',
-      authorizedCenter: false
-    },
+    insuranceValid: true,
+    insuranceValidTill: '2024-06-30',
+    insuranceType: 'Third Party',
+    lastServiceDate: '2023-10-15',
+    serviceAtAuthorized: false,
     rtoTransferSupport: false,
     verified: false,
     featured: false,
