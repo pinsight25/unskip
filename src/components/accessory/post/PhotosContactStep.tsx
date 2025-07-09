@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Camera, Plus, CheckCircle } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 import { useUser } from '@/contexts/UserContext';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
-  onUpdate: (field: keyof AccessoryFormData, value: string | boolean) => void;
+  onUpdate: (field: keyof AccessoryFormData, value: any) => void;
   onPhoneVerification: () => void;
 }
 

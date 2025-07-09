@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { X } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface DetailsCompatibilityStepProps {
   formData: AccessoryFormData;
@@ -95,7 +96,7 @@ const DetailsCompatibilityStep = ({ formData, onUpdate }: DetailsCompatibilitySt
             <Switch
               id="installation"
               checked={formData.installationAvailable}
-              onCheckedChange={(checked) => onUpdate('installationAvailable', checked)}
+              onCheckedChange={(checked) => onUpdate('installationAvailable', updateFormField({ installationAvailable: formData.installationAvailable }, 'installationAvailable', checked).installationAvailable)}
             />
             <Label htmlFor="installation" className="text-sm">
               Installation Service Available
