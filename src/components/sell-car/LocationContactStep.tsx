@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface LocationContactStepProps {
   formData: any;
