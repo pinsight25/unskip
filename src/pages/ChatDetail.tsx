@@ -133,8 +133,8 @@ const ChatDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-4xl bg-white shadow-sm">
-        <div className="flex flex-col h-screen">
+      <div className="mx-auto max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="flex flex-col h-screen max-h-screen">
           <ChatHeader
             car={car}
             onBack={() => navigate('/chats')}

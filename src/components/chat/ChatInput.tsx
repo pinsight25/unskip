@@ -20,9 +20,9 @@ const ChatInput = ({
   onTestDrive 
 }: ChatInputProps) => {
   return (
-    <div className="bg-white border-t border-gray-200 flex-shrink-0">
+    <div className="bg-white border-t border-gray-200 flex-shrink-0 shadow-sm">
       {/* Quick Replies */}
-      <div className="p-3 border-b border-gray-100">
+      <div className="p-3 bg-gray-50/50 border-b border-gray-100">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 max-w-3xl mx-auto">
           {quickReplies.map((reply) => (
             <Button
@@ -30,7 +30,7 @@ const ChatInput = ({
               variant="outline"
               size="sm"
               onClick={() => onQuickReply(reply.text)}
-              className="whitespace-nowrap text-xs flex-shrink-0 h-8"
+              className="whitespace-nowrap text-xs flex-shrink-0 h-8 bg-white hover:bg-gray-50 border-gray-200"
             >
               {reply.text}
             </Button>
@@ -39,7 +39,7 @@ const ChatInput = ({
             variant="outline"
             size="sm"
             onClick={onTestDrive}
-            className="whitespace-nowrap text-xs flex-shrink-0 h-8"
+            className="whitespace-nowrap text-xs flex-shrink-0 h-8 bg-white hover:bg-gray-50 border-gray-200"
           >
             <Calendar className="h-3 w-3 mr-1" />
             Test Drive
@@ -48,7 +48,7 @@ const ChatInput = ({
       </div>
 
       {/* Message Input */}
-      <div className="p-4 pb-6 md:pb-4">
+      <div className="p-4 pb-6 md:pb-4 bg-white">
         <div className="flex items-center gap-3 max-w-3xl mx-auto">
           <div className="flex-1 flex gap-2">
             <Input
@@ -56,7 +56,7 @@ const ChatInput = ({
               onChange={(e) => onMessageChange(e.target.value)}
               placeholder="Type a message..."
               onKeyPress={(e) => e.key === 'Enter' && onSendMessage()}
-              className="flex-1 rounded-full border-gray-300"
+              className="flex-1 rounded-full border-gray-300 focus:border-primary focus:ring-primary"
             />
             <Button 
               onClick={onSendMessage}
