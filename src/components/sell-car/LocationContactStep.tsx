@@ -57,7 +57,11 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             <Select 
               value={formData.city} 
               onValueChange={(value) => {
-                setFormData({ ...formData, city: value, area: '' }); // Reset area when city changes
+                setFormData((prev: any) => {
+                  let updated = updateFormField(prev, 'city', value);
+                  updated = updateFormField(updated, 'area', '');
+                  return updated;
+                });
               }}
             >
               <SelectTrigger className="h-10 w-full max-w-md">
@@ -75,7 +79,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
             <Label className="text-sm font-medium">Area *</Label>
             <Select 
               value={formData.area} 
-              onValueChange={(value) => setFormData({ ...formData, area: value })}
+              onValueChange={(value) => setFormData((prev: any) => updateFormField(prev, 'area', value))}
               disabled={!formData.city}
             >
               <SelectTrigger className="h-10 w-full max-w-md">
@@ -95,7 +99,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
           <Input 
             placeholder="Near Landmark Mall, Opposite Metro Station"
             value={formData.landmark}
-            onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+            onChange={(e) => setFormData((prev: any) => updateFormField(prev, 'landmark', e.target.value))}
             className="h-10 w-full max-w-md"
           />
         </div>
@@ -134,7 +138,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
           <Textarea 
             placeholder="Tell buyers about your car's condition, service history, recent maintenance, etc."
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) => setFormData((prev: any) => updateFormField(prev, 'description', e.target.value))}
             rows={3}
             className="resize-none w-full max-w-lg"
           />
