@@ -1,5 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -31,26 +32,14 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
         </Link>
       ))}
       
-      {/* Add Profile and Saved to desktop navigation */}
-      <Link
-        to="/profile"
-        className={`text-base font-semibold transition-all duration-300 hover:text-primary relative py-2 ${
-          isActive('/profile') ? 'text-primary' : 'text-foreground/80'
-        }`}
-      >
-        Profile
-        {isActive('/profile') && (
-          <div className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full" />
-        )}
-      </Link>
-      
+      {/* Saved with Heart Icon */}
       <Link
         to="/saved"
-        className={`text-base font-semibold transition-all duration-300 hover:text-primary relative py-2 ${
+        className={`text-base font-semibold transition-all duration-300 hover:text-primary relative py-2 flex items-center ${
           isActive('/saved') ? 'text-primary' : 'text-foreground/80'
         }`}
       >
-        Saved
+        <Heart className={`h-5 w-5 ${isActive('/saved') ? 'fill-primary' : ''}`} />
         {isActive('/saved') && (
           <div className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full" />
         )}

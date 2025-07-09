@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User as UserIcon, LogOut } from 'lucide-react';
+import { User as UserIcon, LogOut, Heart } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import SignInModal from '@/components/modals/SignInModal';
 
@@ -85,6 +85,18 @@ const MobileMenu = ({
             </Link>
           ))}
           
+          {/* Saved with Heart Icon */}
+          <Link
+            to="/saved"
+            className={`text-base font-medium transition-colors py-2 flex items-center ${
+              isActive('/saved') ? 'text-primary' : 'text-foreground/80 hover:text-primary'
+            }`}
+            onClick={onMenuClose}
+          >
+            <Heart className={`h-5 w-5 mr-2 ${isActive('/saved') ? 'fill-primary' : ''}`} />
+            Saved
+          </Link>
+          
           {/* Mobile Actions */}
           <div className="flex flex-col space-y-3 pt-4 border-t border-border">
             {!isSignedIn ? (
@@ -116,7 +128,7 @@ const MobileMenu = ({
 
       <SignInModal 
         isOpen={isSignInModalOpen}
-        onClose={() => setIsSignInModalOpen(false)}
+        onClose={() => setIsSignInModalModal(false)}
       />
     </>
   );
