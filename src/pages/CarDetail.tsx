@@ -3,7 +3,6 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import CarDetailContainer from '@/components/car/CarDetailContainer';
 
 const CarDetail = () => {
@@ -12,7 +11,7 @@ const CarDetail = () => {
 
   if (!car) {
     return (
-      <ResponsiveLayout>
+      <div className="min-h-screen bg-gray-50 responsive-header-spacing">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Car Not Found</h2>
@@ -25,16 +24,16 @@ const CarDetail = () => {
             </Link>
           </div>
         </div>
-      </ResponsiveLayout>
+      </div>
     );
   }
 
   return (
-    <ResponsiveLayout>
+    <div className="min-h-screen bg-gray-50 responsive-header-spacing">
       <div className="w-full">
         <CarDetailContainer car={car} />
       </div>
-    </ResponsiveLayout>
+    </div>
   );
 };
 

@@ -112,7 +112,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
     <div className="bg-white border-b border-gray-100">
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
         <div className="space-y-4 lg:space-y-5">
-          {/* Search Bar */}
+          {/* Search Bar - Fixed height to prevent expansion */}
           <div className="flex gap-3 max-w-4xl mx-auto">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -135,7 +135,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             <Button 
               onClick={handleSearch}
               size="default"
-              className="px-6 lg:px-8 h-11 lg:h-12 text-base font-bold"
+              className="px-6 lg:px-8 h-11 lg:h-12 text-base font-bold flex-shrink-0"
             >
               Search
             </Button>
@@ -173,11 +173,11 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                   </button>
                 )}
 
-                {/* Scrollable areas container */}
+                {/* Scrollable areas container - Fixed height */}
                 <div 
                   ref={scrollContainerRef}
                   onScroll={handleScroll}
-                  className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1 lg:px-12" 
+                  className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1 lg:px-12 h-[52px]" 
                   style={{ WebkitOverflowScrolling: 'touch' }}
                 >
                   {currentPopularAreas.map((location) => {
@@ -186,7 +186,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                       <button
                         key={location}
                         onClick={() => handleLocationClick(location)}
-                        className={`flex-shrink-0 px-4 lg:px-5 py-2 lg:py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap min-h-[40px] lg:min-h-[44px] ${
+                        className={`flex-shrink-0 px-4 lg:px-5 py-2 lg:py-2.5 text-sm font-semibold rounded-full transition-all duration-200 whitespace-nowrap h-[40px] lg:h-[44px] flex items-center ${
                           isSelected 
                             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg hover:from-orange-600 hover:to-red-600 transform scale-105' 
                             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
