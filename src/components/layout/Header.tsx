@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { mockChats } from '@/data/chatMockData';
-import Logo from './header/Logo';
+import { ModernLogoOption2 } from './header/ModernLogo';
 import DesktopNavigation from './header/DesktopNavigation';
 import HeaderActions from './header/HeaderActions';
 import HeaderCitySelector from './header/HeaderCitySelector';
@@ -57,7 +57,7 @@ const Header = () => {
       <div className="w-full max-w-7xl mx-auto container-safe">
         {/* Header Layout */}
         <div className="flex h-16 lg:h-20 items-center justify-between">
-          <Logo />
+          <ModernLogoOption2 />
 
           {/* Desktop Navigation */}
           <DesktopNavigation navItems={navItems} />
