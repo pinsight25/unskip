@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import TestDriveModal from '@/components/modals/TestDriveModal';
 
 const ChatDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { chatId } = useParams<{ chatId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -28,15 +27,15 @@ const ChatDetail = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   
-  const chat = mockChats.find(c => c.id === id);
+  const chat = mockChats.find(c => c.id === chatId);
   const car = chat ? mockCars.find(c => c.id === chat.carId) : null;
   
   useEffect(() => {
-    if (id) {
-      const chatMessages = mockMessages.filter(msg => msg.chatId === id);
+    if (chatId) {
+      const chatMessages = mockMessages.filter(msg => msg.chatId === chatId);
       setMessages(chatMessages);
     }
-  }, [id]);
+  }, [chatId]);
 
   useEffect(() => {
     scrollToBottom();
