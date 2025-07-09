@@ -20,6 +20,8 @@ import Saved from '@/pages/Saved';
 import Profile from '@/pages/Profile';
 import Chats from '@/pages/Chats';
 import ChatDetail from '@/pages/ChatDetail';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,8 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/chats" element={<Chats />} />
                   <Route path="/chats/:chatId" element={<ChatDetail />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/privacy" element={<Privacy />} />
                 </Routes>
               </ResponsiveLayout>
               <Toaster />

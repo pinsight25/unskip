@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,9 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Shield, Phone, CheckCircle, Edit, Loader, User } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import { updateFormField } from '@/utils/formHelpers';
+import { Link } from 'react-router-dom';
 
 interface SignInModalProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(true);
   
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -54,6 +57,11 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   };
 
   const handleVerifyOTP = async () => {
+    if (!termsAccepted) {
+      setError('Please accept the Terms of Service and Privacy Policy to continue');
+      return;
+    }
+
     setIsVerifying(true);
     setError('');
     
@@ -113,6 +121,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setIsVerifying(false);
     setProfileData({ name: '', email: '', city: '' });
     setIsSaving(false);
+    setTermsAccepted(true);
   };
 
   const handleClose = () => {
@@ -124,6 +133,13 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setStep('phone');
     setOtp('');
     setError('');
+  };
+
+  const handleTermsChange = (checked: boolean) => {
+    setTermsAccepted(checked);
+    if (error && checked) {
+      setError('');
+    }
   };
 
   if (isVerified) {
@@ -232,6 +248,27 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
+
+                {/* Terms Acceptance Checkbox */}
+                <div className="flex items-start space-x-3 py-2">
+                  <Checkbox
+                    id="terms"
+                    checked={termsAccepted}
+                    onCheckedChange={handleTermsChange}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed">
+                    I agree to the{' '}
+                    <Link to="/terms" className="text-orange-600 hover:underline">
+                      Terms of Service
+                    </Link>
+                    {' '}and{' '}
+                    <Link to="/privacy" className="text-orange-600 hover:underline">
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </div>
+
                 {error && (
                   <p className="text-sm text-red-500 text-center bg-red-50 py-2 px-4 rounded-xl">{error}</p>
                 )}
@@ -243,7 +280,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                 </Button>
                 <Button 
                   onClick={handleVerifyOTP} 
-                  disabled={otp.length !== 6 || isVerifying}
+                  disabled={otp.length !== 6 || isVerifying || !termsAccepted}
                   className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
                 >
                   {isVerifying ? (
