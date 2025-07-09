@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
-import { updateFormField } from '@/utils/formHelpers';
+import { updateFormField, toBoolean } from '@/utils/formHelpers';
 
 interface LocationContactStepProps {
   formData: any;
@@ -102,7 +102,7 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
               type="tel" 
               placeholder="+91 9876543210"
               value={displayPhone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => setFormData((prev: any) => updateFormField(prev, 'phone', e.target.value))}
               className="flex-1 h-10 w-full max-w-md"
               disabled={isSignedIn && user?.phone}
             />
@@ -110,13 +110,13 @@ const LocationContactStep = ({ formData, setFormData, handlePhoneVerification }:
               variant="outline" 
               size="sm"
               onClick={handlePhoneVerification}
-              disabled={isPhoneVerified || formData.phoneVerified || !displayPhone}
+              disabled={isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean) || !displayPhone}
               className="px-4 py-2"
             >
-              {isPhoneVerified || formData.phoneVerified ? 'Verified' : 'Verify'}
+              {isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean) ? 'Verified' : 'Verify'}
             </Button>
           </div>
-          {(isPhoneVerified || formData.phoneVerified) && (
+          {(isPhoneVerified || toBoolean(formData.phoneVerified as string | boolean)) && (
             <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
               <span className="text-xs">Phone number verified</span>

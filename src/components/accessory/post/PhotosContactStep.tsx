@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Camera, Plus, CheckCircle } from 'lucide-react';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 import { useUser } from '@/contexts/UserContext';
-import { updateFormField } from '@/utils/formHelpers';
+import { updateFormField, toBoolean } from '@/utils/formHelpers';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
@@ -68,12 +68,12 @@ const PhotosContactStep = ({ formData, onUpdate, onPhoneVerification }: PhotosCo
                   type="button" 
                   variant="outline"
                   onClick={onPhoneVerification}
-                  disabled={isPhoneVerified || formData.phoneVerified || !displayPhone}
+                  disabled={isPhoneVerified || toBoolean(formData.phoneVerified) || !displayPhone}
                 >
-                  {isPhoneVerified || formData.phoneVerified ? 'Verified' : 'Verify'}
+                  {isPhoneVerified || toBoolean(formData.phoneVerified) ? 'Verified' : 'Verify'}
                 </Button>
               </div>
-              {(isPhoneVerified || formData.phoneVerified) && (
+              {(isPhoneVerified || toBoolean(formData.phoneVerified)) && (
                 <div className="flex items-center text-sm text-green-600 mt-1">
                   <CheckCircle className="h-4 w-4 mr-1" />
                   <span className="text-xs">Phone number verified</span>
