@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EditProfileModal from '@/components/modals/EditProfileModal';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
@@ -103,81 +102,77 @@ const Profile = () => {
   // Show sign-in prompt for non-signed-in users
   if (!isSignedIn || !user) {
     return (
-      <ResponsiveLayout>
-        <div className="bg-white min-h-screen">
-          <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-12 text-center">
-            <h1 className="text-3xl font-bold mb-4">Sign In Required</h1>
-            <p className="text-gray-600 mb-8">Please sign in to access your profile</p>
-            <button
-              onClick={() => setIsSignInModalOpen(true)}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90"
-            >
-              Sign In
-            </button>
-          </div>
-          
-          <SignInModal 
-            isOpen={isSignInModalOpen}
-            onClose={() => setIsSignInModalOpen(false)}
-          />
+      <div className="bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-12 text-center">
+          <h1 className="text-3xl font-bold mb-4">Sign In Required</h1>
+          <p className="text-gray-600 mb-8">Please sign in to access your profile</p>
+          <button
+            onClick={() => setIsSignInModalOpen(true)}
+            className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90"
+          >
+            Sign In
+          </button>
         </div>
-      </ResponsiveLayout>
+        
+        <SignInModal 
+          isOpen={isSignInModalOpen}
+          onClose={() => setIsSignInModalOpen(false)}
+        />
+      </div>
     );
   }
 
   return (
-    <ResponsiveLayout>
-      <div className="bg-white min-h-screen">
-        {/* Header Section */}
-        <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-          <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
-            <div className="text-center">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">My Profile</h1>
-              <p className="text-base md:text-lg text-gray-600">
-                Manage your account and track your activity
-              </p>
-            </div>
+    <div className="bg-white min-h-screen">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
+        <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">My Profile</h1>
+            <p className="text-base md:text-lg text-gray-600">
+              Manage your account and track your activity
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Content Section */}
-        <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8 pb-24 lg:pb-8">
-          <div>
-            {/* Profile Header */}
-            <ProfileHeader
-              profile={user}
-              onEditProfile={() => setIsEditProfileOpen(true)}
-              onSignOut={() => setIsSignOutModalOpen(true)}
-            />
+      {/* Content Section */}
+      <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8 pb-24 lg:pb-8">
+        <div>
+          {/* Profile Header */}
+          <ProfileHeader
+            profile={user}
+            onEditProfile={() => setIsEditProfileOpen(true)}
+            onSignOut={() => setIsSignOutModalOpen(true)}
+          />
 
-            {/* Stats Section */}
-            <ProfileStats stats={stats} />
+          {/* Stats Section */}
+          <ProfileStats stats={stats} />
 
-            {/* Tabs */}
-            <Tabs defaultValue="listings" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 section-gap">
-                <TabsTrigger value="listings">
-                  My Listings ({stats.activeListings})
-                </TabsTrigger>
-                <TabsTrigger value="offers">
-                  Received Offers ({stats.totalOffers})
-                </TabsTrigger>
-              </TabsList>
+          {/* Tabs */}
+          <Tabs defaultValue="listings" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 section-gap">
+              <TabsTrigger value="listings">
+                My Listings ({stats.activeListings})
+              </TabsTrigger>
+              <TabsTrigger value="offers">
+                Received Offers ({stats.totalOffers})
+              </TabsTrigger>
+            </TabsList>
 
-              {/* My Listings Tab */}
-              <TabsContent value="listings">
-                <MyListingsTab
-                  listings={listings}
-                  onDeleteListing={handleDeleteListing}
-                />
-              </TabsContent>
+            {/* My Listings Tab */}
+            <TabsContent value="listings">
+              <MyListingsTab
+                listings={listings}
+                onDeleteListing={handleDeleteListing}
+              />
+            </TabsContent>
 
-              {/* Received Offers Tab */}
-              <TabsContent value="offers">
-                <ReceivedOffersTab />
-              </TabsContent>
-            </Tabs>
-          </div>
+            {/* Received Offers Tab */}
+            <TabsContent value="offers">
+              <ReceivedOffersTab />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
@@ -204,7 +199,7 @@ const Profile = () => {
         title="Delete Listing"
         description={`Are you sure you want to delete "${deleteModal.title}"? This action cannot be undone.`}
       />
-    </ResponsiveLayout>
+    </div>
   );
 };
 
