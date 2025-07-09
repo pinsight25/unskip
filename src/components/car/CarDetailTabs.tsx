@@ -250,15 +250,15 @@ const CarDetailTabs = ({ car }: CarDetailTabsProps) => {
 
   return (
     <div className="space-y-4">
-      {/* Tab Navigation - Fixed mobile spacing */}
-      <div className="flex gap-0.5 bg-gray-100 p-0.5 rounded-lg overflow-x-auto">
+      {/* Tab Navigation - Fixed mobile spacing and distribution */}
+      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as TabType)}
-              className={`flex items-center justify-center gap-1 px-2 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all duration-200 min-w-0 flex-shrink-0 ${
+              className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all duration-200 flex-1 ${
                 activeTab === tab.id
                   ? 'bg-orange-500 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
