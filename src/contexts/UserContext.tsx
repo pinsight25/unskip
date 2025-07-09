@@ -5,13 +5,14 @@ interface User {
   name: string;
   phone: string;
   email: string;
+  city?: string;
   avatar?: string;
 }
 
 interface UserContextType {
   user: User | null;
   isSignedIn: boolean;
-  signIn: (phone: string) => void;
+  signIn: (phone: string, profileData?: { name: string; email: string; city: string }) => void;
   signOut: () => void;
 }
 
@@ -32,14 +33,14 @@ interface UserProviderProps {
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const signIn = (phone: string) => {
-    // Mock user data - in real app this would come from backend
-    const mockUser: User = {
-      name: 'John Doe',
+  const signIn = (phone: string, profileData?: { name: string; email: string; city: string }) => {
+    const newUser: User = {
+      name: profileData?.name || 'John Doe',
       phone: phone,
-      email: 'john.doe@example.com'
+      email: profileData?.email || 'john.doe@example.com',
+      city: profileData?.city
     };
-    setUser(mockUser);
+    setUser(newUser);
   };
 
   const signOut = () => {
