@@ -6,11 +6,9 @@ import { Button } from '@/components/ui/button';
 import CarImageGallery from '@/components/car/CarImageGallery';
 import CarOverview from '@/components/car/CarOverview';
 import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
-import BasicSpecs from '@/components/car/BasicSpecs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
-import CarCondition from '@/components/car/CarCondition';
-import CarRegistration from '@/components/car/CarRegistration';
+import CarDetailTabs from '@/components/car/CarDetailTabs';
 
 interface CarDetailContentProps {
   car: Car;
@@ -51,16 +49,19 @@ const CarDetailContent = ({
         {/* Desktop 3-column layout, Mobile stacked */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Image Gallery (Desktop: 2 columns width) */}
-          <div className="lg:col-span-2 lg:sticky lg:top-4 lg:self-start">
+          <div className="lg:col-span-2 lg:sticky lg:top-4 lg:self-start space-y-4">
             <CarImageGallery
               images={car.images}
               title={car.title}
               featured={car.featured}
               verified={car.verified}
             />
+            
+            {/* Tabbed Details - Now under image gallery */}
+            <CarDetailTabs car={car} />
           </div>
 
-          {/* Right Column - Car Details */}
+          {/* Right Column - Car Overview and Actions */}
           <div className="space-y-4">
             <CarOverview
               title={car.title}
@@ -98,35 +99,6 @@ const CarDetailContent = ({
               insuranceType={car.insuranceType}
               lastServiceDate={car.lastServiceDate}
               serviceAtAuthorized={car.serviceAtAuthorized}
-            />
-
-            <BasicSpecs
-              year={car.year}
-              fuelType={car.fuelType}
-              transmission={car.transmission}
-              mileage={car.kilometersDriven}
-              color={car.color}
-              seatingCapacity={car.seatingCapacity}
-            />
-
-            <CarRegistration
-              registrationYear={car.registrationYear}
-              registrationState={car.registrationState}
-              year={car.year}
-              variant={car.variant}
-              seatingCapacity={car.seatingCapacity}
-            />
-
-            <CarCondition
-              noAccidentHistory={car.noAccidentHistory}
-              acceptOffers={car.acceptOffers}
-              offerPercentage={car.offerPercentage}
-              insuranceValid={car.insuranceValid}
-              insuranceValidTill={car.insuranceValidTill}
-              insuranceType={car.insuranceType}
-              lastServiceDate={car.lastServiceDate}
-              serviceAtAuthorized={car.serviceAtAuthorized}
-              rtoTransferSupport={car.rtoTransferSupport}
             />
 
             {/* Mobile Actions - Bottom */}
