@@ -42,13 +42,13 @@ const AccessoryInfo = ({
           </div>
         </div>
 
-        {/* Badges */}
+        {/* Streamlined Badges */}
         <div className="flex flex-wrap gap-2 mb-4">
           {accessory.featured && (
             <Badge className="bg-amber-500 text-white">⭐ Featured</Badge>
           )}
-          <Badge className={`${getConditionColor('new')}`}>
-            New Condition
+          <Badge className={`${getConditionColor(accessory.condition)}`}>
+            {accessory.condition?.charAt(0).toUpperCase() + accessory.condition?.slice(1)} Condition
           </Badge>
           {accessory.seller.verified && (
             <Badge className="bg-green-500 text-white">
@@ -62,9 +62,6 @@ const AccessoryInfo = ({
           >
             {accessory.availability === 'in-stock' ? 'In Stock' : 'On Order'}
           </Badge>
-          <Badge className="bg-blue-500 text-white">
-            Installation Available
-          </Badge>
         </div>
 
         {/* Price */}
@@ -77,18 +74,6 @@ const AccessoryInfo = ({
               {accessory.views} views
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Compatible Models - moved from separate section */}
-      <div>
-        <h3 className="font-semibold text-lg mb-3">Compatible Car Models</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {accessory.compatibility.map((model, index) => (
-            <Badge key={index} variant="secondary" className="text-sm justify-center py-2">
-              {model}
-            </Badge>
-          ))}
         </div>
       </div>
     </div>

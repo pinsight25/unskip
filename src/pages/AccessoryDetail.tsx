@@ -8,8 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
-import AccessoryDetails from '@/components/accessory/detail/AccessoryDetails';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
+import CompatibleModels from '@/components/accessory/detail/CompatibleModels';
 import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories';
 
 const AccessoryDetail = () => {
@@ -100,11 +100,11 @@ const AccessoryDetail = () => {
           <span className="text-gray-900">{accessory.name}</span>
         </nav>
 
-        {/* Main Content - Desktop 2-column, Mobile stacked */}
+        {/* Main Content - Improved Desktop Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          {/* Left Column - Images and Main Info (2/3 width on desktop) */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - Images and Product Info (2/3 width) */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <AccessoryImageGallery
                 images={accessory.images}
                 name={accessory.name}
@@ -122,8 +122,6 @@ const AccessoryDetail = () => {
               />
             </div>
 
-            <AccessoryDetails accessory={accessory} />
-
             {/* Description */}
             <Card>
               <CardContent className="p-6">
@@ -133,8 +131,10 @@ const AccessoryDetail = () => {
             </Card>
           </div>
 
-          {/* Right Column - Seller Info with Contact Actions (1/3 width on desktop) */}
-          <div className="lg:col-span-1">
+          {/* Right Column - Compatible Models and Seller Info (1/3 width) */}
+          <div className="lg:col-span-1 space-y-6">
+            <CompatibleModels accessory={accessory} />
+            
             <AccessorySellerCard 
               seller={accessory.seller} 
               onChat={handleChat}

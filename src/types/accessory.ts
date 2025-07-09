@@ -12,17 +12,13 @@ export interface Accessory {
   description: string;
   features: string[];
   compatibility: string[]; // Car models
-  installation: 'included' | 'extra' | 'diy';
-  warranty: string;
-  returnPolicy: string;
   availability: 'in-stock' | 'order' | 'out-of-stock';
   seller: AccessorySeller;
   location: string;
   views: number;
-  rating: number;
-  reviewCount: number;
   createdAt: string;
   featured: boolean;
+  condition: string; // Added from post form
 }
 
 export interface AccessorySeller {
@@ -33,7 +29,6 @@ export interface AccessorySeller {
   phone: string;
   email: string;
   verified: boolean;
-  rating: number;
   totalSales: number;
   memberSince: string;
   avatar?: string;
