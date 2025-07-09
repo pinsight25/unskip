@@ -34,24 +34,24 @@ const SearchHeader = ({
 
   return (
     <div className="bg-white border-b">
-      <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">Advanced Search</h1>
+      <div className="container mx-auto px-4 py-4">
+        <h1 className="text-xl md:text-2xl font-bold mb-3">Advanced Search</h1>
         
-        {/* Search Bar */}
-        <div className="relative mb-4">
+        {/* Search Bar - Normal size like home page */}
+        <div className="relative mb-3">
           <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
           <Input
             type="text"
             placeholder="Search cars by make, model, or location..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 h-12 text-base border-2 focus:border-primary"
+            className="pl-10 h-11 text-base border-2 focus:border-primary"
           />
         </div>
         
         {/* Active Filters */}
         {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-2">
             {selectedMake && (
               <Badge variant="secondary" className="bg-primary/10 text-primary">
                 {selectedMake}
