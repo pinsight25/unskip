@@ -9,7 +9,6 @@ import SimpleVehicleInfo from '@/components/car/SimpleVehicleInfo';
 import BasicSpecs from '@/components/car/BasicSpecs';
 import SellerCard from '@/components/car/SellerCard';
 import CarActions from '@/components/car/CarActions';
-import RentalTerms from '@/components/car/RentalTerms';
 
 interface CarDetailContentProps {
   car: Car;
@@ -29,12 +28,12 @@ const CarDetailContent = ({
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate(-1);
+    navigate('/');
   };
 
   return (
     <div className="bg-white">
-      <div className="max-w-3xl mx-auto px-4 pb-32 md:pb-6">
+      <div className="max-w-7xl mx-auto px-4 pb-32 md:pb-6">
         {/* Back Navigation */}
         <div className="mb-4 md:mb-6 pt-4">
           <Button 
@@ -47,10 +46,10 @@ const CarDetailContent = ({
           </Button>
         </div>
 
-        {/* Desktop 2-column layout, Mobile stacked */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column - Image Gallery */}
-          <div className="lg:sticky lg:top-4 lg:self-start">
+        {/* Desktop 3-column layout, Mobile stacked */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Image Gallery (Desktop: 2 columns width) */}
+          <div className="lg:col-span-2 lg:sticky lg:top-4 lg:self-start">
             <CarImageGallery
               images={car.images}
               title={car.title}
@@ -67,6 +66,18 @@ const CarDetailContent = ({
               rentPrice={car.rentPrice}
               description={car.description}
             />
+
+            {/* Quick Actions - Desktop Top */}
+            <div className="hidden lg:block">
+              <CarActions
+                offerStatus={offerStatus}
+                onMakeOffer={onMakeOffer}
+                onChatClick={onChatClick}
+                onTestDrive={onTestDrive}
+              />
+            </div>
+
+            <SellerCard seller={car.seller} />
 
             <SimpleVehicleInfo
               ownership={car.ownership}
@@ -85,13 +96,8 @@ const CarDetailContent = ({
               mileage={car.mileage}
             />
 
-            {car.isRentAvailable && car.rentPolicies && (
-              <RentalTerms rentPolicies={car.rentPolicies} />
-            )}
-
-            <SellerCard seller={car.seller} />
-
-            <div className="lg:sticky lg:bottom-4">
+            {/* Mobile Actions - Bottom */}
+            <div className="lg:hidden">
               <CarActions
                 offerStatus={offerStatus}
                 onMakeOffer={onMakeOffer}

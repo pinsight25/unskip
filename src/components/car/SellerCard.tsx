@@ -1,8 +1,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Phone, MessageCircle, MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar } from 'lucide-react';
 import { Seller } from '@/types/car';
 
 interface SellerCardProps {
@@ -10,16 +9,6 @@ interface SellerCardProps {
 }
 
 const SellerCard = ({ seller }: SellerCardProps) => {
-  const handleCall = () => {
-    window.location.href = 'tel:+919876543210';
-  };
-
-  const handleWhatsApp = () => {
-    const phoneNumber = '919876543210';
-    const message = 'Hi! I am interested in your car listing.';
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
-  };
-
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
@@ -55,27 +44,6 @@ const SellerCard = ({ seller }: SellerCardProps) => {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center justify-center min-h-[44px]"
-            onClick={handleCall}
-          >
-            <Phone className="h-4 w-4 mr-1" />
-            Call
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center justify-center min-h-[44px]"
-            onClick={handleWhatsApp}
-          >
-            <MessageCircle className="h-4 w-4 mr-1" />
-            WhatsApp
-          </Button>
         </div>
       </CardContent>
     </Card>
