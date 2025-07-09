@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, X } from 'lucide-react';
+import CitySelector from '@/components/common/CitySelector';
 
 interface SearchFiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
@@ -15,13 +16,26 @@ interface SearchFilters {
   type: 'all' | 'dealer' | 'individual';
   priceRange: [number, number];
   location: string;
+  city: string;
 }
+
+// Popular areas by city
+const popularAreasByCity: Record<string, string[]> = {
+  Chennai: ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'ECR', 'Tambaram', 'Chromepet'],
+  Mumbai: ['Andheri', 'Bandra', 'Borivali', 'Thane', 'Navi Mumbai', 'Powai', 'Malad', 'Goregaon'],
+  Delhi: ['Connaught Place', 'Karol Bagh', 'Lajpat Nagar', 'Saket', 'Dwarka', 'Rohini', 'Vasant Kunj', 'Janakpuri'],
+  Bangalore: ['Koramangala', 'Indiranagar', 'Whitefield', 'Electronic City', 'HSR Layout', 'Marathahalli', 'Jayanagar', 'BTM Layout'],
+  Hyderabad: ['Banjara Hills', 'Jubilee Hills', 'Gachibowli', 'Hitech City', 'Kondapur', 'Madhapur', 'Secunderabad', 'Kukatpally'],
+  Pune: ['Koregaon Park', 'Hinjewadi', 'Baner', 'Wakad', 'Kothrud', 'Deccan', 'Camp', 'Aundh'],
+  Kolkata: ['Salt Lake', 'Park Street', 'Ballygunge', 'Alipore', 'New Town', 'Rajarhat', 'Howrah', 'Jadavpur']
+};
 
 const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<string>('Chennai'); // Default to Chennai
   
-  const popularLocations = ['T. Nagar', 'Anna Nagar', 'Adyar', 'Velachery', 'OMR', 'ECR', 'Tambaram', 'Chromepet'];
+  const currentPopularAreas = popularAreasByCity[selectedCity] || popularAreasByCity.Chennai;
 
   const handleSearch = () => {
     if (onSearch) {
@@ -31,7 +45,8 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
         query: searchQuery,
         type: 'all',
         priceRange: [0, 5000000],
-        location: selectedLocation
+        location: selectedLocation,
+        city: selectedCity
       });
     }
   };
@@ -48,7 +63,26 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
         query: newLocation,
         type: 'all',
         priceRange: [0, 5000000],
-        location: newLocation
+        location: newLocation,
+        city: selectedCity
+      });
+    }
+  };
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedLocation(''); // Clear location when city changes
+    setSearchQuery('');
+    
+    if (onSearch) {
+      onSearch('');
+    } else {
+      onFilterChange({
+        query: '',
+        type: 'all',
+        priceRange: [0, 5000000],
+        location: '',
+        city: city
       });
     }
   };
@@ -63,7 +97,8 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
         query: '',
         type: 'all',
         priceRange: [0, 5000000],
-        location: ''
+        location: '',
+        city: selectedCity
       });
     }
   };
@@ -101,20 +136,30 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
             </Button>
           </div>
 
+          {/* City Selector */}
+          {!hideContent && (
+            <div className="flex justify-center">
+              <CitySelector 
+                selectedCity={selectedCity}
+                onCityChange={handleCityChange}
+              />
+            </div>
+          )}
+
           {/* Popular Areas - Mobile horizontal scroll, Desktop wrapped */}
           {!hideContent && (
             <div className="space-y-2 lg:space-y-3">
               <div className="flex items-center justify-start max-w-5xl mx-auto">
                 <span className="text-sm lg:text-base text-gray-700 font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
-                  Popular Areas in Chennai
+                  Popular Areas in {selectedCity || 'Chennai'}
                 </span>
               </div>
               
               {/* Mobile: Horizontal scroll container */}
               <div className="max-w-5xl mx-auto lg:hidden">
                 <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
-                  {popularLocations.map((location) => {
+                  {currentPopularAreas.map((location) => {
                     const isSelected = selectedLocation === location;
                     return (
                       <button
@@ -138,7 +183,7 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
               {/* Desktop: Wrapped layout */}
               <div className="max-w-5xl mx-auto hidden lg:block">
                 <div className="flex flex-wrap gap-3 justify-start pb-2">
-                  {popularLocations.map((location) => {
+                  {currentPopularAreas.map((location) => {
                     const isSelected = selectedLocation === location;
                     return (
                       <button

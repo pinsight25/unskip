@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
@@ -9,6 +8,7 @@ interface SearchFiltersType {
   type: 'all' | 'dealer' | 'individual';
   priceRange: [number, number];
   location: string;
+  city: string;
 }
 
 export const useHomeState = () => {
@@ -20,7 +20,8 @@ export const useHomeState = () => {
     query: '',
     type: 'all',
     priceRange: [0, 5000000],
-    location: ''
+    location: '',
+    city: 'Chennai' // Default to Chennai
   });
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
@@ -48,6 +49,13 @@ export const useHomeState = () => {
     // Filter by seller type - WORKING
     if (filters.type !== 'all') {
       filtered = filtered.filter(car => car.seller.type === filters.type);
+    }
+    
+    // City filtering - NEW
+    if (filters.city) {
+      filtered = filtered.filter(car => 
+        car.location.toLowerCase().includes(filters.city.toLowerCase())
+      );
     }
     
     // Search functionality - WORKING

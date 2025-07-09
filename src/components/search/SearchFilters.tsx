@@ -6,6 +6,7 @@ import PriceRangeFilter from './filters/PriceRangeFilter';
 import MakeFilter from './filters/MakeFilter';
 import YearFilter from './filters/YearFilter';
 import FuelTypeFilter from './filters/FuelTypeFilter';
+import CitySelector from '@/components/common/CitySelector';
 
 interface SearchFiltersProps {
   priceRange: [number, number];
@@ -18,6 +19,8 @@ interface SearchFiltersProps {
   onFuelToggle: (fuel: string) => void;
   onClearFilters: () => void;
   makes: string[];
+  selectedCity?: string;
+  onCityChange?: (city: string) => void;
 }
 
 const SearchFilters = ({
@@ -30,7 +33,9 @@ const SearchFilters = ({
   selectedFuel,
   onFuelToggle,
   onClearFilters,
-  makes
+  makes,
+  selectedCity = '',
+  onCityChange
 }: SearchFiltersProps) => {
   return (
     <div className="w-full">
@@ -41,6 +46,17 @@ const SearchFilters = ({
         </h3>
         
         <div className="space-y-6">
+          {onCityChange && (
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">City</label>
+              <CitySelector 
+                selectedCity={selectedCity}
+                onCityChange={onCityChange}
+                className="justify-start"
+              />
+            </div>
+          )}
+          
           <PriceRangeFilter 
             priceRange={priceRange}
             onPriceRangeChange={onPriceRangeChange}
