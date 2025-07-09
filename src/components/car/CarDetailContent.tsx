@@ -78,16 +78,16 @@ const CarDetailContent = ({
               featured={car.featured}
               seatingCapacity={car.seatingCapacity}
             />
-            
-            {/* Tabbed Details */}
-            <CarDetailTabs car={car} />
 
-            {/* Description */}
+            {/* Description - Moved to correct position between overview and tabs */}
             {car.description && (
               <div>
                 <p className="text-gray-700 text-sm leading-relaxed">{car.description}</p>
               </div>
             )}
+            
+            {/* Tabbed Details */}
+            <CarDetailTabs car={car} />
           </div>
 
           {/* Right Column - Seller and Actions */}
