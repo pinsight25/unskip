@@ -9,13 +9,11 @@ import { useToast } from '@/hooks/use-toast';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
-import CompatibleModels from '@/components/accessory/detail/CompatibleModels';
 import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories';
 
 const AccessoryDetail = () => {
   const { id } = useParams<{ id: string }>();
   const accessory: Accessory | undefined = mockAccessories.find((acc) => acc.id === id);
-  const [isSaved, setIsSaved] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
 
@@ -48,16 +46,6 @@ const AccessoryDetail = () => {
       case 'fair': return 'bg-orange-500 text-white';
       default: return 'bg-gray-500 text-white';
     }
-  };
-
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-    toast({
-      title: isSaved ? "Removed from saved" : "Saved!",
-      description: isSaved 
-        ? "Accessory removed from your saved items" 
-        : "Accessory saved to your wishlist",
-    });
   };
 
   const handleChat = () => {
@@ -114,8 +102,6 @@ const AccessoryDetail = () => {
 
               <AccessoryInfo
                 accessory={accessory}
-                isSaved={isSaved}
-                onSave={handleSave}
                 onShare={handleShare}
                 formatPrice={formatPrice}
                 getConditionColor={getConditionColor}
@@ -131,10 +117,8 @@ const AccessoryDetail = () => {
             </Card>
           </div>
 
-          {/* Right Column - Compatible Models and Seller Info (1/3 width) */}
+          {/* Right Column - Seller Info (1/3 width) */}
           <div className="lg:col-span-1 space-y-6">
-            <CompatibleModels accessory={accessory} />
-            
             <AccessorySellerCard 
               seller={accessory.seller} 
               onChat={handleChat}

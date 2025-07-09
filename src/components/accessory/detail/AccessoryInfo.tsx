@@ -1,13 +1,11 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Share2, Shield } from 'lucide-react';
+import { Share2, Shield } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryInfoProps {
   accessory: Accessory;
-  isSaved: boolean;
-  onSave: () => void;
   onShare: () => void;
   formatPrice: (price: { min: number; max: number }) => string;
   getConditionColor: (condition: string) => string;
@@ -15,8 +13,6 @@ interface AccessoryInfoProps {
 
 const AccessoryInfo = ({ 
   accessory, 
-  isSaved, 
-  onSave, 
   onShare, 
   formatPrice, 
   getConditionColor 
@@ -33,9 +29,6 @@ const AccessoryInfo = ({
             <p className="text-lg text-gray-600 font-medium">{accessory.brand}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={onSave}>
-              <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
-            </Button>
             <Button variant="outline" size="sm" onClick={onShare}>
               <Share2 className="h-4 w-4" />
             </Button>
@@ -73,6 +66,22 @@ const AccessoryInfo = ({
             <div>
               {accessory.views} views
             </div>
+          </div>
+        </div>
+
+        {/* Compatible Models - Below Pricing */}
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 mb-1">Compatible with:</p>
+          <div className="text-sm">
+            {accessory.compatibility.slice(0, 4).map((model, index) => (
+              <span key={model}>
+                <span className="text-cyan-600 font-medium">{model}</span>
+                {index < Math.min(accessory.compatibility.length, 4) - 1 && ', '}
+              </span>
+            ))}
+            {accessory.compatibility.length > 4 && (
+              <span className="text-cyan-600 font-medium"> +{accessory.compatibility.length - 4} more</span>
+            )}
           </div>
         </div>
       </div>
