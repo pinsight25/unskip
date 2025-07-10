@@ -54,16 +54,16 @@ const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
       isScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Header Layout - Improved mobile spacing */}
-        <div className="flex h-16 lg:h-20 items-center justify-between gap-2 sm:gap-4">
+      <div className="w-full max-w-7xl mx-auto container-safe">
+        {/* Header Layout */}
+        <div className="flex h-16 lg:h-20 items-center justify-between">
           <Logo />
 
           {/* Desktop Navigation */}
           <DesktopNavigation navItems={navItems} />
 
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-6">
-            {/* Desktop City Selector - Hidden on mobile */}
+          <div className="flex items-center space-x-4 lg:space-x-6">
+            {/* City Selector - Hidden on mobile */}
             <div className="hidden md:block">
               <HeaderCitySelector />
             </div>
@@ -71,12 +71,17 @@ const Header = () => {
             {/* Desktop Actions */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
+            {/* Mobile City Selector */}
+            <div className="md:hidden">
+              <HeaderCitySelector />
+            </div>
+
             {/* Mobile Chat Icon with proper badge positioning */}
             <Link
               to="/chats"
-              className="lg:hidden relative p-2 h-10 w-10 sm:h-12 sm:w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"
+              className="lg:hidden relative p-2 h-12 w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
             >
-              <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+              <MessageCircle className="h-5 w-5 text-gray-700" />
               {unreadChats > 0 && (
                 <span className="notification-badge">
                   {unreadChats}
@@ -84,16 +89,16 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Mobile Menu Button - Always visible and prioritized */}
+            {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 h-10 w-10 sm:h-12 sm:w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"
+              className="lg:hidden p-2 h-12 w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
-                <X className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                <X className="h-5 w-5 text-gray-700" />
               ) : (
-                <Menu className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                <Menu className="h-5 w-5 text-gray-700" />
               )}
             </button>
           </div>
