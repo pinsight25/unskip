@@ -32,13 +32,13 @@ const SellCarHeader = ({ currentStep, activeCarListings, carLimit, onBackClick }
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl md:text-3xl font-bold">Sell Your Car</h1>
           <div className="flex items-center gap-2">
-            <Badge variant="outline">Step {currentStep} of 5</Badge>
+            <Badge variant="outline">Step {currentStep} of 4</Badge>
             <Badge variant={activeCarListings >= carLimit - 1 ? "destructive" : "secondary"} className="text-xs">
               {activeCarListings}/{carLimit} cars
             </Badge>
           </div>
         </div>
-        <Progress value={(currentStep / 5) * 100} className="h-2" />
+        <Progress value={(currentStep / 4) * 100} className="h-2" />
       </div>
     </>
   );

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { updateFormField } from '@/utils/formHelpers';
 
@@ -40,11 +41,10 @@ export type SellCarFormData = {
   phoneVerified: boolean;
   description: string;
   termsAccepted: boolean;
-  // Additional fields for LocationContactStep
+  // Fields for LocationContactStep
   address: string;
   sellerName: string;
   email: string;
-  additionalInfo: string;
 };
 
 export const useSellCarForm = () => {
@@ -87,11 +87,10 @@ export const useSellCarForm = () => {
     phoneVerified: false,
     description: '',
     termsAccepted: false,
-    // Additional fields for LocationContactStep
+    // Fields for LocationContactStep
     address: '',
     sellerName: '',
     email: '',
-    additionalInfo: '',
   });
 
   const validatePrice = (price: string) => {

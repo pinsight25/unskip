@@ -16,7 +16,6 @@ type SellCarFormData = {
   sellerName: string;
   phone: string;
   email: string;
-  additionalInfo: string;
   termsAccepted: boolean;
   // Add any other fields used in the form
 };
@@ -135,17 +134,6 @@ const LocationContactStep = ({ formData, onUpdate, setFormData }: LocationContac
               value={formData.email}
               onChange={(e) => onUpdate({ email: e.target.value })}
               placeholder="Enter your email (optional)"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="additionalInfo">Additional Information</Label>
-            <Textarea
-              id="additionalInfo"
-              value={formData.additionalInfo}
-              onChange={(e) => onUpdate({ additionalInfo: e.target.value })}
-              placeholder="Any additional details about the car or sale conditions..."
-              rows={3}
             />
           </div>
         </CardContent>
