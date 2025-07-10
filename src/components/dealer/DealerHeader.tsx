@@ -2,13 +2,19 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ShareButton from '@/components/ui/ShareButton';
-import { MapPin, Car as CarIcon, Phone, Shield } from 'lucide-react';
+import { MapPin, Car as CarIcon, Phone, Shield, Calendar, Building, User } from 'lucide-react';
 
 interface DealerHeaderProps {
   dealer: {
     id: string;
     name: string;
+    contactPerson?: string;
+    phone?: string;
+    email?: string;
+    businessCategory?: string;
+    specialization?: string;
     location: string;
+    establishmentYear?: string;
     carsInStock: number;
     responseTime: string;
     verified: boolean;
@@ -18,7 +24,8 @@ interface DealerHeaderProps {
 
 const DealerHeader = ({ dealer }: DealerHeaderProps) => {
   const handleCallNow = () => {
-    window.location.href = 'tel:+919876543210';
+    const phoneNumber = dealer.phone || '+919876543210';
+    window.location.href = `tel:${phoneNumber}`;
   };
 
   const handleGetDirections = () => {
@@ -28,7 +35,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg mx-4 md:mx-0 mb-6 p-4 md:p-8 desktop-header-section shadow-sm">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-8">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-8">
         <div className="flex-1">
           {/* Mobile: Stack dealer name and badges vertically */}
           <div className="md:flex md:items-center md:gap-3 mb-4 md:mb-6">
@@ -49,21 +56,52 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 text-gray-600 mb-4 md:mb-6">
+          {/* Dealer Details */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 md:gap-6 text-gray-600 mb-4 md:mb-6">
             <div className="flex items-center">
               <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
               <span className="text-sm md:text-base">{dealer.location}</span>
             </div>
             <div className="flex items-center">
               <CarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span className="text-sm md:text-base">{dealer.carsInStock}+ cars in stock</span>
+              <span className="text-sm md:text-base">
+                {dealer.carsInStock === 0 ? 'No cars' : `${dealer.carsInStock}+ cars`} in stock
+              </span>
             </div>
             <div className="flex items-center">
               <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
               <span className="text-sm md:text-base">Responds in {dealer.responseTime}</span>
             </div>
+            {dealer.contactPerson && (
+              <div className="flex items-center">
+                <User className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="text-sm md:text-base">{dealer.contactPerson}</span>
+              </div>
+            )}
+            {dealer.establishmentYear && (
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="text-sm md:text-base">Since {dealer.establishmentYear}</span>
+              </div>
+            )}
+            {dealer.businessCategory && (
+              <div className="flex items-center">
+                <Building className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="text-sm md:text-base">{dealer.businessCategory}</span>
+              </div>
+            )}
           </div>
 
+          {/* Business Categories */}
+          <div className="mb-4">
+            {dealer.specialization && (
+              <Badge variant="secondary" className="mr-2 mb-2">
+                {dealer.specialization}
+              </Badge>
+            )}
+          </div>
+
+          {/* Brands */}
           <div className="flex flex-wrap gap-2">
             {dealer.brands.map((brand) => (
               <Badge key={brand} variant="outline" className="text-xs">

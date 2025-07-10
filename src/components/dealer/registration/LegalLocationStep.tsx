@@ -2,9 +2,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
 
 interface LegalLocationStepProps {
@@ -17,22 +15,6 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
   const handleGSTChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const gstValue = e.target.value.toUpperCase();
     onInputChange('gstNumber', gstValue);
-  };
-
-  const handle24x7Change = (checked: boolean | 'indeterminate') => {
-    onInputChange('operatingHours', {
-      ...formData.operatingHours,
-      is24x7: checked === true,
-      openingTime: checked === true ? '' : formData.operatingHours.openingTime,
-      closingTime: checked === true ? '' : formData.operatingHours.closingTime,
-    });
-  };
-
-  const handleOperatingHoursChange = (field: 'openingTime' | 'closingTime', value: string) => {
-    onInputChange('operatingHours', {
-      ...formData.operatingHours,
-      [field]: value,
-    });
   };
 
   return (
@@ -92,75 +74,6 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               value={formData.establishmentYear}
               onChange={(e) => onInputChange('establishmentYear', e.target.value)}
             />
-          </div>
-        </div>
-      </div>
-
-      {/* Business Operations */}
-      <div>
-        <h3 className="text-lg font-medium mb-4">Business Operations</h3>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="websiteUrl">Website URL (Optional)</Label>
-            <Input
-              id="websiteUrl"
-              type="url"
-              placeholder="https://www.yourwebsite.com"
-              value={formData.websiteUrl}
-              onChange={(e) => onInputChange('websiteUrl', e.target.value)}
-            />
-          </div>
-
-          <div>
-            <Label className="text-base font-medium">Operating Hours *</Label>
-            <div className="space-y-3 mt-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="is24x7"
-                  checked={formData.operatingHours.is24x7}
-                  onCheckedChange={handle24x7Change}
-                />
-                <Label htmlFor="is24x7" className="text-sm">Open 24x7</Label>
-              </div>
-
-              {!formData.operatingHours.is24x7 && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="openingTime">Opening Time *</Label>
-                    <Select
-                      value={formData.operatingHours.openingTime}
-                      onValueChange={(value) => handleOperatingHoursChange('openingTime', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select opening time" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['6:00 AM', '7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM'].map((time) => (
-                          <SelectItem key={time} value={time}>{time}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="closingTime">Closing Time *</Label>
-                    <Select
-                      value={formData.operatingHours.closingTime}
-                      onValueChange={(value) => handleOperatingHoursChange('closingTime', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select closing time" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'].map((time) => (
-                          <SelectItem key={time} value={time}>{time}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>

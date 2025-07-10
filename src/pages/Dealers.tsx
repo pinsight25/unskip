@@ -10,8 +10,12 @@ const Dealers = () => {
     {
       id: 1,
       name: 'CarMax Motors',
+      contactPerson: 'Rajesh Kumar',
+      businessCategory: 'New & Used Cars',
+      specialization: 'All Brands',
       location: 'Andheri West, Mumbai',
-      stock: '150+ cars',
+      establishmentYear: '2010',
+      stock: '0 cars', // Dynamic based on listings
       responseTime: '30 mins',
       brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
       verified: true
@@ -19,8 +23,12 @@ const Dealers = () => {
     {
       id: 2,
       name: 'Premium Auto Hub',
+      contactPerson: 'Arjun Mehta',
+      businessCategory: 'Specialized',
+      specialization: 'Luxury Cars',
       location: 'Bandra East, Mumbai',
-      stock: '120+ cars',
+      establishmentYear: '2015',
+      stock: '0 cars',
       responseTime: '15 mins',
       brands: ['BMW', 'Audi', 'Mercedes'],
       verified: true
@@ -28,8 +36,12 @@ const Dealers = () => {
     {
       id: 3,
       name: 'City Car Center',
+      contactPerson: 'Priya Sharma',
+      businessCategory: 'New & Used Cars',
+      specialization: 'Budget Cars',
       location: 'Powai, Mumbai',
-      stock: '200+ cars',
+      establishmentYear: '2008',
+      stock: '0 cars',
       responseTime: '45 mins',
       brands: ['Honda', 'Toyota', 'Nissan'],
       verified: true
@@ -37,8 +49,12 @@ const Dealers = () => {
     {
       id: 4,
       name: 'Elite Motors',
+      contactPerson: 'Suresh Patel',
+      businessCategory: 'Used Cars Only',
+      specialization: 'All Brands',
       location: 'Goregaon West, Mumbai',
-      stock: '80+ cars',
+      establishmentYear: '2012',
+      stock: '0 cars',
       responseTime: '1 hour',
       brands: ['Mahindra', 'Ford', 'Renault'],
       verified: false
@@ -46,8 +62,12 @@ const Dealers = () => {
     {
       id: 5,
       name: 'Royal Car Palace',
+      contactPerson: 'Vikram Singh',
+      businessCategory: 'New Cars Only',
+      specialization: 'Electric',
       location: 'Thane West, Mumbai',
-      stock: '180+ cars',
+      establishmentYear: '2018',
+      stock: '0 cars',
       responseTime: '20 mins',
       brands: ['Kia', 'Skoda', 'Volkswagen'],
       verified: true
@@ -55,8 +75,12 @@ const Dealers = () => {
     {
       id: 6,
       name: 'Metro Auto Sales',
+      contactPerson: 'Ravi Kumar',
+      businessCategory: 'Used Cars Only',
+      specialization: 'Budget Cars',
       location: 'Malad West, Mumbai',
-      stock: '90+ cars',
+      establishmentYear: '2005',
+      stock: '0 cars',
       responseTime: '35 mins',
       brands: ['Jeep', 'MG', 'Tata'],
       verified: true
@@ -111,6 +135,7 @@ const Dealers = () => {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-bold text-lg mb-1">{dealer.name}</h3>
+                    <p className="text-sm text-gray-600">Since {dealer.establishmentYear}</p>
                   </div>
                   {dealer.verified && (
                     <Badge className="bg-green-100 text-green-700">
@@ -133,6 +158,12 @@ const Dealers = () => {
                     <Phone className="h-4 w-4 mr-2" />
                     <span className="text-sm">Responds in {dealer.responseTime}</span>
                   </div>
+                </div>
+
+                <div className="mb-4">
+                  <Badge variant="secondary" className="mb-2">
+                    {dealer.specialization}
+                  </Badge>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">

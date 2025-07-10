@@ -21,14 +21,20 @@ const DealerInventory = () => {
   const { dealerId } = useParams();
   const [sortBy, setSortBy] = useState('');
   
-  // Mock dealer data - in real app this would come from API
+  // Mock dealer data with actual form data - in real app this would come from API
   const dealer = {
     id: dealerId || '1',
     name: 'CarMax Motors',
+    contactPerson: 'Rajesh Kumar',
+    phone: '+91 98765 43210',
+    email: 'contact@carmaxmotors.com',
+    businessCategory: 'New & Used Cars',
+    specialization: 'All Brands',
     rating: 4.8,
     reviewCount: 234,
     location: 'Andheri West, Mumbai',
-    carsInStock: 150,
+    establishmentYear: '2010',
+    carsInStock: 0, // Dynamic count based on actual listings
     responseTime: '30 mins',
     verified: true,
     brands: ['Maruti Suzuki', 'Hyundai', 'Tata']
@@ -36,6 +42,9 @@ const DealerInventory = () => {
 
   // Filter cars by dealer - in real app this would be API call
   const dealerCars = mockCars.filter(car => car.seller.type === 'dealer').slice(0, 12);
+  
+  // Update dealer's car count with actual listings
+  dealer.carsInStock = dealerCars.length;
   
   const sortedCars = [...dealerCars].sort((a, b) => {
     switch (sortBy) {

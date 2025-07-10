@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -124,15 +123,12 @@ export const useDealerRegistrationForm = () => {
         return step1Valid;
         
       case 2:
-        const hoursValid = formData.operatingHours.is24x7 || 
-                          (formData.operatingHours.openingTime?.trim() && formData.operatingHours.closingTime?.trim());
         const step2Valid = !!(
           formData.gstNumber?.trim() && 
           validateGST(formData.gstNumber) && 
           formData.shopAddress?.trim() && 
           formData.pincode?.trim() && 
-          formData.establishmentYear?.trim() && 
-          hoursValid
+          formData.establishmentYear?.trim()
         );
         console.log('Step 2 validation:', {
           gstNumber: !!formData.gstNumber?.trim(),
@@ -140,10 +136,6 @@ export const useDealerRegistrationForm = () => {
           shopAddress: !!formData.shopAddress?.trim(),
           pincode: !!formData.pincode?.trim(),
           establishmentYear: !!formData.establishmentYear?.trim(),
-          hoursValid,
-          openingTime: formData.operatingHours.openingTime,
-          closingTime: formData.operatingHours.closingTime,
-          is24x7: formData.operatingHours.is24x7,
           result: step2Valid
         });
         return step2Valid;
