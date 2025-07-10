@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useSellCarForm } from '@/hooks/useSellCarForm';
 import { updateFormField } from '@/utils/formHelpers';
@@ -9,6 +9,7 @@ import { FREE_LIMITS, getCarLimit } from '@/constants/limits';
 export const useSellCarLogic = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const { formData, setFormData, validatePrice, validateKilometersDriven } = useSellCarForm();
 
@@ -16,6 +17,48 @@ export const useSellCarLogic = () => {
   const activeCarListings = 3; // Mock count
   const userType = 'regular'; // Mock user type - will come from user context
   const carLimit = getCarLimit(userType);
+
+  // Handle duplicate listing data on component mount
+  useEffect(() => {
+    const isDuplicate = searchParams.get('duplicate') === 'true';
+    if (isDuplicate) {
+      const duplicateDataString = sessionStorage.getItem('duplicateListingData');
+      if (duplicateDataString) {
+        try {
+          const duplicateData = JSON.parse(duplicateDataString);
+          // Clear photos and specific identifiers for the duplicate
+          const cleanedData = {
+            ...duplicateData,
+            photos: [], // Clear photos
+            coverPhotoIndex: 0,
+            phone: '', // Clear phone for privacy
+            phoneVerified: false,
+            termsAccepted: false, // Require re-acceptance
+          };
+          
+          setFormData(prevData => ({
+            ...prevData,
+            ...cleanedData
+          }));
+          
+          // Clear the stored data
+          sessionStorage.removeItem('duplicateListingData');
+          
+          toast({
+            title: "Listing Duplicated",
+            description: "Your listing has been copied. Update the details and photos as needed.",
+          });
+        } catch (error) {
+          console.error('Error parsing duplicate data:', error);
+          toast({
+            title: "Error",
+            description: "Failed to duplicate listing. Please try again.",
+            variant: "destructive"
+          });
+        }
+      }
+    }
+  }, [searchParams, setFormData, toast]);
 
   const handleNext = () => {
     if (currentStep < 5) {

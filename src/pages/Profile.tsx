@@ -30,7 +30,7 @@ const Profile = () => {
     title: ''
   });
 
-  // Mock data
+  // Mock data with enhanced listing information for duplication
   const [listings] = useState([
     {
       id: '1',
@@ -39,7 +39,37 @@ const Profile = () => {
       location: 'Mumbai, Maharashtra',
       views: 45,
       postedDate: '2 days ago',
-      status: 'active'
+      status: 'active',
+      // Enhanced data for duplication
+      make: 'Maruti',
+      model: 'Swift',
+      variant: 'VXI',
+      year: 2022,
+      registrationYear: 2022,
+      registrationState: 'MH',
+      fitnessCertificateValidTill: '2025-07-15',
+      numberOfOwners: '1',
+      seatingCapacity: '5',
+      fuelType: 'Petrol',
+      transmission: 'Manual',
+      kilometersDriven: 15000,
+      color: 'Red',
+      acceptOffers: true,
+      offerPercentage: 70,
+      insuranceValidTill: '2024-12-15',
+      insuranceType: 'Comprehensive',
+      insuranceValid: true,
+      lastServiceDate: '2024-01-15',
+      serviceCenterType: 'Authorized',
+      serviceHistory: true,
+      authorizedServiceCenter: true,
+      rtoTransferSupport: true,
+      noAccidentHistory: true,
+      isRentAvailable: false,
+      city: 'Mumbai',
+      area: 'Andheri West',
+      landmark: 'Near Metro Station',
+      description: 'Well maintained car with full service history.'
     },
     {
       id: '2',
@@ -48,7 +78,37 @@ const Profile = () => {
       location: 'Mumbai, Maharashtra',
       views: 32,
       postedDate: '5 days ago',
-      status: 'active'
+      status: 'active',
+      // Enhanced data for duplication
+      make: 'Hyundai',
+      model: 'i20',
+      variant: 'Sportz',
+      year: 2021,
+      registrationYear: 2021,
+      registrationState: 'MH',
+      fitnessCertificateValidTill: '2026-03-20',
+      numberOfOwners: '1',
+      seatingCapacity: '5',
+      fuelType: 'Petrol',
+      transmission: 'Manual',
+      kilometersDriven: 25000,
+      color: 'Blue',
+      acceptOffers: true,
+      offerPercentage: 75,
+      insuranceValidTill: '2024-11-20',
+      insuranceType: 'Comprehensive',
+      insuranceValid: true,
+      lastServiceDate: '2024-02-10',
+      serviceCenterType: 'Authorized',
+      serviceHistory: true,
+      authorizedServiceCenter: true,
+      rtoTransferSupport: true,
+      noAccidentHistory: true,
+      isRentAvailable: false,
+      city: 'Mumbai',
+      area: 'Bandra East',
+      landmark: 'Near Shopping Mall',
+      description: 'Excellent condition with complete paperwork.'
     },
     {
       id: '3',
@@ -57,7 +117,37 @@ const Profile = () => {
       location: 'Mumbai, Maharashtra',
       views: 28,
       postedDate: '1 week ago',
-      status: 'sold'
+      status: 'sold',
+      // Enhanced data for duplication
+      make: 'Honda',
+      model: 'City',
+      variant: 'VX',
+      year: 2020,
+      registrationYear: 2020,
+      registrationState: 'MH',
+      fitnessCertificateValidTill: '2025-05-10',
+      numberOfOwners: '1',
+      seatingCapacity: '5',
+      fuelType: 'Petrol',
+      transmission: 'CVT',
+      kilometersDriven: 35000,
+      color: 'White',
+      acceptOffers: false,
+      offerPercentage: 0,
+      insuranceValidTill: '2024-10-10',
+      insuranceType: 'Comprehensive',
+      insuranceValid: true,
+      lastServiceDate: '2024-03-05',
+      serviceCenterType: 'Authorized',
+      serviceHistory: true,
+      authorizedServiceCenter: true,
+      rtoTransferSupport: true,
+      noAccidentHistory: true,
+      isRentAvailable: false,
+      city: 'Mumbai',
+      area: 'Powai',
+      landmark: 'Near Tech Park',
+      description: 'Premium sedan in pristine condition.'
     }
   ]);
 
