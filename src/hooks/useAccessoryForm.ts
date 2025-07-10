@@ -11,8 +11,8 @@ export interface AccessoryFormData {
   description: string;
   condition: string;
   compatibility: string[];
-  warranty: string; // New field
-  installationAvailable: boolean; // New field
+  warranty: string;
+  installationAvailable: boolean;
   photos: string[];
   phone: string;
   phoneVerified: boolean;
@@ -34,8 +34,8 @@ export const useAccessoryForm = () => {
     description: '',
     condition: '',
     compatibility: [],
-    warranty: '', // New field
-    installationAvailable: false, // New field
+    warranty: '',
+    installationAvailable: false,
     photos: [],
     phone: '',
     phoneVerified: false,
@@ -52,13 +52,56 @@ export const useAccessoryForm = () => {
   };
 
   const validateStep = (step: number): boolean => {
+    console.log(`Validating accessory step ${step}:`, formData);
+    
     switch (step) {
       case 1:
-        return !!(formData.name && formData.category && formData.brand && formData.priceMin);
+        const step1Valid = !!(
+          formData.name?.trim() && 
+          formData.category?.trim() && 
+          formData.brand?.trim() && 
+          formData.priceMin?.trim() &&
+          parseFloat(formData.priceMin) > 0
+        );
+        console.log('Accessory Step 1 validation:', {
+          name: !!formData.name?.trim(),
+          category: !!formData.category?.trim(),
+          brand: !!formData.brand?.trim(),
+          priceMin: !!formData.priceMin?.trim(),
+          priceMinValid: parseFloat(formData.priceMin) > 0,
+          result: step1Valid
+        });
+        return step1Valid;
+        
       case 2:
-        return !!(formData.description && formData.condition);
+        const step2Valid = !!(
+          formData.description?.trim() && 
+          formData.condition?.trim()
+        );
+        console.log('Accessory Step 2 validation:', {
+          description: !!formData.description?.trim(),
+          condition: !!formData.condition?.trim(),
+          result: step2Valid
+        });
+        return step2Valid;
+        
       case 3:
-        return !!(formData.phone && formData.location);
+        // Phone number validation - accept various formats
+        const phoneValid = formData.phone?.trim() && 
+          (formData.phone.replace(/\D/g, '').length >= 10);
+        const step3Valid = !!(
+          phoneValid &&
+          formData.location?.trim()
+        );
+        console.log('Accessory Step 3 validation:', {
+          phone: formData.phone,
+          phoneValid,
+          phoneDigits: formData.phone?.replace(/\D/g, '').length,
+          location: !!formData.location?.trim(),
+          result: step3Valid
+        });
+        return step3Valid;
+        
       default:
         return false;
     }

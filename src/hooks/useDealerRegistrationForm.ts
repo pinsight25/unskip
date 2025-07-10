@@ -66,6 +66,7 @@ export const useDealerRegistrationForm = () => {
   const progress = (currentStep / totalSteps) * 100;
 
   const validateGST = (gst: string) => {
+    if (!gst || gst.length === 0) return false;
     const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
     return gstRegex.test(gst);
   };
@@ -97,18 +98,72 @@ export const useDealerRegistrationForm = () => {
   };
 
   const validateStep = (step: number) => {
+    console.log(`Validating step ${step}:`, formData);
+    
     switch (step) {
       case 1:
-        return formData.businessName && formData.contactPerson && formData.phone && 
-               formData.email && formData.businessCategory && formData.brandsDealWith.length > 0;
+        const step1Valid = !!(
+          formData.businessName?.trim() && 
+          formData.contactPerson?.trim() && 
+          formData.phone?.trim() && 
+          formData.email?.trim() && 
+          formData.businessCategory?.trim() && 
+          formData.brandsDealWith?.length > 0 &&
+          formData.specialization?.trim()
+        );
+        console.log('Step 1 validation:', {
+          businessName: !!formData.businessName?.trim(),
+          contactPerson: !!formData.contactPerson?.trim(),
+          phone: !!formData.phone?.trim(),
+          email: !!formData.email?.trim(),
+          businessCategory: !!formData.businessCategory?.trim(),
+          brandsDealWith: formData.brandsDealWith?.length > 0,
+          specialization: !!formData.specialization?.trim(),
+          result: step1Valid
+        });
+        return step1Valid;
+        
       case 2:
         const hoursValid = formData.operatingHours.is24x7 || 
-                          (formData.operatingHours.openingTime && formData.operatingHours.closingTime);
-        return formData.gstNumber && validateGST(formData.gstNumber) && formData.shopAddress && 
-               formData.pincode && formData.establishmentYear && hoursValid;
+                          (formData.operatingHours.openingTime?.trim() && formData.operatingHours.closingTime?.trim());
+        const step2Valid = !!(
+          formData.gstNumber?.trim() && 
+          validateGST(formData.gstNumber) && 
+          formData.shopAddress?.trim() && 
+          formData.pincode?.trim() && 
+          formData.establishmentYear?.trim() && 
+          hoursValid
+        );
+        console.log('Step 2 validation:', {
+          gstNumber: !!formData.gstNumber?.trim(),
+          gstValid: validateGST(formData.gstNumber),
+          shopAddress: !!formData.shopAddress?.trim(),
+          pincode: !!formData.pincode?.trim(),
+          establishmentYear: !!formData.establishmentYear?.trim(),
+          hoursValid,
+          openingTime: formData.operatingHours.openingTime,
+          closingTime: formData.operatingHours.closingTime,
+          is24x7: formData.operatingHours.is24x7,
+          result: step2Valid
+        });
+        return step2Valid;
+        
       case 3:
-        return formData.documents.gstCertificate && formData.documents.shopLicense && 
-               formData.documents.shopPhotos.length > 0 && formData.agreeToTerms;
+        const step3Valid = !!(
+          formData.documents.gstCertificate && 
+          formData.documents.shopLicense && 
+          formData.documents.shopPhotos?.length > 0 && 
+          formData.agreeToTerms === true
+        );
+        console.log('Step 3 validation:', {
+          gstCertificate: !!formData.documents.gstCertificate,
+          shopLicense: !!formData.documents.shopLicense,
+          shopPhotos: formData.documents.shopPhotos?.length > 0,
+          agreeToTerms: formData.agreeToTerms === true,
+          result: step3Valid
+        });
+        return step3Valid;
+        
       default:
         return false;
     }

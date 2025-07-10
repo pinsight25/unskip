@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Camera, Upload, Phone, MessageCircle, Shield } from 'lucide-react';
+import { Camera, Upload, Phone, MessageCircle, Shield, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,7 +58,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5" />
-            Product Photos
+            Product Photos (Optional)
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -127,24 +127,41 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => onUpdate({ phone: e.target.value })}
-                placeholder="Enter your phone number"
+                placeholder="+91 98765 43210"
                 required
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Enter 10-digit mobile number (with or without +91)
+              </p>
             </div>
             <div>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Email Address (Optional)</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => onUpdate({ email: e.target.value })}
-                placeholder="Enter your email"
+                placeholder="your.email@example.com"
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="additionalInfo">Additional Information</Label>
+            <Label htmlFor="location" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Location *
+            </Label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) => onUpdate({ location: e.target.value })}
+              placeholder="City, State (e.g., Mumbai, Maharashtra)"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="additionalInfo">Additional Information (Optional)</Label>
             <Textarea
               id="additionalInfo"
               value={formData.additionalInfo}
