@@ -100,6 +100,17 @@ export function MultiSelect({
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start">
           <Command>
+            <div className="flex items-center justify-between p-2 border-b md:hidden">
+              <span className="text-sm font-medium">Select brands</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setOpen(false)}
+                className="h-6 w-6 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
             <CommandInput placeholder="Search brands..." />
             <CommandList>
               <CommandEmpty>No brands found.</CommandEmpty>
@@ -121,6 +132,15 @@ export function MultiSelect({
                 ))}
               </CommandGroup>
             </CommandList>
+            <div className="p-2 border-t md:hidden">
+              <Button 
+                onClick={() => setOpen(false)}
+                className="w-full"
+                size="sm"
+              >
+                Done
+              </Button>
+            </div>
           </Command>
         </PopoverContent>
       </Popover>
