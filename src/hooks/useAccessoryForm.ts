@@ -22,6 +22,7 @@ export interface AccessoryFormData {
   additionalInfo: string;
   whatsappContact: boolean;
   verifiedSeller: boolean;
+  sellerName: string; // Added seller name field
 }
 
 export const useAccessoryForm = () => {
@@ -45,6 +46,7 @@ export const useAccessoryForm = () => {
     additionalInfo: '',
     whatsappContact: false,
     verifiedSeller: false,
+    sellerName: '', // Initialize seller name
   });
 
   const updateFormData = (field: keyof AccessoryFormData, value: any) => {
@@ -89,14 +91,18 @@ export const useAccessoryForm = () => {
         // Phone number validation - accept various formats
         const phoneValid = formData.phone?.trim() && 
           (formData.phone.replace(/\D/g, '').length >= 10);
+        // Name validation
+        const nameValid = formData.sellerName?.trim();
         const step3Valid = !!(
           phoneValid &&
+          nameValid &&
           formData.location?.trim()
         );
         console.log('Accessory Step 3 validation:', {
           phone: formData.phone,
           phoneValid,
           phoneDigits: formData.phone?.replace(/\D/g, '').length,
+          sellerName: !!formData.sellerName?.trim(),
           location: !!formData.location?.trim(),
           result: step3Valid
         });

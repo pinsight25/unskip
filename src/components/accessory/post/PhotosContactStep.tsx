@@ -1,11 +1,10 @@
 
 import { useState } from 'react';
-import { Camera, Upload, Phone, MessageCircle, Shield, MapPin } from 'lucide-react';
+import { Camera, Upload, Phone, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 
@@ -120,6 +119,20 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <Label htmlFor="sellerName" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Your Name *
+              </Label>
+              <Input
+                id="sellerName"
+                type="text"
+                value={formData.sellerName}
+                onChange={(e) => onUpdate({ sellerName: e.target.value })}
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+            <div>
               <Label htmlFor="phone">Phone Number *</Label>
               <Input
                 id="phone"
@@ -133,16 +146,17 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
                 Enter 10-digit mobile number (with or without +91)
               </p>
             </div>
-            <div>
-              <Label htmlFor="email">Email Address (Optional)</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => onUpdate({ email: e.target.value })}
-                placeholder="your.email@example.com"
-              />
-            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email Address (Optional)</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => onUpdate({ email: e.target.value })}
+              placeholder="your.email@example.com"
+            />
           </div>
 
           <div>
@@ -168,32 +182,6 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               placeholder="Any additional details about the accessory..."
               rows={3}
             />
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="whatsappContact"
-                checked={formData.whatsappContact}
-                onCheckedChange={(checked) => onUpdate({ whatsappContact: checked === true })}
-              />
-              <Label htmlFor="whatsappContact" className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Allow WhatsApp contact
-              </Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="verifiedSeller"
-                checked={formData.verifiedSeller}
-                onCheckedChange={(checked) => onUpdate({ verifiedSeller: checked === true })}
-              />
-              <Label htmlFor="verifiedSeller" className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Request seller verification
-              </Label>
-            </div>
           </div>
         </CardContent>
       </Card>
