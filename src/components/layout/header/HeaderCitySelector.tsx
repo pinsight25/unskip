@@ -38,15 +38,15 @@ const HeaderCitySelector = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors w-full md:w-auto"
       >
-        <MapPin className="h-4 w-4 text-primary" />
-        <span className="hidden sm:inline">{selectedCity}</span>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+        <span className="text-left">{selectedCity}</span>
+        <ChevronDown className={`h-4 w-4 transition-transform ml-auto ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]">
+        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] w-full md:w-auto">
           {cities.map((city) => (
             <button
               key={city}
