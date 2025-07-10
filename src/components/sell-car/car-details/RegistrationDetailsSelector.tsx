@@ -57,6 +57,8 @@ const RegistrationDetailsSelector = ({ formData, setFormData }: RegistrationDeta
           date={formData.fitnessCertificateValidTill ? new Date(formData.fitnessCertificateValidTill) : undefined}
           onSelect={(date) => handleDateSelect('fitnessCertificateValidTill', date)}
           placeholder="Select fitness certificate validity date"
+          helperText="Tap outside calendar to close"
+          showHelperOnMobile={true}
         />
       </div>
     </div>
