@@ -21,7 +21,6 @@ const booleanFields = [
   'isRentAvailable',
   'insuranceValid',
   'serviceHistory',
-  'verifiedSeller',
   'whatsappContact',
   'installationAvailable',
   'agreeToTerms',

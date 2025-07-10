@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { updateFormField } from '@/utils/formHelpers';
 
@@ -46,7 +45,6 @@ export type SellCarFormData = {
   sellerName: string;
   email: string;
   additionalInfo: string;
-  verifiedSeller: boolean;
 };
 
 export const useSellCarForm = () => {
@@ -94,7 +92,6 @@ export const useSellCarForm = () => {
     sellerName: '',
     email: '',
     additionalInfo: '',
-    verifiedSeller: false,
   });
 
   const validatePrice = (price: string) => {

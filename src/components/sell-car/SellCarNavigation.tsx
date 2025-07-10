@@ -30,7 +30,7 @@ const SellCarNavigation = ({
       >
         Previous
       </Button>
-      {currentStep === 5 ? (
+      {currentStep === 4 ? (
         <Button 
           onClick={onSubmit} 
           className="w-full sm:w-auto bg-primary px-6 py-2"

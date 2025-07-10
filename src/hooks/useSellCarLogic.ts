@@ -61,7 +61,7 @@ export const useSellCarLogic = () => {
   }, [searchParams, setFormData, toast]);
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
   };

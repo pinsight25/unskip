@@ -1,11 +1,12 @@
 
-import { MapPin, Phone, MessageCircle, Shield, User } from 'lucide-react';
+import { MapPin, Phone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { updateFormField } from '@/utils/formHelpers';
 
 // Define SellCarFormData type locally to match formData structure
 type SellCarFormData = {
@@ -16,13 +17,14 @@ type SellCarFormData = {
   phone: string;
   email: string;
   additionalInfo: string;
-  verifiedSeller: boolean;
+  termsAccepted: boolean;
   // Add any other fields used in the form
 };
 
 interface LocationContactStepProps {
   formData: SellCarFormData;
   onUpdate: (updates: Partial<SellCarFormData>) => void;
+  setFormData: (updater: (prev: SellCarFormData) => SellCarFormData) => void;
 }
 
 const cities = [
@@ -30,7 +32,11 @@ const cities = [
   'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow'
 ];
 
-const LocationContactStep = ({ formData, onUpdate }: LocationContactStepProps) => {
+const LocationContactStep = ({ formData, onUpdate, setFormData }: LocationContactStepProps) => {
+  const handleTermsChange = (checked: boolean) => {
+    setFormData(prev => updateFormField(prev, 'termsAccepted', checked));
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -142,25 +148,21 @@ const LocationContactStep = ({ formData, onUpdate }: LocationContactStepProps) =
               rows={3}
             />
           </div>
-
-          {/* Contact Preferences */}
-          <div className="space-y-3 pt-4 border-t">
-            <Label className="text-base font-medium">Contact Preferences</Label>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="verifiedSeller"
-                checked={formData.verifiedSeller}
-                onCheckedChange={(checked) => onUpdate({ verifiedSeller: checked === true })}
-              />
-              <Label htmlFor="verifiedSeller" className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Request seller verification badge
-              </Label>
-            </div>
-          </div>
         </CardContent>
       </Card>
+
+      {/* Terms & Conditions */}
+      <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
+        <Checkbox 
+          id="termsAccepted"
+          checked={formData.termsAccepted}
+          onCheckedChange={handleTermsChange}
+          className="mt-0.5"
+        />
+        <Label htmlFor="termsAccepted" className="text-sm leading-relaxed">
+          I agree to the <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and confirm that all information provided is accurate. I understand that providing false information may result in my listing being removed.
+        </Label>
+      </div>
     </div>
   );
 };

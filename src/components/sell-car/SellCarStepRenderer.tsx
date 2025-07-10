@@ -4,7 +4,6 @@ import CarDetailsStep from '@/components/sell-car/CarDetailsStep';
 import PricingStep from '@/components/sell-car/PricingStep';
 import PhotosStep from '@/components/sell-car/PhotosStep';
 import LocationContactStep from '@/components/sell-car/LocationContactStep';
-import ReviewStep from '@/components/sell-car/ReviewStep';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -64,12 +63,6 @@ const SellCarStepRenderer = ({
           <LocationContactStep 
             formData={formData}
             onUpdate={(updates) => setFormData(prev => ({ ...prev, ...updates }))}
-          />
-        );
-      case 5:
-        return (
-          <ReviewStep 
-            formData={formData}
             setFormData={setFormData}
           />
         );
