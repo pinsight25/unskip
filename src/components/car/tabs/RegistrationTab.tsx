@@ -17,6 +17,13 @@ const RegistrationTab = ({ car }: RegistrationTabProps) => {
     });
   };
 
+  const formatFCDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'long',
+      year: 'numeric' 
+    });
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -58,7 +65,7 @@ const RegistrationTab = ({ car }: RegistrationTabProps) => {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <span className="text-gray-600">FC Valid:</span>
-                <span className="font-medium">{formatDate(car.fitnessCertificateValidTill)}</span>
+                <span className="font-medium">{formatFCDate(car.fitnessCertificateValidTill)}</span>
               </div>
             )}
           </div>
