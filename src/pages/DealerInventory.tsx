@@ -30,12 +30,9 @@ const DealerInventory = () => {
     email: 'contact@carmaxmotors.com',
     businessCategory: 'New & Used Cars',
     specialization: 'All Brands',
-    rating: 4.8,
-    reviewCount: 234,
     location: 'Andheri West, Mumbai',
     establishmentYear: '2010',
     carsInStock: 0,
-    responseTime: '30 mins',
     verified: true,
     brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
     shopPhoto: 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop'
@@ -65,7 +62,7 @@ const DealerInventory = () => {
       <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Breadcrumb - Desktop Only */}
-          <Breadcrumb className="py-4 hidden md:block">
+          <Breadcrumb className="py-3 hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -80,7 +77,7 @@ const DealerInventory = () => {
           </Breadcrumb>
 
           {/* Back Button for Mobile */}
-          <div className="md:hidden py-3">
+          <div className="md:hidden py-2">
             <Link 
               to="/dealers" 
               className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
@@ -94,25 +91,25 @@ const DealerInventory = () => {
           <DealerHeader dealer={dealer} />
 
           {/* Inventory Section */}
-          <div className="mt-8">
+          <div className="mt-6">
             <DealerInventoryHeader 
               carsCount={sortedCars.length}
               sortBy={sortBy}
               onSortChange={setSortBy}
             />
 
-            <div className="mt-6">
+            <div className="mt-4">
               <DealerInventoryGrid cars={sortedCars} />
             </div>
           </div>
 
           {/* Load More Button */}
           {sortedCars.length > 0 && (
-            <div className="text-center mt-12 md:mt-20 pb-8">
+            <div className="text-center mt-8 md:mt-12 pb-8">
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="min-h-[48px] shadow-md hover:shadow-lg transition-all duration-300"
+                className="shadow-md hover:shadow-lg transition-all duration-300"
               >
                 Load More Cars
               </Button>

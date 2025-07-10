@@ -9,13 +9,13 @@ interface DealerInventoryHeaderProps {
 
 const DealerInventoryHeader = ({ carsCount, sortBy, onSortChange }: DealerInventoryHeaderProps) => {
   return (
-    <div className="bg-white rounded-xl shadow-lg border-0 p-6 mx-4 md:mx-0">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 md:gap-6">
+    <div className="bg-white rounded-lg shadow-md border-0 p-4 mx-4 md:mx-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="flex items-center">
-          <Car className="h-6 w-6 text-primary mr-3" />
+          <Car className="h-5 w-5 text-primary mr-2" />
           <div>
-            <h2 className="text-xl md:text-2xl font-semibold mb-1">Available Inventory</h2>
-            <p className="text-gray-600 text-base md:text-lg">
+            <h2 className="text-lg md:text-xl font-semibold mb-1">Available Inventory</h2>
+            <p className="text-gray-600 text-sm md:text-base">
               {carsCount === 0 ? 'No cars available' : `${carsCount} cars available`}
             </p>
           </div>
@@ -24,7 +24,7 @@ const DealerInventoryHeader = ({ carsCount, sortBy, onSortChange }: DealerInvent
         <select 
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value)}
-          className="border border-gray-200 rounded-lg px-4 py-3 text-sm md:text-base w-full sm:w-auto h-12 bg-white shadow-sm hover:shadow-md transition-shadow focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm w-full sm:w-auto bg-white shadow-sm hover:shadow-md transition-shadow focus:ring-2 focus:ring-primary/20 focus:border-primary"
         >
           <option value="">Sort by: Featured</option>
           <option value="price_asc">Price: Low to High</option>

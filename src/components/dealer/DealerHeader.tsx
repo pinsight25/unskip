@@ -12,9 +12,7 @@ import {
   Building, 
   User, 
   Mail,
-  Star,
-  Award,
-  Clock
+  Award
 } from 'lucide-react';
 
 interface DealerHeaderProps {
@@ -29,12 +27,9 @@ interface DealerHeaderProps {
     location: string;
     establishmentYear?: string;
     carsInStock: number;
-    responseTime: string;
     verified: boolean;
     brands: string[];
     shopPhoto?: string;
-    rating?: number;
-    reviewCount?: number;
   };
 }
 
@@ -66,9 +61,9 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
   const shopPhoto = dealer.shopPhoto || 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Hero Banner with Shop Photo */}
-      <div className="relative h-64 md:h-80 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-xl">
+      <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg">
         <img
           src={shopPhoto}
           alt={`${dealer.name} shop`}
@@ -77,26 +72,18 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
         
         {/* Overlay Content */}
-        <div className="absolute bottom-6 left-6 right-6 text-white">
+        <div className="absolute bottom-4 left-4 right-4 text-white">
           <div className="flex flex-col md:flex-row md:items-end justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl md:text-4xl font-bold">{dealer.name}</h1>
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-xl md:text-2xl font-bold">{dealer.name}</h1>
                 {dealer.verified && (
-                  <Badge className="bg-green-500/90 text-white backdrop-blur-sm border-0">
+                  <Badge className="bg-green-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
                     <Shield className="h-3 w-3 mr-1" />
                     Verified
                   </Badge>
                 )}
               </div>
-              
-              {dealer.rating && (
-                <div className="flex items-center bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full w-fit">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                  <span className="font-medium mr-2">{dealer.rating}</span>
-                  <span className="text-sm opacity-90">({dealer.reviewCount} reviews)</span>
-                </div>
-              )}
             </div>
             
             <ShareButton 
@@ -110,36 +97,32 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
       </div>
 
       {/* Information Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-4 md:mx-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mx-4 md:mx-0">
         {/* About Card */}
-        <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <Building className="h-5 w-5 text-primary mr-2" />
-              <h3 className="font-semibold text-lg">About</h3>
+        <Card className="shadow-md border-0 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-4">
+            <div className="flex items-center mb-3">
+              <Building className="h-4 w-4 text-primary mr-2" />
+              <h3 className="font-semibold text-base">About</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {dealer.establishmentYear && (
                 <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-3 text-gray-500" />
+                  <Calendar className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm">Since {dealer.establishmentYear}</span>
                 </div>
               )}
               {dealer.businessCategory && (
                 <div className="flex items-center">
-                  <Award className="h-4 w-4 mr-3 text-gray-500" />
+                  <Award className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm">{dealer.businessCategory}</span>
                 </div>
               )}
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-3 text-gray-500" />
-                <span className="text-sm">Responds in {dealer.responseTime}</span>
-              </div>
             </div>
             
             {dealer.specialization && (
-              <div className="mt-4">
-                <Badge className={`${getSpecializationColor(dealer.specialization)} border font-medium`}>
+              <div className="mt-3">
+                <Badge className={`${getSpecializationColor(dealer.specialization)} border font-medium text-xs px-2 py-1`}>
                   {dealer.specialization}
                 </Badge>
               </div>
@@ -148,40 +131,40 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         </Card>
 
         {/* Contact Card */}
-        <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <User className="h-5 w-5 text-primary mr-2" />
-              <h3 className="font-semibold text-lg">Contact</h3>
+        <Card className="shadow-md border-0 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-4">
+            <div className="flex items-center mb-3">
+              <User className="h-4 w-4 text-primary mr-2" />
+              <h3 className="font-semibold text-base">Contact</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {dealer.contactPerson && (
                 <div className="flex items-center">
-                  <User className="h-4 w-4 mr-3 text-gray-500" />
+                  <User className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm font-medium">{dealer.contactPerson}</span>
                 </div>
               )}
               {dealer.phone && (
                 <div className="flex items-center">
-                  <Phone className="h-4 w-4 mr-3 text-gray-500" />
+                  <Phone className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm">{dealer.phone}</span>
                 </div>
               )}
               {dealer.email && (
                 <div className="flex items-center">
-                  <Mail className="h-4 w-4 mr-3 text-gray-500" />
+                  <Mail className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm">{dealer.email}</span>
                 </div>
               )}
             </div>
             
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mt-3">
               <Button 
                 size="sm" 
-                className="flex-1"
+                className="flex-1 text-sm py-1"
                 onClick={handleCallNow}
               >
-                <Phone className="h-4 w-4 mr-1" />
+                <Phone className="h-3 w-3 mr-1" />
                 Call
               </Button>
             </div>
@@ -189,19 +172,19 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         </Card>
 
         {/* Location & Inventory Card */}
-        <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <MapPin className="h-5 w-5 text-primary mr-2" />
-              <h3 className="font-semibold text-lg">Location & Stock</h3>
+        <Card className="shadow-md border-0 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-4">
+            <div className="flex items-center mb-3">
+              <MapPin className="h-4 w-4 text-primary mr-2" />
+              <h3 className="font-semibold text-base">Location & Stock</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-start">
-                <MapPin className="h-4 w-4 mr-3 text-gray-500 mt-0.5" />
+                <MapPin className="h-3 w-3 mr-2 text-gray-500 mt-0.5" />
                 <span className="text-sm">{dealer.location}</span>
               </div>
               <div className="flex items-center">
-                <CarIcon className="h-4 w-4 mr-3 text-gray-500" />
+                <CarIcon className="h-3 w-3 mr-2 text-gray-500" />
                 <span className="text-sm">
                   {dealer.carsInStock === 0 ? 'No cars' : `${dealer.carsInStock}+ cars`} in stock
                 </span>
@@ -211,10 +194,10 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="w-full mt-4"
+              className="w-full mt-3 text-sm py-1"
               onClick={handleGetDirections}
             >
-              <MapPin className="h-4 w-4 mr-1" />
+              <MapPin className="h-3 w-3 mr-1" />
               Get Directions
             </Button>
           </CardContent>
@@ -222,10 +205,10 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
       </div>
 
       {/* Brands Section */}
-      <Card className="shadow-lg border-0 mx-4 md:mx-0">
-        <CardContent className="p-6">
-          <h3 className="font-semibold text-lg mb-4 flex items-center">
-            <Award className="h-5 w-5 text-primary mr-2" />
+      <Card className="shadow-md border-0 mx-4 md:mx-0">
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-base mb-3 flex items-center">
+            <Award className="h-4 w-4 text-primary mr-2" />
             Brands Available
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -233,7 +216,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
               <Badge 
                 key={brand} 
                 variant="outline" 
-                className="px-3 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                className="px-2 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
               >
                 {brand}
               </Badge>
