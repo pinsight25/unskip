@@ -2,11 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { DatePicker } from '@/components/ui/date-picker';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
 import { updateFormField } from '@/utils/formHelpers';
 
@@ -57,34 +53,11 @@ const RegistrationDetailsSelector = ({ formData, setFormData }: RegistrationDeta
         <Label className="text-sm font-medium">
           Fitness Certificate Valid Till *
         </Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !formData.fitnessCertificateValidTill && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {formData.fitnessCertificateValidTill ? (
-                format(new Date(formData.fitnessCertificateValidTill), "PPP")
-              ) : (
-                <span>Select fitness certificate validity date</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={formData.fitnessCertificateValidTill ? new Date(formData.fitnessCertificateValidTill) : undefined}
-              onSelect={(date) => handleDateSelect('fitnessCertificateValidTill', date)}
-              disabled={(date) => date < new Date()}
-              initialFocus
-              className="pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
+        <DatePicker
+          date={formData.fitnessCertificateValidTill ? new Date(formData.fitnessCertificateValidTill) : undefined}
+          onSelect={(date) => handleDateSelect('fitnessCertificateValidTill', date)}
+          placeholder="Select fitness certificate validity date"
+        />
       </div>
     </div>
   );
