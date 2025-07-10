@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,9 @@ import { MapPin, Car, Phone, Shield, Plus, Calendar, Building2, Users } from 'lu
 import { Link } from 'react-router-dom';
 
 const Dealers = () => {
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
+
   const dealers = [
     {
       id: 1,
@@ -16,6 +20,7 @@ const Dealers = () => {
       businessCategory: 'New & Used Cars',
       specialization: 'All Brands',
       location: 'Andheri West, Mumbai',
+      city: 'Mumbai',
       establishmentYear: '2010',
       stock: '0 cars',
       brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
@@ -31,6 +36,7 @@ const Dealers = () => {
       businessCategory: 'Specialized',
       specialization: 'Luxury Cars',
       location: 'Bandra East, Mumbai',
+      city: 'Mumbai',
       establishmentYear: '2015',
       stock: '0 cars',
       brands: ['BMW', 'Audi', 'Mercedes'],
@@ -46,6 +52,7 @@ const Dealers = () => {
       businessCategory: 'New & Used Cars',
       specialization: 'Budget Cars',
       location: 'Powai, Mumbai',
+      city: 'Mumbai',
       establishmentYear: '2008',
       stock: '0 cars',
       brands: ['Honda', 'Toyota', 'Nissan'],
@@ -61,6 +68,7 @@ const Dealers = () => {
       businessCategory: 'Used Cars Only',
       specialization: 'All Brands',
       location: 'Goregaon West, Mumbai',
+      city: 'Mumbai',
       establishmentYear: '2012',
       stock: '0 cars',
       brands: ['Mahindra', 'Ford', 'Renault'],
@@ -75,7 +83,8 @@ const Dealers = () => {
       email: 'vikram@royalcarpalace.com',
       businessCategory: 'New Cars Only',
       specialization: 'Electric',
-      location: 'Thane West, Mumbai',
+      location: 'Thane West, Delhi',
+      city: 'Delhi',
       establishmentYear: '2018',
       stock: '0 cars',
       brands: ['Kia', 'Skoda', 'Volkswagen'],
@@ -90,7 +99,8 @@ const Dealers = () => {
       email: 'ravi@metroautosales.com',
       businessCategory: 'Used Cars Only',
       specialization: 'Budget Cars',
-      location: 'Malad West, Mumbai',
+      location: 'Malad West, Bangalore',
+      city: 'Bangalore',
       establishmentYear: '2005',
       stock: '0 cars',
       brands: ['Jeep', 'MG', 'Tata'],
@@ -98,6 +108,21 @@ const Dealers = () => {
       shopPhoto: 'https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=200&fit=crop'
     }
   ];
+
+  // Filter dealers based on selected filters
+  const filteredDealers = dealers.filter(dealer => {
+    const locationMatch = !selectedLocation || selectedLocation === 'All Locations' || 
+                         dealer.city.toLowerCase() === selectedLocation.toLowerCase();
+    const brandMatch = !selectedBrand || selectedBrand === 'All Brands' || 
+                      dealer.brands.some(brand => brand.toLowerCase() === selectedBrand.toLowerCase());
+    
+    return locationMatch && brandMatch;
+  });
+
+  const handleApplyFilters = () => {
+    // Filters are applied automatically through filteredDealers
+    console.log('Filters applied:', { selectedLocation, selectedBrand });
+  };
 
   const getSpecializationColor = (specialization: string) => {
     switch (specialization) {
@@ -131,26 +156,74 @@ const Dealers = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <select className="border rounded-lg px-3 py-2 bg-white shadow-sm text-sm">
-              <option>All Locations</option>
-              <option>Mumbai</option>
-              <option>Delhi</option>
-              <option>Bangalore</option>
+            <select 
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="border rounded-lg px-3 py-2 bg-white shadow-sm text-sm"
+            >
+              <option value="">All Locations</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Bangalore">Bangalore</option>
             </select>
-            <select className="border rounded-lg px-3 py-2 bg-white shadow-sm text-sm">
-              <option>All Brands</option>
-              <option>Maruti Suzuki</option>
-              <option>Hyundai</option>
-              <option>Tata</option>
+            <select 
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="border rounded-lg px-3 py-2 bg-white shadow-sm text-sm"
+            >
+              <option value="">All Brands</option>
+              <option value="Maruti Suzuki">Maruti Suzuki</option>
+              <option value="Hyundai">Hyundai</option>
+              <option value="Tata">Tata</option>
+              <option value="BMW">BMW</option>
+              <option value="Audi">Audi</option>
+              <option value="Mercedes">Mercedes</option>
             </select>
-            <Button variant="outline" size="sm" className="shadow-sm">Apply Filters</Button>
+            <Button variant="outline" size="sm" className="shadow-sm" onClick={handleApplyFilters}>
+              Apply Filters
+            </Button>
           </div>
+
+          {/* Show active filters */}
+          {(selectedLocation || selectedBrand) && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {selectedLocation && (
+                <Badge variant="secondary" className="text-xs">
+                  Location: {selectedLocation}
+                  <button 
+                    onClick={() => setSelectedLocation('')}
+                    className="ml-1 hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </Badge>
+              )}
+              {selectedBrand && (
+                <Badge variant="secondary" className="text-xs">
+                  Brand: {selectedBrand}
+                  <button 
+                    onClick={() => setSelectedBrand('')}
+                    className="ml-1 hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       <div className="max-width-container-wide py-4 pb-24 lg:pb-8">
+        {/* Results count */}
+        <div className="mb-4">
+          <p className="text-gray-600 text-sm">
+            Showing {filteredDealers.length} of {dealers.length} dealers
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {dealers.map((dealer) => (
+          {filteredDealers.map((dealer) => (
             <Card key={dealer.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
               {/* Shop Photo Header */}
               <div className="relative h-24 bg-gradient-to-r from-gray-200 to-gray-300">
@@ -239,6 +312,23 @@ const Dealers = () => {
             </Card>
           ))}
         </div>
+
+        {/* Empty state */}
+        {filteredDealers.length === 0 && (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold mb-2">No dealers found</h3>
+            <p className="text-gray-600 mb-4">Try adjusting your filters to see more results</p>
+            <Button 
+              onClick={() => {
+                setSelectedLocation('');
+                setSelectedBrand('');
+              }}
+              variant="outline"
+            >
+              Clear All Filters
+            </Button>
+          </div>
+        )}
 
         {/* Bottom CTA for Mobile */}
         <div className="mt-8 text-center md:hidden">

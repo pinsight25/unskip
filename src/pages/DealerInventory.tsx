@@ -1,6 +1,5 @@
 
 import { useParams, Link } from 'react-router-dom';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { mockCars } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import DealerHeader from '@/components/dealer/DealerHeader';
@@ -58,66 +57,64 @@ const DealerInventory = () => {
   });
 
   return (
-    <ResponsiveLayout>
-      <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          {/* Breadcrumb - Desktop Only */}
-          <Breadcrumb className="py-3 hidden md:block">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/dealers" className="hover:text-primary transition-colors">Dealers</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="font-medium">{dealer.name}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        {/* Breadcrumb - Desktop Only */}
+        <Breadcrumb className="py-3 hidden md:block">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/dealers" className="hover:text-primary transition-colors">Dealers</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-medium">{dealer.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
-          {/* Back Button for Mobile */}
-          <div className="md:hidden py-2">
-            <Link 
-              to="/dealers" 
-              className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dealers
-            </Link>
-          </div>
-
-          {/* Enhanced Dealer Header */}
-          <DealerHeader dealer={dealer} />
-
-          {/* Inventory Section */}
-          <div className="mt-6">
-            <DealerInventoryHeader 
-              carsCount={sortedCars.length}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-            />
-
-            <div className="mt-4">
-              <DealerInventoryGrid cars={sortedCars} />
-            </div>
-          </div>
-
-          {/* Load More Button */}
-          {sortedCars.length > 0 && (
-            <div className="text-center mt-8 md:mt-12 pb-8">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                Load More Cars
-              </Button>
-            </div>
-          )}
+        {/* Back Button for Mobile */}
+        <div className="md:hidden py-2">
+          <Link 
+            to="/dealers" 
+            className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dealers
+          </Link>
         </div>
+
+        {/* Enhanced Dealer Header */}
+        <DealerHeader dealer={dealer} />
+
+        {/* Inventory Section */}
+        <div className="mt-6">
+          <DealerInventoryHeader 
+            carsCount={sortedCars.length}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
+
+          <div className="mt-4">
+            <DealerInventoryGrid cars={sortedCars} />
+          </div>
+        </div>
+
+        {/* Load More Button */}
+        {sortedCars.length > 0 && (
+          <div className="text-center mt-8 md:mt-12 pb-8">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              Load More Cars
+            </Button>
+          </div>
+        )}
       </div>
-    </ResponsiveLayout>
+    </div>
   );
 };
 
