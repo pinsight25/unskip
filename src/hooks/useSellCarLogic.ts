@@ -11,6 +11,8 @@ export const useSellCarLogic = () => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
   const { formData, setFormData, validatePrice, validateKilometersDriven } = useSellCarForm();
 
   // Mock active car listings count - will be replaced with real data from Supabase
@@ -18,9 +20,11 @@ export const useSellCarLogic = () => {
   const userType = 'regular'; // Mock user type - will come from user context
   const carLimit = getCarLimit(userType);
 
-  // Handle duplicate listing data on component mount
+  // Handle edit and duplicate listing data on component mount
   useEffect(() => {
     const isDuplicate = searchParams.get('duplicate') === 'true';
+    const editId = searchParams.get('edit');
+
     if (isDuplicate) {
       const duplicateDataString = sessionStorage.getItem('duplicateListingData');
       if (duplicateDataString) {
@@ -31,7 +35,6 @@ export const useSellCarLogic = () => {
             ...duplicateData,
             photos: [], // Clear photos
             coverPhotoIndex: 0,
-            phone: '', // Clear phone for privacy
             phoneVerified: false,
             termsAccepted: false, // Require re-acceptance
           };
@@ -53,6 +56,43 @@ export const useSellCarLogic = () => {
           toast({
             title: "Error",
             description: "Failed to duplicate listing. Please try again.",
+            variant: "destructive"
+          });
+        }
+      }
+    } else if (editId) {
+      // Handle edit mode
+      const editDataString = sessionStorage.getItem('editListingData');
+      if (editDataString) {
+        try {
+          const editData = JSON.parse(editDataString);
+          const { listingId, ...restData } = editData;
+          
+          setIsEditMode(true);
+          setEditingListingId(listingId);
+          
+          // Load the edit data
+          setFormData(prevData => ({
+            ...prevData,
+            ...restData,
+            photos: [], // For now, clear photos as we don't have photo URLs in mock data
+            coverPhotoIndex: 0,
+            phoneVerified: true, // Assume phone is already verified for existing listings
+            termsAccepted: false, // Require re-acceptance
+          }));
+          
+          // Clear the stored data
+          sessionStorage.removeItem('editListingData');
+          
+          toast({
+            title: "Editing Listing",
+            description: "Make your changes and save to update your listing.",
+          });
+        } catch (error) {
+          console.error('Error parsing edit data:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load listing for editing. Please try again.",
             variant: "destructive"
           });
         }
@@ -88,8 +128,8 @@ export const useSellCarLogic = () => {
   };
 
   const handleSubmit = () => {
-    // Check car listing limit before submission
-    if (activeCarListings >= carLimit) {
+    // Check car listing limit before submission (only for new listings)
+    if (!isEditMode && activeCarListings >= carLimit) {
       toast({
         title: "Listing Limit Reached",
         description: `You've reached your free limit of ${carLimit} car listings. Remove an old listing to post a new one.`,
@@ -107,11 +147,19 @@ export const useSellCarLogic = () => {
       return;
     }
     
-    toast({
-      title: "Car Listed Successfully!",
-      description: "Your car has been posted. You'll receive calls from interested buyers soon.",
-    });
-    navigate('/');
+    if (isEditMode) {
+      toast({
+        title: "Listing Updated!",
+        description: "Your car listing has been updated successfully.",
+      });
+    } else {
+      toast({
+        title: "Car Listed Successfully!",
+        description: "Your car has been posted. You'll receive calls from interested buyers soon.",
+      });
+    }
+    
+    navigate('/profile');
   };
 
   const handleBackToHome = () => {
@@ -124,6 +172,7 @@ export const useSellCarLogic = () => {
     setFormData,
     activeCarListings,
     carLimit,
+    isEditMode,
     validatePrice,
     validateKilometersDriven,
     handleNext,

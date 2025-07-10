@@ -11,6 +11,7 @@ const SellCar = () => {
     setFormData,
     activeCarListings,
     carLimit,
+    isEditMode,
     validatePrice,
     validateKilometersDriven,
     handleNext,
@@ -41,6 +42,7 @@ const SellCar = () => {
         activeCarListings={activeCarListings}
         carLimit={carLimit}
         termsAccepted={formData.termsAccepted}
+        isEditMode={isEditMode}
         onPrevious={handlePrevious}
         onNext={handleNext}
         onSubmit={handleSubmit}

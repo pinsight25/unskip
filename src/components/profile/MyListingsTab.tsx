@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Car, Clock, Eye, Edit, Trash2, Copy } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Listing {
   id: string;
@@ -55,6 +56,7 @@ interface MyListingsTabProps {
 
 const MyListingsTab = ({ listings, onDeleteListing }: MyListingsTabProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -78,8 +80,65 @@ const MyListingsTab = ({ listings, onDeleteListing }: MyListingsTabProps) => {
     );
   };
 
+  const handleEditListing = (listing: Listing) => {
+    const editData = {
+      make: listing.make || '',
+      model: listing.model || '',
+      variant: listing.variant || '',
+      year: listing.year?.toString() || '',
+      registrationYear: listing.registrationYear?.toString() || '',
+      registrationState: listing.registrationState || '',
+      fitnessCertificateValidTill: listing.fitnessCertificateValidTill || '',
+      numberOfOwners: listing.numberOfOwners || '1',
+      seatingCapacity: listing.seatingCapacity || '5',
+      fuelType: listing.fuelType || '',
+      transmission: listing.transmission || '',
+      kilometersDriven: listing.kilometersDriven?.toString() || '',
+      color: listing.color || '',
+      price: listing.price?.toString() || '',
+      acceptOffers: listing.acceptOffers ?? true,
+      offerPercentage: listing.offerPercentage?.toString() || '70',
+      insuranceValidTill: listing.insuranceValidTill || '',
+      insuranceType: listing.insuranceType || 'Comprehensive',
+      insuranceValid: listing.insuranceValid ?? false,
+      lastServiceDate: listing.lastServiceDate || '',
+      serviceCenterType: listing.serviceCenterType || 'Authorized',
+      serviceHistory: listing.serviceHistory ?? false,
+      authorizedServiceCenter: listing.authorizedServiceCenter ?? false,
+      rtoTransferSupport: listing.rtoTransferSupport ?? true,
+      noAccidentHistory: listing.noAccidentHistory ?? false,
+      isRentAvailable: listing.isRentAvailable ?? false,
+      dailyRate: listing.dailyRate || '',
+      weeklyRate: listing.weeklyRate || '',
+      securityDeposit: listing.securityDeposit || '',
+      city: listing.city || '',
+      area: listing.area || '',
+      landmark: listing.landmark || '',
+      description: listing.description || '',
+      // Add contact info for edit mode
+      sellerName: 'John Doe', // Mock seller name
+      phone: '+91 9876543210', // Mock phone
+      email: 'john@example.com', // Mock email
+      address: '123 Main Street', // Mock address
+    };
+
+    // Store in sessionStorage for the SellCar page to pick up
+    sessionStorage.setItem('editListingData', JSON.stringify({
+      ...editData,
+      listingId: listing.id
+    }));
+    
+    // Navigate to sell page with edit flag
+    navigate(`/sell?edit=${listing.id}`);
+    
+    toast({
+      title: "Editing Listing",
+      description: "Loading your listing data for editing",
+    });
+  };
+
   const handleDuplicateListing = (listing: Listing) => {
-    // Store the listing data for duplication
+    // Prepare duplicate data - same as edit but without sensitive info
     const duplicateData = {
       make: listing.make || '',
       model: listing.model || '',
@@ -114,6 +173,11 @@ const MyListingsTab = ({ listings, onDeleteListing }: MyListingsTabProps) => {
       area: listing.area || '',
       landmark: listing.landmark || '',
       description: listing.description || '',
+      // Clear sensitive fields for duplicate
+      sellerName: '',
+      phone: '',
+      email: '',
+      address: '',
     };
 
     // Store in sessionStorage for the SellCar page to pick up
@@ -155,7 +219,7 @@ const MyListingsTab = ({ listings, onDeleteListing }: MyListingsTabProps) => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => navigate(`/sell?edit=${listing.id}`)}
+                    onClick={() => handleEditListing(listing)}
                     className="flex-1 md:flex-none"
                   >
                     <Edit className="h-4 w-4 mr-1" />
