@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { User as UserIcon, LogOut, Heart } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import SignInModal from '@/components/modals/SignInModal';
+import HeaderCitySelector from './HeaderCitySelector';
 
 interface NavItem {
   label: string;
@@ -47,6 +48,11 @@ const MobileMenu = ({
   return (
     <>
       <div className="md:hidden border-t border-border py-4 bg-white">
+        {/* Mobile City Selector - Moved from header */}
+        <div className="px-4 py-2 mb-4 border-b border-border">
+          <HeaderCitySelector />
+        </div>
+
         {/* User Section */}
         {isSignedIn && user ? (
           <div className="flex items-center space-x-3 px-4 py-3 border-b border-border mb-4">
@@ -70,7 +76,7 @@ const MobileMenu = ({
           </div>
         ) : null}
 
-        <nav className="flex flex-col space-y-4">
+        <nav className="flex flex-col space-y-4 px-4">
           {/* Mobile Nav Items */}
           {navItems.map((item) => (
             <Link
