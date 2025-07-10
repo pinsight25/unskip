@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, IndianRupee, ShieldCheck, Wrench } from 'lucide-react';
+import { CalendarIcon, IndianRupee, ShieldCheck, Wrench, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
@@ -94,6 +95,31 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               </p>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Description Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <FileText className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">Car Description</h3>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="description" className="text-sm font-medium">
+            Description (optional)
+          </Label>
+          <Textarea
+            id="description"
+            value={formData.description}
+            onChange={(e) => handleFieldChange('description', e.target.value)}
+            placeholder="Describe your car's condition, features, and why it's a great buy..."
+            rows={4}
+            className="resize-none"
+          />
+          <p className="text-xs text-gray-500">
+            Add details about maintenance, accessories, or any special features
+          </p>
         </div>
       </div>
 
