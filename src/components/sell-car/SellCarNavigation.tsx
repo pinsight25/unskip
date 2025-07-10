@@ -38,23 +38,20 @@ const SellCarNavigation = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 safe-area-pb z-50 lg:relative lg:bg-transparent lg:border-t-0 lg:p-0 lg:mt-8 lg:z-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:relative lg:bg-transparent lg:border-t-0 lg:p-0 lg:mt-8">
       <div className="max-w-2xl mx-auto">
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between gap-4">
           {/* Previous Button */}
           {currentStep > 1 && (
             <Button
               variant="outline"
               onClick={onPrevious}
-              className="flex items-center gap-2 min-w-[100px] h-12"
+              className="flex items-center gap-2"
             >
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
           )}
-
-          {/* Spacer when no previous button */}
-          {currentStep === 1 && <div className="flex-1" />}
 
           {/* Next/Submit Button */}
           <div className="flex-1 flex justify-end">
@@ -62,7 +59,7 @@ const SellCarNavigation = ({
               <Button
                 onClick={onSubmit}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 px-8 h-12 min-w-[120px]"
+                className="flex items-center gap-2 px-8"
                 size="lg"
               >
                 {getSubmitButtonText()}
@@ -71,7 +68,7 @@ const SellCarNavigation = ({
               <Button
                 onClick={onNext}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 h-12 min-w-[100px]"
+                className="flex items-center gap-2"
               >
                 Next
                 <ChevronRight className="h-4 w-4" />
