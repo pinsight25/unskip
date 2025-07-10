@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useState } from 'react';
 
 interface CityContextType {
@@ -20,7 +21,6 @@ interface CityProviderProps {
 }
 
 export const CityProvider = ({ children }: CityProviderProps) => {
-  // Keep the same default city to maintain compatibility
   const [selectedCity, setSelectedCity] = useState<string>('Chennai');
 
   return (
