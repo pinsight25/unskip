@@ -4,10 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Car, CheckCircle, Crown, Shield, FileText, Settings } from 'lucide-react';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface ReviewStepProps {
   formData: any;
-  setFormData: (data: any) => void;
+  setFormData: (updater: (prev: any) => any) => void;
 }
 
 const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
@@ -28,6 +29,10 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
       });
   };
 
+  const handleTermsChange = (checked: boolean) => {
+    setFormData(prev => updateFormField(prev, 'termsAccepted', checked));
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Review & Post</h2>
@@ -36,57 +41,69 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
         <h3 className="font-medium mb-2">How your listing will appear:</h3>
         <Card>
           <CardContent className="p-6">
+            {/* Car Title */}
             <div className="flex items-center space-x-4 mb-4">
               <Car className="h-8 w-8 text-primary" />
               <div>
-                <h3 className="font-semibold">{formData.make} {formData.model} {formData.variant}</h3>
-                <p className="text-sm text-gray-600">{formData.year} • {formData.fuelType} • {formData.transmission}</p>
+                <h3 className="font-semibold text-lg">
+                  {formData.make && formData.model ? 
+                    `${formData.make} ${formData.model}${formData.variant ? ` ${formData.variant}` : ''}` : 
+                    'Car Title'
+                  }
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {formData.year || 'Year'} • {formData.fuelType || 'Fuel'} • {formData.transmission || 'Transmission'}
+                </p>
               </div>
             </div>
             
+            {/* Price Section */}
+            <div className="mb-4">
+              <div className="text-2xl font-bold text-primary mb-2">
+                ₹{formData.price ? Number(formData.price).toLocaleString() : '0'}
+              </div>
+            </div>
+
             {/* Ownership - Most Important */}
             {formData.numberOfOwners && (
-              <div className="mb-4 p-2 bg-green-50 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2">
-                  <Crown className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-semibold text-green-800">{getOwnershipText(formData.numberOfOwners)}</span>
-                </div>
+              <div className="mb-4">
+                <Badge className="bg-green-100 text-green-800 border-green-200">
+                  <Crown className="h-3 w-3 mr-1" />
+                  {getOwnershipText(formData.numberOfOwners)}
+                </Badge>
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-              <div>
-                <span className="text-gray-600">Price:</span>
-                <span className="ml-2 font-semibold text-primary">₹{formData.price ? Number(formData.price).toLocaleString() : '0'}</span>
-              </div>
-              {formData.mileage && (
-                <div>
-                  <span className="text-gray-600">Mileage:</span>
-                  <span className="ml-2">{formData.mileage} km</span>
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+              {formData.kilometersDriven && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Kilometers:</span>
+                  <span className="font-medium">{Number(formData.kilometersDriven).toLocaleString()} km</span>
                 </div>
               )}
               {formData.area && (
-                <div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Location:</span>
-                  <span className="ml-2">{formData.area}</span>
+                  <span className="font-medium">{formData.area}</span>
                 </div>
               )}
               {formData.seatingCapacity && (
-                <div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Seating:</span>
-                  <span className="ml-2">{formData.seatingCapacity} Seater</span>
+                  <span className="font-medium">{formData.seatingCapacity} Seater</span>
                 </div>
               )}
               {formData.registrationState && (
-                <div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Registration:</span>
-                  <span className="ml-2">{formData.registrationState}</span>
+                  <span className="font-medium">{formData.registrationState}</span>
                 </div>
               )}
               {formData.color && (
-                <div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Color:</span>
-                  <span className="ml-2">{formData.color}</span>
+                  <span className="font-medium">{formData.color}</span>
                 </div>
               )}
             </div>
@@ -106,11 +123,11 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
               </div>
             )}
 
-            {/* Badges */}
+            {/* Badges Row */}
             <div className="flex flex-wrap gap-2 mb-4">
               {formData.acceptOffers && (
-                <Badge variant="secondary" className="text-xs">
-                  Accepts offers (min {formData.offerPercentage}%)
+                <Badge variant="outline" className="text-xs">
+                  Accepts offers (min {formData.offerPercentage || 70}%)
                 </Badge>
               )}
               {formData.isRentAvailable && formData.dailyRate && (
@@ -124,10 +141,15 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
                   RC Transfer Support
                 </Badge>
               )}
-              {formData.insuranceType && (
+              {formData.insuranceValid && formData.insuranceType && (
                 <Badge variant="outline" className="text-xs">
                   <Shield className="h-3 w-3 mr-1" />
                   {formData.insuranceType} Insurance
+                </Badge>
+              )}
+              {formData.noAccidentHistory && (
+                <Badge variant="outline" className="text-xs">
+                  No Accident History
                 </Badge>
               )}
             </div>
@@ -138,7 +160,7 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
       <div className="flex items-start space-x-2">
         <Checkbox 
           checked={formData.termsAccepted}
-          onCheckedChange={(checked) => setFormData({ ...formData, termsAccepted: checked as boolean })}
+          onCheckedChange={handleTermsChange}
         />
         <Label className="text-sm">
           I agree to the <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and confirm that all information provided is accurate

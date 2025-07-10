@@ -1,23 +1,34 @@
-
-export const toBoolean = (value: unknown): boolean => {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'string') return value === 'true';
-  if (value === 'indeterminate') return false; // Handle Radix checkbox indeterminate state
-  return Boolean(value);
+export const updateFormField = <T, K extends keyof T>(
+  state: T,
+  field: K,
+  value: T[K]
+): T => {
+  return {
+    ...state,
+    [field]: value,
+  };
 };
 
-export const updateFormField = <T extends Record<string, any>>(
-  formData: T,
-  field: keyof T,
-  value: any
-): T => {
-  const booleanFields = [
-    'agreeToTerms', 'termsAccepted', 'isRentAvailable', 'acceptOffers',
-    'insuranceValid', 'serviceHistory', 'rtoTransferSupport', 'noAccidentHistory',
-    'authorizedServiceCenter', 'phoneVerified', 'installationAvailable'
-  ];
-  if (booleanFields.includes(field as string)) {
-    return { ...formData, [field]: toBoolean(value) };
+// List of boolean fields
+const booleanFields = [
+  'acceptOffers',
+  'phoneVerified',
+  'termsAccepted',
+  'authorizedServiceCenter',
+  'rtoTransferSupport',
+  'noAccidentHistory',
+  'isRentAvailable',
+  'insuranceValid',
+  'serviceHistory',
+  'verifiedSeller'
+];
+
+export const convertToBoolean = (value: any, fieldName: string): boolean => {
+  if (booleanFields.includes(fieldName)) {
+    if (typeof value === 'string') {
+      return value === 'true';
+    }
+    return !!value;
   }
-  return { ...formData, [field]: value };
+  return value;
 };

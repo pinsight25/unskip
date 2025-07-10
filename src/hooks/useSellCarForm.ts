@@ -9,7 +9,7 @@ export type SellCarFormData = {
   year: string;
   registrationYear: string;
   registrationState: string;
-  fitnessCertificateValidTill: string; // New field
+  fitnessCertificateValidTill: string;
   numberOfOwners: string;
   seatingCapacity: string;
   fuelType: string;
@@ -21,10 +21,10 @@ export type SellCarFormData = {
   offerPercentage: string;
   insuranceValidTill: string;
   insuranceType: string;
-  insuranceValid: boolean; // New field to track if insurance section is expanded
+  insuranceValid: boolean;
   lastServiceDate: string;
-  serviceCenterType: string; // New field
-  serviceHistory: boolean; // New field to track if service section is expanded
+  serviceCenterType: string;
+  serviceHistory: boolean;
   authorizedServiceCenter: boolean;
   rtoTransferSupport: boolean;
   noAccidentHistory: boolean;
@@ -46,7 +46,6 @@ export type SellCarFormData = {
   sellerName: string;
   email: string;
   additionalInfo: string;
-  whatsappContact: boolean;
   verifiedSeller: boolean;
 };
 
@@ -58,7 +57,7 @@ export const useSellCarForm = () => {
     year: '',
     registrationYear: '',
     registrationState: '',
-    fitnessCertificateValidTill: '', // New field
+    fitnessCertificateValidTill: '',
     numberOfOwners: '1',
     seatingCapacity: '5',
     fuelType: '',
@@ -70,10 +69,10 @@ export const useSellCarForm = () => {
     offerPercentage: '70',
     insuranceValidTill: '',
     insuranceType: 'Comprehensive',
-    insuranceValid: false, // New field
+    insuranceValid: false,
     lastServiceDate: '',
-    serviceCenterType: 'Authorized', // New field
-    serviceHistory: false, // New field
+    serviceCenterType: 'Authorized',
+    serviceHistory: false,
     authorizedServiceCenter: false,
     rtoTransferSupport: true,
     noAccidentHistory: false,
@@ -95,7 +94,6 @@ export const useSellCarForm = () => {
     sellerName: '',
     email: '',
     additionalInfo: '',
-    whatsappContact: false,
     verifiedSeller: false,
   });
 

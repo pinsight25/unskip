@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, IndianRupee, TrendingUp, ShieldCheck, Wrench } from 'lucide-react';
+import { CalendarIcon, IndianRupee, ShieldCheck, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
@@ -40,10 +40,10 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
       </div>
 
       {/* Pricing Section */}
-      <div className="bg-blue-50 rounded-lg p-4 space-y-4">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <IndianRupee className="h-5 w-5 text-blue-600" />
-          <h3 className="font-semibold text-blue-800">Pricing Information</h3>
+          <IndianRupee className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">Pricing Information</h3>
         </div>
 
         <div className="space-y-4">
@@ -98,10 +98,10 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
       </div>
 
       {/* Insurance Section */}
-      <div className="bg-green-50 rounded-lg p-4 space-y-4">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-green-600" />
-          <h3 className="font-semibold text-green-800">Insurance Information</h3>
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">Insurance Information</h3>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -116,7 +116,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         </div>
 
         {formData.insuranceValid && (
-          <div className="space-y-4 ml-6">
+          <div className="space-y-4 ml-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
             <div className="space-y-2">
               <Label htmlFor="insuranceType" className="text-sm font-medium">
                 Insurance Type *
@@ -170,10 +170,10 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
       </div>
 
       {/* Service History Section */}
-      <div className="bg-purple-50 rounded-lg p-4 space-y-4">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Wrench className="h-5 w-5 text-purple-600" />
-          <h3 className="font-semibold text-purple-800">Service History</h3>
+          <Wrench className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">Service History</h3>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -188,7 +188,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
         </div>
 
         {formData.serviceHistory && (
-          <div className="space-y-4 ml-6">
+          <div className="space-y-4 ml-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
             <div className="space-y-2">
               <Label className="text-sm font-medium">
                 Last Service Date *
