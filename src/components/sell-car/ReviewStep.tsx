@@ -19,19 +19,23 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
     return `${owners}th Owner`;
   };
 
-  const getSelectedFeatures = () => {
-    if (!formData.features) return [];
-    return Object.entries(formData.features)
-      .filter(([_, value]) => value)
-      .map(([key, _]) => {
-        // Convert camelCase to readable format
-        return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-      });
+  const formatFCDate = (dateString: string) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'long',
+      year: 'numeric' 
+    });
   };
 
   const handleTermsChange = (checked: boolean) => {
     setFormData(prev => updateFormField(prev, 'termsAccepted', checked));
   };
+
+  const carTitle = formData.make && formData.model 
+    ? `${formData.make} ${formData.model}${formData.variant ? ` ${formData.variant}` : ''}`
+    : 'Please complete car details';
+
+  const carSubtitle = `${formData.year || 'Year'} • ${formData.fuelType || 'Fuel'} • ${formData.transmission || 'Transmission'}`;
 
   return (
     <div className="space-y-6">
@@ -45,15 +49,8 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
             <div className="flex items-center space-x-4 mb-4">
               <Car className="h-8 w-8 text-primary" />
               <div>
-                <h3 className="font-semibold text-lg">
-                  {formData.make && formData.model ? 
-                    `${formData.make} ${formData.model}${formData.variant ? ` ${formData.variant}` : ''}` : 
-                    'Car Title'
-                  }
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {formData.year || 'Year'} • {formData.fuelType || 'Fuel'} • {formData.transmission || 'Transmission'}
-                </p>
+                <h3 className="font-semibold text-lg">{carTitle}</h3>
+                <p className="text-sm text-gray-600">{carSubtitle}</p>
               </div>
             </div>
             
@@ -64,7 +61,7 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
               </div>
             </div>
 
-            {/* Ownership - Most Important */}
+            {/* Ownership Badge */}
             {formData.numberOfOwners && (
               <div className="mb-4">
                 <Badge className="bg-green-100 text-green-800 border-green-200">
@@ -106,19 +103,20 @@ const ReviewStep = ({ formData, setFormData }: ReviewStepProps) => {
                   <span className="font-medium">{formData.color}</span>
                 </div>
               )}
+              {formData.fitnessCertificateValidTill && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">FC Valid:</span>
+                  <span className="font-medium">{formatFCDate(formData.fitnessCertificateValidTill)}</span>
+                </div>
+              )}
             </div>
 
-            {/* Show selected features if any */}
-            {getSelectedFeatures().length > 0 && (
+            {/* Additional Features/Details */}
+            {formData.description && (
               <div className="mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Settings className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Features:</span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {getSelectedFeatures().map((feature, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">{feature}</Badge>
-                  ))}
+                <div className="text-sm">
+                  <span className="text-gray-600">Description:</span>
+                  <p className="font-medium mt-1 text-gray-800">{formData.description}</p>
                 </div>
               </div>
             )}

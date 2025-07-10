@@ -17,6 +17,31 @@ interface CarDetailsStepProps {
   validateKilometersDriven: (km: string) => { valid: boolean; message: string };
 }
 
+// Car models by make
+const carModels: Record<string, string[]> = {
+  'Maruti Suzuki': ['Swift', 'Baleno', 'Dzire', 'Vitara Brezza', 'Ertiga', 'Wagon R', 'Alto', 'Celerio', 'Ciaz', 'S-Cross', 'XL6', 'Ignis'],
+  'Hyundai': ['i20', 'Creta', 'Verna', 'Venue', 'Grand i10', 'Santro', 'Elantra', 'Tucson', 'Kona', 'Alcazar'],
+  'Tata': ['Nexon', 'Harrier', 'Safari', 'Altroz', 'Tiago', 'Tigor', 'Punch', 'Hexa', 'Zest'],
+  'Mahindra': ['XUV700', 'XUV300', 'Scorpio', 'Thar', 'Bolero', 'KUV100', 'Marazzo', 'XUV500'],
+  'Honda': ['City', 'Amaze', 'Jazz', 'WR-V', 'CR-V', 'Civic', 'BR-V'],
+  'Toyota': ['Innova Crysta', 'Fortuner', 'Glanza', 'Urban Cruiser', 'Camry', 'Yaris'],
+  'Ford': ['EcoSport', 'Endeavour', 'Figo', 'Freestyle', 'Aspire'],
+  'Volkswagen': ['Polo', 'Vento', 'Tiguan', 'T-Roc', 'Passat']
+};
+
+// Common variants for popular models
+const carVariants: Record<string, string[]> = {
+  'Swift': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Baleno': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Dzire': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'i20': ['Magna', 'Sportz', 'Asta'],
+  'Creta': ['E', 'EX', 'S', 'SX'],
+  'Nexon': ['XE', 'XM', 'XT', 'XZ', 'XZ+'],
+  'City': ['V', 'VX', 'ZX'],
+  'Innova Crysta': ['GX', 'VX', 'ZX'],
+  // Add more as needed
+};
+
 const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: CarDetailsStepProps) => {
   const handleFieldChange = (field: keyof SellCarFormData, value: any) => {
     setFormData(prev => updateFormField(prev, field, value));
@@ -27,6 +52,28 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
       handleFieldChange(field, date.toISOString());
     }
   };
+
+  const handleMakeChange = (make: string) => {
+    handleFieldChange('make', make);
+    // Clear model and variant when make changes
+    handleFieldChange('model', '');
+    handleFieldChange('variant', '');
+  };
+
+  const handleModelChange = (model: string) => {
+    handleFieldChange('model', model);
+    // Clear variant when model changes
+    handleFieldChange('variant', '');
+  };
+
+  const availableModels = formData.make ? carModels[formData.make] || [] : [];
+  const availableVariants = formData.model ? carVariants[formData.model] || [] : [];
+
+  // Generate year options (2024 down to 1990)
+  const yearOptions = Array.from({ length: 35 }, (_, i) => {
+    const year = new Date().getFullYear() - i;
+    return year.toString();
+  });
 
   return (
     <div className="space-y-6">
@@ -43,7 +90,7 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
           <Label htmlFor="make" className="text-sm font-medium">
             Make *
           </Label>
-          <Select value={formData.make} onValueChange={(value) => handleFieldChange('make', value)}>
+          <Select value={formData.make} onValueChange={handleMakeChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select make" />
             </SelectTrigger>
@@ -65,12 +112,17 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
           <Label htmlFor="model" className="text-sm font-medium">
             Model *
           </Label>
-          <Input
-            id="model"
-            value={formData.model}
-            onChange={(e) => handleFieldChange('model', e.target.value)}
-            placeholder="e.g., Swift, i20, Nexon"
-          />
+          <Select value={formData.model} onValueChange={handleModelChange} disabled={!formData.make}>
+            <SelectTrigger>
+              <SelectValue placeholder={formData.make ? "Select model" : "Select make first"} />
+            </SelectTrigger>
+            <SelectContent>
+              {availableModels.map((model) => (
+                <SelectItem key={model} value={model}>{model}</SelectItem>
+              ))}
+              <SelectItem value="Other">Other</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Variant */}
@@ -78,12 +130,17 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
           <Label htmlFor="variant" className="text-sm font-medium">
             Variant
           </Label>
-          <Input
-            id="variant"
-            value={formData.variant}
-            onChange={(e) => handleFieldChange('variant', e.target.value)}
-            placeholder="e.g., VXI, Asta, XZ+"
-          />
+          <Select value={formData.variant} onValueChange={(value) => handleFieldChange('variant', value)} disabled={!formData.model}>
+            <SelectTrigger>
+              <SelectValue placeholder={formData.model ? "Select variant" : "Select model first"} />
+            </SelectTrigger>
+            <SelectContent>
+              {availableVariants.map((variant) => (
+                <SelectItem key={variant} value={variant}>{variant}</SelectItem>
+              ))}
+              <SelectItem value="Other">Other</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Year */}
@@ -96,14 +153,9 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
               <SelectValue placeholder="Select year" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: 25 }, (_, i) => {
-                const year = new Date().getFullYear() - i;
-                return (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                );
-              })}
+              {yearOptions.map((year) => (
+                <SelectItem key={year} value={year}>{year}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -118,14 +170,9 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
               <SelectValue placeholder="Select registration year" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: 25 }, (_, i) => {
-                const year = new Date().getFullYear() - i;
-                return (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                );
-              })}
+              {yearOptions.map((year) => (
+                <SelectItem key={year} value={year}>{year}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
