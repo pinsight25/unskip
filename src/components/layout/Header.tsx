@@ -71,14 +71,14 @@ const Header = () => {
             {/* Desktop Actions */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
 
-            {/* Mobile Chat Icon with proper badge positioning */}
+            {/* Mobile Chat Icon with standardized badge positioning */}
             <Link
               to="/chats"
               className="lg:hidden relative p-2 h-10 w-10 sm:h-12 sm:w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"
             >
               <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
               {unreadChats > 0 && (
-                <span className="notification-badge">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center border-2 border-white z-10">
                   {unreadChats}
                 </span>
               )}
