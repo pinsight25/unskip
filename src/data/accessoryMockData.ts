@@ -75,7 +75,12 @@ export const mockAccessories: Accessory[] = [
     views: 234,
     createdAt: '2024-01-10T10:00:00Z',
     featured: true,
-    condition: 'new'
+    condition: 'new',
+    warranty: '6 months',
+    installationAvailable: true,
+    email: 'raj@autostylehub.com',
+    whatsappContact: true,
+    additionalInfo: 'Custom stitching available in 5 different colors. Professional installation recommended for best results.'
   },
   {
     id: 'acc-2',
@@ -102,7 +107,12 @@ export const mockAccessories: Accessory[] = [
     views: 567,
     createdAt: '2024-01-08T14:30:00Z',
     featured: true,
-    condition: 'new'
+    condition: 'new',
+    warranty: '2 years',
+    installationAvailable: true,
+    email: 'raj@autostylehub.com',
+    whatsappContact: true,
+    additionalInfo: 'Includes mounting hardware and balancing weights. Professional installation recommended.'
   },
   {
     id: 'acc-3',
@@ -128,7 +138,11 @@ export const mockAccessories: Accessory[] = [
     views: 189,
     createdAt: '2024-01-12T09:15:00Z',
     featured: false,
-    condition: 'new'
+    condition: 'new',
+    warranty: '1 year',
+    installationAvailable: true,
+    whatsappContact: false,
+    additionalInfo: 'Includes 32GB SD card and all mounting accessories. Easy DIY installation with video guide.'
   },
   {
     id: 'acc-4',
@@ -154,7 +168,10 @@ export const mockAccessories: Accessory[] = [
     views: 156,
     createdAt: '2024-01-15T16:20:00Z',
     featured: false,
-    condition: 'new'
+    condition: 'new',
+    email: 'priya@carcomfort.com',
+    whatsappContact: true,
+    additionalInfo: 'Perfect fit guaranteed for listed models. Easy to remove and clean.'
   },
   {
     id: 'acc-5',
@@ -180,7 +197,9 @@ export const mockAccessories: Accessory[] = [
     views: 298,
     createdAt: '2024-01-14T11:45:00Z',
     featured: false,
-    condition: 'new'
+    condition: 'new',
+    warranty: '6 months',
+    whatsappContact: true
   },
   {
     id: 'acc-6',
@@ -206,7 +225,12 @@ export const mockAccessories: Accessory[] = [
     views: 423,
     createdAt: '2024-01-09T13:30:00Z',
     featured: true,
-    condition: 'new'
+    condition: 'new',
+    warranty: '3 years',
+    installationAvailable: true,
+    email: 'raj@autostylehub.com',
+    whatsappContact: true,
+    additionalInfo: 'CANBUS compatible and EMC approved. No dashboard warnings.'
   }
 ];
 

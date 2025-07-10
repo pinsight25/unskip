@@ -1,7 +1,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Share2, Shield } from 'lucide-react';
+import { Share2, Shield, CheckCircle, Wrench } from 'lucide-react';
 import { Accessory } from '@/types/accessory';
 
 interface AccessoryInfoProps {
@@ -67,6 +67,26 @@ const AccessoryInfo = ({
               {accessory.views} views
             </div>
           </div>
+        </div>
+
+        {/* Warranty and Installation Information */}
+        <div className="mb-4 space-y-2">
+          {/* Warranty */}
+          <div className="flex items-center gap-2 text-sm">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            <span className="font-medium">Warranty:</span>
+            <span className="text-gray-700">
+              {accessory.warranty ? `${accessory.warranty}` : 'No Warranty'}
+            </span>
+          </div>
+
+          {/* Installation Service */}
+          {accessory.installationAvailable && (
+            <div className="flex items-center gap-2 text-sm">
+              <Wrench className="h-4 w-4 text-blue-500" />
+              <span className="text-green-600 font-medium">✓ Installation Service Available</span>
+            </div>
+          )}
         </div>
 
         {/* Compatible Models - Below Pricing */}

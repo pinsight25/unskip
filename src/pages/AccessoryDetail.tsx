@@ -127,6 +127,16 @@ const AccessoryDetail = () => {
               <p className="text-gray-700 leading-relaxed">{accessory.description}</p>
             </CardContent>
           </Card>
+
+          {/* Additional Information */}
+          {accessory.additionalInfo && (
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-lg mb-4">Additional Details</h3>
+                <p className="text-gray-700 leading-relaxed">{accessory.additionalInfo}</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Right Column - Seller Info (1/3 width) */}
@@ -135,6 +145,8 @@ const AccessoryDetail = () => {
             seller={accessory.seller} 
             onChat={handleChat}
             onCall={handleCall}
+            email={accessory.email}
+            whatsappContact={accessory.whatsappContact}
           />
         </div>
       </div>

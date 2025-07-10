@@ -1,4 +1,3 @@
-
 export interface Accessory {
   id: string;
   name: string;
@@ -18,7 +17,12 @@ export interface Accessory {
   views: number;
   createdAt: string;
   featured: boolean;
-  condition: string; // Added from post form
+  condition: string;
+  warranty?: string; // Added from form
+  installationAvailable?: boolean; // Added from form
+  email?: string; // Added from form
+  whatsappContact?: boolean; // Added from form
+  additionalInfo?: string; // Added from form
 }
 
 export interface AccessorySeller {
