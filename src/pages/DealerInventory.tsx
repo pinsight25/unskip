@@ -21,7 +21,7 @@ const DealerInventory = () => {
   const { dealerId } = useParams();
   const [sortBy, setSortBy] = useState('');
   
-  // Mock dealer data with actual form data - in real app this would come from API
+  // Mock dealer data with enhanced information
   const dealer = {
     id: dealerId || '1',
     name: 'CarMax Motors',
@@ -34,16 +34,15 @@ const DealerInventory = () => {
     reviewCount: 234,
     location: 'Andheri West, Mumbai',
     establishmentYear: '2010',
-    carsInStock: 0, // Dynamic count based on actual listings
+    carsInStock: 0,
     responseTime: '30 mins',
     verified: true,
-    brands: ['Maruti Suzuki', 'Hyundai', 'Tata']
+    brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
+    shopPhoto: 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop'
   };
 
-  // Filter cars by dealer - in real app this would be API call
+  // Filter cars by dealer
   const dealerCars = mockCars.filter(car => car.seller.type === 'dealer').slice(0, 12);
-  
-  // Update dealer's car count with actual listings
   dealer.carsInStock = dealerCars.length;
   
   const sortedCars = [...dealerCars].sort((a, b) => {
@@ -63,19 +62,19 @@ const DealerInventory = () => {
 
   return (
     <ResponsiveLayout>
-      <div className="bg-white min-h-screen">
+      <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Breadcrumb - Desktop Only */}
           <Breadcrumb className="py-4 hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/dealers">Dealers</Link>
+                  <Link to="/dealers" className="hover:text-primary transition-colors">Dealers</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{dealer.name}</BreadcrumbPage>
+                <BreadcrumbPage className="font-medium">{dealer.name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -91,23 +90,30 @@ const DealerInventory = () => {
             </Link>
           </div>
 
-          {/* Dealer Header */}
+          {/* Enhanced Dealer Header */}
           <DealerHeader dealer={dealer} />
 
-          {/* Inventory Header */}
-          <DealerInventoryHeader 
-            carsCount={sortedCars.length}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-          />
+          {/* Inventory Section */}
+          <div className="mt-8">
+            <DealerInventoryHeader 
+              carsCount={sortedCars.length}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
 
-          {/* Cars Grid */}
-          <DealerInventoryGrid cars={sortedCars} />
+            <div className="mt-6">
+              <DealerInventoryGrid cars={sortedCars} />
+            </div>
+          </div>
 
           {/* Load More Button */}
           {sortedCars.length > 0 && (
             <div className="text-center mt-12 md:mt-20 pb-8">
-              <Button variant="outline" size="lg" className="min-h-[48px]">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="min-h-[48px] shadow-md hover:shadow-lg transition-all duration-300"
+              >
                 Load More Cars
               </Button>
             </div>
