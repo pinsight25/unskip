@@ -39,7 +39,7 @@ const ConditionTab = ({ car }: ConditionTabProps) => {
         </div>
 
         {/* Service History */}
-        {(car.lastServiceDate || car.serviceAtAuthorized !== undefined) && (
+        {(car.lastServiceDate || car.serviceCenterType) && (
           <div className="bg-purple-50 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <FileText className="h-4 w-4 text-purple-600" />
@@ -49,8 +49,8 @@ const ConditionTab = ({ car }: ConditionTabProps) => {
               {car.lastServiceDate && (
                 <p>Last Service: {formatDate(car.lastServiceDate)}</p>
               )}
-              {car.serviceAtAuthorized !== undefined && (
-                <p>Service Center: {car.serviceAtAuthorized ? 'Authorized' : 'Local'}</p>
+              {car.serviceCenterType && (
+                <p>Service Center: {car.serviceCenterType}</p>
               )}
             </div>
           </div>

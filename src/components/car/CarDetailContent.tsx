@@ -79,9 +79,10 @@ const CarDetailContent = ({
               seatingCapacity={car.seatingCapacity}
             />
 
-            {/* Description - Moved to correct position between overview and tabs */}
+            {/* Description Box - Styled like accessories detail page */}
             {car.description && (
-              <div>
+              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <h3 className="font-medium text-gray-900 mb-2">Description</h3>
                 <p className="text-gray-700 text-sm leading-relaxed">{car.description}</p>
               </div>
             )}

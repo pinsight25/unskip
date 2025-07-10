@@ -9,6 +9,7 @@ export type SellCarFormData = {
   year: string;
   registrationYear: string;
   registrationState: string;
+  fitnessCertificateValidTill: string; // New field
   numberOfOwners: string;
   seatingCapacity: string;
   fuelType: string;
@@ -20,7 +21,10 @@ export type SellCarFormData = {
   offerPercentage: string;
   insuranceValidTill: string;
   insuranceType: string;
+  insuranceValid: boolean; // New field to track if insurance section is expanded
   lastServiceDate: string;
+  serviceCenterType: string; // New field
+  serviceHistory: boolean; // New field to track if service section is expanded
   authorizedServiceCenter: boolean;
   rtoTransferSupport: boolean;
   noAccidentHistory: boolean;
@@ -54,6 +58,7 @@ export const useSellCarForm = () => {
     year: '',
     registrationYear: '',
     registrationState: '',
+    fitnessCertificateValidTill: '', // New field
     numberOfOwners: '1',
     seatingCapacity: '5',
     fuelType: '',
@@ -61,21 +66,24 @@ export const useSellCarForm = () => {
     kilometersDriven: '',
     color: '',
     price: '',
-    acceptOffers: true, // Smart default ON
-    offerPercentage: '70', // Smart default 70%
+    acceptOffers: true,
+    offerPercentage: '70',
     insuranceValidTill: '',
-    insuranceType: 'Comprehensive', // Smart default
+    insuranceType: 'Comprehensive',
+    insuranceValid: false, // New field
     lastServiceDate: '',
+    serviceCenterType: 'Authorized', // New field
+    serviceHistory: false, // New field
     authorizedServiceCenter: false,
-    rtoTransferSupport: true, // Smart default checked
-    noAccidentHistory: false, // New field
+    rtoTransferSupport: true,
+    noAccidentHistory: false,
     isRentAvailable: false,
     dailyRate: '',
     weeklyRate: '',
     securityDeposit: '',
     photos: [] as string[],
     coverPhotoIndex: 0,
-    city: '', // New city field
+    city: '',
     area: '',
     landmark: '',
     phone: '',

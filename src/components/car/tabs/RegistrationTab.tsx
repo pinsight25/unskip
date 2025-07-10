@@ -9,6 +9,14 @@ interface RegistrationTabProps {
 }
 
 const RegistrationTab = ({ car }: RegistrationTabProps) => {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-IN', { 
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric' 
+    });
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -42,6 +50,15 @@ const RegistrationTab = ({ car }: RegistrationTabProps) => {
               <div className="flex items-center gap-2">
                 <span className="text-gray-600">Seating:</span>
                 <span className="font-medium">{car.seatingCapacity} Seater</span>
+              </div>
+            )}
+
+            {/* Fitness Certificate */}
+            {car.fitnessCertificateValidTill && (
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-gray-500" />
+                <span className="text-gray-600">FC Valid:</span>
+                <span className="font-medium">{formatDate(car.fitnessCertificateValidTill)}</span>
               </div>
             )}
           </div>

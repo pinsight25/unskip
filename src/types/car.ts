@@ -1,4 +1,3 @@
-
 export interface Car {
   id: string;
   title: string;
@@ -41,6 +40,7 @@ export interface Car {
   // Fields from Sell Car form - flat structure to match components
   registrationYear?: number;
   registrationState?: string;
+  fitnessCertificateValidTill?: string; // New field
   noAccidentHistory?: boolean;
   acceptOffers?: boolean;
   offerPercentage?: number;
@@ -48,6 +48,7 @@ export interface Car {
   insuranceValidTill?: string;
   insuranceType?: 'Comprehensive' | 'Third Party';
   lastServiceDate?: string;
+  serviceCenterType?: 'Authorized' | 'Local Garage'; // New field
   serviceAtAuthorized?: boolean;
   rtoTransferSupport?: boolean;
   // Legacy nested structures for backward compatibility
