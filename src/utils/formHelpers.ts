@@ -1,3 +1,4 @@
+
 export const updateFormField = <T, K extends keyof T>(
   state: T,
   field: K,
@@ -20,7 +21,11 @@ const booleanFields = [
   'isRentAvailable',
   'insuranceValid',
   'serviceHistory',
-  'verifiedSeller'
+  'verifiedSeller',
+  'whatsappContact',
+  'installationAvailable',
+  'agreeToTerms',
+  'is24x7'
 ];
 
 export const convertToBoolean = (value: any, fieldName: string): boolean => {

@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
-import { updateFormField } from '@/utils/formHelpers';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
@@ -176,7 +175,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               <Checkbox
                 id="whatsappContact"
                 checked={formData.whatsappContact}
-                onCheckedChange={(checked) => onUpdate(updateFormField(formData, 'whatsappContact', checked))}
+                onCheckedChange={(checked) => onUpdate({ whatsappContact: checked === true })}
               />
               <Label htmlFor="whatsappContact" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
@@ -188,7 +187,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               <Checkbox
                 id="verifiedSeller"
                 checked={formData.verifiedSeller}
-                onCheckedChange={(checked) => onUpdate(updateFormField(formData, 'verifiedSeller', checked))}
+                onCheckedChange={(checked) => onUpdate({ verifiedSeller: checked === true })}
               />
               <Label htmlFor="verifiedSeller" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />

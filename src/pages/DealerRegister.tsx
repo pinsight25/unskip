@@ -1,10 +1,10 @@
+
 import { useNavigate } from 'react-router-dom';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft } from 'lucide-react';
 import { useDealerRegistrationForm } from '@/hooks/useDealerRegistrationForm';
-import { updateFormField } from '@/utils/formHelpers';
 import BusinessInformationStep from '@/components/dealer/registration/BusinessInformationStep';
 import LegalLocationStep from '@/components/dealer/registration/LegalLocationStep';
 import DocumentUploadStep from '@/components/dealer/registration/DocumentUploadStep';
@@ -28,7 +28,10 @@ const DealerRegister = () => {
   } = useDealerRegistrationForm();
 
   const handleTermsChange = (checked: boolean | 'indeterminate') => {
-    setFormData(prev => updateFormField(prev, 'agreeToTerms', checked));
+    setFormData(prev => ({
+      ...prev,
+      agreeToTerms: checked === true
+    }));
   };
 
   const renderCurrentStep = () => {
