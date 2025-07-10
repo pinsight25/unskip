@@ -1,128 +1,17 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-@import './styles/variables.css';
-@import './styles/typography.css';
-@import './styles/containers.css';
-@import './styles/spacing.css';
-@import './styles/responsive.css';
-@import './styles/components.css';
-@import './styles/buttons.css';
-@import './styles/globals.css';
-@import './styles/animations.css';
-@import './styles/utilities.css';
+@import url('./styles/globals.css');
+@import url('./styles/variables.css');
+@import url('./styles/typography.css');
+@import url('./styles/layout.css');
+@import url('./styles/spacing.css');
+@import url('./styles/responsive.css');
+@import url('./styles/components.css');
+@import url('./styles/containers.css');
+@import url('./styles/buttons.css');
+@import url('./styles/utilities.css');
+@import url('./styles/animations.css');
+@import url('./styles/mobile.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* CarVibe Mobile-First Layout System with Enhanced Design Standards */
-
-@layer base {
-  :root {
-    /* Enhanced Color Palette - Consistent with Design System */
-    --background: 0 0% 98%;           
-    --foreground: var(--color-text-primary);        
-
-    --card: 0 0% 100%;                
-    --card-foreground: var(--color-text-primary);
-
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--color-text-primary);
-
-    /* CarVibe Brand Colors - Standardized */
-    --primary: 14 100% 57%;           /* #FF6B35 */
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 14 100% 67%;     
-    --primary-dark: 14 100% 47%;      
-
-    --secondary: 193 100% 42%;        
-    --secondary-foreground: 0 0% 100%;
-    --secondary-light: 154 100% 52%;  
-    --secondary-dark: 193 100% 32%;
-
-    --muted: 210 14% 96%;            
-    --muted-foreground: var(--color-text-secondary);
-
-    --accent: 258 90% 58%;           
-    --accent-foreground: 0 0% 100%;
-    --accent-light: 258 90% 68%;
-
-    --success: 175 100% 41%;         
-    --success-foreground: 0 0% 100%;
-    
-    --trust: 223 100% 46%;           
-    --trust-foreground: 0 0% 100%;
-    
-    --warning: 45 100% 50%;          
-    --warning-foreground: var(--color-text-primary);
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 14% 89%;
-    --input: 210 14% 89%;
-    --ring: 14 100% 57%;
-
-    --radius: var(--radius-md);
-    --radius-lg: 1.5rem;
-    --radius-xl: 2rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222 84% 5%;
-    --foreground: 0 0% 98%;
-    --card: 222 84% 5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 222 84% 5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 84% 5%;
-    --secondary: 215 25% 20%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 215 25% 20%;
-    --muted-foreground: 215 25% 65%;
-    --accent: 160 84% 39%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 217 91% 60%;
-  }
-}
-
-/* Utility Classes for Responsive Design */
-@layer utilities {
-  .text-primary {
-    color: var(--color-primary);
-  }
-  
-  .text-primary-hover:hover {
-    color: var(--color-primary-hover);
-  }
-  
-  .bg-primary {
-    background-color: var(--color-primary);
-  }
-  
-  .border-primary {
-    border-color: var(--color-primary);
-  }
-  
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-  
-  .shadow-card-hover:hover {
-    box-shadow: var(--shadow-card-hover);
-  }
-}

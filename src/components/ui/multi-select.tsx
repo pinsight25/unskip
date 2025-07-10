@@ -47,6 +47,10 @@ export function MultiSelect({
     }
   }
 
+  const handleDone = () => {
+    setOpen(false)
+  }
+
   return (
     <div className={cn("w-full", className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -98,10 +102,10 @@ export function MultiSelect({
             <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent className="w-full p-0 max-h-[70vh] overflow-hidden" align="start">
           <Command>
             <CommandInput placeholder="Search brands..." />
-            <CommandList>
+            <CommandList className="max-h-[50vh] overflow-y-auto">
               <CommandEmpty>No brands found.</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => (
@@ -121,6 +125,15 @@ export function MultiSelect({
                 ))}
               </CommandGroup>
             </CommandList>
+            <div className="border-t p-2 lg:hidden">
+              <Button 
+                onClick={handleDone}
+                className="w-full"
+                size="sm"
+              >
+                Done ({selected.length} selected)
+              </Button>
+            </div>
           </Command>
         </PopoverContent>
       </Popover>
