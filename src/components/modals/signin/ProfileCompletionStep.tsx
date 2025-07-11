@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -23,7 +24,7 @@ interface ProfileData {
   name: string;
   email: string;
   city: string;
-  gender: string;
+  gender: 'Male' | 'Female' | 'Other'; // Fix: Match the exact enum values from useOTPAuth
 }
 
 interface ProfileCompletionStepProps {
@@ -58,7 +59,7 @@ const ProfileCompletionStep = ({
 
         <div>
           <label className="text-sm font-medium mb-2 block text-gray-700">Gender *</label>
-          <Select value={profileData.gender} onValueChange={(value) => setProfileData({ ...profileData, gender: value })}>
+          <Select value={profileData.gender} onValueChange={(value: 'Male' | 'Female' | 'Other') => setProfileData({ ...profileData, gender: value })}>
             <SelectTrigger className="h-12 rounded-xl border-2 border-gray-100 focus:border-primary">
               <SelectValue placeholder="Select your gender" />
             </SelectTrigger>
