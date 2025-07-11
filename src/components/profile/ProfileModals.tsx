@@ -72,7 +72,7 @@ const ProfileModals = ({
           isOpen={isSignInModalOpen}
           onClose={() => setIsSignInModalOpen(false)}
           onSuccess={() => setIsSignInModalOpen(false)}
-          phoneNumber="+91 98765 43210"
+          phoneNumber=""
           purpose="access your profile"
         />
       ) : (

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,7 +37,7 @@ const genders = [
 
 const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpose }: MobileOTPModalProps) => {
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
-  const [phoneNumber, setPhoneNumber] = useState(initialPhone);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhone || '+91 ');
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -128,7 +129,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
 
   const resetModal = () => {
     setStep('phone');
-    setPhoneNumber(initialPhone);
+    setPhoneNumber(initialPhone || '+91 ');
     setOtp('');
     setIsVerified(false);
     setError('');

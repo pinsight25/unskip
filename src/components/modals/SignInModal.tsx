@@ -26,7 +26,7 @@ interface ProfileData {
 
 const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
-  const [phoneNumber, setPhoneNumber] = useState('+91 98765 43210');
+  const [phoneNumber, setPhoneNumber] = useState('+91 ');
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSendingOTP, setIsSendingOTP] = useState(false);
@@ -235,7 +235,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
 
   const resetModal = () => {
     setStep('phone');
-    setPhoneNumber('+91 98765 43210');
+    setPhoneNumber('+91 ');
     setOtp('');
     setIsVerified(false);
     setError('');
