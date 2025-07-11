@@ -7,24 +7,34 @@ import { useUserListings } from '@/hooks/useUserListings';
 import ProfileContent from '@/components/profile/ProfileContent';
 import ProfileModals from '@/components/profile/ProfileModals';
 import SignInPrompt from '@/components/profile/SignInPrompt';
-import { useState } from 'react';
+import LoadingScreen from '@/components/common/LoadingScreen';
+import { useState, useEffect } from 'react';
 import SignInModal from '@/components/modals/SignInModal';
 
 const Profile = () => {
   const { user, isSignedIn, isLoading } = useUser();
   const isMobile = useIsMobile();
+  const [forceLoad, setForceLoad] = useState(false);
   
   // STATE FOR SIGN IN MODAL
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  
+  // Force load after 8 seconds
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      console.warn('🚨 FORCING PROFILE TO LOAD after 8 seconds');
+      setForceLoad(true);
+    }, 8000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
   
   // DEBUG LOGS
   console.log('Profile Page Debug:');
   console.log('- user:', user);
   console.log('- isSignedIn:', isSignedIn);
   console.log('- isLoading:', isLoading);
-  console.log('- typeof user:', typeof user);
-  console.log('- user === null:', user === null);
-  console.log('- user === undefined:', user === undefined);
+  console.log('- forceLoad:', forceLoad);
   
   const {
     isEditProfileOpen,
@@ -52,14 +62,6 @@ const Profile = () => {
     refetch 
   } = useUserListings();
 
-  console.log('Profile: useUserListings hook results:', {
-    carListingsCount: carListings?.length || 0,
-    accessoryListingsCount: accessoryListings?.length || 0,
-    stats,
-    isLoading: listingsLoading,
-    error
-  });
-
   // Add mock dealer verification to user - in real app this would come from context
   const userWithDealer = user ? {
     ...user,
@@ -83,16 +85,15 @@ const Profile = () => {
     setIsSignInModalOpen(true);
   };
 
-  // If still loading, show loading state
-  if (isLoading) {
+  // If still loading and not forced, show loading state with timeout
+  if (isLoading && !forceLoad) {
     console.log('Profile: Still loading auth state');
     return (
-      <div className="bg-white min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-pulse mb-4">Loading profile...</div>
-          <p className="text-sm text-gray-500">Checking authentication status</p>
-        </div>
-      </div>
+      <LoadingScreen 
+        message="Loading profile..." 
+        timeout={6000}
+        onTimeout={() => setForceLoad(true)}
+      />
     );
   }
 

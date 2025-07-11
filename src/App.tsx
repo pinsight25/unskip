@@ -1,12 +1,15 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SupabaseProvider } from '@/contexts/SupabaseContext';
-import { UserProvider } from '@/contexts/UserContext';
+import { UserProvider, useUser } from '@/contexts/UserContext';
 import { OfferProvider } from '@/contexts/OfferContext';
 import { CityProvider } from '@/contexts/CityContext';
 import { Toaster } from '@/components/ui/toaster';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import ScrollToTop from '@/components/common/ScrollToTop';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import LoadingScreen from '@/components/common/LoadingScreen';
 import Home from '@/pages/Home';
 import CarDetail from '@/pages/CarDetail';
 import Dealers from '@/pages/Dealers';
@@ -24,47 +27,80 @@ import Chats from '@/pages/Chats';
 import ChatDetail from '@/pages/ChatDetail';
 import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
+import { useState, useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
+// App content component that uses the UserContext
+const AppContent = () => {
+  const { isLoading } = useUser();
+  const [forceLoad, setForceLoad] = useState(false);
+
+  // Force load after 10 seconds regardless of auth state
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      console.warn('🚨 FORCING APP TO LOAD after 10 seconds');
+      setForceLoad(true);
+    }, 10000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  if (isLoading && !forceLoad) {
+    return (
+      <LoadingScreen 
+        message="Loading profile..." 
+        timeout={8000}
+        onTimeout={() => setForceLoad(true)}
+      />
+    );
+  }
+
+  return (
+    <Router>
+      <ScrollToTop />
+      <ResponsiveLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/car/:id" element={<CarDetail />} />
+          <Route path="/dealers" element={<Dealers />} />
+          <Route path="/dealers/:dealerId" element={<DealerInventory />} />
+          <Route path="/dealers/:dealerSlug" element={<DealerProfile />} />
+          <Route path="/dealer/register" element={<DealerRegister />} />
+          <Route path="/sell-car" element={<SellCar />} />
+          <Route path="/sell" element={<SellCar />} />
+          <Route path="/post-accessory" element={<PostAccessory />} />
+          <Route path="/accessories" element={<Accessories />} />
+          <Route path="/accessories/:id" element={<AccessoryDetail />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/saved" element={<Saved />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/chats" element={<Chats />} />
+          <Route path="/chats/:chatId" element={<ChatDetail />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+        </Routes>
+      </ResponsiveLayout>
+      <Toaster />
+    </Router>
+  );
+};
+
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SupabaseProvider>
-        <UserProvider>
-          <OfferProvider>
-            <CityProvider>
-              <Router>
-                <ScrollToTop />
-                <ResponsiveLayout>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/car/:id" element={<CarDetail />} />
-                    <Route path="/dealers" element={<Dealers />} />
-                    <Route path="/dealers/:dealerId" element={<DealerInventory />} />
-                    <Route path="/dealers/:dealerSlug" element={<DealerProfile />} />
-                    <Route path="/dealer/register" element={<DealerRegister />} />
-                    <Route path="/sell-car" element={<SellCar />} />
-                    <Route path="/sell" element={<SellCar />} />
-                    <Route path="/post-accessory" element={<PostAccessory />} />
-                    <Route path="/accessories" element={<Accessories />} />
-                    <Route path="/accessories/:id" element={<AccessoryDetail />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/saved" element={<Saved />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/chats" element={<Chats />} />
-                    <Route path="/chats/:chatId" element={<ChatDetail />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/privacy" element={<Privacy />} />
-                  </Routes>
-                </ResponsiveLayout>
-                <Toaster />
-              </Router>
-            </CityProvider>
-          </OfferProvider>
-        </UserProvider>
-      </SupabaseProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <SupabaseProvider>
+          <UserProvider>
+            <OfferProvider>
+              <CityProvider>
+                <AppContent />
+              </CityProvider>
+            </OfferProvider>
+          </UserProvider>
+        </SupabaseProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
