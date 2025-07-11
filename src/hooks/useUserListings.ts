@@ -5,6 +5,15 @@ import { useUser } from '@/contexts/UserContext';
 import { CarListing, AccessoryListing, UserStats } from '@/types/userListings';
 import { transformCarsData, transformAccessoriesData } from '@/utils/userListingsTransformers';
 
+// Type definition for the RPC function return value
+type UserListingStats = {
+  total_cars: number;
+  active_cars: number;
+  total_accessories: number;
+  active_accessories: number;
+  total_views: number;
+};
+
 export const useUserListings = () => {
   const { user } = useUser();
   const [carListings, setCarListings] = useState<CarListing[]>([]);
@@ -92,7 +101,10 @@ export const useUserListings = () => {
       // Fetch user stats using RPC call with proper typing
       console.log('useUserListings: Fetching stats for user_uuid:', userId);
       const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId });
+        .rpc('get_user_listing_stats', { user_uuid: userId }) as {
+          data: UserListingStats[] | null;
+          error: any;
+        };
 
       console.log('useUserListings: Stats data:', statsData);
       console.log('useUserListings: Stats error:', statsError);
