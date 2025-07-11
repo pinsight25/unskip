@@ -182,6 +182,74 @@ export type Database = {
           },
         ]
       }
+      car_makes: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          name: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      car_models: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          make_id: string
+          name: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          make_id: string
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          make_id?: string
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_models_make_id_fkey"
+            columns: ["make_id"]
+            isOneToOne: false
+            referencedRelation: "car_makes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cars: {
         Row: {
           accept_offers: boolean | null
@@ -463,6 +531,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cities: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       dealer_documents: {
         Row: {

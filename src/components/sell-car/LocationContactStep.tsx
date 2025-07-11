@@ -1,129 +1,94 @@
 
-import { MapPin, Phone } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { Button } from '@/components/ui/button';
+import { Shield, CheckCircle } from 'lucide-react';
 import { updateFormField } from '@/utils/formHelpers';
-
-// Define SellCarFormData type locally to match formData structure
-type SellCarFormData = {
-  city: string;
-  area: string;
-  address: string;
-  sellerName: string;
-  phone: string;
-  email: string;
-  termsAccepted: boolean;
-  // Add any other fields used in the form
-};
+import { useCities } from '@/hooks/useCities';
+import type { SellCarFormData } from '@/hooks/useSellCarForm';
 
 interface LocationContactStepProps {
   formData: SellCarFormData;
-  onUpdate: (updates: Partial<SellCarFormData>) => void;
-  setFormData: (updater: (prev: SellCarFormData) => SellCarFormData) => void;
+  setFormData: React.Dispatch<React.SetStateAction<SellCarFormData>>;
+  onPhoneVerification: () => void;
 }
 
-const cities = [
-  'Chennai', 'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 
-  'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow'
-];
-
-const LocationContactStep = ({ formData, onUpdate, setFormData }: LocationContactStepProps) => {
-  const handleTermsChange = (checked: boolean) => {
-    setFormData(prev => updateFormField(prev, 'termsAccepted', checked));
-  };
+const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: LocationContactStepProps) => {
+  const { cities, isLoading: citiesLoading } = useCities();
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Location & Contact</h2>
-        <p className="text-gray-600">Where is your car located and how can buyers reach you?</p>
-      </div>
-
       {/* Location Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Location Details
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="city">City *</Label>
-              <Select value={formData.city} onValueChange={(value) => onUpdate({ city: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select city" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="area">Area/Locality *</Label>
-              <Input
-                id="area"
-                value={formData.area}
-                onChange={(e) => onUpdate({ area: e.target.value })}
-                placeholder="e.g., Andheri West, Koramangala"
-                required
-              />
-            </div>
-          </div>
-
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Location Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="address">Full Address</Label>
-            <Textarea
-              id="address"
-              value={formData.address}
-              onChange={(e) => onUpdate({ address: e.target.value })}
-              placeholder="Complete address for inspection (optional)"
-              rows={2}
+            <Label htmlFor="city">City *</Label>
+            <Select 
+              value={formData.city} 
+              onValueChange={(value) => setFormData(prev => updateFormField(prev, 'city', value))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={citiesLoading ? "Loading cities..." : "Select City"} />
+              </SelectTrigger>
+              <SelectContent className="bg-white border shadow-lg max-h-60 overflow-y-auto">
+                {cities.map((city) => (
+                  <SelectItem key={city.id} value={city.name}>
+                    {city.name}{city.state && `, ${city.state}`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="area">Area/Locality</Label>
+            <Input
+              id="area"
+              placeholder="e.g., Andheri East, Koramangala"
+              value={formData.area}
+              onChange={(e) => setFormData(prev => updateFormField(prev, 'area', e.target.value))}
             />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        
+        <div className="mt-4">
+          <Label htmlFor="landmark">Landmark (Optional)</Label>
+          <Input
+            id="landmark"
+            placeholder="e.g., Near Metro Station, Mall"
+            value={formData.landmark}
+            onChange={(e) => setFormData(prev => updateFormField(prev, 'landmark', e.target.value))}
+          />
+        </div>
+
+        <div className="mt-4">
+          <Label htmlFor="address">Full Address</Label>
+          <Textarea
+            id="address"
+            placeholder="Enter complete address where the car can be inspected"
+            value={formData.address}
+            onChange={(e) => setFormData(prev => updateFormField(prev, 'address', e.target.value))}
+            rows={3}
+          />
+        </div>
+      </div>
 
       {/* Contact Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Phone className="h-5 w-5" />
-            Contact Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="sellerName">Your Name *</Label>
-              <Input
-                id="sellerName"
-                value={formData.sellerName}
-                onChange={(e) => onUpdate({ sellerName: e.target.value })}
-                placeholder="Enter your full name"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone Number *</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => onUpdate({ phone: e.target.value })}
-                placeholder="Enter your phone number"
-                required
-              />
-            </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="sellerName">Your Name *</Label>
+            <Input
+              id="sellerName"
+              placeholder="Enter your full name"
+              value={formData.sellerName}
+              onChange={(e) => setFormData(prev => updateFormField(prev, 'sellerName', e.target.value))}
+            />
           </div>
 
           <div>
@@ -131,25 +96,65 @@ const LocationContactStep = ({ formData, onUpdate, setFormData }: LocationContac
             <Input
               id="email"
               type="email"
+              placeholder="your.email@example.com"
               value={formData.email}
-              onChange={(e) => onUpdate({ email: e.target.value })}
-              placeholder="Enter your email (optional)"
+              onChange={(e) => setFormData(prev => updateFormField(prev, 'email', e.target.value))}
             />
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Terms & Conditions */}
-      <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
-        <Checkbox 
-          id="termsAccepted"
-          checked={formData.termsAccepted}
-          onCheckedChange={handleTermsChange}
-          className="mt-0.5"
-        />
-        <Label htmlFor="termsAccepted" className="text-sm leading-relaxed">
-          I agree to the <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and confirm that all information provided is accurate. I understand that providing false information may result in my listing being removed.
-        </Label>
+          <div>
+            <Label htmlFor="phone">Phone Number *</Label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <PhoneInput
+                  value={formData.phone}
+                  onChange={(value) => setFormData(prev => updateFormField(prev, 'phone', value))}
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              <Button
+                type="button"
+                variant={formData.phoneVerified ? "default" : "outline"}
+                onClick={onPhoneVerification}
+                disabled={!formData.phone || formData.phoneVerified}
+                className="shrink-0"
+              >
+                {formData.phoneVerified ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Verified
+                  </>
+                ) : (
+                  <>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Verify
+                  </>
+                )}
+              </Button>
+            </div>
+            {formData.phoneVerified && (
+              <p className="text-sm text-green-600 mt-1">Phone number verified successfully</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Information */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
+        <div>
+          <Label htmlFor="description">Description (Optional)</Label>
+          <Textarea
+            id="description"
+            placeholder="Share any additional details about your car, special features, or selling reason..."
+            value={formData.description}
+            onChange={(e) => setFormData(prev => updateFormField(prev, 'description', e.target.value))}
+            rows={4}
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            A good description helps buyers understand your car better and can lead to faster sales.
+          </p>
+        </div>
       </div>
     </div>
   );
