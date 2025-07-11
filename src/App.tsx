@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from '@/contexts/UserContext';
@@ -6,6 +5,7 @@ import { OfferProvider } from '@/contexts/OfferContext';
 import { CityProvider } from '@/contexts/CityContext';
 import { Toaster } from '@/components/ui/toaster';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
+import ScrollToTop from '@/components/common/ScrollToTop';
 import Home from '@/pages/Home';
 import CarDetail from '@/pages/CarDetail';
 import Dealers from '@/pages/Dealers';
@@ -33,6 +33,7 @@ function App() {
         <OfferProvider>
           <CityProvider>
             <Router>
+              <ScrollToTop />
               <ResponsiveLayout>
                 <Routes>
                   <Route path="/" element={<Home />} />

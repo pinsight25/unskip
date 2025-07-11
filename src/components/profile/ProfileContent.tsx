@@ -190,7 +190,7 @@ const ProfileContent = ({
               <Link to="/sell-car">
                 <Button className="w-full h-14 text-base font-semibold" size="lg">
                   <Car className="h-5 w-5 mr-3" />
-                  Post New Car
+                  Post Your Car
                 </Button>
               </Link>
               <Link to="/post-accessory">
