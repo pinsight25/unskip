@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Shield, Phone, CheckCircle, Edit, Loader, User } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
-import { updateFormField } from '@/utils/formHelpers';
+import { useSupabase } from '@/contexts/SupabaseContext';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface SignInModalProps {
@@ -38,6 +38,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [phoneNumber, setPhoneNumber] = useState('+91 98765 43210');
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isSendingOTP, setIsSendingOTP] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(true);
@@ -53,14 +54,44 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
 
   const { signIn } = useUser();
   const { toast } = useToast();
+  const { supabase } = useSupabase();
   const navigate = useNavigate();
 
-  const handleSendOTP = () => {
-    if (phoneNumber.length >= 10) {
-      setStep('otp');
-      setError('');
-    } else {
+  const handleSendOTP = async () => {
+    if (phoneNumber.length < 10) {
       setError('Please enter a valid phone number');
+      return;
+    }
+
+    setIsSendingOTP(true);
+    setError('');
+
+    try {
+      // Format phone number to ensure +91 prefix
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      console.log('Sending OTP to:', formattedPhone);
+      
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhone,
+      });
+
+      if (error) {
+        console.error('OTP send error:', error);
+        setError(error.message || 'Failed to send OTP. Please try again.');
+      } else {
+        console.log('OTP sent successfully');
+        setStep('otp');
+        toast({
+          title: "OTP Sent",
+          description: "Please check your phone for the verification code.",
+        });
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSendingOTP(false);
     }
   };
 
@@ -70,22 +101,47 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
       return;
     }
 
+    if (otp.length !== 6) {
+      setError('Please enter the complete 6-digit OTP');
+      return;
+    }
+
     setIsVerifying(true);
     setError('');
     
-    setTimeout(() => {
-      if (otp === '123456') {
+    try {
+      // Format phone number to ensure +91 prefix
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      console.log('Verifying OTP for:', formattedPhone);
+      
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: formattedPhone,
+        token: otp,
+        type: 'sms'
+      });
+
+      if (error) {
+        console.error('OTP verification error:', error);
+        setError(error.message || 'Invalid OTP. Please try again.');
+      } else if (data.user) {
+        console.log('OTP verified successfully:', data.user);
         setIsVerified(true);
+        
         setTimeout(() => {
           setStep('profile');
           setIsVerifying(false);
           setIsVerified(false);
         }, 1500);
-      } else {
-        setError('Invalid OTP. Please try again.');
+      }
+    } catch (err) {
+      console.error('Unexpected verification error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      if (!isVerified) {
         setIsVerifying(false);
       }
-    }, 1000);
+    }
   };
 
   const handleCompleteProfile = async () => {
@@ -105,27 +161,55 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setIsSaving(true);
     setError('');
 
-    setTimeout(() => {
-      // Sign in with actual profile data including gender
-      signIn(phoneNumber, {
-        name: profileData.name.trim(),
-        email: profileData.email.trim(),
-        city: profileData.city,
-        gender: profileData.gender
-      });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
       
-      toast({
-        title: "Welcome!",
-        description: "Your profile has been created successfully.",
-      });
-      
-      onClose();
-      resetModal();
+      if (user) {
+        // Format phone number for storage
+        const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+        
+        // Create/update user profile in users table
+        const { error: profileError } = await supabase
+          .from('users')
+          .upsert({
+            id: user.id,
+            phone: formattedPhone,
+            name: profileData.name.trim(),
+            email: profileData.email.trim() || null,
+            city: profileData.city,
+            gender: profileData.gender,
+            updated_at: new Date().toISOString()
+          });
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          setError('Failed to create profile. Please try again.');
+          return;
+        }
+
+        // Sign in with profile data in context
+        signIn(formattedPhone, {
+          name: profileData.name.trim(),
+          email: profileData.email.trim(),
+          city: profileData.city,
+          gender: profileData.gender
+        });
+        
+        toast({
+          title: "Welcome!",
+          description: "Your profile has been created successfully.",
+        });
+        
+        onClose();
+        resetModal();
+        navigate('/profile');
+      }
+    } catch (err) {
+      console.error('Profile completion error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
       setIsSaving(false);
-      
-      // Route to profile page after completion
-      navigate('/profile');
-    }, 1000);
+    }
   };
 
   const resetModal = () => {
@@ -135,6 +219,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setIsVerified(false);
     setError('');
     setIsVerifying(false);
+    setIsSendingOTP(false);
     setProfileData({ name: '', email: '', city: '', gender: '' });
     setIsSaving(false);
     setTermsAccepted(true);
@@ -219,10 +304,17 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                 </Button>
                 <Button 
                   onClick={handleSendOTP} 
-                  disabled={phoneNumber.length < 10}
+                  disabled={phoneNumber.length < 10 || isSendingOTP}
                   className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
                 >
-                  Send OTP
+                  {isSendingOTP ? (
+                    <>
+                      <Loader className="h-4 w-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send OTP'
+                  )}
                 </Button>
               </div>
             </>
@@ -237,12 +329,6 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                 <Badge className="bg-green-100 text-green-700 border-green-200">
                   OTP Sent
                 </Badge>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4">
-                <p className="text-sm text-green-800 font-medium text-center">
-                  <strong>🔥 Demo Mode:</strong> Use OTP <code className="bg-green-200 px-3 py-1 rounded-lg text-lg font-bold mx-2">123456</code>
-                </p>
               </div>
 
               <div className="space-y-4">
@@ -311,8 +397,8 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
               </div>
 
               <div className="text-center">
-                <Button variant="ghost" size="sm" className="text-xs text-gray-500 hover:text-primary">
-                  Didn't receive OTP? Resend in 30s
+                <Button variant="ghost" size="sm" onClick={handleSendOTP} disabled={isSendingOTP} className="text-xs text-gray-500 hover:text-primary">
+                  {isSendingOTP ? 'Sending...' : 'Didn\'t receive OTP? Resend'}
                 </Button>
               </div>
             </>
