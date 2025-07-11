@@ -14,12 +14,44 @@ interface HeaderActionsProps {
 }
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
-  const { user, isSignedIn, signOut } = useUser();
+  const { user, isSignedIn, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
   const handleSignOut = () => {
     signOut();
   };
+
+  // Don't show anything while loading to prevent flash
+  if (isLoading) {
+    return (
+      <div className="hidden lg:flex items-center space-x-6">
+        {/* Chat Icon with Badge */}
+        <Link to="/chats" className="relative">
+          <div className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors relative">
+            <MessageCircle className="h-5 w-5 text-gray-700" />
+            {unreadChats > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center border-2 border-white z-10">
+                {unreadChats}
+              </span>
+            )}
+          </div>
+        </Link>
+        
+        {/* Loading skeleton for profile */}
+        <div className="flex items-center space-x-3">
+          <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        
+        {/* Post Car Button */}
+        <Link to="/sell">
+          <Button size="default" className="font-semibold px-6 shadow-sm">
+            Post Your Car
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="hidden lg:flex items-center space-x-6">

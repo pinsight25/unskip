@@ -30,7 +30,7 @@ const MobileMenu = ({
   isActive, 
   onMenuClose 
 }: MobileMenuProps) => {
-  const { user, isSignedIn, signOut } = useUser();
+  const { user, isSignedIn, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
   const handleSignOut = () => {
@@ -54,7 +54,7 @@ const MobileMenu = ({
         </div>
 
         {/* User Section */}
-        {isSignedIn && user ? (
+        {!isLoading && isSignedIn && user ? (
           <div className="flex items-center space-x-3 px-4 py-3 border-b border-border mb-4">
             <Avatar className="h-12 w-12 border border-gray-200">
               <AvatarFallback className="bg-primary/10 text-primary text-sm">
@@ -73,6 +73,14 @@ const MobileMenu = ({
             >
               <LogOut className="h-4 w-4" />
             </Button>
+          </div>
+        ) : isLoading ? (
+          <div className="flex items-center space-x-3 px-4 py-3 border-b border-border mb-4">
+            <div className="h-12 w-12 bg-gray-200 rounded-full animate-pulse"></div>
+            <div className="flex-1">
+              <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-2"></div>
+              <div className="h-3 w-32 bg-gray-200 rounded animate-pulse"></div>
+            </div>
           </div>
         ) : null}
 
@@ -105,7 +113,7 @@ const MobileMenu = ({
           
           {/* Mobile Actions */}
           <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-            {!isSignedIn ? (
+            {!isLoading && !isSignedIn ? (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -115,14 +123,14 @@ const MobileMenu = ({
                 <UserIcon className="h-4 w-4 mr-2" />
                 Sign In
               </Button>
-            ) : (
+            ) : isSignedIn ? (
               <Link to="/profile" onClick={onMenuClose}>
                 <Button variant="outline" size="sm" className="w-full justify-start">
                   <UserIcon className="h-4 w-4 mr-2" />
                   Profile
                 </Button>
               </Link>
-            )}
+            ) : null}
             <Link to="/sell" onClick={onMenuClose}>
               <Button size="sm" className="w-full bg-primary font-semibold">
                 Post Your Car

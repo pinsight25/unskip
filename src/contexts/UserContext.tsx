@@ -39,6 +39,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Debug: Check localStorage on mount
+  useEffect(() => {
+    console.log('LocalStorage auth items:', {
+      'carsx-auth': localStorage.getItem('carsx-auth'),
+      'sb-auth-token': localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token')
+    });
+  }, []);
+
   useEffect(() => {
     let mounted = true;
 
@@ -76,7 +84,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     // Set up auth state change listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+        console.log('Auth state changed:', event, 'Session exists:', !!session, 'User ID:', session?.user?.id);
         
         if (!mounted) return;
         
@@ -95,6 +103,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           if (!user) {
             await syncUserFromDatabase(session.user.id);
           }
+        } else if (event === 'INITIAL_SESSION' && session?.user) {
+          console.log('Initial session found, syncing data...');
+          await syncUserFromDatabase(session.user.id);
         }
         
         setIsLoading(false);
@@ -113,6 +124,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('Found existing session:', session.user.id);
           setSession(session);
           await syncUserFromDatabase(session.user.id);
+        } else {
+          console.log('No existing session found');
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -161,11 +174,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const value = {
     user,
-    isSignedIn: !!user && !!session,
+    isSignedIn: !!session, // Simplified check - only session matters
     isLoading,
     signIn,
     signOut
   };
+
+  console.log('UserContext state:', { 
+    hasUser: !!user, 
+    hasSession: !!session, 
+    isSignedIn: !!session, 
+    isLoading 
+  });
 
   return (
     <UserContext.Provider value={value}>
