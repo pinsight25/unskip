@@ -48,6 +48,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     let mounted = true;
+    let authTimeoutId: NodeJS.Timeout;
+
+    // Add timeout to prevent infinite loading - 5 second fallback
+    authTimeoutId = setTimeout(() => {
+      if (mounted && isLoading) {
+        console.warn('Auth check timeout - setting loading to false');
+        setIsLoading(false);
+      }
+    }, 5000);
 
     // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
@@ -87,6 +96,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         
         if (!mounted) return;
         
+        // Clear timeout since we got an auth event
+        if (authTimeoutId) {
+          clearTimeout(authTimeoutId);
+        }
+        
         // Update session state
         setSession(session);
         
@@ -102,11 +116,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           if (!user) {
             await syncUserFromDatabase(session.user.id);
           }
-        } else if (event === 'INITIAL_SESSION' && session?.user) {
-          console.log('Initial session found, syncing data...');
-          await syncUserFromDatabase(session.user.id);
+        } else if (event === 'INITIAL_SESSION') {
+          if (session?.user) {
+            console.log('Initial session found, syncing data...');
+            await syncUserFromDatabase(session.user.id);
+          } else {
+            console.log('Initial session check - no session found');
+          }
         }
         
+        // Always set loading to false after handling auth state change
         setIsLoading(false);
       }
     );
@@ -119,7 +138,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         
         if (error) {
           console.error('Error getting session:', error);
-        } else if (session?.user && mounted) {
+          if (mounted) {
+            setIsLoading(false);
+          }
+          return;
+        }
+        
+        if (session?.user && mounted) {
           console.log('Found existing session:', session.user.id);
           setSession(session);
           await syncUserFromDatabase(session.user.id);
@@ -129,6 +154,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       } catch (error) {
         console.error('Error getting initial session:', error);
       } finally {
+        // Always set loading to false, regardless of success or error
         if (mounted) {
           setIsLoading(false);
         }
@@ -139,6 +165,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     return () => {
       mounted = false;
+      if (authTimeoutId) {
+        clearTimeout(authTimeoutId);
+      }
       subscription.unsubscribe();
     };
   }, []); // Remove user dependency to prevent infinite loops
