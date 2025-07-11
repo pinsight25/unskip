@@ -1,6 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from './database.types'
+import type { Database } from '@/integrations/supabase/types'
 
 const supabaseUrl = 'https://qrzueqtkvjamvuljgaix.supabase.co'
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyenVlcXRrdmphbXZ1bGpnYWl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTAxMjIsImV4cCI6MjA2NzY2NjEyMn0.gWpRWlN5kbvJaTN0wtGj7VD9N_JWHz1Dzs9WkMkAmM8'
