@@ -96,11 +96,10 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     postedDate: formatRelativeDate(listing.created_at)
   }));
 
-  // Transform accessories to ensure they have all required fields
+  // Accessories already come with postedDate from the hook, so no transformation needed
   const accessoriesWithRequiredFields = accessories.map(accessory => ({
     ...accessory,
     images: accessory.images || [], // Ensure images field exists
-    postedDate: accessory.postedDate || formatRelativeDate(accessory.created_at)
   }));
 
   if (totalActive === 0) {
