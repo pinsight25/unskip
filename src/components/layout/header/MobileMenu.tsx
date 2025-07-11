@@ -33,6 +33,11 @@ const MobileMenu = ({
   const { user, isSignedIn, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
+  // Debug logging for mobile
+  console.log('MobileMenu - user:', user);
+  console.log('MobileMenu - isSignedIn:', isSignedIn);
+  console.log('MobileMenu - isLoading:', isLoading);
+
   const handleSignOut = () => {
     signOut();
     onMenuClose();
@@ -58,11 +63,11 @@ const MobileMenu = ({
           <div className="flex items-center space-x-3 px-4 py-3 border-b border-border mb-4">
             <Avatar className="h-12 w-12 border border-gray-200">
               <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <p className="font-medium text-gray-900">{user.name}</p>
+              <p className="font-medium text-gray-900">{user.name || 'User'}</p>
               <p className="text-sm text-gray-500">{user.phone}</p>
             </div>
             <Button 

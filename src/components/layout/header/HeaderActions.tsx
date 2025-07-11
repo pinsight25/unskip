@@ -17,11 +17,16 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   const { user, isSignedIn, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
+  // Debug logging
+  console.log('HeaderActions - user:', user);
+  console.log('HeaderActions - isSignedIn:', isSignedIn);
+  console.log('HeaderActions - isLoading:', isLoading);
+
   const handleSignOut = () => {
     signOut();
   };
 
-  // Don't show anything while loading to prevent flash
+  // Show loading skeleton while checking auth state
   if (isLoading) {
     return (
       <div className="hidden lg:flex items-center space-x-6">
@@ -55,7 +60,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
 
   return (
     <div className="hidden lg:flex items-center space-x-6">
-      {/* Chat Icon with Badge - Fixed styling */}
+      {/* Chat Icon with Badge */}
       <Link to="/chats" className="relative">
         <div className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors relative">
           <MessageCircle className="h-5 w-5 text-gray-700" />
@@ -73,12 +78,12 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           <DropdownMenuTrigger asChild>
             <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
               <Avatar className="h-10 w-10 border border-gray-200">
-                <AvatarImage src="" />
+                <AvatarImage src={user.avatar || ""} />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
                 </AvatarFallback>
               </Avatar>
-              <span className="body-text font-medium text-gray-700">{user.name}</span>
+              <span className="body-text font-medium text-gray-700">{user.name || 'User'}</span>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
