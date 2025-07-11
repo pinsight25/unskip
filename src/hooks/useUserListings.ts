@@ -76,7 +76,7 @@ interface StatsRow {
   active_cars: number;
   total_accessories: number;
   active_accessories: number;
-  total_views: string;
+  total_views: number;
 }
 
 export const useUserListings = () => {
@@ -156,9 +156,12 @@ export const useUserListings = () => {
         return;
       }
 
-      // Fetch user stats with proper typing
+      // Fetch user stats with explicit typing
       const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId });
+        .rpc('get_user_listing_stats', { user_uuid: userId }) as { 
+          data: StatsRow[] | null, 
+          error: any 
+        };
 
       if (statsError) {
         console.error('Error fetching stats:', statsError);
