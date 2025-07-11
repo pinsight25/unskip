@@ -16,7 +16,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 // Test connection function
 export const testSupabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('_supabase_migrations').select('*').limit(1)
+    // Test with a simple query to users table which we know exists
+    const { data, error } = await supabase.from('users').select('count').limit(1)
     if (error && error.code !== 'PGRST116') { // PGRST116 means table doesn't exist, which is fine
       console.error('Supabase connection error:', error)
       return false
