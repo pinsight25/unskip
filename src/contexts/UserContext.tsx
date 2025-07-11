@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useSupabase } from '@/contexts/SupabaseContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface User {
   name: string;
@@ -36,30 +36,14 @@ interface UserProviderProps {
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { supabase } = useSupabase();
 
   useEffect(() => {
     let mounted = true;
 
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user && mounted) {
-          console.log('Existing session found:', session.user);
-          await syncUserFromDatabase(session.user.id);
-        }
-      } catch (error) {
-        console.error('Error getting session:', error);
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
+    // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
       try {
+        console.log('Syncing user data for ID:', userId);
         const { data: userData, error } = await supabase
           .from('users')
           .select('*')
@@ -87,6 +71,24 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     };
 
+    // Check for existing session on mount
+    const getSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user && mounted) {
+          console.log('Existing session found:', session.user);
+          await syncUserFromDatabase(session.user.id);
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
     // Listen to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -110,7 +112,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []);
 
   const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
     const newUser: User = {

@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useSupabase } from '@/contexts/SupabaseContext';
+import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +32,6 @@ export const useOTPAuth = () => {
 
   const { signIn } = useUser();
   const { toast } = useToast();
-  const { supabase } = useSupabase();
   const navigate = useNavigate();
 
   const handleSendOTP = async () => {
@@ -99,10 +98,11 @@ export const useOTPAuth = () => {
       } else if (data.user) {
         console.log('OTP verified successfully:', data.user);
         
+        // Check if user profile already exists in our users table
         const { data: existingUserData, error: fetchError } = await supabase
           .from('users')
           .select('*')
-          .eq('phone', formattedPhone)
+          .eq('id', data.user.id)
           .single();
 
         if (fetchError && fetchError.code !== 'PGRST116') {
@@ -113,6 +113,7 @@ export const useOTPAuth = () => {
           console.log('Existing user found:', existingUserData);
           setExistingUser(existingUserData);
           
+          // User exists, sign them in directly
           signIn(formattedPhone, {
             name: existingUserData.name,
             email: existingUserData.email || '',
@@ -194,7 +195,9 @@ export const useOTPAuth = () => {
       
       const { data, error: profileError } = await supabase
         .from('users')
-        .insert([userData]);
+        .insert([userData])
+        .select()
+        .single();
 
       console.log('📊 Insert response data:', data);
       
@@ -207,7 +210,7 @@ export const useOTPAuth = () => {
         return;
       }
 
-      console.log('✅ Profile created successfully');
+      console.log('✅ Profile created successfully:', data);
       
       signIn(user.phone!, {
         name: profileData.name.trim(),
