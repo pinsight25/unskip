@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Car } from '@/types/car';
 import { PricingAlert } from '@/types/car';
 import { IndianRupee, CheckCircle, AlertTriangle, X } from 'lucide-react';
@@ -22,7 +23,7 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
   const [offerAmount, setOfferAmount] = useState('');
   const [message, setMessage] = useState('');
   const [buyerName, setBuyerName] = useState('');
-  const [buyerPhone, setBuyerPhone] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('+91 ');
   const [pricingAlert, setPricingAlert] = useState<PricingAlert | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -113,6 +114,8 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
     );
   };
 
+  const phoneDigits = buyerPhone.replace(/^\+91\s?/, '').replace(/\D/g, '');
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
@@ -154,12 +157,10 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
             </div>
             <div>
               <label className="text-sm font-semibold mb-2 block text-gray-700">Phone Number *</label>
-              <Input
-                placeholder="+91 98765 43210"
+              <PhoneInput
                 value={buyerPhone}
-                onChange={(e) => setBuyerPhone(e.target.value)}
+                onChange={setBuyerPhone}
                 className="h-12 text-base border-2 rounded-xl"
-                inputMode="tel"
               />
             </div>
           </div>

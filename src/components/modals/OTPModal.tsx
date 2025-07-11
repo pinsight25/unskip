@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Badge } from '@/components/ui/badge';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Shield, Phone, CheckCircle, Edit, Loader } from 'lucide-react';
 
 interface OTPModalProps {
@@ -22,8 +23,10 @@ const OTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpo
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
 
+  const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
+
   const handleSendOTP = () => {
-    if (phoneNumber.length >= 10) {
+    if (phoneDigits.length >= 10) {
       setStep('otp');
       setError('');
     } else {
@@ -108,14 +111,11 @@ const OTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpo
             <>
               <div className="space-y-4">
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    placeholder="+91 98765 43210"
+                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-20" />
+                  <PhoneInput
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    maxLength={15}
-                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
+                    onChange={setPhoneNumber}
+                    className="pl-12 py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
                   />
                 </div>
                 {error && (
@@ -129,7 +129,7 @@ const OTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpo
                 </Button>
                 <Button 
                   onClick={handleSendOTP} 
-                  disabled={phoneNumber.length < 10}
+                  disabled={phoneDigits.length < 10}
                   className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
                 >
                   Send OTP

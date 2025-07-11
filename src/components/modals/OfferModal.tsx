@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Car } from '@/types/car';
 import { PricingAlert } from '@/types/car';
 import { AlertTriangle, CheckCircle, X, IndianRupee } from 'lucide-react';
@@ -23,7 +23,7 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
   const [offerAmount, setOfferAmount] = useState('');
   const [message, setMessage] = useState('');
   const [buyerName, setBuyerName] = useState('');
-  const [buyerPhone, setBuyerPhone] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('+91 ');
   const [pricingAlert, setPricingAlert] = useState<PricingAlert | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -105,12 +105,14 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
     setPricingAlert(null);
   };
 
+  const phoneDigits = buyerPhone.replace(/^\+91\s?/, '').replace(/\D/g, '');
+
   const isFormValid = () => {
     const numericAmount = parseInt(offerAmount.replace(/,/g, ''));
     return (
       numericAmount > 0 &&
       buyerName.trim() &&
-      buyerPhone.trim() &&
+      phoneDigits.length === 10 &&
       pricingAlert?.type !== 'blocked'
     );
   };
@@ -157,10 +159,9 @@ const OfferModal = ({ isOpen, onClose, car, onSubmit }: OfferModalProps) => {
             </div>
             <div>
               <label className="text-sm font-semibold mb-2 block text-gray-700">Phone Number *</label>
-              <Input
-                placeholder="+91 98765 43210"
+              <PhoneInput
                 value={buyerPhone}
-                onChange={(e) => setBuyerPhone(e.target.value)}
+                onChange={setBuyerPhone}
                 className="h-12 border-2 rounded-xl"
               />
             </div>

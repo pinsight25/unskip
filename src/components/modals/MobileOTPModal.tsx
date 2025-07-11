@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Shield, Phone, CheckCircle, Edit, User, Loader } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
@@ -54,8 +55,10 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
+
   const handleSendOTP = () => {
-    if (phoneNumber.length >= 10) {
+    if (phoneDigits.length >= 10) {
       setStep('otp');
       setError('');
     } else {
@@ -187,14 +190,11 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               <div className="space-y-4">
                 <label className="text-base font-medium">Enter your phone number</label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    placeholder="+91 98765 43210"
+                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground z-20" />
+                  <PhoneInput
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={setPhoneNumber}
                     className="pl-12 h-14 text-base"
-                    inputMode="tel"
-                    maxLength={15}
                   />
                 </div>
                 {error && (
@@ -203,7 +203,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               </div>
               <Button 
                 onClick={handleSendOTP} 
-                disabled={phoneNumber.length < 10}
+                disabled={phoneDigits.length < 10}
                 className="w-full h-12 text-base font-semibold"
               >
                 Send OTP

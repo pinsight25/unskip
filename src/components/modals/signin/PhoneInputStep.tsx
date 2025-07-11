@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Phone, Loader } from 'lucide-react';
 
 interface PhoneInputStepProps {
@@ -20,18 +20,17 @@ const PhoneInputStep = ({
   error,
   isSendingOTP
 }: PhoneInputStepProps) => {
+  const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
+
   return (
     <>
       <div className="space-y-4">
         <div className="relative">
-          <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="tel"
-            placeholder="+91 98765 43210"
+          <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-20" />
+          <PhoneInput
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            maxLength={15}
-            className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
+            onChange={setPhoneNumber}
+            className="pl-12 py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
           />
         </div>
         {error && (
@@ -45,7 +44,7 @@ const PhoneInputStep = ({
         </Button>
         <Button 
           onClick={onSendOTP} 
-          disabled={phoneNumber.length < 10 || isSendingOTP}
+          disabled={phoneDigits.length < 10 || isSendingOTP}
           className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
         >
           {isSendingOTP ? (
