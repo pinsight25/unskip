@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Shield, User } from 'lucide-react';
@@ -224,15 +223,12 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
         .insert([userData]);
 
       console.log('📊 Insert response data:', data);
-      console.log('❌ Insert error (if any):', profileError);
-
+      
       if (profileError) {
-        console.error('❌ Detailed Supabase error:', {
-          message: profileError.message,
-          details: profileError.details,
-          hint: profileError.hint,
-          code: profileError.code
-        });
+        console.error('❌ Supabase error code:', profileError.code);
+        console.error('❌ Supabase error message:', profileError.message);
+        console.error('❌ Supabase error details:', profileError.details);
+        console.error('❌ Full error object:', profileError);
         setError(`Failed to create profile: ${profileError.message}`);
         return;
       }

@@ -144,15 +144,12 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
         .insert([userData]);
 
       console.log('📊 [Mobile] Insert response data:', data);
-      console.log('❌ [Mobile] Insert error (if any):', profileError);
 
       if (profileError) {
-        console.error('❌ [Mobile] Detailed Supabase error:', {
-          message: profileError.message,
-          details: profileError.details,
-          hint: profileError.hint,
-          code: profileError.code
-        });
+        console.error('❌ [Mobile] Supabase error code:', profileError.code);
+        console.error('❌ [Mobile] Supabase error message:', profileError.message);
+        console.error('❌ [Mobile] Supabase error details:', profileError.details);
+        console.error('❌ [Mobile] Full error object:', profileError);
         setError(`Failed to create profile: ${profileError.message}`);
         return;
       }
