@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Shield, Phone, CheckCircle, Edit, User, Loader } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface MobileOTPModalProps {
   isOpen: boolean;
@@ -27,6 +27,12 @@ const cities = [
   'Kolkata'
 ];
 
+const genders = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'other', label: 'Other' }
+];
+
 const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpose }: MobileOTPModalProps) => {
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
   const [phoneNumber, setPhoneNumber] = useState(initialPhone);
@@ -39,12 +45,14 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
-    city: ''
+    city: '',
+    gender: ''
   });
   const [isSaving, setIsSaving] = useState(false);
 
   const { signIn } = useUser();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSendOTP = () => {
     if (phoneNumber.length >= 10) {
@@ -83,16 +91,21 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
       setError('Please select your city');
       return;
     }
+    if (!profileData.gender) {
+      setError('Please select your gender');
+      return;
+    }
 
     setIsSaving(true);
     setError('');
 
     setTimeout(() => {
-      // Sign in with actual profile data
+      // Sign in with actual profile data including gender
       signIn(phoneNumber, {
         name: profileData.name.trim(),
         email: profileData.email.trim(),
-        city: profileData.city
+        city: profileData.city,
+        gender: profileData.gender
       });
       
       toast({
@@ -104,6 +117,9 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
       onClose();
       resetModal();
       setIsSaving(false);
+      
+      // Route to profile page after completion
+      navigate('/profile');
     }, 1000);
   };
 
@@ -114,7 +130,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
     setIsVerified(false);
     setError('');
     setIsVerifying(false);
-    setProfileData({ name: '', email: '', city: '' });
+    setProfileData({ name: '', email: '', city: '', gender: '' });
     setIsSaving(false);
   };
 
@@ -265,6 +281,22 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 </div>
 
                 <div>
+                  <label className="text-sm font-medium mb-2 block text-gray-700">Gender *</label>
+                  <Select value={profileData.gender} onValueChange={(value) => setProfileData(prev => ({ ...prev, gender: value }))}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select your gender" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border shadow-lg">
+                      {genders.map((gender) => (
+                        <SelectItem key={gender.value} value={gender.value} className="hover:bg-gray-50">
+                          {gender.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
                   <label className="text-sm font-medium mb-2 block text-gray-700">Email (Optional)</label>
                   <Input
                     type="email"
@@ -299,7 +331,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               <div className="space-y-3">
                 <Button 
                   onClick={handleCompleteProfile} 
-                  disabled={isSaving || !profileData.name.trim() || !profileData.city}
+                  disabled={isSaving || !profileData.name.trim() || !profileData.city || !profileData.gender}
                   className="w-full h-12 text-base font-semibold"
                 >
                   {isSaving ? (

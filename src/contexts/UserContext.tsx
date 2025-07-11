@@ -6,13 +6,14 @@ interface User {
   phone: string;
   email: string;
   city?: string;
+  gender?: string;
   avatar?: string;
 }
 
 interface UserContextType {
   user: User | null;
   isSignedIn: boolean;
-  signIn: (phone: string, profileData?: { name: string; email: string; city: string }) => void;
+  signIn: (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => void;
   signOut: () => void;
 }
 
@@ -33,12 +34,13 @@ interface UserProviderProps {
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const signIn = (phone: string, profileData?: { name: string; email: string; city: string }) => {
+  const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
     const newUser: User = {
       name: profileData?.name || 'John Doe',
       phone: phone,
       email: profileData?.email || 'john.doe@example.com',
-      city: profileData?.city
+      city: profileData?.city,
+      gender: profileData?.gender
     };
     setUser(newUser);
   };

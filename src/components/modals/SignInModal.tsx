@@ -10,7 +10,7 @@ import { Shield, Phone, CheckCircle, Edit, Loader, User } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { updateFormField } from '@/utils/formHelpers';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface SignInModalProps {
   isOpen: boolean;
@@ -27,6 +27,12 @@ const cities = [
   'Kolkata'
 ];
 
+const genders = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'other', label: 'Other' }
+];
+
 const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('+91 98765 43210');
@@ -40,12 +46,14 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
-    city: ''
+    city: '',
+    gender: ''
   });
   const [isSaving, setIsSaving] = useState(false);
 
   const { signIn } = useUser();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSendOTP = () => {
     if (phoneNumber.length >= 10) {
@@ -89,16 +97,21 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
       setError('Please select your city');
       return;
     }
+    if (!profileData.gender) {
+      setError('Please select your gender');
+      return;
+    }
 
     setIsSaving(true);
     setError('');
 
     setTimeout(() => {
-      // Sign in with actual profile data
+      // Sign in with actual profile data including gender
       signIn(phoneNumber, {
         name: profileData.name.trim(),
         email: profileData.email.trim(),
-        city: profileData.city
+        city: profileData.city,
+        gender: profileData.gender
       });
       
       toast({
@@ -109,6 +122,9 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
       onClose();
       resetModal();
       setIsSaving(false);
+      
+      // Route to profile page after completion
+      navigate('/profile');
     }, 1000);
   };
 
@@ -119,7 +135,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setIsVerified(false);
     setError('');
     setIsVerifying(false);
-    setProfileData({ name: '', email: '', city: '' });
+    setProfileData({ name: '', email: '', city: '', gender: '' });
     setIsSaving(false);
     setTermsAccepted(true);
   };
@@ -314,6 +330,22 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                 </div>
 
                 <div>
+                  <label className="text-sm font-medium mb-2 block text-gray-700">Gender *</label>
+                  <Select value={profileData.gender} onValueChange={(value) => setProfileData(prev => ({ ...prev, gender: value }))}>
+                    <SelectTrigger className="h-12 rounded-xl border-2 border-gray-100 focus:border-primary">
+                      <SelectValue placeholder="Select your gender" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border shadow-lg">
+                      {genders.map((gender) => (
+                        <SelectItem key={gender.value} value={gender.value} className="hover:bg-gray-50">
+                          {gender.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
                   <label className="text-sm font-medium mb-2 block text-gray-700">Email (Optional)</label>
                   <Input
                     type="email"
@@ -351,7 +383,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
                 </Button>
                 <Button 
                   onClick={handleCompleteProfile} 
-                  disabled={isSaving || !profileData.name.trim() || !profileData.city}
+                  disabled={isSaving || !profileData.name.trim() || !profileData.city || !profileData.gender}
                   className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
                 >
                   {isSaving ? (

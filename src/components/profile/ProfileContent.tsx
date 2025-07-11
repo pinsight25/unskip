@@ -1,4 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Plus, Car, Package } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
@@ -178,6 +182,25 @@ const ProfileContent = ({
 
           {/* Stats Section */}
           <ProfileStats stats={updatedStats} />
+
+          {/* Quick Actions Card */}
+          <Card className="p-6 section-gap">
+            <h3 className="text-lg font-semibold mb-4 text-center">Quick Actions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link to="/sell-car">
+                <Button className="w-full h-14 text-base font-semibold" size="lg">
+                  <Car className="h-5 w-5 mr-3" />
+                  Post New Car
+                </Button>
+              </Link>
+              <Link to="/post-accessory">
+                <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
+                  <Package className="h-5 w-5 mr-3" />
+                  Post Accessory
+                </Button>
+              </Link>
+            </div>
+          </Card>
 
           {/* Tabs */}
           <Tabs defaultValue="listings" className="w-full">

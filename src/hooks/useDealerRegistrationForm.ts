@@ -64,6 +64,15 @@ export const useDealerRegistrationForm = () => {
   const totalSteps = 3;
   const progress = (currentStep / totalSteps) * 100;
 
+  // Generate dealer slug from business name
+  const generateDealerSlug = (businessName: string) => {
+    return businessName
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  };
+
   const validateGST = (gst: string) => {
     if (!gst || gst.length === 0) return false;
     const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -185,13 +194,16 @@ export const useDealerRegistrationForm = () => {
     if (validateStep(3)) {
       console.log('Submitting dealer registration:', formData);
       
+      const dealerSlug = generateDealerSlug(formData.businessName);
+      
       toast({
         title: "Application Submitted!",
-        description: "We'll review your application and get back to you within 2-3 business days.",
+        description: "Your dealer profile has been created and is pending verification.",
       });
       
       setTimeout(() => {
-        navigate('/dealers');
+        // Route to the new dealer page with pending status
+        navigate(`/dealers/${dealerSlug}`);
       }, 2000);
     }
   };
