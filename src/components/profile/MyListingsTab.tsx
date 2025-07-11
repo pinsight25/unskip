@@ -1,3 +1,4 @@
+
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Car, Package } from 'lucide-react';
@@ -70,11 +71,25 @@ interface MyListingsTabProps {
 }
 
 const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTabProps) => {
+  console.log('MyListingsTab: Component rendered');
+  console.log('MyListingsTab: Props received:', {
+    listingsCount: listings?.length || 0,
+    accessoriesCount: accessories?.length || 0,
+    listings: listings,
+    accessories: accessories
+  });
+
   const { handleEditListing, handleDuplicateListing, handleEditAccessory } = useListingHandlers();
 
   const activeListings = listings.filter(l => l.status === 'active');
   const activeAccessories = accessories.filter(a => a.status === 'active');
   const totalActive = activeListings.length + activeAccessories.length;
+
+  console.log('MyListingsTab: Active counts:', {
+    activeListings: activeListings.length,
+    activeAccessories: activeAccessories.length,
+    totalActive
+  });
 
   // Helper function to format date relative to now
   const formatRelativeDate = (dateString: string) => {
@@ -102,7 +117,13 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     images: accessory.images || [], // Ensure images field exists
   }));
 
+  console.log('MyListingsTab: Processed data:', {
+    listingsWithDate: listingsWithDate.length,
+    accessoriesWithRequiredFields: accessoriesWithRequiredFields.length
+  });
+
   if (totalActive === 0) {
+    console.log('MyListingsTab: No active listings, showing empty state');
     return <EmptyListingsState />;
   }
 

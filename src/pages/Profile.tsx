@@ -42,6 +42,14 @@ const Profile = () => {
     refetch 
   } = useUserListings();
 
+  console.log('Profile: useUserListings hook results:', {
+    carListingsCount: carListings?.length || 0,
+    accessoryListingsCount: accessoryListings?.length || 0,
+    stats,
+    isLoading,
+    error
+  });
+
   // Add mock dealer verification to user - in real app this would come from context
   const userWithDealer = user ? {
     ...user,
@@ -62,7 +70,7 @@ const Profile = () => {
 
   // Show sign-in prompt for non-signed-in users
   if (!isSignedIn || !userWithDealer) {
-    console.log('Showing sign-in prompt');
+    console.log('Profile: Showing sign-in prompt');
     return (
       <>
         <SignInPrompt onSignIn={() => setIsSignInModalOpen(true)} />
@@ -87,6 +95,7 @@ const Profile = () => {
 
   // Show loading state while fetching data
   if (isLoading) {
+    console.log('Profile: Showing loading state');
     return (
       <div className="bg-white min-h-screen">
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
@@ -112,6 +121,7 @@ const Profile = () => {
 
   // Show error state if data fetching failed
   if (error) {
+    console.log('Profile: Showing error state:', error);
     return (
       <div className="bg-white min-h-screen">
         <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
@@ -135,7 +145,7 @@ const Profile = () => {
     totalOffers: 0 // We'll implement this later when we add offers functionality
   };
 
-  console.log('Showing profile content with real data:', { 
+  console.log('Profile: Showing profile content with real data:', { 
     carListings: carListings.length, 
     accessoryListings: accessoryListings.length,
     stats: realStats 
