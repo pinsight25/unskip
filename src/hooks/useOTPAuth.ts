@@ -97,7 +97,6 @@ export const useOTPAuth = () => {
       console.log('🔵 VERIFYING OTP:');
       console.log('- Phone:', formattedPhone);
       console.log('- OTP:', otp);
-      console.log('- Before verification localStorage:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
       
       const { data, error } = await supabase.auth.verifyOtp({
         phone: formattedPhone,
@@ -105,23 +104,7 @@ export const useOTPAuth = () => {
         type: 'sms'
       });
 
-      console.log('🔍 OTP Verification Response:');
-      console.log('- Data:', data);
-      console.log('- Error:', error);
-      console.log('- User:', data?.user);
-      console.log('- Session:', data?.session);
-      console.log('- Session access_token:', data?.session?.access_token ? '✅ Present' : '❌ Missing');
-      console.log('- Session refresh_token:', data?.session?.refresh_token ? '✅ Present' : '❌ Missing');
-
-      // Check if session is being set in localStorage
-      console.log('🔍 LocalStorage after OTP verification:');
-      console.log('- Auth token:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
-      console.log('- All localStorage keys:', Object.keys(localStorage));
-
-      // Check current session from Supabase
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      console.log('🔍 Current session after verification:', sessionData);
-      console.log('- Session error:', sessionError);
+      console.log('🔍 OTP Verification Response:', { data, error });
 
       clearTimeout(timeoutId);
 
@@ -135,27 +118,19 @@ export const useOTPAuth = () => {
       if (data.user) {
         console.log('✅ OTP verified successfully:', data.user);
         
-        // Check if user profile already exists in our users table
-        const { data: existingUserData, error: fetchError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-
-        if (fetchError && fetchError.code !== 'PGRST116') {
-          console.error('❌ Error fetching user:', fetchError);
-        }
-
-        if (existingUserData) {
-          console.log('👤 Existing user found:', existingUserData);
-          setExistingUser(existingUserData);
+        // NEW: Create or get user record immediately after auth success
+        const userRecord = await createOrGetUserRecord(data.user, formattedPhone);
+        
+        if (userRecord?.isExisting) {
+          console.log('👤 Existing user found:', userRecord.userData);
+          setExistingUser(userRecord.userData);
           
           // User exists, sign them in directly
           signIn(formattedPhone, {
-            name: existingUserData.name,
-            email: existingUserData.email || '',
-            city: existingUserData.city,
-            gender: existingUserData.gender
+            name: userRecord.userData.name,
+            email: userRecord.userData.email || '',
+            city: userRecord.userData.city,
+            gender: userRecord.userData.gender
           });
           
           setIsVerified(true);
@@ -181,6 +156,77 @@ export const useOTPAuth = () => {
       setError('An unexpected error occurred. Please try again or refresh the page.');
     } finally {
       setIsVerifying(false);
+    }
+  };
+
+  // NEW: Function to create or get user record
+  const createOrGetUserRecord = async (authUser: any, phone: string) => {
+    try {
+      console.log('🔍 Creating/getting user record for:', authUser.id);
+      
+      // First try to get existing user
+      const { data: existingUserData, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('❌ Error fetching user:', fetchError);
+        // Don't throw - we'll create a basic record instead
+      }
+
+      if (existingUserData) {
+        console.log('✅ User record exists:', existingUserData);
+        return { isExisting: true, userData: existingUserData };
+      }
+
+      // Create basic user record if it doesn't exist
+      console.log('📝 Creating basic user record...');
+      const basicUserData = {
+        id: authUser.id,
+        phone: phone,
+        name: authUser.user_metadata?.name || 'User', // Use metadata if available
+        email: authUser.email || null,
+        city: null,
+        gender: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data: newUserData, error: insertError } = await supabase
+        .from('users')
+        .insert(basicUserData)
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('❌ Error creating user record:', insertError);
+        // Return basic info even if DB insert fails
+        return { 
+          isExisting: false, 
+          userData: { 
+            name: 'User', 
+            phone: phone, 
+            email: authUser.email || '' 
+          } 
+        };
+      }
+
+      console.log('✅ Created basic user record:', newUserData);
+      return { isExisting: false, userData: newUserData };
+
+    } catch (err) {
+      console.error('❌ Error in createOrGetUserRecord:', err);
+      // Return basic fallback
+      return { 
+        isExisting: false, 
+        userData: { 
+          name: 'User', 
+          phone: phone, 
+          email: authUser.email || '' 
+        } 
+      };
     }
   };
 
@@ -220,37 +266,33 @@ export const useOTPAuth = () => {
         return;
       }
 
-      const userData = {
-        id: user.id,
-        phone: user.phone!,
+      // Update the existing basic user record with profile data
+      const updatedUserData = {
         name: profileData.name.trim(),
         email: profileData.email.trim() || null,
         city: profileData.city,
         gender: profileData.gender,
-        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
       
-      console.log('📝 Attempting to insert user data:', userData);
+      console.log('📝 Updating user profile with:', updatedUserData);
       
       const { data, error: profileError } = await supabase
         .from('users')
-        .insert(userData)
+        .update(updatedUserData)
+        .eq('id', user.id)
         .select()
         .single();
 
-      console.log('📊 Insert response data:', data);
+      console.log('📊 Update response data:', data);
       
       if (profileError) {
-        console.error('❌ Supabase error code:', profileError.code);
-        console.error('❌ Supabase error message:', profileError.message);
-        console.error('❌ Supabase error details:', profileError.details);
-        console.error('❌ Full error object:', profileError);
-        setError(`Failed to create profile: ${profileError.message}`);
+        console.error('❌ Profile update error:', profileError);
+        setError(`Failed to update profile: ${profileError.message}`);
         return;
       }
 
-      console.log('✅ Profile created successfully:', data);
+      console.log('✅ Profile updated successfully:', data);
       
       signIn(user.phone!, {
         name: profileData.name.trim(),

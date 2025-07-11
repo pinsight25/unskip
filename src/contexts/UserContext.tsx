@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -64,7 +63,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           .from('users')
           .select('*')
           .eq('id', userId)
-          .single();
+          .maybeSingle(); // Use maybeSingle to handle no results gracefully
 
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Database query timeout')), 5000);
@@ -81,10 +80,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         if (error) {
           console.error('🔵 USER QUERY ERROR:', error);
-          throw error;
-        } 
-        
-        if (userData && mounted) {
+          // NEW: Create fallback user from session if query fails
+          const fallbackUser = await createFallbackUserFromSession(userId);
+          if (fallbackUser && mounted) {
+            console.log('🔵 SETTING FALLBACK USER:', fallbackUser);
+            setUser(fallbackUser);
+          }
+        } else if (userData && mounted) {
           console.log('🔵 SETTING USER from database:', userData);
           setUser({
             name: userData.name,
@@ -94,17 +96,50 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             gender: userData.gender || undefined,
             avatar: userData.avatar || undefined
           });
+        } else if (!userData && mounted) {
+          console.log('🔵 No user data found, creating fallback');
+          const fallbackUser = await createFallbackUserFromSession(userId);
+          if (fallbackUser) {
+            setUser(fallbackUser);
+          }
         }
       } catch (err) {
         console.error('🔵 SYNC ERROR:', err);
-        // Don't throw - just log and continue with auth session
-        console.warn('🔵 Continuing without user profile data due to sync error');
+        // NEW: Create fallback user from session data
+        if (mounted) {
+          const fallbackUser = await createFallbackUserFromSession(userId);
+          if (fallbackUser) {
+            console.log('🔵 SETTING FALLBACK USER due to sync error:', fallbackUser);
+            setUser(fallbackUser);
+          }
+        }
       } finally {
         console.log('🔵 SETTING LOADING TO FALSE');
         if (mounted) {
           setIsLoading(false);
         }
       }
+    };
+
+    // NEW: Create fallback user from session data
+    const createFallbackUserFromSession = async (userId: string) => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          console.log('🔵 Creating fallback user from session:', session.user);
+          return {
+            name: session.user.user_metadata?.name || 'User',
+            phone: session.user.phone || 'Unknown',
+            email: session.user.email || '',
+            city: undefined,
+            gender: undefined,
+            avatar: undefined
+          };
+        }
+      } catch (err) {
+        console.error('🔵 Error creating fallback user:', err);
+      }
+      return null;
     };
 
     // Set up auth state change listener
