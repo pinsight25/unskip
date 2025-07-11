@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@/contexts/UserContext';
@@ -180,16 +179,13 @@ export const useOTPAuth = () => {
         return;
       }
 
-      // Ensure gender matches the enum type
-      const validGender = profileData.gender as "Male" | "Female" | "Other";
-      
       const userData = {
         id: user.id,
         phone: user.phone!,
         name: profileData.name.trim(),
         email: profileData.email.trim() || null,
         city: profileData.city,
-        gender: validGender,
+        gender: profileData.gender,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
