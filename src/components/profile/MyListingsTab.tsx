@@ -12,10 +12,10 @@ interface Listing {
   id: string;
   title: string;
   price: number;
-  location: string;
+  city: string;
   views: number;
-  postedDate: string;
   status: string;
+  created_at: string;
   // Add all the fields we need for duplication
   make?: string;
   model?: string;
@@ -45,7 +45,6 @@ interface Listing {
   dailyRate?: string;
   weeklyRate?: string;
   securityDeposit?: string;
-  city?: string;
   area?: string;
   landmark?: string;
   description?: string;
@@ -57,12 +56,12 @@ interface Accessory {
   brand: string;
   category: string;
   price: { min: number; max: number };
-  images: string[];
   location: string;
   views: number;
-  postedDate: string;
   status: string;
+  created_at: string;
   type: 'accessory';
+  postedDate: string;
 }
 
 interface MyListingsTabProps {
@@ -78,6 +77,26 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
   const activeAccessories = accessories.filter(a => a.status === 'active');
   const totalActive = activeListings.length + activeAccessories.length;
 
+  // Helper function to format date relative to now
+  const formatRelativeDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    return `${Math.ceil(diffDays / 30)} months ago`;
+  };
+
+  // Transform listings to include postedDate
+  const listingsWithDate = listings.map(listing => ({
+    ...listing,
+    location: listing.city,
+    postedDate: formatRelativeDate(listing.created_at)
+  }));
+
   if (totalActive === 0) {
     return <EmptyListingsState />;
   }
@@ -86,14 +105,14 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     <Card className="p-4 md:p-6">
       <div className="space-y-6">
         {/* Cars Section */}
-        {listings.length > 0 && (
+        {listingsWithDate.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Car className="h-5 w-5 text-gray-600" />
-              <h3 className="text-lg font-semibold">My Cars ({listings.length})</h3>
+              <h3 className="text-lg font-semibold">My Cars ({listingsWithDate.length})</h3>
             </div>
             <div className="space-y-4">
-              {listings.map((listing) => (
+              {listingsWithDate.map((listing) => (
                 <ListingCard
                   key={listing.id}
                   listing={listing}
@@ -110,7 +129,7 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
         )}
 
         {/* Separator */}
-        {listings.length > 0 && accessories.length > 0 && (
+        {listingsWithDate.length > 0 && accessories.length > 0 && (
           <Separator />
         )}
 
