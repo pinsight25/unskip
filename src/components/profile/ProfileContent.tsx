@@ -27,7 +27,7 @@ const ProfileContent = ({
   onDeleteListing
 }: ProfileContentProps) => {
   // Mock accessories data - properly typed with additional properties for MyListingsTab
-  const mockAccessories: (Accessory & { postedDate: string; status: string; type: string })[] = [
+  const mockAccessories: (Accessory & { postedDate: string; status: string; type: "accessory" })[] = [
     {
       id: 'acc-1',
       name: 'Premium Seat Covers',
@@ -62,7 +62,7 @@ const ProfileContent = ({
       // Additional properties for MyListingsTab compatibility
       postedDate: '3 days ago',
       status: 'active',
-      type: 'accessory'
+      type: 'accessory' as const
     },
     {
       id: 'acc-2',
@@ -98,7 +98,7 @@ const ProfileContent = ({
       // Additional properties for MyListingsTab compatibility
       postedDate: '1 week ago',
       status: 'active',
-      type: 'accessory'
+      type: 'accessory' as const
     },
     {
       id: 'acc-3',
@@ -134,7 +134,7 @@ const ProfileContent = ({
       // Additional properties for MyListingsTab compatibility
       postedDate: '5 days ago',
       status: 'active',
-      type: 'accessory'
+      type: 'accessory' as const
     }
   ];
 
