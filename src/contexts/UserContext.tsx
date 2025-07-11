@@ -78,16 +78,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id);
         
+        if (!mounted) return;
+        
         // Update session state
         setSession(session);
         
-        if (event === 'SIGNED_IN' && session?.user && mounted) {
+        if (event === 'SIGNED_IN' && session?.user) {
           console.log('User signed in, syncing data...');
           await syncUserFromDatabase(session.user.id);
-        } else if (event === 'SIGNED_OUT' && mounted) {
+        } else if (event === 'SIGNED_OUT') {
           console.log('User signed out, clearing data...');
           setUser(null);
-        } else if (event === 'TOKEN_REFRESHED' && session?.user && mounted) {
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           console.log('Token refreshed, maintaining session...');
           // User data should already be set, but ensure we maintain it
           if (!user) {
@@ -95,15 +97,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           }
         }
         
-        if (mounted) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     );
 
     // THEN check for existing session
     const getInitialSession = async () => {
       try {
+        console.log('Checking for existing session...');
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -128,7 +129,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Remove user dependency to prevent infinite loops
 
   const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
     const newUser: UserProfile = {
