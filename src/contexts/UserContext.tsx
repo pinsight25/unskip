@@ -42,8 +42,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   // Debug: Check localStorage on mount
   useEffect(() => {
     console.log('LocalStorage auth items:', {
-      'carsx-auth': localStorage.getItem('carsx-auth'),
-      'sb-auth-token': localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token')
+      'sb-qrzueqtkvjamvuljgaix-auth-token': localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token')
     });
   }, []);
 
