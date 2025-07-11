@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -27,8 +26,8 @@ const ProfileContent = ({
   onSignOut,
   onDeleteListing
 }: ProfileContentProps) => {
-  // Mock accessories data - properly typed
-  const mockAccessories: Accessory[] = [
+  // Mock accessories data - properly typed with additional properties for MyListingsTab
+  const mockAccessories: (Accessory & { postedDate: string; status: string; type: string })[] = [
     {
       id: 'acc-1',
       name: 'Premium Seat Covers',
@@ -59,7 +58,11 @@ const ProfileContent = ({
       views: 23,
       createdAt: '2024-01-10T10:00:00Z',
       featured: false,
-      condition: 'new'
+      condition: 'new',
+      // Additional properties for MyListingsTab compatibility
+      postedDate: '3 days ago',
+      status: 'active',
+      type: 'accessory'
     },
     {
       id: 'acc-2',
@@ -91,7 +94,11 @@ const ProfileContent = ({
       views: 15,
       createdAt: '2024-01-08T14:30:00Z',
       featured: false,
-      condition: 'new'
+      condition: 'new',
+      // Additional properties for MyListingsTab compatibility
+      postedDate: '1 week ago',
+      status: 'active',
+      type: 'accessory'
     },
     {
       id: 'acc-3',
@@ -123,7 +130,11 @@ const ProfileContent = ({
       views: 31,
       createdAt: '2024-01-12T09:15:00Z',
       featured: false,
-      condition: 'new'
+      condition: 'new',
+      // Additional properties for MyListingsTab compatibility
+      postedDate: '5 days ago',
+      status: 'active',
+      type: 'accessory'
     }
   ];
 
@@ -134,7 +145,7 @@ const ProfileContent = ({
   } : null;
 
   // Calculate updated stats including accessories
-  const totalListings = listings.length + mockAccessories.filter(acc => acc.availability !== 'out-of-stock').length;
+  const totalListings = listings.length + mockAccessories.filter(acc => acc.status === 'active').length;
   const updatedStats = {
     ...stats,
     activeListings: totalListings
