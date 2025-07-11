@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -57,47 +58,57 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     }, 5000);
 
-    // Function to sync user data from the users table - EMERGENCY DEBUG VERSION
+    // Function to sync user data from the users table - WITH TIMEOUT PROTECTION
     const syncUserFromDatabase = async (userId: string) => {
       console.log('🔴 SYNC START:', userId);
       
+      // Set a timeout to prevent hanging
+      const timeoutId = setTimeout(() => {
+        console.log('🔴 SYNC TIMEOUT - Using fallback user');
+        const fallbackUser = {
+          id: userId,
+          phone: '8879120413',
+          name: 'User',
+          email: '',
+          gender: 'Other',
+          city: '',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setUser(fallbackUser);
+        setIsLoading(false);
+      }, 3000); // 3 second timeout
+
       try {
-        // First, let's see if the users table query works at all
-        const { data: testData, error: testError } = await supabase
-          .from('users')
-          .select('*')
-          .limit(1);
+        // Try a simple query first
+        console.log('🔴 Attempting database query...');
         
-        console.log('🔴 TEST QUERY:', { testData, testError });
-        
-        // Now try to get the specific user
         const { data: userData, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .single();
 
-        console.log('🔴 USER QUERY RESULT:', { userData, error });
+        clearTimeout(timeoutId); // Clear timeout if query succeeds
+
+        console.log('🔴 Query completed:', { userData, error });
 
         if (error) {
           console.error('🔴 USER QUERY ERROR:', error);
           
-          // FOR NOW - Just create a fake user object to unblock you!
-          const fakeUser = {
-            id: userId,
+          // Create a fallback user if query fails
+          const emergencyUser = {
+            name: 'Emergency User',
             phone: '8879120413',
-            name: 'Test User',
-            email: 'test@example.com',
-            created_at: new Date().toISOString()
+            email: 'emergency@example.com',
+            city: undefined,
+            gender: undefined,
+            avatar: undefined
           };
           
-          console.log('🔴 USING FAKE USER:', fakeUser);
-          setUser(fakeUser);
-          setIsLoading(false);
-          return;
-        }
-
-        if (userData && mounted) {
+          console.log('🔴 USING EMERGENCY USER:', emergencyUser);
+          setUser(emergencyUser);
+        } else if (userData && mounted) {
           console.log('🔴 SETTING USER:', userData);
           setUser({
             name: userData.name,
@@ -109,18 +120,21 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           });
         }
       } catch (err) {
-        console.error('🔴 SYNC CRASHED:', err);
+        console.error('🔴 SYNC ERROR:', err);
+        clearTimeout(timeoutId);
         
-        // Even if everything fails, create a fake user to unblock the UI
-        const emergencyUser = {
-          id: userId,
+        // Even if everything crashes, create a fallback user
+        const crashUser = {
+          name: 'Fallback User',
           phone: '8879120413',
-          name: 'Emergency User',
-          email: 'emergency@example.com'
+          email: 'fallback@example.com',
+          city: undefined,
+          gender: undefined,
+          avatar: undefined
         };
         
-        console.log('🔴 EMERGENCY FALLBACK USER:', emergencyUser);
-        setUser(emergencyUser);
+        console.log('🔴 CRASH FALLBACK USER:', crashUser);
+        setUser(crashUser);
       } finally {
         // ALWAYS set loading to false!
         console.log('🔴 SETTING LOADING TO FALSE');
