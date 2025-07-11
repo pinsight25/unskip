@@ -1,3 +1,4 @@
+
 import { useUser } from '@/contexts/UserContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useProfileState } from '@/hooks/useProfileState';
@@ -78,7 +79,7 @@ const Profile = () => {
           setIsEditProfileOpen={setIsEditProfileOpen}
           isSignOutModalOpen={isSignOutModalOpen}
           setIsSignOutModalOpen={setIsSignOutModalOpen}
-          isSignInModalOpen={setIsSignInModalOpen}
+          isSignInModalOpen={isSignInModalOpen}
           setIsSignInModalOpen={setIsSignInModalOpen}
           deleteModal={deleteModal}
           setDeleteModal={setDeleteModal}
