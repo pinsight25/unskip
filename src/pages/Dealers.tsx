@@ -1,10 +1,17 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Car, Phone, Shield, Plus, Calendar, Building2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Utility function for creating URL-friendly slugs
+const createSlug = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '');
+};
 
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -303,7 +310,7 @@ const Dealers = () => {
                 </div>
 
                 {/* Action Button */}
-                <Link to={`/dealers/${dealer.id}`}>
+                <Link to={`/dealers/${createSlug(dealer.name)}`}>
                   <Button className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-600 text-white font-semibold shadow-md text-sm py-2">
                     View Inventory
                   </Button>

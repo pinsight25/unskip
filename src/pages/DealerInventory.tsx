@@ -16,26 +16,85 @@ import {
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 
+// Utility functions for slug handling
+const createSlug = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '');
+};
+
+const findDealerByIdOrSlug = (param: string) => {
+  const dealers = [
+    {
+      id: '1',
+      name: 'CarMax Motors',
+      contactPerson: 'Rajesh Kumar',
+      phone: '+91 98765 43210',
+      email: 'contact@carmaxmotors.com',
+      businessCategory: 'New & Used Cars',
+      specialization: 'All Brands',
+      location: 'Andheri West, Mumbai',
+      establishmentYear: '2010',
+      carsInStock: 0,
+      verified: true,
+      brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
+      shopPhoto: 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop'
+    },
+    {
+      id: '2',
+      name: 'Premium Auto Hub',
+      contactPerson: 'Arjun Mehta',
+      phone: '+91 98765 43211',
+      email: 'arjun@premiumautohub.com',
+      businessCategory: 'Specialized',
+      specialization: 'Luxury Cars',
+      location: 'Bandra East, Mumbai',
+      establishmentYear: '2015',
+      carsInStock: 0,
+      verified: true,
+      brands: ['BMW', 'Audi', 'Mercedes'],
+      shopPhoto: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&h=300&fit=crop'
+    }
+  ];
+
+  // Try to find by ID first
+  let dealer = dealers.find(d => d.id === param);
+  
+  // If not found by ID, try to find by slug
+  if (!dealer) {
+    dealer = dealers.find(d => createSlug(d.name) === param);
+  }
+
+  return dealer;
+};
+
 const DealerInventory = () => {
   const { dealerId } = useParams();
   const [sortBy, setSortBy] = useState('');
   
-  // Mock dealer data with enhanced information
-  const dealer = {
-    id: dealerId || '1',
-    name: 'CarMax Motors',
-    contactPerson: 'Rajesh Kumar',
-    phone: '+91 98765 43210',
-    email: 'contact@carmaxmotors.com',
-    businessCategory: 'New & Used Cars',
-    specialization: 'All Brands',
-    location: 'Andheri West, Mumbai',
-    establishmentYear: '2010',
-    carsInStock: 0,
-    verified: true,
-    brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
-    shopPhoto: 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop'
-  };
+  // Find dealer by ID or slug
+  const dealer = findDealerByIdOrSlug(dealerId || '1');
+
+  // Fallback if dealer not found
+  if (!dealer) {
+    return (
+      <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Dealer Not Found</h1>
+            <p className="text-gray-600 mb-6">The dealer you're looking for doesn't exist.</p>
+            <Link to="/dealers">
+              <Button>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dealers
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Filter cars by dealer
   const dealerCars = mockCars.filter(car => car.seller.type === 'dealer').slice(0, 12);

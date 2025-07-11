@@ -15,9 +15,16 @@ const ShareButton = ({ dealerName, dealerId, carsCount, className }: ShareButton
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
 
+  const createSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '');
+  };
+
   const generateShareUrl = () => {
     const baseUrl = 'https://unskip.lovable.app';
-    const dealerSlug = dealerName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    const dealerSlug = createSlug(dealerName);
     return `${baseUrl}/dealers/${dealerSlug}`;
   };
 
