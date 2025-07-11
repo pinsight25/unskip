@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@/contexts/UserContext';
 
 interface Offer {
@@ -85,7 +85,7 @@ export const useUserOffers = () => {
         offer_amount: offer.amount,
         status: offer.status as 'pending' | 'accepted' | 'rejected',
         created_at: formatRelativeDate(offer.created_at),
-        message: offer.message
+        message: offer.message || undefined
       }));
 
       setOffers(transformedOffers);

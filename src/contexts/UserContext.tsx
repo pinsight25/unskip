@@ -1,9 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
-interface User {
+interface UserProfile {
   name: string;
   phone: string;
   email: string;
@@ -13,7 +13,7 @@ interface User {
 }
 
 interface UserContextType {
-  user: User | null;
+  user: UserProfile | null;
   isSignedIn: boolean;
   isLoading: boolean;
   signIn: (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => void;
@@ -35,7 +35,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,9 +63,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             name: userData.name,
             phone: userData.phone,
             email: userData.email || '',
-            city: userData.city,
-            gender: userData.gender,
-            avatar: userData.avatar
+            city: userData.city || undefined,
+            gender: userData.gender || undefined,
+            avatar: userData.avatar || undefined
           });
         }
       } catch (error) {
@@ -131,7 +131,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, []);
 
   const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
-    const newUser: User = {
+    const newUser: UserProfile = {
       name: profileData?.name || 'John Doe',
       phone: phone,
       email: profileData?.email || 'john.doe@example.com',
