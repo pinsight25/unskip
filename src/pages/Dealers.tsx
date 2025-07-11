@@ -1,123 +1,18 @@
+
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Car, Phone, Shield, Plus, Calendar, Building2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// Utility function for creating URL-friendly slugs
-const createSlug = (name: string) => {
-  return name
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]/g, '');
-};
+import { dealersData, createSlug } from '@/data/dealers';
 
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
 
-  const dealers = [
-    {
-      id: 1,
-      name: 'CarMax Motors',
-      contactPerson: 'Rajesh Kumar',
-      phone: '+91 98765 43210',
-      email: 'contact@carmaxmotors.com',
-      businessCategory: 'New & Used Cars',
-      specialization: 'All Brands',
-      location: 'Andheri West, Mumbai',
-      city: 'Mumbai',
-      establishmentYear: '2010',
-      stock: '0 cars',
-      brands: ['Maruti Suzuki', 'Hyundai', 'Tata'],
-      verified: true,
-      shopPhoto: 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=400&h=200&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'Premium Auto Hub',
-      contactPerson: 'Arjun Mehta',
-      phone: '+91 98765 43211',
-      email: 'arjun@premiumautohub.com',
-      businessCategory: 'Specialized',
-      specialization: 'Luxury Cars',
-      location: 'Bandra East, Mumbai',
-      city: 'Mumbai',
-      establishmentYear: '2015',
-      stock: '0 cars',
-      brands: ['BMW', 'Audi', 'Mercedes'],
-      verified: true,
-      shopPhoto: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=400&h=200&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'City Car Center',
-      contactPerson: 'Priya Sharma',
-      phone: '+91 98765 43212',
-      email: 'priya@citycarcentre.com',
-      businessCategory: 'New & Used Cars',
-      specialization: 'Budget Cars',
-      location: 'Powai, Mumbai',
-      city: 'Mumbai',
-      establishmentYear: '2008',
-      stock: '0 cars',
-      brands: ['Honda', 'Toyota', 'Nissan'],
-      verified: true,
-      shopPhoto: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop'
-    },
-    {
-      id: 4,
-      name: 'Elite Motors',
-      contactPerson: 'Suresh Patel',
-      phone: '+91 98765 43213',
-      email: 'suresh@elitemotors.com',
-      businessCategory: 'Used Cars Only',
-      specialization: 'All Brands',
-      location: 'Goregaon West, Mumbai',
-      city: 'Mumbai',
-      establishmentYear: '2012',
-      stock: '0 cars',
-      brands: ['Mahindra', 'Ford', 'Renault'],
-      verified: false,
-      shopPhoto: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop'
-    },
-    {
-      id: 5,
-      name: 'Royal Car Palace',
-      contactPerson: 'Vikram Singh',
-      phone: '+91 98765 43214',
-      email: 'vikram@royalcarpalace.com',
-      businessCategory: 'New Cars Only',
-      specialization: 'Electric',
-      location: 'Thane West, Delhi',
-      city: 'Delhi',
-      establishmentYear: '2018',
-      stock: '0 cars',
-      brands: ['Kia', 'Skoda', 'Volkswagen'],
-      verified: true,
-      shopPhoto: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400&h=200&fit=crop'
-    },
-    {
-      id: 6,
-      name: 'Metro Auto Sales',
-      contactPerson: 'Ravi Kumar',
-      phone: '+91 98765 43215',
-      email: 'ravi@metroautosales.com',
-      businessCategory: 'Used Cars Only',
-      specialization: 'Budget Cars',
-      location: 'Malad West, Bangalore',
-      city: 'Bangalore',
-      establishmentYear: '2005',
-      stock: '0 cars',
-      brands: ['Jeep', 'MG', 'Tata'],
-      verified: true,
-      shopPhoto: 'https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=200&fit=crop'
-    }
-  ];
-
   // Filter dealers based on selected filters
-  const filteredDealers = dealers.filter(dealer => {
+  const filteredDealers = dealersData.filter(dealer => {
     const locationMatch = !selectedLocation || selectedLocation === 'All Locations' || 
                          dealer.city.toLowerCase() === selectedLocation.toLowerCase();
     const brandMatch = !selectedBrand || selectedBrand === 'All Brands' || 
@@ -127,7 +22,6 @@ const Dealers = () => {
   });
 
   const handleApplyFilters = () => {
-    // Filters are applied automatically through filteredDealers
     console.log('Filters applied:', { selectedLocation, selectedBrand });
   };
 
@@ -225,7 +119,7 @@ const Dealers = () => {
         {/* Results count */}
         <div className="mb-4">
           <p className="text-gray-600 text-sm">
-            Showing {filteredDealers.length} of {dealers.length} dealers
+            Showing {filteredDealers.length} of {dealersData.length} dealers
           </p>
         </div>
 
@@ -282,7 +176,7 @@ const Dealers = () => {
                   
                   <div className="flex items-center bg-blue-50 p-2 rounded-lg">
                     <Car className="h-3 w-3 mr-2 text-blue-600" />
-                    <span className="text-xs font-medium">{dealer.stock}</span>
+                    <span className="text-xs font-medium">{dealer.carsInStock || 0} cars</span>
                   </div>
                 </div>
 
