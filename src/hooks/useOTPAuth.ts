@@ -8,7 +8,7 @@ interface ProfileData {
   name: string;
   email: string;
   city: string;
-  gender: string;
+  gender: 'Male' | 'Female' | 'Other'; // Fix: Use the exact enum values instead of string
 }
 
 export const useOTPAuth = () => {
@@ -25,7 +25,7 @@ export const useOTPAuth = () => {
     name: '',
     email: '',
     city: '',
-    gender: ''
+    gender: 'Male'
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -241,7 +241,7 @@ export const useOTPAuth = () => {
     setError('');
     setIsVerifying(false);
     setIsSendingOTP(false);
-    setProfileData({ name: '', email: '', city: '', gender: '' });
+    setProfileData({ name: '', email: '', city: '', gender: 'Male' });
     setIsSaving(false);
     setExistingUser(null);
   };
