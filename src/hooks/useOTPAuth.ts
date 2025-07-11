@@ -46,17 +46,19 @@ export const useOTPAuth = () => {
     try {
       const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
       
-      console.log('Sending OTP to:', formattedPhone);
+      console.log('🔵 SENDING OTP:');
+      console.log('- Phone:', formattedPhone);
+      console.log('- Current localStorage auth:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
       
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
       });
 
       if (error) {
-        console.error('OTP send error:', error);
+        console.error('❌ OTP send error:', error);
         setError(error.message || 'Failed to send OTP. Please try again.');
       } else {
-        console.log('OTP sent successfully');
+        console.log('✅ OTP sent successfully');
         setStep('otp');
         toast({
           title: "OTP Sent",
@@ -64,7 +66,7 @@ export const useOTPAuth = () => {
         });
       }
     } catch (err) {
-      console.error('Unexpected error:', err);
+      console.error('❌ Unexpected OTP send error:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSendingOTP(false);
@@ -83,7 +85,7 @@ export const useOTPAuth = () => {
     // Add timeout to prevent getting stuck
     const timeoutId = setTimeout(() => {
       if (isVerifying) {
-        console.warn('OTP verification timeout');
+        console.warn('⚠️ OTP verification timeout');
         setError('Verification is taking too long. Please try again or refresh the page.');
         setIsVerifying(false);
       }
@@ -92,7 +94,10 @@ export const useOTPAuth = () => {
     try {
       const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
       
-      console.log('Verifying OTP for:', formattedPhone);
+      console.log('🔵 VERIFYING OTP:');
+      console.log('- Phone:', formattedPhone);
+      console.log('- OTP:', otp);
+      console.log('- Before verification localStorage:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
       
       const { data, error } = await supabase.auth.verifyOtp({
         phone: formattedPhone,
@@ -100,17 +105,35 @@ export const useOTPAuth = () => {
         type: 'sms'
       });
 
+      console.log('🔍 OTP Verification Response:');
+      console.log('- Data:', data);
+      console.log('- Error:', error);
+      console.log('- User:', data?.user);
+      console.log('- Session:', data?.session);
+      console.log('- Session access_token:', data?.session?.access_token ? '✅ Present' : '❌ Missing');
+      console.log('- Session refresh_token:', data?.session?.refresh_token ? '✅ Present' : '❌ Missing');
+
+      // Check if session is being set in localStorage
+      console.log('🔍 LocalStorage after OTP verification:');
+      console.log('- Auth token:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
+      console.log('- All localStorage keys:', Object.keys(localStorage));
+
+      // Check current session from Supabase
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('🔍 Current session after verification:', sessionData);
+      console.log('- Session error:', sessionError);
+
       clearTimeout(timeoutId);
 
       if (error) {
-        console.error('OTP verification error:', error);
+        console.error('❌ OTP verification error:', error);
         setError(error.message || 'Invalid OTP. Please try again.');
         setIsVerifying(false);
         return;
       } 
       
       if (data.user) {
-        console.log('OTP verified successfully:', data.user);
+        console.log('✅ OTP verified successfully:', data.user);
         
         // Check if user profile already exists in our users table
         const { data: existingUserData, error: fetchError } = await supabase
@@ -120,11 +143,11 @@ export const useOTPAuth = () => {
           .single();
 
         if (fetchError && fetchError.code !== 'PGRST116') {
-          console.error('Error fetching user:', fetchError);
+          console.error('❌ Error fetching user:', fetchError);
         }
 
         if (existingUserData) {
-          console.log('Existing user found:', existingUserData);
+          console.log('👤 Existing user found:', existingUserData);
           setExistingUser(existingUserData);
           
           // User exists, sign them in directly
@@ -139,7 +162,7 @@ export const useOTPAuth = () => {
           setIsVerifying(false);
           return { isExistingUser: true };
         } else {
-          console.log('New user - showing profile form');
+          console.log('👤 New user - showing profile form');
           setIsVerified(true);
           setTimeout(() => {
             setStep('profile');
@@ -148,10 +171,13 @@ export const useOTPAuth = () => {
           }, 1500);
           return { isExistingUser: false };
         }
+      } else {
+        console.error('❌ No user data in verification response');
+        setError('Verification failed. Please try again.');
       }
     } catch (err) {
       clearTimeout(timeoutId);
-      console.error('Unexpected verification error:', err);
+      console.error('❌ Unexpected verification error:', err);
       setError('An unexpected error occurred. Please try again or refresh the page.');
     } finally {
       setIsVerifying(false);
