@@ -19,8 +19,6 @@ const Profile = () => {
     setIsEditProfileOpen,
     isSignOutModalOpen,
     setIsSignOutModalOpen,
-    isSignInModalOpen,
-    setIsSignInModalOpen,
     deleteModal,
     setDeleteModal
   } = useProfileState();
@@ -73,14 +71,12 @@ const Profile = () => {
     console.log('Profile: Showing sign-in prompt');
     return (
       <>
-        <SignInPrompt onSignIn={() => setIsSignInModalOpen(true)} />
+        <SignInPrompt onSignIn={() => {}} />
         <ProfileModals
           isEditProfileOpen={isEditProfileOpen}
           setIsEditProfileOpen={setIsEditProfileOpen}
           isSignOutModalOpen={isSignOutModalOpen}
           setIsSignOutModalOpen={setIsSignOutModalOpen}
-          isSignInModalOpen={isSignInModalOpen}
-          setIsSignInModalOpen={setIsSignInModalOpen}
           deleteModal={deleteModal}
           setDeleteModal={setDeleteModal}
           user={userWithDealer}
@@ -127,8 +123,6 @@ const Profile = () => {
         setIsEditProfileOpen={setIsEditProfileOpen}
         isSignOutModalOpen={isSignOutModalOpen}
         setIsSignOutModalOpen={setIsSignOutModalOpen}
-        isSignInModalOpen={isSignInModalOpen}
-        setIsSignInModalOpen={setIsSignInModalOpen}
         deleteModal={deleteModal}
         setDeleteModal={setDeleteModal}
         user={userWithDealer}
