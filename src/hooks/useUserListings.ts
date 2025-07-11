@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@/contexts/UserContext';
-import { CarListing, AccessoryListing, UserStats, StatsRow } from '@/types/userListings';
+import { CarListing, AccessoryListing, UserStats } from '@/types/userListings';
 import { transformCarsData, transformAccessoriesData } from '@/utils/userListingsTransformers';
 
 export const useUserListings = () => {
@@ -72,10 +72,7 @@ export const useUserListings = () => {
 
       // Fetch user stats using RPC call with proper typing
       const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId }) as {
-          data: StatsRow[] | null;
-          error: any;
-        };
+        .rpc('get_user_listing_stats', { user_uuid: userId });
 
       if (statsError) {
         console.error('Error fetching stats:', statsError);
@@ -90,7 +87,7 @@ export const useUserListings = () => {
 
       // Set stats with proper type handling
       if (statsData && Array.isArray(statsData) && statsData.length > 0) {
-        const userStats = statsData[0] as StatsRow;
+        const userStats = statsData[0];
         setStats({
           totalCars: userStats.total_cars || 0,
           activeCars: userStats.active_cars || 0,
