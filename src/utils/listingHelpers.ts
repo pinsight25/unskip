@@ -1,6 +1,4 @@
 
-import { Badge } from '@/components/ui/badge';
-
 export const formatPrice = (price: number | { min: number; max: number }) => {
   if (typeof price === 'number') {
     return new Intl.NumberFormat('en-IN', {
@@ -16,16 +14,16 @@ export const formatPrice = (price: number | { min: number; max: number }) => {
   }
 };
 
-export const getStatusBadge = (status: string) => {
+export const getStatusVariant = (status: string) => {
   const variants = {
     active: 'bg-green-100 text-green-800',
     sold: 'bg-blue-100 text-blue-800',
     expired: 'bg-gray-100 text-gray-800'
   };
   
-  return (
-    <Badge className={variants[status as keyof typeof variants] || variants.active}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </Badge>
-  );
+  return variants[status as keyof typeof variants] || variants.active;
+};
+
+export const getStatusText = (status: string) => {
+  return status.charAt(0).toUpperCase() + status.slice(1);
 };

@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Car, Package } from 'lucide-react';
 import { useListingHandlers } from '@/hooks/useListingHandlers';
-import { formatPrice, getStatusBadge } from '@/utils/listingHelpers';
+import { formatPrice, getStatusVariant, getStatusText } from '@/utils/listingHelpers';
 import ListingCard from './listings/ListingCard';
 import AccessoryCard from './listings/AccessoryCard';
 import EmptyListingsState from './listings/EmptyListingsState';
@@ -101,7 +101,8 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
                   onDuplicate={handleDuplicateListing}
                   onDelete={onDeleteListing}
                   formatPrice={formatPrice}
-                  getStatusBadge={getStatusBadge}
+                  getStatusVariant={getStatusVariant}
+                  getStatusText={getStatusText}
                 />
               ))}
             </div>
@@ -128,7 +129,8 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
                   onEdit={handleEditAccessory}
                   onDelete={onDeleteListing}
                   formatPrice={formatPrice}
-                  getStatusBadge={getStatusBadge}
+                  getStatusVariant={getStatusVariant}
+                  getStatusText={getStatusText}
                 />
               ))}
             </div>

@@ -22,7 +22,8 @@ interface AccessoryCardProps {
   onEdit: (accessory: Accessory) => void;
   onDelete: (accessoryId: string, name: string) => void;
   formatPrice: (price: { min: number; max: number }) => string;
-  getStatusBadge: (status: string) => JSX.Element;
+  getStatusVariant: (status: string) => string;
+  getStatusText: (status: string) => string;
 }
 
 const AccessoryCard = ({ 
@@ -30,7 +31,8 @@ const AccessoryCard = ({
   onEdit, 
   onDelete, 
   formatPrice, 
-  getStatusBadge 
+  getStatusVariant,
+  getStatusText
 }: AccessoryCardProps) => {
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -39,7 +41,9 @@ const AccessoryCard = ({
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
             <h4 className="font-semibold text-lg">{accessory.name}</h4>
-            {getStatusBadge(accessory.status)}
+            <Badge className={getStatusVariant(accessory.status)}>
+              {getStatusText(accessory.status)}
+            </Badge>
           </div>
           <p className="text-sm text-gray-600 mb-1">{accessory.brand}</p>
           <p className="text-primary font-bold text-xl mb-1">

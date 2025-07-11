@@ -53,7 +53,8 @@ interface ListingCardProps {
   onDuplicate: (listing: Listing) => void;
   onDelete: (listingId: string, title: string) => void;
   formatPrice: (price: number) => string;
-  getStatusBadge: (status: string) => JSX.Element;
+  getStatusVariant: (status: string) => string;
+  getStatusText: (status: string) => string;
 }
 
 const ListingCard = ({ 
@@ -62,7 +63,8 @@ const ListingCard = ({
   onDuplicate, 
   onDelete, 
   formatPrice, 
-  getStatusBadge 
+  getStatusVariant,
+  getStatusText
 }: ListingCardProps) => {
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -71,7 +73,9 @@ const ListingCard = ({
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
             <h4 className="font-semibold text-lg">{listing.title}</h4>
-            {getStatusBadge(listing.status)}
+            <Badge className={getStatusVariant(listing.status)}>
+              {getStatusText(listing.status)}
+            </Badge>
           </div>
           <p className="text-primary font-bold text-xl mb-1">
             {formatPrice(listing.price)}
