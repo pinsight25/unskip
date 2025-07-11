@@ -62,19 +62,60 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     const syncUserFromDatabase = async (userId: string) => {
       try {
         console.log('Syncing user data for ID:', userId);
+        
         const { data: userData, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .single();
 
+        console.log('User sync result:', {
+          userData,
+          error,
+          hasData: !!userData
+        });
+
         if (error) {
           console.error('Error fetching user data:', error);
+          
+          // If user doesn't exist in database, create them
+          if (error.code === 'PGRST116') {
+            console.log('User not found in database, creating...');
+            
+            const { data: sessionData } = await supabase.auth.getSession();
+            const phone = sessionData?.session?.user?.phone;
+            
+            if (phone && mounted) {
+              const { data: newUser, error: createError } = await supabase
+                .from('users')
+                .insert({
+                  id: userId,
+                  phone: phone.replace(/^\+91/, ''), // Remove country code
+                  name: 'New User' // Default name
+                })
+                .select()
+                .single();
+
+              if (createError) {
+                console.error('Error creating user:', createError);
+              } else {
+                console.log('Created new user:', newUser);
+                setUser({
+                  name: newUser.name,
+                  phone: newUser.phone,
+                  email: newUser.email || '',
+                  city: newUser.city || undefined,
+                  gender: newUser.gender || undefined,
+                  avatar: newUser.avatar || undefined
+                });
+              }
+            }
+          }
           return;
         }
 
         if (userData && mounted) {
-          console.log('User data synced from database:', userData);
+          console.log('Setting user data:', userData);
           setUser({
             name: userData.name,
             phone: userData.phone,
@@ -84,8 +125,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             avatar: userData.avatar || undefined
           });
         }
-      } catch (error) {
-        console.error('Error syncing user from database:', error);
+      } catch (err) {
+        console.error('Unexpected error syncing user:', err);
       }
     };
 
@@ -107,18 +148,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (event === 'SIGNED_IN' && session?.user) {
           console.log('User signed in, syncing data...');
           await syncUserFromDatabase(session.user.id);
-          setIsLoading(false); // FIXED: Set loading to false after successful sign in
+          setIsLoading(false);
         } else if (event === 'SIGNED_OUT') {
           console.log('User signed out, clearing data...');
           setUser(null);
-          setIsLoading(false); // FIXED: Set loading to false after sign out
+          setIsLoading(false);
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           console.log('Token refreshed, maintaining session...');
           // User data should already be set, but ensure we maintain it
           if (!user) {
             await syncUserFromDatabase(session.user.id);
           }
-          setIsLoading(false); // FIXED: Set loading to false after token refresh
+          setIsLoading(false);
         } else if (event === 'INITIAL_SESSION') {
           if (session?.user) {
             console.log('Initial session found, syncing data...');
@@ -126,9 +167,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           } else {
             console.log('Initial session check - no session found');
           }
-          setIsLoading(false); // FIXED: Always set loading to false after initial session check
+          setIsLoading(false);
         } else {
-          // FIXED: Handle any other auth events by setting loading to false
           setIsLoading(false);
         }
       }
@@ -143,7 +183,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (error) {
           console.error('Error getting session:', error);
           if (mounted) {
-            setIsLoading(false); // FIXED: Set loading to false on error
+            setIsLoading(false);
           }
           return;
         }
@@ -152,17 +192,17 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('Found existing session:', session.user.id);
           setSession(session);
           await syncUserFromDatabase(session.user.id);
-          setIsLoading(false); // FIXED: Set loading to false after successful sync
+          setIsLoading(false);
         } else {
           console.log('No existing session found');
           if (mounted) {
-            setIsLoading(false); // FIXED: Set loading to false when no session
+            setIsLoading(false);
           }
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
         if (mounted) {
-          setIsLoading(false); // FIXED: Set loading to false on catch
+          setIsLoading(false);
         }
       }
     };
