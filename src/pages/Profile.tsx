@@ -7,12 +7,24 @@ import { useUserListings } from '@/hooks/useUserListings';
 import ProfileContent from '@/components/profile/ProfileContent';
 import ProfileModals from '@/components/profile/ProfileModals';
 import SignInPrompt from '@/components/profile/SignInPrompt';
+import { useState } from 'react';
+import SignInModal from '@/components/modals/SignInModal';
 
 const Profile = () => {
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, isLoading } = useUser();
   const isMobile = useIsMobile();
   
-  console.log('Profile page render:', { user, isSignedIn, isMobile });
+  // STATE FOR SIGN IN MODAL
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  
+  // DEBUG LOGS
+  console.log('Profile Page Debug:');
+  console.log('- user:', user);
+  console.log('- isSignedIn:', isSignedIn);
+  console.log('- isLoading:', isLoading);
+  console.log('- typeof user:', typeof user);
+  console.log('- user === null:', user === null);
+  console.log('- user === undefined:', user === undefined);
   
   const {
     isEditProfileOpen,
@@ -35,7 +47,7 @@ const Profile = () => {
     carListings, 
     accessoryListings, 
     stats, 
-    isLoading, 
+    isLoading: listingsLoading, 
     error,
     refetch 
   } = useUserListings();
@@ -44,7 +56,7 @@ const Profile = () => {
     carListingsCount: carListings?.length || 0,
     accessoryListingsCount: accessoryListings?.length || 0,
     stats,
-    isLoading,
+    isLoading: listingsLoading,
     error
   });
 
@@ -66,12 +78,34 @@ const Profile = () => {
     }, 1500);
   };
 
-  // Show sign-in prompt for non-signed-in users
+  const handleSignInClick = () => {
+    console.log('Sign in button clicked');
+    setIsSignInModalOpen(true);
+  };
+
+  // If still loading, show loading state
+  if (isLoading) {
+    console.log('Profile: Still loading auth state');
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse mb-4">Loading profile...</div>
+          <p className="text-sm text-gray-500">Checking authentication status</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show sign-in prompt for non-signed-in users OR if user data is missing
   if (!isSignedIn || !userWithDealer) {
-    console.log('Profile: Showing sign-in prompt');
+    console.log('Profile: Showing sign-in prompt', { isSignedIn, hasUser: !!userWithDealer });
     return (
       <>
-        <SignInPrompt onSignIn={() => {}} />
+        <SignInPrompt onSignIn={handleSignInClick} />
+        <SignInModal 
+          isOpen={isSignInModalOpen}
+          onClose={() => setIsSignInModalOpen(false)}
+        />
         <ProfileModals
           isEditProfileOpen={isEditProfileOpen}
           setIsEditProfileOpen={setIsEditProfileOpen}
@@ -100,7 +134,7 @@ const Profile = () => {
     carListings: carListings.length, 
     accessoryListings: accessoryListings.length,
     stats: realStats,
-    isLoading,
+    isLoading: listingsLoading,
     error
   });
 
@@ -111,7 +145,7 @@ const Profile = () => {
         listings={carListings}
         accessories={accessoryListings}
         stats={realStats}
-        isLoading={isLoading}
+        isLoading={listingsLoading}
         error={error}
         onEditProfile={() => setIsEditProfileOpen(true)}
         onSignOut={() => setIsSignOutModalOpen(true)}

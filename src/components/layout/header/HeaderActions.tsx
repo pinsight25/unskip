@@ -17,17 +17,29 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   const { user, isSignedIn, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
-  // Debug logging
-  console.log('HeaderActions - user:', user);
-  console.log('HeaderActions - isSignedIn:', isSignedIn);
-  console.log('HeaderActions - isLoading:', isLoading);
+  // Enhanced Debug logging
+  console.log('HeaderActions Debug:');
+  console.log('- user:', user);
+  console.log('- isSignedIn:', isSignedIn);
+  console.log('- isLoading:', isLoading);
+  console.log('- user type:', typeof user);
+  console.log('- user === null:', user === null);
+  console.log('- user?.name:', user?.name);
+  console.log('- user?.phone:', user?.phone);
 
   const handleSignOut = () => {
+    console.log('HeaderActions: Sign out clicked');
     signOut();
+  };
+
+  const handleSignInClick = () => {
+    console.log('HeaderActions: Sign in button clicked');
+    setIsSignInModalOpen(true);
   };
 
   // Show loading skeleton while checking auth state
   if (isLoading) {
+    console.log('HeaderActions: Showing loading state');
     return (
       <div className="hidden lg:flex items-center space-x-6">
         {/* Chat Icon with Badge */}
@@ -57,6 +69,8 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       </div>
     );
   }
+
+  console.log('HeaderActions: Rendering main content, isSignedIn:', isSignedIn, 'hasUser:', !!user);
 
   return (
     <div className="hidden lg:flex items-center space-x-6">
@@ -101,7 +115,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
         </DropdownMenu>
       ) : (
         <button 
-          onClick={() => setIsSignInModalOpen(true)}
+          onClick={handleSignInClick}
           className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
         >
           <Avatar className="h-10 w-10 border border-gray-200">
