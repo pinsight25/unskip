@@ -156,12 +156,9 @@ export const useUserListings = () => {
         return;
       }
 
-      // Fetch user stats with explicit typing
+      // Fetch user stats using RPC call
       const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId }) as { 
-          data: StatsRow[] | null, 
-          error: any 
-        };
+        .rpc('get_user_listing_stats', { user_uuid: userId });
 
       if (statsError) {
         console.error('Error fetching stats:', statsError);
@@ -233,7 +230,7 @@ export const useUserListings = () => {
       setCarListings(transformedCars);
       setAccessoryListings(transformedAccessories);
 
-      // Set stats with proper type checking
+      // Set stats with proper type handling
       if (statsData && Array.isArray(statsData) && statsData.length > 0) {
         const userStats = statsData[0] as StatsRow;
         setStats({
