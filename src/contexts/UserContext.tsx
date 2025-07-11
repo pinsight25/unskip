@@ -1,5 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
+import type { Session, User } from '@supabase/supabase-js';
 
 interface User {
   name: string;
@@ -34,6 +36,7 @@ interface UserProviderProps {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -70,33 +73,26 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     };
 
-    // Check for existing session on mount
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user && mounted) {
-          console.log('Existing session found:', session.user);
-          await syncUserFromDatabase(session.user.id);
-        }
-      } catch (error) {
-        console.error('Error getting session:', error);
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    // Listen to auth state changes
+    // Set up auth state change listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user);
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        // Update session state
+        setSession(session);
         
         if (event === 'SIGNED_IN' && session?.user && mounted) {
+          console.log('User signed in, syncing data...');
           await syncUserFromDatabase(session.user.id);
         } else if (event === 'SIGNED_OUT' && mounted) {
+          console.log('User signed out, clearing data...');
           setUser(null);
+        } else if (event === 'TOKEN_REFRESHED' && session?.user && mounted) {
+          console.log('Token refreshed, maintaining session...');
+          // User data should already be set, but ensure we maintain it
+          if (!user) {
+            await syncUserFromDatabase(session.user.id);
+          }
         }
         
         if (mounted) {
@@ -105,7 +101,28 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     );
 
-    getSession();
+    // THEN check for existing session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+        } else if (session?.user && mounted) {
+          console.log('Found existing session:', session.user.id);
+          setSession(session);
+          await syncUserFromDatabase(session.user.id);
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    getInitialSession();
 
     return () => {
       mounted = false;
@@ -133,6 +150,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         console.error('Error signing out:', error);
       } else {
         setUser(null);
+        setSession(null);
         console.log('User signed out successfully');
       }
     } catch (error) {
@@ -142,7 +160,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const value = {
     user,
-    isSignedIn: !!user,
+    isSignedIn: !!user && !!session,
     isLoading,
     signIn,
     signOut

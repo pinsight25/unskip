@@ -10,6 +10,9 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     storageKey: 'carsx-auth',
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: localStorage,
+    flowType: 'pkce'
   },
 })
 
