@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Shield, User, CheckCircle } from 'lucide-react';
 import { useOTPAuth } from '@/hooks/useOTPAuth';
