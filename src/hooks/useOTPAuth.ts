@@ -180,13 +180,16 @@ export const useOTPAuth = () => {
         return;
       }
 
+      // Ensure gender matches the enum type
+      const validGender = profileData.gender as "Male" | "Female" | "Other";
+      
       const userData = {
         id: user.id,
-        phone: user.phone,
+        phone: user.phone!,
         name: profileData.name.trim(),
         email: profileData.email.trim() || null,
         city: profileData.city,
-        gender: profileData.gender,
+        gender: validGender,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -195,7 +198,7 @@ export const useOTPAuth = () => {
       
       const { data, error: profileError } = await supabase
         .from('users')
-        .insert([userData])
+        .insert(userData)
         .select()
         .single();
 
