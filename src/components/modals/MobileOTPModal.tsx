@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { Shield, Phone, CheckCircle, Edit, User, Loader } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useSupabase } from '@/contexts/SupabaseContext';
 
 interface MobileOTPModalProps {
   isOpen: boolean;
@@ -55,6 +55,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   const { signIn } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { supabase } = useSupabase();
 
   const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
 
@@ -103,7 +104,61 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
     setIsSaving(true);
     setError('');
 
-    setTimeout(() => {
+    console.log('🔍 [Mobile] Starting profile completion process...');
+    
+    try {
+      // Get the authenticated user
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('[Mobile] Auth user:', user);
+      console.log('[Mobile] Auth error:', authError);
+      
+      if (authError) {
+        console.error('❌ [Mobile] Auth error:', authError);
+        setError('Authentication error. Please try signing in again.');
+        return;
+      }
+      
+      if (!user) {
+        console.error('❌ [Mobile] No authenticated user found');
+        setError('No authenticated user found. Please try signing in again.');
+        return;
+      }
+
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      const userData = {
+        id: user.id,
+        phone: formattedPhone,
+        name: profileData.name.trim(),
+        email: profileData.email.trim() || null,
+        city: profileData.city,
+        gender: profileData.gender,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('📝 [Mobile] Attempting to insert user data:', userData);
+      
+      const { data, error: profileError } = await supabase
+        .from('users')
+        .insert([userData]);
+
+      console.log('📊 [Mobile] Insert response data:', data);
+      console.log('❌ [Mobile] Insert error (if any):', profileError);
+
+      if (profileError) {
+        console.error('❌ [Mobile] Detailed Supabase error:', {
+          message: profileError.message,
+          details: profileError.details,
+          hint: profileError.hint,
+          code: profileError.code
+        });
+        setError(`Failed to create profile: ${profileError.message}`);
+        return;
+      }
+
+      console.log('✅ [Mobile] Profile created successfully');
+      
       // Sign in with actual profile data including gender
       signIn(phoneNumber, {
         name: profileData.name.trim(),
@@ -124,7 +179,11 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
       
       // Route to profile page after completion
       navigate('/profile');
-    }, 1000);
+    } catch (err) {
+      console.error('❌ [Mobile] Unexpected profile completion error:', err);
+      setError('An unexpected error occurred. Please try again.');
+      setIsSaving(false);
+    }
   };
 
   const resetModal = () => {

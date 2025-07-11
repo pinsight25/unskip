@@ -185,48 +185,77 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setError('');
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      console.log('🔍 Starting profile completion process...');
       
-      if (user) {
-        const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
-        
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: user.id,
-            phone: formattedPhone,
-            name: profileData.name.trim(),
-            email: profileData.email.trim() || null,
-            city: profileData.city,
-            gender: profileData.gender,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-          setError('Failed to create profile. Please try again.');
-          return;
-        }
-
-        signIn(formattedPhone, {
-          name: profileData.name.trim(),
-          email: profileData.email.trim(),
-          city: profileData.city,
-          gender: profileData.gender
-        });
-        
-        toast({
-          title: "Welcome!",
-          description: "Your profile has been created successfully.",
-        });
-        
-        onClose();
-        resetModal();
-        navigate('/profile');
+      // Get the authenticated user
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('Auth user:', user);
+      console.log('Auth error:', authError);
+      
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        setError('Authentication error. Please try signing in again.');
+        return;
       }
+      
+      if (!user) {
+        console.error('❌ No authenticated user found');
+        setError('No authenticated user found. Please try signing in again.');
+        return;
+      }
+
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      const userData = {
+        id: user.id,
+        phone: formattedPhone,
+        name: profileData.name.trim(),
+        email: profileData.email.trim() || null,
+        city: profileData.city,
+        gender: profileData.gender,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('📝 Attempting to insert user data:', userData);
+      
+      const { data, error: profileError } = await supabase
+        .from('users')
+        .insert([userData]);
+
+      console.log('📊 Insert response data:', data);
+      console.log('❌ Insert error (if any):', profileError);
+
+      if (profileError) {
+        console.error('❌ Detailed Supabase error:', {
+          message: profileError.message,
+          details: profileError.details,
+          hint: profileError.hint,
+          code: profileError.code
+        });
+        setError(`Failed to create profile: ${profileError.message}`);
+        return;
+      }
+
+      console.log('✅ Profile created successfully');
+      
+      signIn(formattedPhone, {
+        name: profileData.name.trim(),
+        email: profileData.email.trim(),
+        city: profileData.city,
+        gender: profileData.gender
+      });
+      
+      toast({
+        title: "Welcome!",
+        description: "Your profile has been created successfully.",
+      });
+      
+      onClose();
+      resetModal();
+      navigate('/profile');
     } catch (err) {
-      console.error('Profile completion error:', err);
+      console.error('❌ Unexpected profile completion error:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSaving(false);
