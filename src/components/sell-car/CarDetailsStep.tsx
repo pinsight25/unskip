@@ -5,6 +5,7 @@ import VehicleSpecsSelector from '@/components/sell-car/car-details/VehicleSpecs
 import RegistrationDetailsSelector from '@/components/sell-car/car-details/RegistrationDetailsSelector';
 import VehicleConditionSelector from '@/components/sell-car/car-details/VehicleConditionSelector';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
+import { updateFormField } from '@/utils/formHelpers';
 
 interface CarDetailsStepProps {
   formData: SellCarFormData;
@@ -13,6 +14,14 @@ interface CarDetailsStepProps {
 }
 
 const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: CarDetailsStepProps) => {
+  const handleMakeChange = (value: string) => {
+    setFormData(prev => updateFormField(prev, 'make', value));
+  };
+
+  const handleModelChange = (value: string) => {
+    setFormData(prev => updateFormField(prev, 'model', value));
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -24,8 +33,10 @@ const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: Car
 
       {/* Make, Model, Variant */}
       <MakeModelSelector 
-        formData={formData} 
-        setFormData={setFormData} 
+        make={formData.make}
+        model={formData.model}
+        onMakeChange={handleMakeChange}
+        onModelChange={handleModelChange}
       />
 
       {/* Year Selection */}
