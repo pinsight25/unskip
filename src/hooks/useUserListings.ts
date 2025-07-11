@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { CarListing, AccessoryListing, UserStats } from '@/types/userListings';
 import { transformCarsData, transformAccessoriesData } from '@/utils/userListingsTransformers';
