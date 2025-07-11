@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -40,16 +41,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     let mounted = true;
-    let authTimeoutId: NodeJS.Timeout;
     let initTimeoutId: NodeJS.Timeout;
 
-    // Critical timeout - force loading to false after 10 seconds no matter what
+    // Critical timeout - force loading to false after 8 seconds no matter what
     initTimeoutId = setTimeout(() => {
       if (mounted && isLoading) {
-        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 10 seconds, forcing loading to false');
+        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 8 seconds, forcing loading to false');
         setIsLoading(false);
       }
-    }, 10000);
+    }, 8000);
 
     // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
@@ -63,7 +63,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           .from('users')
           .select('*')
           .eq('id', userId)
-          .maybeSingle(); // Use maybeSingle to handle no results gracefully
+          .maybeSingle();
 
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Database query timeout')), 5000);
@@ -80,11 +80,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         if (error) {
           console.error('🔵 USER QUERY ERROR:', error);
-          // NEW: Create fallback user from session if query fails
-          const fallbackUser = await createFallbackUserFromSession(userId);
-          if (fallbackUser && mounted) {
-            console.log('🔵 SETTING FALLBACK USER:', fallbackUser);
-            setUser(fallbackUser);
+          // Set user to null if database query fails
+          if (mounted) {
+            setUser(null);
           }
         } else if (userData && mounted) {
           console.log('🔵 SETTING USER from database:', userData);
@@ -97,21 +95,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             avatar: userData.avatar || undefined
           });
         } else if (!userData && mounted) {
-          console.log('🔵 No user data found, creating fallback');
-          const fallbackUser = await createFallbackUserFromSession(userId);
-          if (fallbackUser) {
-            setUser(fallbackUser);
-          }
+          console.log('🔵 No user data found in database');
+          setUser(null);
         }
       } catch (err) {
         console.error('🔵 SYNC ERROR:', err);
-        // NEW: Create fallback user from session data
         if (mounted) {
-          const fallbackUser = await createFallbackUserFromSession(userId);
-          if (fallbackUser) {
-            console.log('🔵 SETTING FALLBACK USER due to sync error:', fallbackUser);
-            setUser(fallbackUser);
-          }
+          setUser(null);
         }
       } finally {
         console.log('🔵 SETTING LOADING TO FALSE');
@@ -121,27 +111,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     };
 
-    // NEW: Create fallback user from session data
-    const createFallbackUserFromSession = async (userId: string) => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log('🔵 Creating fallback user from session:', session.user);
-          return {
-            name: session.user.user_metadata?.name || 'User',
-            phone: session.user.phone || 'Unknown',
-            email: session.user.email || '',
-            city: undefined,
-            gender: undefined,
-            avatar: undefined
-          };
-        }
-      } catch (err) {
-        console.error('🔵 Error creating fallback user:', err);
-      }
-      return null;
-    };
-
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -149,8 +118,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         
         if (!mounted) return;
         
-        // Clear timeouts since we got an auth event
-        if (authTimeoutId) clearTimeout(authTimeoutId);
+        // Clear timeout since we got an auth event
         if (initTimeoutId) clearTimeout(initTimeoutId);
         
         // Update session state
@@ -221,7 +189,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     return () => {
       mounted = false;
-      if (authTimeoutId) clearTimeout(authTimeoutId);
       if (initTimeoutId) clearTimeout(initTimeoutId);
       subscription.unsubscribe();
     };
@@ -229,9 +196,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
     const newUser: UserProfile = {
-      name: profileData?.name || 'John Doe',
+      name: profileData?.name || 'User',
       phone: phone,
-      email: profileData?.email || 'john.doe@example.com',
+      email: profileData?.email || '',
       city: profileData?.city,
       gender: profileData?.gender
     };

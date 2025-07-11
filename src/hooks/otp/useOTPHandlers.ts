@@ -23,6 +23,8 @@ interface OTPHandlersProps {
   setExistingUser: (user: any) => void;
   setIsVerified: (verified: boolean) => void;
   setIsSaving: (saving: boolean) => void;
+  onClose?: () => void;
+  resetModal?: () => void;
 }
 
 export const useOTPHandlers = ({
@@ -35,7 +37,9 @@ export const useOTPHandlers = ({
   setIsVerifying,
   setExistingUser,
   setIsVerified,
-  setIsSaving
+  setIsSaving,
+  onClose,
+  resetModal
 }: OTPHandlersProps) => {
   const { signIn } = useUser();
   const { toast } = useToast();
@@ -71,7 +75,7 @@ export const useOTPHandlers = ({
         setStep('otp');
         toast({
           title: "OTP Sent",
-          description: "Please check your phone for the verification code.",
+          description: `Verification code sent to ${formattedPhone}`,
         });
       }
     } catch (err) {
@@ -173,17 +177,28 @@ export const useOTPHandlers = ({
             console.log('👤 Existing user found:', userRecord.userData);
             setExistingUser(userRecord.userData);
             
-            // User exists, sign them in directly
+            // Sign in the user
             const userData = userRecord.userData;
             signIn(phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''), {
               name: userData.name,
               email: userData.email || '',
-              city: 'city' in userData ? userData.city : '',
+              city: 'city' in userData ? userData.city || '' : '',
               gender: 'gender' in userData ? userData.gender : undefined
             });
             
             setIsVerified(true);
             setIsVerifying(false);
+            
+            // Ensure modal closes properly after success message
+            setTimeout(() => {
+              if (onClose) {
+                onClose(); // Close the modal
+              }
+              if (resetModal) {
+                resetModal(); // Reset all modal states
+              }
+            }, 1500);
+            
             return { isExistingUser: true };
           } else {
             console.log('👤 New user - showing profile form');
@@ -305,6 +320,15 @@ export const useOTPHandlers = ({
       });
       
       navigate('/profile');
+      
+      // Close modal and reset state
+      if (onClose) {
+        onClose();
+      }
+      if (resetModal) {
+        resetModal();
+      }
+      
       return { success: true };
     } catch (err) {
       console.error('❌ Unexpected profile completion error:', err);

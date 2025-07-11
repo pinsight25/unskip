@@ -27,22 +27,42 @@ export const useOTPState = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const resetModal = () => {
+    console.log('🔄 Resetting modal state...');
+    
+    // Reset all step-related states
     setStep('phone');
     setPhoneNumber('+91 ');
     setOtp('');
+    
+    // Reset all loading and verification states
     setIsVerified(false);
-    setError('');
     setIsVerifying(false);
     setIsSendingOTP(false);
-    setProfileData({ name: '', email: '', city: '', gender: 'Male' });
     setIsSaving(false);
+    
+    // Clear error messages
+    setError('');
+    
+    // Reset profile data
+    setProfileData({ 
+      name: '', 
+      email: '', 
+      city: '', 
+      gender: 'Male' 
+    });
+    
+    // Clear existing user data
     setExistingUser(null);
+    
+    console.log('✅ Modal state reset complete');
   };
 
   const editPhoneNumber = () => {
     setStep('phone');
     setOtp('');
     setError('');
+    setIsVerified(false);
+    setIsVerifying(false);
   };
 
   return {

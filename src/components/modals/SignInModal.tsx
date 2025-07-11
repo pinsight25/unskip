@@ -37,7 +37,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     handleCompleteProfile,
     resetModal,
     editPhoneNumber
-  } = useOTPAuth();
+  } = useOTPAuth({ onClose });
 
   const handleClose = () => {
     onClose();
@@ -59,18 +59,16 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
 
     const result = await handleVerifyOTP();
     if (result?.isExistingUser) {
-      setTimeout(() => {
-        onClose();
-        resetModal();
-      }, 1500);
+      // Modal will close automatically via the handler
+      return;
     }
   };
 
   const handleProfileCompletion = async () => {
     const result = await handleCompleteProfile();
     if (result?.success) {
-      onClose();
-      resetModal();
+      // Modal closing is now handled in the handler
+      return;
     }
   };
 

@@ -2,7 +2,11 @@
 import { useOTPState } from './otp/useOTPState';
 import { useOTPHandlers } from './otp/useOTPHandlers';
 
-export const useOTPAuth = () => {
+interface UseOTPAuthProps {
+  onClose?: () => void;
+}
+
+export const useOTPAuth = (props?: UseOTPAuthProps) => {
   const {
     step,
     phoneNumber,
@@ -42,7 +46,9 @@ export const useOTPAuth = () => {
     setIsVerifying,
     setExistingUser,
     setIsVerified,
-    setIsSaving
+    setIsSaving,
+    onClose: props?.onClose,
+    resetModal
   });
 
   return {
