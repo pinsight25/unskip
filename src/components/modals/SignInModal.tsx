@@ -42,6 +42,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(true);
+  const [existingUser, setExistingUser] = useState<any>(null);
   
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -126,19 +127,56 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
         setError(error.message || 'Invalid OTP. Please try again.');
       } else if (data.user) {
         console.log('OTP verified successfully:', data.user);
-        setIsVerified(true);
         
-        setTimeout(() => {
-          setStep('profile');
-          setIsVerifying(false);
-          setIsVerified(false);
-        }, 1500);
+        // Check if user exists in users table
+        const { data: existingUserData, error: fetchError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('phone', formattedPhone)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('Error fetching user:', fetchError);
+        }
+
+        if (existingUserData) {
+          // Existing user - sign them in directly
+          console.log('Existing user found:', existingUserData);
+          setExistingUser(existingUserData);
+          
+          signIn(formattedPhone, {
+            name: existingUserData.name,
+            email: existingUserData.email || '',
+            city: existingUserData.city,
+            gender: existingUserData.gender
+          });
+          
+          setIsVerified(true);
+          setTimeout(() => {
+            toast({
+              title: "Welcome back!",
+              description: "You've been signed in successfully.",
+            });
+            onClose();
+            resetModal();
+            navigate('/profile');
+          }, 1500);
+        } else {
+          // New user - show profile completion
+          console.log('New user - showing profile form');
+          setIsVerified(true);
+          setTimeout(() => {
+            setStep('profile');
+            setIsVerifying(false);
+            setIsVerified(false);
+          }, 1500);
+        }
       }
     } catch (err) {
       console.error('Unexpected verification error:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
-      if (!isVerified) {
+      if (!isVerified && !existingUser) {
         setIsVerifying(false);
       }
     }
@@ -168,16 +206,17 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
         // Format phone number for storage
         const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
         
-        // Create/update user profile in users table
+        // Create user profile in users table
         const { error: profileError } = await supabase
           .from('users')
-          .upsert({
+          .insert({
             id: user.id,
             phone: formattedPhone,
             name: profileData.name.trim(),
             email: profileData.email.trim() || null,
             city: profileData.city,
             gender: profileData.gender,
+            created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
 
@@ -223,6 +262,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     setProfileData({ name: '', email: '', city: '', gender: '' });
     setIsSaving(false);
     setTermsAccepted(true);
+    setExistingUser(null);
   };
 
   const handleClose = () => {
@@ -251,8 +291,12 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
             <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
               <CheckCircle className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900">Phone Verified!</h3>
-            <p className="text-gray-600">Setting up your profile...</p>
+            <h3 className="text-xl font-bold mb-3 text-gray-900">
+              {existingUser ? 'Welcome Back!' : 'Phone Verified!'}
+            </h3>
+            <p className="text-gray-600">
+              {existingUser ? 'Signing you in...' : 'Setting up your profile...'}
+            </p>
           </div>
         </DialogContent>
       </Dialog>
