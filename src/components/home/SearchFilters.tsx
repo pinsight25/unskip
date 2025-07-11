@@ -173,11 +173,11 @@ const SearchFilters = ({ onFilterChange, onSearch, hideContent = false }: Search
                   </button>
                 )}
 
-                {/* Scrollable areas container - Fixed height */}
+                {/* Scrollable areas container - Fixed height with proper padding */}
                 <div 
                   ref={scrollContainerRef}
                   onScroll={handleScroll}
-                  className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1 lg:px-12 h-[52px]" 
+                  className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-1 lg:px-14 h-[52px]" 
                   style={{ WebkitOverflowScrolling: 'touch' }}
                 >
                   {currentPopularAreas.map((location) => {
