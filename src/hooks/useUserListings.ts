@@ -60,6 +60,7 @@ interface AccessoryListing {
   // Convert for compatibility
   price: { min: number; max: number };
   postedDate: string;
+  images: string[]; // Add required images field
 }
 
 interface UserStats {
@@ -68,6 +69,14 @@ interface UserStats {
   totalAccessories: number;
   activeAccessories: number;
   totalViews: number;
+}
+
+interface StatsRow {
+  total_cars: number;
+  active_cars: number;
+  total_accessories: number;
+  active_accessories: number;
+  total_views: string;
 }
 
 export const useUserListings = () => {
@@ -149,7 +158,7 @@ export const useUserListings = () => {
 
       // Fetch user stats
       const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId });
+        .rpc('get_user_listing_stats', { user_uuid: userId }) as { data: StatsRow[] | null, error: any };
 
       if (statsError) {
         console.error('Error fetching stats:', statsError);
@@ -215,6 +224,7 @@ export const useUserListings = () => {
           max: Number(accessory.price_max || accessory.price_min) 
         },
         postedDate: formatDate(accessory.created_at),
+        images: [], // Default empty images array
       }));
 
       setCarListings(transformedCars);

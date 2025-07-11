@@ -1,4 +1,3 @@
-
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Car, Package } from 'lucide-react';
@@ -56,12 +55,12 @@ interface Accessory {
   brand: string;
   category: string;
   price: { min: number; max: number };
+  images: string[];
   location: string;
   views: number;
-  status: string;
-  created_at: string;
-  type: 'accessory';
   postedDate: string;
+  status: string;
+  type: 'accessory';
 }
 
 interface MyListingsTabProps {
@@ -97,6 +96,13 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     postedDate: formatRelativeDate(listing.created_at)
   }));
 
+  // Transform accessories to ensure they have all required fields
+  const accessoriesWithRequiredFields = accessories.map(accessory => ({
+    ...accessory,
+    images: accessory.images || [], // Ensure images field exists
+    postedDate: accessory.postedDate || formatRelativeDate(accessory.created_at)
+  }));
+
   if (totalActive === 0) {
     return <EmptyListingsState />;
   }
@@ -129,19 +135,19 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
         )}
 
         {/* Separator */}
-        {listingsWithDate.length > 0 && accessories.length > 0 && (
+        {listingsWithDate.length > 0 && accessoriesWithRequiredFields.length > 0 && (
           <Separator />
         )}
 
         {/* Accessories Section */}
-        {accessories.length > 0 && (
+        {accessoriesWithRequiredFields.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Package className="h-5 w-5 text-gray-600" />
-              <h3 className="text-lg font-semibold">My Accessories ({accessories.length})</h3>
+              <h3 className="text-lg font-semibold">My Accessories ({accessoriesWithRequiredFields.length})</h3>
             </div>
             <div className="space-y-4">
-              {accessories.map((accessory) => (
+              {accessoriesWithRequiredFields.map((accessory) => (
                 <AccessoryCard
                   key={accessory.id}
                   accessory={accessory}
