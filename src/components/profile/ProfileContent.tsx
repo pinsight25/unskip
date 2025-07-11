@@ -26,6 +26,62 @@ const ProfileContent = ({
   onSignOut,
   onDeleteListing
 }: ProfileContentProps) => {
+  // Mock accessories data - in real app this would come from props
+  const mockAccessories = [
+    {
+      id: 'acc-1',
+      name: 'Premium Seat Covers',
+      brand: 'AutoFit',
+      category: 'seat-covers',
+      price: { min: 2500, max: 2500 },
+      images: ['/placeholder.svg'],
+      location: 'Mumbai, Maharashtra',
+      views: 23,
+      postedDate: '3 days ago',
+      status: 'active',
+      type: 'accessory'
+    },
+    {
+      id: 'acc-2',
+      name: 'LED Headlight Kit',
+      brand: 'BrightAuto',
+      category: 'led-lights',
+      price: { min: 4500, max: 4500 },
+      images: ['/placeholder.svg'],
+      location: 'Mumbai, Maharashtra',
+      views: 15,
+      postedDate: '1 week ago',
+      status: 'active',
+      type: 'accessory'
+    },
+    {
+      id: 'acc-3',
+      name: 'Dashboard Camera',
+      brand: 'SafeDrive',
+      category: 'dash-cameras',
+      price: { min: 8000, max: 8000 },
+      images: ['/placeholder.svg'],
+      location: 'Mumbai, Maharashtra',
+      views: 31,
+      postedDate: '5 days ago',
+      status: 'sold',
+      type: 'accessory'
+    }
+  ];
+
+  // Mock dealer info - in real app this would come from user context
+  const dealerInfo = user?.dealerVerified ? {
+    businessName: 'Premium Auto Solutions',
+    verified: true
+  } : null;
+
+  // Calculate updated stats including accessories
+  const totalListings = listings.length + mockAccessories.filter(acc => acc.status === 'active').length;
+  const updatedStats = {
+    ...stats,
+    activeListings: totalListings
+  };
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header Section */}
@@ -46,21 +102,22 @@ const ProfileContent = ({
           {/* Profile Header */}
           <ProfileHeader
             profile={user}
+            dealerInfo={dealerInfo}
             onEditProfile={onEditProfile}
             onSignOut={onSignOut}
           />
 
           {/* Stats Section */}
-          <ProfileStats stats={stats} />
+          <ProfileStats stats={updatedStats} />
 
           {/* Tabs */}
           <Tabs defaultValue="listings" className="w-full">
             <TabsList className="grid w-full grid-cols-2 section-gap">
               <TabsTrigger value="listings">
-                My Listings ({stats.activeListings})
+                My Listings ({totalListings})
               </TabsTrigger>
               <TabsTrigger value="offers">
-                Received Offers ({stats.totalOffers})
+                Received Offers ({updatedStats.totalOffers})
               </TabsTrigger>
             </TabsList>
 
@@ -68,6 +125,7 @@ const ProfileContent = ({
             <TabsContent value="listings">
               <MyListingsTab
                 listings={listings}
+                accessories={mockAccessories}
                 onDeleteListing={onDeleteListing}
               />
             </TabsContent>

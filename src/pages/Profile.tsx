@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -151,6 +150,12 @@ const Profile = () => {
     }
   ]);
 
+  // Add mock dealer verification to user - in real app this would come from context
+  const userWithDealer = user ? {
+    ...user,
+    dealerVerified: true // Mock dealer verification status
+  } : null;
+
   const stats = {
     totalViews: listings.reduce((sum, listing) => sum + listing.views, 0),
     activeListings: listings.filter(l => l.status === 'active').length,
@@ -190,7 +195,7 @@ const Profile = () => {
   };
 
   // Show sign-in prompt for non-signed-in users
-  if (!isSignedIn || !user) {
+  if (!isSignedIn || !userWithDealer) {
     console.log('Showing sign-in prompt');
     return (
       <>
@@ -204,7 +209,7 @@ const Profile = () => {
           setIsSignInModalOpen={setIsSignInModalOpen}
           deleteModal={deleteModal}
           setDeleteModal={setDeleteModal}
-          user={user}
+          user={userWithDealer}
           onEditProfile={handleEditProfile}
           onSignOut={handleSignOut}
           onConfirmDeleteListing={confirmDeleteListing}
@@ -218,7 +223,7 @@ const Profile = () => {
   return (
     <>
       <ProfileContent
-        user={user}
+        user={userWithDealer}
         listings={listings}
         stats={stats}
         onEditProfile={() => setIsEditProfileOpen(true)}
@@ -235,7 +240,7 @@ const Profile = () => {
         setIsSignInModalOpen={setIsSignInModalOpen}
         deleteModal={deleteModal}
         setDeleteModal={setDeleteModal}
-        user={user}
+        user={userWithDealer}
         onEditProfile={handleEditProfile}
         onSignOut={handleSignOut}
         onConfirmDeleteListing={confirmDeleteListing}
