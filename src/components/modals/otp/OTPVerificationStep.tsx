@@ -36,12 +36,6 @@ const OTPVerificationStep = ({
         </Badge>
       </div>
 
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4">
-        <p className="text-sm text-green-800 font-medium text-center">
-          <strong>🔥 Demo Mode:</strong> Use OTP <code className="bg-green-200 px-3 py-1 rounded-lg text-lg font-bold mx-2">123456</code>
-        </p>
-      </div>
-
       <div className="space-y-4">
         <div className="text-center">
           <label className="text-sm font-semibold text-gray-700 block mb-3">Enter 6-digit OTP</label>

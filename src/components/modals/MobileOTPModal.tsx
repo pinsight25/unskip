@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,6 +41,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
   const [phoneNumber, setPhoneNumber] = useState(initialPhone || '+91 ');
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isSendingOTP, setIsSendingOTP] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
   
@@ -59,32 +61,118 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
 
   const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
 
-  const handleSendOTP = () => {
-    if (phoneDigits.length >= 10) {
-      setStep('otp');
-      setError('');
-    } else {
+  const handleSendOTP = async () => {
+    if (phoneDigits.length < 10) {
       setError('Please enter a valid phone number');
+      return;
+    }
+
+    setIsSendingOTP(true);
+    setError('');
+
+    try {
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      console.log('[Mobile] Sending OTP to:', formattedPhone);
+      
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhone,
+      });
+
+      if (error) {
+        console.error('[Mobile] OTP send error:', error);
+        setError(error.message || 'Failed to send OTP. Please try again.');
+      } else {
+        console.log('[Mobile] OTP sent successfully');
+        setStep('otp');
+        toast({
+          title: "OTP Sent",
+          description: "Please check your phone for the verification code.",
+        });
+      }
+    } catch (err) {
+      console.error('[Mobile] Unexpected error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSendingOTP(false);
     }
   };
 
   const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      setError('Please enter the complete 6-digit OTP');
+      return;
+    }
+
     setIsVerifying(true);
     setError('');
     
-    setTimeout(() => {
-      if (otp === '123456') {
-        setIsVerified(true);
-        setTimeout(() => {
-          setStep('profile');
-          setIsVerifying(false);
-          setIsVerified(false);
-        }, 1500);
-      } else {
-        setError('Invalid OTP. Please try again.');
+    try {
+      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      
+      console.log('[Mobile] Verifying OTP for:', formattedPhone);
+      
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: formattedPhone,
+        token: otp,
+        type: 'sms'
+      });
+
+      if (error) {
+        console.error('[Mobile] OTP verification error:', error);
+        setError(error.message || 'Invalid OTP. Please try again.');
+      } else if (data.user) {
+        console.log('[Mobile] OTP verified successfully:', data.user);
+        
+        const { data: existingUserData, error: fetchError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('phone', formattedPhone)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('[Mobile] Error fetching user:', fetchError);
+        }
+
+        if (existingUserData) {
+          console.log('[Mobile] Existing user found:', existingUserData);
+          
+          signIn(formattedPhone, {
+            name: existingUserData.name,
+            email: existingUserData.email || '',
+            city: existingUserData.city,
+            gender: existingUserData.gender
+          });
+          
+          setIsVerified(true);
+          setTimeout(() => {
+            toast({
+              title: "Welcome back!",
+              description: "You've been signed in successfully.",
+            });
+            onSuccess();
+            onClose();
+            resetModal();
+            navigate('/profile');
+          }, 1500);
+        } else {
+          console.log('[Mobile] New user - showing profile form');
+          setIsVerified(true);
+          setTimeout(() => {
+            setStep('profile');
+            setIsVerifying(false);
+            setIsVerified(false);
+          }, 1500);
+        }
+      }
+    } catch (err) {
+      console.error('[Mobile] Unexpected verification error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      if (!isVerified) {
         setIsVerifying(false);
       }
-    }, 1000);
+    }
   };
 
   const handleCompleteProfile = async () => {
@@ -107,7 +195,6 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
     console.log('🔍 [Mobile] Starting profile completion process...');
     
     try {
-      // Get the authenticated user
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       console.log('[Mobile] Auth user:', user);
       console.log('[Mobile] Auth error:', authError);
@@ -124,11 +211,9 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
         return;
       }
 
-      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
-      
       const userData = {
         id: user.id,
-        phone: formattedPhone,
+        phone: user.phone,
         name: profileData.name.trim(),
         email: profileData.email.trim() || null,
         city: profileData.city,
@@ -156,8 +241,7 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
 
       console.log('✅ [Mobile] Profile created successfully');
       
-      // Sign in with actual profile data including gender
-      signIn(phoneNumber, {
+      signIn(user.phone!, {
         name: profileData.name.trim(),
         email: profileData.email.trim(),
         city: profileData.city,
@@ -174,7 +258,6 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
       resetModal();
       setIsSaving(false);
       
-      // Route to profile page after completion
       navigate('/profile');
     } catch (err) {
       console.error('❌ [Mobile] Unexpected profile completion error:', err);
@@ -260,10 +343,17 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               </div>
               <Button 
                 onClick={handleSendOTP} 
-                disabled={phoneDigits.length < 10}
+                disabled={phoneDigits.length < 10 || isSendingOTP}
                 className="w-full h-12 text-base font-semibold"
               >
-                Send OTP
+                {isSendingOTP ? (
+                  <>
+                    <Loader className="h-4 w-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send OTP'
+                )}
               </Button>
             </>
           ) : step === 'otp' ? (
@@ -277,13 +367,6 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                 <Badge variant="outline" className="bg-white">
                   OTP Sent
                 </Badge>
-              </div>
-
-              <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
-                <p className="text-green-800 font-medium text-center">
-                  <strong>🔥 Demo Mode:</strong><br />
-                  Use OTP <code className="bg-green-200 px-3 py-1 rounded text-xl font-bold">123456</code> to verify
-                </p>
               </div>
 
               <div className="space-y-4">
@@ -302,8 +385,8 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
               </div>
 
               <div className="text-center">
-                <Button variant="ghost" size="sm" className="text-sm">
-                  Didn't receive OTP? Resend
+                <Button variant="ghost" size="sm" className="text-sm" onClick={handleSendOTP} disabled={isSendingOTP}>
+                  {isSendingOTP ? 'Sending...' : 'Didn\'t receive OTP? Resend'}
                 </Button>
               </div>
 
@@ -313,7 +396,14 @@ const MobileOTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone,
                   disabled={otp.length !== 6 || isVerifying}
                   className="w-full h-12 text-base font-semibold"
                 >
-                  {isVerifying ? 'Verifying...' : 'Verify OTP'}
+                  {isVerifying ? (
+                    <>
+                      <Loader className="h-4 w-4 mr-2 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Verify OTP'
+                  )}
                 </Button>
                 <Button 
                   variant="outline" 

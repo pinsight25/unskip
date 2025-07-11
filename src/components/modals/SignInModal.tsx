@@ -186,7 +186,6 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
     try {
       console.log('🔍 Starting profile completion process...');
       
-      // Get the authenticated user
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       console.log('Auth user:', user);
       console.log('Auth error:', authError);
@@ -203,11 +202,9 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
         return;
       }
 
-      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
-      
       const userData = {
         id: user.id,
-        phone: formattedPhone,
+        phone: user.phone,
         name: profileData.name.trim(),
         email: profileData.email.trim() || null,
         city: profileData.city,
@@ -235,7 +232,7 @@ const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
 
       console.log('✅ Profile created successfully');
       
-      signIn(formattedPhone, {
+      signIn(user.phone!, {
         name: profileData.name.trim(),
         email: profileData.email.trim(),
         city: profileData.city,
