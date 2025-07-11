@@ -58,7 +58,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     }, 5000);
 
-    // Function to sync user data from the users table - WITH TIMEOUT PROTECTION
+    // Function to sync user data from the users table - WITH ENHANCED DEBUG LOGGING
     const syncUserFromDatabase = async (userId: string) => {
       console.log('🔴 SYNC START:', userId);
       
@@ -66,24 +66,44 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const timeoutId = setTimeout(() => {
         console.log('🔴 SYNC TIMEOUT - Using fallback user');
         const fallbackUser = {
-          id: userId,
+          name: 'Fallback User',
           phone: '8879120413',
-          name: 'User',
-          email: '',
-          gender: 'Other',
-          city: '',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          email: 'fallback@example.com',
+          city: undefined,
+          gender: undefined,
+          avatar: undefined
         };
         setUser(fallbackUser);
         setIsLoading(false);
       }, 3000); // 3 second timeout
 
       try {
-        // Try a simple query first
-        console.log('🔴 Attempting database query...');
+        // First, let's check if Supabase is connected
+        console.log('🔴 Checking Supabase connection...');
+        console.log('🔴 Supabase URL:', supabase.supabaseUrl);
+        console.log('🔴 Supabase Key exists:', !!supabase.supabaseKey);
         
-        const { data: userData, error } = await supabase
+        // Test basic connectivity
+        console.log('🔴 Testing basic query...');
+        const { data: testData, error: testError, status, statusText } = await supabase
+          .from('users')
+          .select('count')
+          .limit(1);
+          
+        console.log('🔴 Basic query result:', { 
+          testData, 
+          testError, 
+          status, 
+          statusText,
+          errorCode: testError?.code,
+          errorMessage: testError?.message,
+          errorDetails: testError?.details
+        });
+
+        // Now try the actual user query
+        console.log('🔴 Attempting user-specific query...');
+        
+        const { data: userData, error, status: userStatus } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
@@ -91,7 +111,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         clearTimeout(timeoutId); // Clear timeout if query succeeds
 
-        console.log('🔴 Query completed:', { userData, error });
+        console.log('🔴 User query completed:', { 
+          userData, 
+          error,
+          userStatus,
+          errorCode: error?.code,
+          errorMessage: error?.message,
+          errorDetails: error?.details
+        });
 
         if (error) {
           console.error('🔴 USER QUERY ERROR:', error);
@@ -121,13 +148,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         }
       } catch (err) {
         console.error('🔴 SYNC ERROR:', err);
+        console.error('🔴 Error type:', typeof err);
+        console.error('🔴 Error details:', {
+          name: err instanceof Error ? err.name : 'Unknown',
+          message: err instanceof Error ? err.message : String(err),
+          stack: err instanceof Error ? err.stack : undefined
+        });
+        
         clearTimeout(timeoutId);
         
         // Even if everything crashes, create a fallback user
         const crashUser = {
-          name: 'Fallback User',
+          name: 'Crash Fallback User',
           phone: '8879120413',
-          email: 'fallback@example.com',
+          email: 'crash@example.com',
           city: undefined,
           gender: undefined,
           avatar: undefined
@@ -244,17 +278,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const signOut = async () => {
     try {
-      console.log('Signing out user...');
+      console.log('🔴 SIGN OUT: Starting sign out process...');
+      
+      // Clear user state immediately for responsive UI
+      setUser(null);
+      setSession(null);
+      console.log('🔴 SIGN OUT: Cleared local state');
+      
+      // Call Supabase signOut
       const { error } = await supabase.auth.signOut();
+      
       if (error) {
-        console.error('Error signing out:', error);
+        console.error('🔴 SIGN OUT ERROR:', error);
+        // Even if signOut fails, we've already cleared local state
       } else {
-        setUser(null);
-        setSession(null);
-        console.log('User signed out successfully');
+        console.log('🔴 SIGN OUT: Successfully signed out from Supabase');
       }
     } catch (error) {
-      console.error('Unexpected error during sign out:', error);
+      console.error('🔴 SIGN OUT UNEXPECTED ERROR:', error);
+      // Even if there's an error, we've cleared the local state
     }
   };
 

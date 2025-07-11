@@ -27,9 +27,14 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   console.log('- user?.name:', user?.name);
   console.log('- user?.phone:', user?.phone);
 
-  const handleSignOut = () => {
-    console.log('HeaderActions: Sign out clicked');
-    signOut();
+  const handleSignOut = async () => {
+    console.log('🔴 HeaderActions: Sign out button clicked');
+    try {
+      await signOut();
+      console.log('🔴 HeaderActions: Sign out completed');
+    } catch (error) {
+      console.error('🔴 HeaderActions: Sign out failed:', error);
+    }
   };
 
   const handleSignInClick = () => {
@@ -107,7 +112,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
                 Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </DropdownMenuItem>
