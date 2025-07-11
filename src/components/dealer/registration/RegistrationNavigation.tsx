@@ -20,7 +20,7 @@ const RegistrationNavigation = ({
   canProceed
 }: RegistrationNavigationProps) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8 pt-4">
+    <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8 pt-4 pb-20 lg:pb-4">
       <Button
         variant="outline"
         onClick={onPrevStep}

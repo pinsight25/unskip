@@ -21,7 +21,7 @@ const PostAccessoryNavigation = ({
   isLimitReached
 }: PostAccessoryNavigationProps) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12">
+    <div className="flex flex-col sm:flex-row gap-4 justify-between mt-6 mb-12 pb-20 lg:pb-0">
       <Button 
         variant="outline" 
         onClick={onPrevious}

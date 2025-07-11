@@ -21,7 +21,7 @@ const SellCar = () => {
   } = useSellCarLogic();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-44 lg:pb-32 responsive-header-spacing">
+    <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-8 lg:pb-32 responsive-header-spacing">
       <SellCarHeader
         currentStep={currentStep}
         activeCarListings={activeCarListings}
