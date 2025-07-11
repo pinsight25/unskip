@@ -107,15 +107,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (event === 'SIGNED_IN' && session?.user) {
           console.log('User signed in, syncing data...');
           await syncUserFromDatabase(session.user.id);
+          setIsLoading(false); // FIXED: Set loading to false after successful sign in
         } else if (event === 'SIGNED_OUT') {
           console.log('User signed out, clearing data...');
           setUser(null);
+          setIsLoading(false); // FIXED: Set loading to false after sign out
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           console.log('Token refreshed, maintaining session...');
           // User data should already be set, but ensure we maintain it
           if (!user) {
             await syncUserFromDatabase(session.user.id);
           }
+          setIsLoading(false); // FIXED: Set loading to false after token refresh
         } else if (event === 'INITIAL_SESSION') {
           if (session?.user) {
             console.log('Initial session found, syncing data...');
@@ -123,10 +126,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           } else {
             console.log('Initial session check - no session found');
           }
+          setIsLoading(false); // FIXED: Always set loading to false after initial session check
+        } else {
+          // FIXED: Handle any other auth events by setting loading to false
+          setIsLoading(false);
         }
-        
-        // Always set loading to false after handling auth state change
-        setIsLoading(false);
       }
     );
 
@@ -139,7 +143,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (error) {
           console.error('Error getting session:', error);
           if (mounted) {
-            setIsLoading(false);
+            setIsLoading(false); // FIXED: Set loading to false on error
           }
           return;
         }
@@ -148,15 +152,17 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('Found existing session:', session.user.id);
           setSession(session);
           await syncUserFromDatabase(session.user.id);
+          setIsLoading(false); // FIXED: Set loading to false after successful sync
         } else {
           console.log('No existing session found');
+          if (mounted) {
+            setIsLoading(false); // FIXED: Set loading to false when no session
+          }
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
-      } finally {
-        // Always set loading to false, regardless of success or error
         if (mounted) {
-          setIsLoading(false);
+          setIsLoading(false); // FIXED: Set loading to false on catch
         }
       }
     };
