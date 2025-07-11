@@ -98,13 +98,15 @@ export const useUserListings = () => {
         return;
       }
 
-      // Fetch user stats using RPC call with proper typing
+      // Fetch user stats using RPC call with explicit typing
       console.log('useUserListings: Fetching stats for user_uuid:', userId);
-      const { data: statsData, error: statsError } = await supabase
-        .rpc('get_user_listing_stats', { user_uuid: userId }) as {
-          data: UserListingStats[] | null;
-          error: any;
-        };
+      const statsResponse = await (supabase as any)
+        .rpc('get_user_listing_stats', { user_uuid: userId });
+      
+      const { data: statsData, error: statsError } = statsResponse as {
+        data: UserListingStats[] | null;
+        error: any;
+      };
 
       console.log('useUserListings: Stats data:', statsData);
       console.log('useUserListings: Stats error:', statsError);
