@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Phone, Edit, Loader, RefreshCw } from 'lucide-react';
+import { Phone, Edit, Loader, RefreshCw, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface OTPVerificationStepProps {
@@ -36,6 +36,8 @@ const OTPVerificationStep = ({
   const handleRefresh = () => {
     window.location.reload();
   };
+
+  const isTimeoutError = error.includes('timeout') || error.includes('taking too long');
 
   return (
     <>
@@ -90,17 +92,38 @@ const OTPVerificationStep = ({
         </div>
 
         {error && (
-          <div className="text-sm text-red-500 text-center bg-red-50 py-2 px-4 rounded-xl">
-            <p>{error}</p>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleRefresh}
-              className="mt-2 text-xs text-gray-500 hover:text-primary"
-            >
-              <RefreshCw className="h-3 w-3 mr-1" />
-              Having issues? Refresh page
-            </Button>
+          <div className="text-sm text-red-500 text-center bg-red-50 py-3 px-4 rounded-xl border border-red-200">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <AlertCircle className="h-4 w-4" />
+              <span className="font-medium">Verification Error</span>
+            </div>
+            <p className="text-red-600 mb-3">{error}</p>
+            
+            {isTimeoutError && (
+              <div className="space-y-2">
+                <p className="text-xs text-red-500">Try these solutions:</p>
+                <div className="flex flex-col space-y-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRefresh}
+                    className="text-xs border-red-200 hover:bg-red-50"
+                  >
+                    <RefreshCw className="h-3 w-3 mr-1" />
+                    Refresh Page
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={onResendOTP}
+                    disabled={isSendingOTP}
+                    className="text-xs border-red-200 hover:bg-red-50"
+                  >
+                    {isSendingOTP ? 'Sending...' : 'Resend OTP'}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

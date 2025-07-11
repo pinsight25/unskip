@@ -82,6 +82,51 @@ export const useOTPHandlers = ({
     }
   };
 
+  const verifyOTPWithRetry = async (attempt = 1, maxAttempts = 3): Promise<any> => {
+    const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+    
+    console.log(`🔵 OTP VERIFICATION ATTEMPT ${attempt}/${maxAttempts}:`);
+    console.log('- Phone:', formattedPhone);
+    console.log('- OTP:', otp);
+    console.log('- Timestamp:', new Date().toISOString());
+    
+    try {
+      // Create a promise that will timeout after 45 seconds
+      const verificationPromise = supabase.auth.verifyOtp({
+        phone: formattedPhone,
+        token: otp,
+        type: 'sms'
+      });
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Verification timeout after 45 seconds (attempt ${attempt})`));
+        }, 45000);
+      });
+
+      const result = await Promise.race([verificationPromise, timeoutPromise]);
+      console.log(`✅ OTP verification completed on attempt ${attempt}:`, result);
+      return result;
+    } catch (error: any) {
+      console.error(`❌ OTP verification error on attempt ${attempt}:`, {
+        message: error.message,
+        code: error.code,
+        status: error.status,
+        details: error.details,
+        hint: error.hint
+      });
+
+      // If it's a timeout and we have retries left, try again
+      if (error.message?.includes('timeout') && attempt < maxAttempts) {
+        console.log(`🔄 Retrying OTP verification (attempt ${attempt + 1}/${maxAttempts})...`);
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+        return verifyOTPWithRetry(attempt + 1, maxAttempts);
+      }
+
+      throw error;
+    }
+  };
+
   const handleVerifyOTP = async () => {
     if (otp.length !== 6) {
       setError('Please enter the complete 6-digit OTP');
@@ -91,63 +136,68 @@ export const useOTPHandlers = ({
     setIsVerifying(true);
     setError('');
     
-    // Add timeout to prevent getting stuck
-    const timeoutId = setTimeout(() => {
-      if (setIsVerifying) {
-        console.warn('⚠️ OTP verification timeout');
-        setError('Verification is taking too long. Please try again or refresh the page.');
-        setIsVerifying(false);
-      }
-    }, 30000); // 30 second timeout
-    
     try {
-      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+      console.log('🔵 STARTING OTP VERIFICATION PROCESS');
       
-      console.log('🔵 VERIFYING OTP:');
-      console.log('- Phone:', formattedPhone);
-      console.log('- OTP:', otp);
-      
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
-        token: otp,
-        type: 'sms'
-      });
-
-      console.log('🔍 OTP Verification Response:', { data, error });
-
-      clearTimeout(timeoutId);
+      const { data, error } = await verifyOTPWithRetry();
 
       if (error) {
-        console.error('❌ OTP verification error:', error);
-        setError(error.message || 'Invalid OTP. Please try again.');
+        console.error('❌ Final OTP verification error:', error);
+        let errorMessage = 'Invalid OTP. Please try again.';
+        
+        // Provide more specific error messages
+        if (error.message?.includes('timeout')) {
+          errorMessage = 'Verification is taking too long. Please try again or refresh the page.';
+        } else if (error.message?.includes('expired')) {
+          errorMessage = 'OTP has expired. Please request a new one.';
+        } else if (error.message?.includes('invalid')) {
+          errorMessage = 'Invalid OTP code. Please check and try again.';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        setError(errorMessage);
         setIsVerifying(false);
         return;
       } 
       
       if (data.user) {
-        console.log('✅ OTP verified successfully:', data.user);
+        console.log('✅ OTP verified successfully:', data.user.id);
         
         // Create or get user record immediately after auth success
-        const userRecord = await createOrGetUserRecord(data.user, formattedPhone);
-        
-        if (userRecord?.isExisting) {
-          console.log('👤 Existing user found:', userRecord.userData);
-          setExistingUser(userRecord.userData);
+        try {
+          console.log('🔄 Creating/getting user record...');
+          const userRecord = await createOrGetUserRecord(data.user, phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''));
           
-          // User exists, sign them in directly - safely access optional properties
-          const userData = userRecord.userData;
-          signIn(formattedPhone, {
-            name: userData.name,
-            email: userData.email || '',
-            city: 'city' in userData ? userData.city : '',
-            gender: 'gender' in userData ? userData.gender : undefined
-          });
-          
-          setIsVerified(true);
-          setIsVerifying(false);
-          return { isExistingUser: true };
-        } else {
-          console.log('👤 New user - showing profile form');
+          if (userRecord?.isExisting) {
+            console.log('👤 Existing user found:', userRecord.userData);
+            setExistingUser(userRecord.userData);
+            
+            // User exists, sign them in directly
+            const userData = userRecord.userData;
+            signIn(phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''), {
+              name: userData.name,
+              email: userData.email || '',
+              city: 'city' in userData ? userData.city : '',
+              gender: 'gender' in userData ? userData.gender : undefined
+            });
+            
+            setIsVerified(true);
+            setIsVerifying(false);
+            return { isExistingUser: true };
+          } else {
+            console.log('👤 New user - showing profile form');
+            setIsVerified(true);
+            setTimeout(() => {
+              setStep('profile');
+              setIsVerifying(false);
+              setIsVerified(false);
+            }, 1500);
+            return { isExistingUser: false };
+          }
+        } catch (userRecordError) {
+          console.error('❌ Error creating/getting user record:', userRecordError);
+          // Continue with auth but show profile form
           setIsVerified(true);
           setTimeout(() => {
             setStep('profile');
@@ -160,10 +210,19 @@ export const useOTPHandlers = ({
         console.error('❌ No user data in verification response');
         setError('Verification failed. Please try again.');
       }
-    } catch (err) {
-      clearTimeout(timeoutId);
-      console.error('❌ Unexpected verification error:', err);
-      setError('An unexpected error occurred. Please try again or refresh the page.');
+    } catch (err: any) {
+      console.error('❌ Unexpected verification error:', {
+        message: err.message,
+        stack: err.stack,
+        name: err.name
+      });
+      
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+      if (err.message?.includes('timeout')) {
+        errorMessage = 'The verification process is taking too long. Please refresh the page and try again.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsVerifying(false);
     }
