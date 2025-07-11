@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
@@ -125,12 +126,13 @@ export const useOTPAuth = () => {
           console.log('👤 Existing user found:', userRecord.userData);
           setExistingUser(userRecord.userData);
           
-          // User exists, sign them in directly
+          // User exists, sign them in directly - safely access optional properties
+          const userData = userRecord.userData;
           signIn(formattedPhone, {
-            name: userRecord.userData.name,
-            email: userRecord.userData.email || '',
-            city: userRecord.userData.city,
-            gender: userRecord.userData.gender
+            name: userData.name,
+            email: userData.email || '',
+            city: 'city' in userData ? userData.city : '',
+            gender: 'gender' in userData ? userData.gender : undefined
           });
           
           setIsVerified(true);
