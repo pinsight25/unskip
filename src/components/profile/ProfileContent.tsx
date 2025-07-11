@@ -18,6 +18,8 @@ interface ProfileContentProps {
     activeListings: number;
     totalOffers: number;
   };
+  isLoading: boolean;
+  error: string | null;
   onEditProfile: () => void;
   onSignOut: () => void;
   onDeleteListing: (listingId: string, title: string) => void;
@@ -28,6 +30,8 @@ const ProfileContent = ({
   listings,
   accessories,
   stats,
+  isLoading,
+  error,
   onEditProfile,
   onSignOut,
   onDeleteListing
@@ -107,6 +111,8 @@ const ProfileContent = ({
               <MyListingsTab
                 listings={listings}
                 accessories={accessories}
+                isLoading={isLoading}
+                error={error}
                 onDeleteListing={onDeleteListing}
               />
             </TabsContent>

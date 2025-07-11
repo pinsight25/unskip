@@ -7,6 +7,7 @@ import { formatPrice, getStatusVariant, getStatusText } from '@/utils/listingHel
 import ListingCard from './listings/ListingCard';
 import AccessoryCard from './listings/AccessoryCard';
 import EmptyListingsState from './listings/EmptyListingsState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Listing {
   id: string;
@@ -67,19 +68,53 @@ interface Accessory {
 interface MyListingsTabProps {
   listings: Listing[];
   accessories: Accessory[];
+  isLoading: boolean;
+  error: string | null;
   onDeleteListing: (listingId: string, title: string) => void;
 }
 
-const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTabProps) => {
-  console.log('MyListingsTab: Component rendered');
-  console.log('MyListingsTab: Props received:', {
+const MyListingsTab = ({ listings, accessories, isLoading, error, onDeleteListing }: MyListingsTabProps) => {
+  console.log('MyListingsTab: Component rendered with props:', {
     listingsCount: listings?.length || 0,
     accessoriesCount: accessories?.length || 0,
+    isLoading,
+    error,
     listings: listings,
     accessories: accessories
   });
 
   const { handleEditListing, handleDuplicateListing, handleEditAccessory } = useListingHandlers();
+
+  // Show loading state
+  if (isLoading) {
+    console.log('MyListingsTab: Showing loading state');
+    return (
+      <Card className="p-4 md:p-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Skeleton className="h-5 w-5" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+      </Card>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    console.log('MyListingsTab: Showing error state:', error);
+    return (
+      <Card className="p-4 md:p-6">
+        <div className="text-center py-12">
+          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-gray-600">Please try refreshing the page</p>
+        </div>
+      </Card>
+    );
+  }
 
   const activeListings = listings.filter(l => l.status === 'active');
   const activeAccessories = accessories.filter(a => a.status === 'active');
@@ -90,6 +125,12 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     activeAccessories: activeAccessories.length,
     totalActive
   });
+
+  // Show empty state when no active listings
+  if (totalActive === 0) {
+    console.log('MyListingsTab: No active listings, showing empty state');
+    return <EmptyListingsState />;
+  }
 
   // Helper function to format date relative to now
   const formatRelativeDate = (dateString: string) => {
@@ -121,11 +162,6 @@ const MyListingsTab = ({ listings, accessories, onDeleteListing }: MyListingsTab
     listingsWithDate: listingsWithDate.length,
     accessoriesWithRequiredFields: accessoriesWithRequiredFields.length
   });
-
-  if (totalActive === 0) {
-    console.log('MyListingsTab: No active listings, showing empty state');
-    return <EmptyListingsState />;
-  }
 
   return (
     <Card className="p-4 md:p-6">
