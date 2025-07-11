@@ -80,8 +80,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       try {
         // First, let's check if Supabase is connected
         console.log('🔴 Checking Supabase connection...');
-        console.log('🔴 Supabase URL:', supabase.supabaseUrl);
-        console.log('🔴 Supabase Key exists:', !!supabase.supabaseKey);
         
         // Test basic connectivity
         console.log('🔴 Testing basic query...');
