@@ -1,7 +1,6 @@
 
 import EditProfileModal from '@/components/modals/EditProfileModal';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
-import SignInModal from '@/components/modals/SignInModal';
 import MobileOTPModal from '@/components/modals/MobileOTPModal';
 
 interface ProfileModalsProps {
@@ -9,8 +8,6 @@ interface ProfileModalsProps {
   setIsEditProfileOpen: (open: boolean) => void;
   isSignOutModalOpen: boolean;
   setIsSignOutModalOpen: (open: boolean) => void;
-  isSignInModalOpen: boolean;
-  setIsSignInModalOpen: (open: boolean) => void;
   deleteModal: {
     isOpen: boolean;
     listingId: string | null;
@@ -29,8 +26,6 @@ const ProfileModals = ({
   setIsEditProfileOpen,
   isSignOutModalOpen,
   setIsSignOutModalOpen,
-  isSignInModalOpen,
-  setIsSignInModalOpen,
   deleteModal,
   setDeleteModal,
   user,
@@ -66,21 +61,6 @@ const ProfileModals = ({
         title="Delete Listing"
         description={`Are you sure you want to delete "${deleteModal.title}"? This action cannot be undone.`}
       />
-
-      {isMobile ? (
-        <MobileOTPModal
-          isOpen={isSignInModalOpen}
-          onClose={() => setIsSignInModalOpen(false)}
-          onSuccess={() => setIsSignInModalOpen(false)}
-          phoneNumber=""
-          purpose="access your profile"
-        />
-      ) : (
-        <SignInModal 
-          isOpen={isSignInModalOpen}
-          onClose={() => setIsSignInModalOpen(false)}
-        />
-      )}
     </>
   );
 };

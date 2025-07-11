@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
@@ -9,7 +8,7 @@ interface ProfileData {
   name: string;
   email: string;
   city: string;
-  gender: 'Male' | 'Female' | 'Other'; // Fix: Use the exact enum values instead of string
+  gender: 'Male' | 'Female' | 'Other';
 }
 
 export const useOTPAuth = () => {
@@ -81,6 +80,15 @@ export const useOTPAuth = () => {
     setIsVerifying(true);
     setError('');
     
+    // Add timeout to prevent getting stuck
+    const timeoutId = setTimeout(() => {
+      if (isVerifying) {
+        console.warn('OTP verification timeout');
+        setError('Verification is taking too long. Please try again or refresh the page.');
+        setIsVerifying(false);
+      }
+    }, 30000); // 30 second timeout
+    
     try {
       const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
       
@@ -92,10 +100,16 @@ export const useOTPAuth = () => {
         type: 'sms'
       });
 
+      clearTimeout(timeoutId);
+
       if (error) {
         console.error('OTP verification error:', error);
         setError(error.message || 'Invalid OTP. Please try again.');
-      } else if (data.user) {
+        setIsVerifying(false);
+        return;
+      } 
+      
+      if (data.user) {
         console.log('OTP verified successfully:', data.user);
         
         // Check if user profile already exists in our users table
@@ -122,6 +136,7 @@ export const useOTPAuth = () => {
           });
           
           setIsVerified(true);
+          setIsVerifying(false);
           return { isExistingUser: true };
         } else {
           console.log('New user - showing profile form');
@@ -135,12 +150,11 @@ export const useOTPAuth = () => {
         }
       }
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('Unexpected verification error:', err);
-      setError('An unexpected error occurred. Please try again.');
+      setError('An unexpected error occurred. Please try again or refresh the page.');
     } finally {
-      if (!isVerified) {
-        setIsVerifying(false);
-      }
+      setIsVerifying(false);
     }
   };
 

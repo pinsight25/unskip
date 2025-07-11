@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Phone, Edit, Loader } from 'lucide-react';
+import { Phone, Edit, Loader, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface OTPVerificationStepProps {
@@ -33,6 +33,10 @@ const OTPVerificationStep = ({
   termsAccepted,
   onTermsChange
 }: OTPVerificationStepProps) => {
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 flex items-center space-x-3">
@@ -86,7 +90,18 @@ const OTPVerificationStep = ({
         </div>
 
         {error && (
-          <p className="text-sm text-red-500 text-center bg-red-50 py-2 px-4 rounded-xl">{error}</p>
+          <div className="text-sm text-red-500 text-center bg-red-50 py-2 px-4 rounded-xl">
+            <p>{error}</p>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleRefresh}
+              className="mt-2 text-xs text-gray-500 hover:text-primary"
+            >
+              <RefreshCw className="h-3 w-3 mr-1" />
+              Having issues? Refresh page
+            </Button>
+          </div>
         )}
       </div>
 
