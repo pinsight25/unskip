@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { PhoneInput } from '@/components/ui/phone-input';
-import { Phone, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
 
 interface PhoneInputStepProps {
   phoneNumber: string;
@@ -26,11 +26,10 @@ const PhoneInputStep = ({
     <>
       <div className="space-y-4">
         <div className="relative">
-          <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-20" />
           <PhoneInput
             value={phoneNumber}
             onChange={setPhoneNumber}
-            className="pl-12 py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
+            className="py-4 border-2 border-gray-100 rounded-2xl focus:border-primary focus:outline-none transition-colors text-lg"
           />
         </div>
         {error && (

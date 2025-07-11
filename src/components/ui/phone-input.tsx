@@ -9,9 +9,7 @@ export interface PhoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInpu
 }
 
 const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
-  ({ className, value, onChange, placeholder = "98765 43210", onFocus, onBlur, ...props }, ref) => {
-    const [isFocused, setIsFocused] = React.useState(false);
-    
+  ({ className, value, onChange, onFocus, onBlur, ...props }, ref) => {
     // Extract only the 10-digit part from the value
     const phoneDigits = value.replace(/^\+91\s?/, '').replace(/\D/g, '');
     
@@ -20,16 +18,6 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       if (inputValue.length <= 10) {
         onChange(`+91 ${inputValue}`);
       }
-    };
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
-      onFocus?.(e);
-    };
-
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false);
-      onBlur?.(e);
     };
 
     return (
@@ -43,11 +31,10 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             "flex h-10 w-full rounded-md border border-input bg-background pl-12 pr-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             className
           )}
-          placeholder={isFocused || phoneDigits ? "" : placeholder}
           value={phoneDigits}
           onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onFocus={onFocus}
+          onBlur={onBlur}
           maxLength={10}
           inputMode="numeric"
           ref={ref}
