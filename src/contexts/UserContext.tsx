@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -38,6 +37,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // EMERGENCY TIMEOUT - Force stop loading state after 3 seconds max
+  useEffect(() => {
+    const emergencyTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.error('🚨 EMERGENCY: Force stopping loading state after 3 seconds');
+        setIsLoading(false);
+      }
+    }, 3000); // 3 seconds max
+    
+    return () => clearTimeout(emergencyTimeout);
+  }, [isLoading]);
 
   useEffect(() => {
     let mounted = true;
