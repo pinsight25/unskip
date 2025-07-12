@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -56,25 +57,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     
     console.log('🚨 USERCONTEXT: Starting auth initialization');
 
-    // Critical timeout - force loading to false after 3 seconds
+    // Critical timeout - force loading to false after 2 seconds
     initTimeoutId = setTimeout(() => {
       if (mounted && isLoading) {
-        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 3 seconds, forcing loading to false');
+        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 2 seconds, forcing loading to false');
         setIsLoading(false);
       }
-    }, 3000);
+    }, 2000);
 
     // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
       console.log('🔵 SYNC START for user:', userId);
       
-      // Set a hard timeout - no matter what happens, stop loading after 3 seconds
+      // Set a hard timeout - no matter what happens, stop loading after 2 seconds
       const timeoutId = setTimeout(() => {
         console.log('🔴 SYNC TIMEOUT - Setting loading to false');
         if (mounted) {
           setIsLoading(false);
         }
-      }, 3000);
+      }, 2000);
       
       try {
         console.log('🔵 Querying users table...');
@@ -94,11 +95,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         if (error) {
           console.error('🔵 USER QUERY ERROR:', error);
-          if (mounted) {
-            console.log('🔵 DATABASE ERROR - Setting user to null');
-            setUser(null);
-          }
-        } else if (userData && mounted) {
+        }
+
+        if (userData && mounted) {
           console.log('🔵 SETTING USER from database:', userData);
           setUser({
             name: userData.name,
@@ -108,14 +107,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             gender: userData.gender || undefined,
             avatar: userData.avatar || undefined
           });
-        } else if (!userData && mounted) {
+        } else if (mounted) {
           console.log('🔵 No user data found in database - setting to null');
           setUser(null);
         }
       } catch (err) {
         console.error('🔵 SYNC ERROR:', err);
         if (mounted) {
-          console.log('🔵 SYNC EXCEPTION - Setting user to null');
           setUser(null);
         }
       } finally {
