@@ -118,7 +118,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         }
       } finally {
         clearTimeout(timeoutId);
-        console.log('🔵 SETTING LOADING TO FALSE');
+        console.log('🔵 SETTING LOADING TO FALSE in finally block');
         if (mounted) {
           setIsLoading(false);
         }
@@ -136,7 +136,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           hasUser: !!user,
           isSignedIn: !!session,
           userId: session?.user?.id,
-          userPhone: session?.user?.phone
+          userPhone: session?.user?.phone,
+          currentIsLoading: isLoading
         });
         
         if (!mounted) {
@@ -158,7 +159,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('🚨 USER SIGNED IN - Starting database sync');
           await syncUserFromDatabase(session.user.id);
         } else if (event === 'SIGNED_OUT') {
-          console.log('🚨 USER SIGNED OUT - Clearing data');
+          console.log('🚨 USER SIGNED OUT - Clearing data and stopping loading');
           setUser(null);
           setIsLoading(false);
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
@@ -167,7 +168,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             console.log('🚨 TOKEN REFRESHED - No user, syncing from database');
             await syncUserFromDatabase(session.user.id);
           } else {
-            console.log('🚨 TOKEN REFRESHED - User exists, keeping current state');
+            console.log('🚨 TOKEN REFRESHED - User exists, stopping loading');
             setIsLoading(false);
           }
         } else if (event === 'INITIAL_SESSION') {
@@ -175,7 +176,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             console.log('🚨 INITIAL SESSION - User found, syncing from database');
             await syncUserFromDatabase(session.user.id);
           } else {
-            console.log('🚨 INITIAL SESSION - No user found');
+            console.log('🚨 INITIAL SESSION - No user found, stopping loading');
             setIsLoading(false);
           }
         } else {
@@ -203,7 +204,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           setSession(session);
           await syncUserFromDatabase(session.user.id);
         } else {
-          console.log('🚨 NO EXISTING SESSION FOUND');
+          console.log('🚨 NO EXISTING SESSION FOUND - Stopping loading');
           if (mounted) setIsLoading(false);
         }
       } catch (error) {
@@ -263,12 +264,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     signOut
   };
 
-  console.log('🚨 USERCONTEXT RENDER:', { 
+  console.log('🚨 USERCONTEXT RENDER VALUES:', { 
     hasUser: !!user, 
     hasSession: !!session, 
     isSignedIn: !!session, 
     isLoading,
-    userName: user?.name
+    userName: user?.name,
+    timestamp: new Date().toISOString()
   });
 
   return (
