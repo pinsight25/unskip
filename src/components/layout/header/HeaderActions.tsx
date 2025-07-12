@@ -128,8 +128,23 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           </DropdownMenu>
           <span className="text-xs text-green-600 font-medium">✓ Signed In</span>
         </>
+      ) : isSignedIn && !user ? (
+        <>
+          {/* User is signed in but profile data not loaded yet */}
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-10 w-10 border border-gray-200">
+              <AvatarImage src="" />
+              <AvatarFallback className="bg-orange-100 text-orange-600">
+                <User className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+            <span className="body-text font-medium text-gray-700">Loading...</span>
+          </div>
+          <span className="text-xs text-orange-600 font-medium">Setting up...</span>
+        </>
       ) : (
         <>
+          {/* Not signed in */}
           <button 
             onClick={handleSignInClick}
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"

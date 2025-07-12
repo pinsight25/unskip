@@ -45,17 +45,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     
     console.log('🚨 USERCONTEXT: Starting auth initialization');
 
-    // Critical timeout - force loading to false after 5 seconds
+    // Critical timeout - force loading to false after 3 seconds
     initTimeoutId = setTimeout(() => {
       if (mounted && isLoading) {
-        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 5 seconds, forcing loading to false');
+        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 3 seconds, forcing loading to false');
         setIsLoading(false);
       }
-    }, 5000);
+    }, 3000);
 
     // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
       console.log('🔵 SYNC START for user:', userId);
+      
+      // Set a hard timeout - no matter what happens, stop loading after 3 seconds
+      const timeoutId = setTimeout(() => {
+        console.log('🔴 SYNC TIMEOUT - Setting loading to false');
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }, 3000);
       
       try {
         console.log('🔵 Querying users table...');
@@ -75,7 +83,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         if (error) {
           console.error('🔵 USER QUERY ERROR:', error);
-          // Set user to null if database query fails - don't create fake users
           if (mounted) {
             console.log('🔵 DATABASE ERROR - Setting user to null');
             setUser(null);
@@ -101,6 +108,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           setUser(null);
         }
       } finally {
+        clearTimeout(timeoutId);
         console.log('🔵 SETTING LOADING TO FALSE');
         if (mounted) {
           setIsLoading(false);

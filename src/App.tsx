@@ -36,12 +36,12 @@ const AppContent = () => {
   const { isLoading } = useUser();
   const [forceLoad, setForceLoad] = useState(false);
 
-  // Force load after 10 seconds regardless of auth state
+  // Force load after 5 seconds regardless of auth state
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      console.warn('🚨 FORCING APP TO LOAD after 10 seconds');
+      console.warn('🚨 FORCING APP TO LOAD after 5 seconds');
       setForceLoad(true);
-    }, 10000);
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, []);
@@ -49,8 +49,8 @@ const AppContent = () => {
   if (isLoading && !forceLoad) {
     return (
       <LoadingScreen 
-        message="Loading profile..." 
-        timeout={8000}
+        message="Loading..." 
+        timeout={3000}
         onTimeout={() => setForceLoad(true)}
       />
     );

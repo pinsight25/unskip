@@ -19,12 +19,12 @@ const Profile = () => {
   // STATE FOR SIGN IN MODAL
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   
-  // Force load after 8 seconds
+  // Force load after 5 seconds
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      console.warn('🚨 FORCING PROFILE TO LOAD after 8 seconds');
+      console.warn('🚨 FORCING PROFILE TO LOAD after 5 seconds');
       setForceLoad(true);
-    }, 8000);
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, []);
@@ -91,14 +91,36 @@ const Profile = () => {
     return (
       <LoadingScreen 
         message="Loading profile..." 
-        timeout={6000}
+        timeout={3000}
         onTimeout={() => setForceLoad(true)}
       />
     );
   }
 
-  // Show sign-in prompt for non-signed-in users OR if user data is missing
-  if (!isSignedIn || !userWithDealer) {
+  // If signed in but no user data yet, show profile setup message
+  if (isSignedIn && !userWithDealer && !isLoading) {
+    console.log('Profile: Signed in but no user data - showing setup message');
+    return (
+      <div className="bg-white min-h-screen">
+        <div className="max-w-md mx-auto px-4 py-12 md:py-16 text-center">
+          <div className="mb-8">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 md:w-10 md:h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Setting up your profile...</h1>
+            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
+              Please wait while we prepare your account
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show sign-in prompt for non-signed-in users ONLY
+  if (!isSignedIn) {
     console.log('Profile: Showing sign-in prompt', { isSignedIn, hasUser: !!userWithDealer });
     return (
       <>
