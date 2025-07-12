@@ -18,14 +18,16 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
   // Enhanced Debug logging
-  console.log('HeaderActions Debug:');
-  console.log('- user:', user);
-  console.log('- isSignedIn:', isSignedIn);
-  console.log('- isLoading:', isLoading);
-  console.log('- user type:', typeof user);
-  console.log('- user === null:', user === null);
-  console.log('- user?.name:', user?.name);
-  console.log('- user?.phone:', user?.phone);
+  console.log('🔴 HEADERACTIONS RENDER:', {
+    user: user,
+    isSignedIn: isSignedIn,
+    isLoading: isLoading,
+    userType: typeof user,
+    userIsNull: user === null,
+    userName: user?.name,
+    userPhone: user?.phone,
+    timestamp: new Date().toISOString()
+  });
 
   const handleSignOut = async () => {
     console.log('🔴 HeaderActions: Sign out button clicked');
@@ -38,13 +40,13 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   };
 
   const handleSignInClick = () => {
-    console.log('HeaderActions: Sign in button clicked');
+    console.log('🔴 HeaderActions: Sign in button clicked');
     setIsSignInModalOpen(true);
   };
 
   // Show loading skeleton while checking auth state
   if (isLoading) {
-    console.log('HeaderActions: Showing loading state');
+    console.log('🔴 HeaderActions: Showing loading state');
     return (
       <div className="hidden lg:flex items-center space-x-6">
         {/* Chat Icon with Badge */}
@@ -75,7 +77,12 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
     );
   }
 
-  console.log('HeaderActions: Rendering main content, isSignedIn:', isSignedIn, 'hasUser:', !!user);
+  console.log('🔴 HeaderActions: Rendering main content, decision factors:', {
+    isSignedIn,
+    hasUser: !!user,
+    userExists: user !== null,
+    showingSignedInUI: isSignedIn && user
+  });
 
   return (
     <div className="hidden lg:flex items-center space-x-6">
@@ -93,44 +100,50 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
       
       {/* Profile/Sign In Section */}
       {isSignedIn && user ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
-              <Avatar className="h-10 w-10 border border-gray-200">
-                <AvatarImage src={user.avatar || ""} />
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <span className="body-text font-medium text-gray-700">{user.name || 'User'}</span>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
+                <Avatar className="h-10 w-10 border border-gray-200">
+                  <AvatarImage src={user.avatar || ""} />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="body-text font-medium text-gray-700">{user.name || 'User'}</span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="flex items-center">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <span className="text-xs text-green-600 font-medium">✓ Signed In</span>
+        </>
       ) : (
-        <button 
-          onClick={handleSignInClick}
-          className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-        >
-          <Avatar className="h-10 w-10 border border-gray-200">
-            <AvatarImage src="" />
-            <AvatarFallback className="bg-gray-100 text-gray-600">
-              <User className="h-4 w-4" />
-            </AvatarFallback>
-          </Avatar>
-          <span className="body-text font-medium text-gray-700">Sign In</span>
-        </button>
+        <>
+          <button 
+            onClick={handleSignInClick}
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
+            <Avatar className="h-10 w-10 border border-gray-200">
+              <AvatarImage src="" />
+              <AvatarFallback className="bg-gray-100 text-gray-600">
+                <User className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+            <span className="body-text font-medium text-gray-700">Sign In</span>
+          </button>
+          <span className="text-xs text-gray-500 font-medium">Not signed in</span>
+        </>
       )}
       
       {/* Post Car Button - PRIMARY CTA */}

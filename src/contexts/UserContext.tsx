@@ -42,14 +42,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     let mounted = true;
     let initTimeoutId: NodeJS.Timeout;
+    
+    console.log('🚨 USERCONTEXT: Starting auth initialization');
 
-    // Critical timeout - force loading to false after 8 seconds no matter what
+    // Critical timeout - force loading to false after 5 seconds
     initTimeoutId = setTimeout(() => {
       if (mounted && isLoading) {
-        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 8 seconds, forcing loading to false');
+        console.warn('🚨 CRITICAL TIMEOUT: Auth initialization exceeded 5 seconds, forcing loading to false');
         setIsLoading(false);
       }
-    }, 8000);
+    }, 5000);
 
     // Function to sync user data from the users table
     const syncUserFromDatabase = async (userId: string) => {
@@ -58,18 +60,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       try {
         console.log('🔵 Querying users table...');
         
-        // Add a promise timeout to prevent hanging queries
-        const queryPromise = supabase
+        const { data: userData, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .maybeSingle();
-
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Database query timeout')), 5000);
-        });
-
-        const { data: userData, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
         console.log('🔵 User query completed:', { 
           userData, 
@@ -80,8 +75,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         if (error) {
           console.error('🔵 USER QUERY ERROR:', error);
-          // Set user to null if database query fails
+          // Set user to null if database query fails - don't create fake users
           if (mounted) {
+            console.log('🔵 DATABASE ERROR - Setting user to null');
             setUser(null);
           }
         } else if (userData && mounted) {
@@ -95,12 +91,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             avatar: userData.avatar || undefined
           });
         } else if (!userData && mounted) {
-          console.log('🔵 No user data found in database');
+          console.log('🔵 No user data found in database - setting to null');
           setUser(null);
         }
       } catch (err) {
         console.error('🔵 SYNC ERROR:', err);
         if (mounted) {
+          console.log('🔵 SYNC EXCEPTION - Setting user to null');
           setUser(null);
         }
       } finally {
@@ -112,75 +109,88 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     };
 
     // Set up auth state change listener
+    console.log('🚨 SETTING UP AUTH LISTENER');
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, 'Session exists:', !!session, 'User ID:', session?.user?.id);
+        console.log('🚨 AUTH STATE CHANGE:', {
+          event: event,
+          time: new Date().toISOString(),
+          hasSession: !!session,
+          hasUser: !!user,
+          isSignedIn: !!session,
+          userId: session?.user?.id,
+          userPhone: session?.user?.phone
+        });
         
-        if (!mounted) return;
+        if (!mounted) {
+          console.log('🚨 AUTH CHANGE IGNORED - Component unmounted');
+          return;
+        }
         
         // Clear timeout since we got an auth event
-        if (initTimeoutId) clearTimeout(initTimeoutId);
+        if (initTimeoutId) {
+          console.log('🚨 CLEARING INIT TIMEOUT');
+          clearTimeout(initTimeoutId);
+        }
         
-        // Update session state
+        // Update session state immediately
+        console.log('🚨 UPDATING SESSION STATE:', !!session);
         setSession(session);
         
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('User signed in, syncing data...');
+          console.log('🚨 USER SIGNED IN - Starting database sync');
           await syncUserFromDatabase(session.user.id);
         } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out, clearing data...');
+          console.log('🚨 USER SIGNED OUT - Clearing data');
           setUser(null);
           setIsLoading(false);
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          console.log('Token refreshed, maintaining session...');
+          console.log('🚨 TOKEN REFRESHED - Checking user state');
           if (!user) {
+            console.log('🚨 TOKEN REFRESHED - No user, syncing from database');
             await syncUserFromDatabase(session.user.id);
           } else {
+            console.log('🚨 TOKEN REFRESHED - User exists, keeping current state');
             setIsLoading(false);
           }
         } else if (event === 'INITIAL_SESSION') {
           if (session?.user) {
-            console.log('Initial session found, syncing data...');
+            console.log('🚨 INITIAL SESSION - User found, syncing from database');
             await syncUserFromDatabase(session.user.id);
           } else {
-            console.log('Initial session check - no session found');
+            console.log('🚨 INITIAL SESSION - No user found');
             setIsLoading(false);
           }
         } else {
-          console.log('Other auth event, setting loading to false');
+          console.log('🚨 OTHER AUTH EVENT - Setting loading to false');
           setIsLoading(false);
         }
       }
     );
 
-    // Check for existing session with timeout
+    // Check for existing session
     const getInitialSession = async () => {
       try {
-        console.log('Checking for existing session...');
+        console.log('🚨 CHECKING FOR EXISTING SESSION');
         
-        const sessionPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Session check timeout')), 3000);
-        });
-
-        const { data: { session }, error } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('🚨 ERROR GETTING SESSION:', error);
           if (mounted) setIsLoading(false);
           return;
         }
         
         if (session?.user && mounted) {
-          console.log('Found existing session:', session.user.id);
+          console.log('🚨 FOUND EXISTING SESSION:', session.user.id);
           setSession(session);
           await syncUserFromDatabase(session.user.id);
         } else {
-          console.log('No existing session found');
+          console.log('🚨 NO EXISTING SESSION FOUND');
           if (mounted) setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error getting initial session:', error);
+        console.error('🚨 ERROR IN INITIAL SESSION CHECK:', error);
         if (mounted) setIsLoading(false);
       }
     };
@@ -188,13 +198,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     getInitialSession();
 
     return () => {
+      console.log('🚨 CLEANING UP AUTH LISTENER');
       mounted = false;
-      if (initTimeoutId) clearTimeout(initTimeoutId);
+      if (initTimeoutId) {
+        console.log('🚨 CLEARING TIMEOUT ON CLEANUP');
+        clearTimeout(initTimeoutId);
+      }
       subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Empty dependency array - this should only run once
 
   const signIn = (phone: string, profileData?: { name: string; email: string; city: string; gender?: string }) => {
+    console.log('🚨 MANUAL SIGN IN via context:', { phone, profileData });
     const newUser: UserProfile = {
       name: profileData?.name || 'User',
       phone: phone,
@@ -203,28 +218,22 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       gender: profileData?.gender
     };
     setUser(newUser);
-    console.log('User signed in via context:', newUser);
   };
 
   const signOut = async () => {
     try {
-      console.log('🔵 SIGN OUT: Starting sign out process...');
+      console.log('🚨 SIGN OUT: Starting sign out process...');
       
       // Clear user state immediately for responsive UI
       setUser(null);
       setSession(null);
-      console.log('🔵 SIGN OUT: Cleared local state');
+      console.log('🚨 SIGN OUT: Cleared local state');
       
-      // Call Supabase signOut with timeout
-      const signOutPromise = supabase.auth.signOut();
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Sign out timeout')), 3000);
-      });
-
-      await Promise.race([signOutPromise, timeoutPromise]);
-      console.log('🔵 SIGN OUT: Successfully signed out from Supabase');
+      // Call Supabase signOut
+      await supabase.auth.signOut();
+      console.log('🚨 SIGN OUT: Successfully signed out from Supabase');
     } catch (error) {
-      console.error('🔵 SIGN OUT ERROR:', error);
+      console.error('🚨 SIGN OUT ERROR:', error);
       // Even if signOut fails, we've already cleared local state
     }
   };
@@ -237,11 +246,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     signOut
   };
 
-  console.log('UserContext state:', { 
+  console.log('🚨 USERCONTEXT RENDER:', { 
     hasUser: !!user, 
     hasSession: !!session, 
     isSignedIn: !!session, 
-    isLoading 
+    isLoading,
+    userName: user?.name
   });
 
   return (
