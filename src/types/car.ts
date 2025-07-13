@@ -16,6 +16,7 @@ export interface Car {
   location: string;
   description: string;
   seller: Seller;
+  seller_type: 'individual' | 'dealer';
   color?: string;
   landmark?: string;
   seatingCapacity?: number;
@@ -69,6 +70,7 @@ export interface Seller {
   phone: string;
   email: string;
   verified: boolean;
+  dealerVerified?: boolean;
   rating: number;
   totalSales: number;
   memberSince: string;

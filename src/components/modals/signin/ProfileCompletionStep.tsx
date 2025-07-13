@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CustomInput } from '@/components/ui/CustomInput';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader } from 'lucide-react';
 
@@ -36,31 +36,35 @@ const ProfileCompletionStep = ({
     <>
       <div className="space-y-4">
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
-          <Input
+          <label htmlFor="profile-name" className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
+          <CustomInput
+            id="profile-name"
             type="text"
             value={profileData.name}
             onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
             placeholder="Enter your full name"
             className="h-12 rounded-2xl border-2 focus:border-primary"
+            aria-label="Full Name"
           />
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-2">Email (Optional)</label>
-          <Input
+          <label htmlFor="profile-email" className="text-sm font-semibold text-gray-700 block mb-2">Email (Optional)</label>
+          <CustomInput
+            id="profile-email"
             type="email"
             value={profileData.email}
             onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
             placeholder="your.email@example.com"
             className="h-12 rounded-2xl border-2 focus:border-primary"
+            aria-label="Email"
           />
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-2">City</label>
-          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })}>
-            <SelectTrigger className="h-12 rounded-2xl border-2 focus:border-primary">
+          <label htmlFor="profile-city" className="text-sm font-semibold text-gray-700 block mb-2">City</label>
+          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })} aria-label="City">
+            <SelectTrigger id="profile-city" className="h-12 rounded-2xl border-2 focus:border-primary">
               <SelectValue placeholder="Select your city" />
             </SelectTrigger>
             <SelectContent>
@@ -72,9 +76,9 @@ const ProfileCompletionStep = ({
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-2">Gender</label>
-          <Select value={profileData.gender} onValueChange={(value: 'Male' | 'Female' | 'Other') => setProfileData({ ...profileData, gender: value })}>
-            <SelectTrigger className="h-12 rounded-2xl border-2 focus:border-primary">
+          <label htmlFor="profile-gender" className="text-sm font-semibold text-gray-700 block mb-2">Gender</label>
+          <Select value={profileData.gender} onValueChange={(value: 'Male' | 'Female' | 'Other') => setProfileData({ ...profileData, gender: value })} aria-label="Gender">
+            <SelectTrigger id="profile-gender" className="h-12 rounded-2xl border-2 focus:border-primary">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

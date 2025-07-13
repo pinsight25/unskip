@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CustomInput } from '@/components/ui/CustomInput';
 import { Loader } from 'lucide-react';
 
 interface PhoneInputStepProps {
@@ -54,12 +54,13 @@ const PhoneInputStep = ({
     <>
       <div className="space-y-4">
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
+          <label htmlFor="phone-input" className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
               +91
             </span>
-            <Input
+            <CustomInput
+              id="phone-input"
               type="tel"
               value={displayPhone}
               onChange={(e) => {
@@ -69,6 +70,7 @@ const PhoneInputStep = ({
               placeholder="98765 43210"
               className="pl-12 h-12 text-lg rounded-2xl border-2 focus:border-primary"
               maxLength={10}
+              aria-label="Phone Number"
             />
           </div>
         </div>

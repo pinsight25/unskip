@@ -18,13 +18,14 @@ const CarCardSeller = ({ seller }: CarCardSellerProps) => {
         <div>
           <div className="flex items-center space-x-1">
             <span className="small-text font-medium line-clamp-1">{seller.name}</span>
-            {seller.verified && (
+            {/* Only show badge if car.seller_type === 'dealer' and seller.dealerVerified */}
+            {seller.type === 'dealer' && seller.dealerVerified && (
               <Shield className="h-3 w-3 text-green-500 flex-shrink-0" />
             )}
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-xs text-gray-500">
-              {seller.type === 'dealer' ? 'Dealer' : 'Individual'}
+              {seller.type === 'dealer' ? 'Dealer' : 'Owner'}
             </span>
           </div>
         </div>

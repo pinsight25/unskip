@@ -1,8 +1,10 @@
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Eye } from 'lucide-react';
+import { Clock, Eye, Edit } from 'lucide-react';
 import ListingActions from './ListingActions';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface Listing {
   id: string;
@@ -45,6 +47,7 @@ interface Listing {
   area?: string;
   landmark?: string;
   description?: string;
+  coverImageUrl?: string;
 }
 
 interface ListingCardProps {
@@ -66,10 +69,20 @@ const ListingCard = ({
   getStatusVariant,
   getStatusText
 }: ListingCardProps) => {
+  const fallbackImage = '/placeholder.svg';
+  const imageUrl = listing.coverImageUrl || fallbackImage;
+  const navigate = useNavigate();
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0"></div>
+        <Link to={`/car/${listing.id}`} className="w-full md:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden block group">
+          <img
+            src={imageUrl}
+            alt={listing.title || 'Car'}
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
+            onError={e => { (e.target as HTMLImageElement).src = fallbackImage; }}
+          />
+        </Link>
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
             <h4 className="font-semibold text-lg">{listing.title}</h4>
@@ -92,11 +105,14 @@ const ListingCard = ({
             </span>
           </div>
         </div>
-        <ListingActions
-          onEdit={() => onEdit(listing)}
-          onDuplicate={() => onDuplicate(listing)}
-          onDelete={() => onDelete(listing.id, listing.title)}
-        />
+        <div className="flex flex-col gap-2 items-end">
+          <ListingActions
+            onEdit={() => onEdit(listing)}
+            onDuplicate={() => onDuplicate(listing)}
+            onDelete={() => onDelete(listing.id, listing.title)}
+          />
+          <Link to={`/car/${listing.id}`} className="mt-2 text-xs text-blue-600 underline">View</Link>
+        </div>
       </div>
     </div>
   );

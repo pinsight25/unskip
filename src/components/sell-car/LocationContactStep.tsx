@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { CustomInput } from '@/components/ui/CustomInput';
+import { CustomTextarea } from '@/components/ui/CustomTextarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { Button } from '@/components/ui/button';
@@ -10,14 +10,146 @@ import { Shield, CheckCircle } from 'lucide-react';
 import { updateFormField } from '@/utils/formHelpers';
 import { useCities } from '@/hooks/useCities';
 import type { SellCarFormData } from '@/hooks/useSellCarForm';
+import { Input } from "@/components/ui/input";
+import { useState, useRef, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface LocationContactStepProps {
   formData: SellCarFormData;
   setFormData: React.Dispatch<React.SetStateAction<SellCarFormData>>;
+  updateFormData: (updates: Partial<SellCarFormData>) => void;
   onPhoneVerification: () => void;
 }
 
-const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: LocationContactStepProps) => {
+// City autocomplete component
+const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
+  const [search, setSearch] = useState(value || '');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const inputRef = useRef(null);
+  const suggestionsRef = useRef(null);
+
+  // Load cities from Supabase on component mount
+  useEffect(() => {
+    const loadCities = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cities')
+          .select('name, state')
+          .eq('is_active', true)
+          .order('name');
+        
+        if (error) throw error;
+        
+        // Format as "City, State"
+        const formattedCities = data.map(city => 
+          city.state ? `${city.name}, ${city.state}` : city.name
+        );
+        setCities(formattedCities);
+      } catch (error) {
+        console.error('Error loading cities:', error);
+        // Fallback to allow free text input
+        setCities([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCities();
+  }, []);
+
+  // Update the filter to use dynamic cities
+  useEffect(() => {
+    if (search.length > 1 && cities.length > 0) {
+      const filtered = cities.filter(city =>
+        city.toLowerCase().includes(search.toLowerCase())
+      ).slice(0, 10);
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  }, [search, cities]);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        inputRef.current && !inputRef.current.contains(event.target) &&
+        suggestionsRef.current && !suggestionsRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setShowSuggestions(true);
+    // Allow free text input
+    onChange(value);
+  };
+
+  const selectCity = (city) => {
+    setSearch(city);
+    onChange(city);
+    setShowSuggestions(false);
+  };
+
+  return (
+    <div className="relative">
+      <Input
+        ref={inputRef}
+        type="text"
+        value={search}
+        onChange={handleInputChange}
+        onFocus={() => setShowSuggestions(true)}
+        placeholder="Type city name (e.g., Chennai, Mumbai)"
+      />
+      
+      {showSuggestions && (
+        <>
+          {loading && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md p-2 text-sm text-gray-500">
+              Loading cities...
+            </div>
+          )}
+          
+          {!loading && suggestions.length > 0 && (
+            <div
+              ref={suggestionsRef}
+              className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-[200px] overflow-y-auto z-50"
+            >
+              {suggestions.map((city, index) => (
+                <div
+                  key={index}
+                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                  onClick={() => selectCity(city)}
+                >
+                  {city}
+                </div>
+              ))}
+              {search.length > 2 && !suggestions.some(city => 
+                city.toLowerCase() === search.toLowerCase()
+              ) && (
+                <div className="px-3 py-2 text-sm text-gray-500 italic">
+                  Using: "{search}" (custom location)
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVerification }: LocationContactStepProps) => {
   const { cities, isLoading: citiesLoading } = useCities();
 
   return (
@@ -26,38 +158,35 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
       <div>
         <h3 className="text-lg font-semibold mb-4">Location Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="city">City *</Label>
-            <Select 
-              value={formData.city} 
-              onValueChange={(value) => setFormData(prev => updateFormField(prev, 'city', value))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={citiesLoading ? "Loading cities..." : "Select City"} />
-              </SelectTrigger>
-              <SelectContent className="bg-white border shadow-lg max-h-60 overflow-y-auto">
-                {cities.map((city) => (
-                  <SelectItem key={city.id} value={city.name}>
-                    {city.name}{city.state && `, ${city.state}`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              City <span className="text-red-500">*</span>
+            </label>
+            <CityAutocomplete
+              value={formData.city}
+              onChange={(value) => {
+                console.log('🔄 City changed to:', value);
+                updateFormData({ city: value });
+              }}
+            />
           </div>
           <div>
             <Label htmlFor="area">Area/Locality</Label>
-            <Input
+            <CustomInput
               id="area"
               placeholder="e.g., Andheri East, Koramangala"
               value={formData.area}
-              onChange={(e) => setFormData(prev => updateFormField(prev, 'area', e.target.value))}
+              onChange={(e) => {
+                console.log('🔄 Area changed to:', e.target.value);
+                updateFormData({ area: e.target.value });
+              }}
             />
           </div>
         </div>
         
         <div className="mt-4">
           <Label htmlFor="landmark">Landmark (Optional)</Label>
-          <Input
+          <CustomInput
             id="landmark"
             placeholder="e.g., Near Metro Station, Mall"
             value={formData.landmark}
@@ -67,7 +196,7 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
 
         <div className="mt-4">
           <Label htmlFor="address">Full Address</Label>
-          <Textarea
+          <CustomTextarea
             id="address"
             placeholder="Enter complete address where the car can be inspected"
             value={formData.address}
@@ -83,7 +212,7 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
         <div className="space-y-4">
           <div>
             <Label htmlFor="sellerName">Your Name *</Label>
-            <Input
+            <CustomInput
               id="sellerName"
               placeholder="Enter your full name"
               value={formData.sellerName}
@@ -93,7 +222,7 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
 
           <div>
             <Label htmlFor="email">Email Address</Label>
-            <Input
+            <CustomInput
               id="email"
               type="email"
               placeholder="your.email@example.com"
@@ -107,33 +236,19 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
             <div className="flex gap-3">
               <div className="flex-1">
                 <PhoneInput
+                  id="phone"
                   value={formData.phone}
                   onChange={(value) => setFormData(prev => updateFormField(prev, 'phone', value))}
                   placeholder="Enter your phone number"
+                  disabled={false} // Allow editing for now
                 />
               </div>
-              <Button
-                type="button"
-                variant={formData.phoneVerified ? "default" : "outline"}
-                onClick={onPhoneVerification}
-                disabled={!formData.phone || formData.phoneVerified}
-                className="shrink-0"
-              >
-                {formData.phoneVerified ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Verified
-                  </>
-                ) : (
-                  <>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Verify
-                  </>
-                )}
-              </Button>
             </div>
             {formData.phoneVerified && (
-              <p className="text-sm text-green-600 mt-1">Phone number verified successfully</p>
+              <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Phone number verified successfully
+              </p>
             )}
           </div>
         </div>
@@ -144,7 +259,7 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
         <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
         <div>
           <Label htmlFor="description">Description (Optional)</Label>
-          <Textarea
+          <CustomTextarea
             id="description"
             placeholder="Share any additional details about your car, special features, or selling reason..."
             value={formData.description}
@@ -155,6 +270,20 @@ const LocationContactStep = ({ formData, setFormData, onPhoneVerification }: Loc
             A good description helps buyers understand your car better and can lead to faster sales.
           </p>
         </div>
+      </div>
+
+      {/* Terms and Conditions Checkbox */}
+      <div className="mt-6 flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="termsAccepted"
+          checked={formData.termsAccepted}
+          onChange={e => updateFormData({ termsAccepted: e.target.checked })}
+          className="accent-primary"
+        />
+        <label htmlFor="termsAccepted" className="text-sm">
+          I accept the <a href="/terms" target="_blank" className="underline">terms and conditions</a>
+        </label>
       </div>
     </div>
   );

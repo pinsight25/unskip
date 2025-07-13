@@ -45,6 +45,7 @@ export type SellCarFormData = {
   address: string;
   sellerName: string;
   email: string;
+  seller_type: 'individual' | 'dealer';
 };
 
 export const useSellCarForm = () => {
@@ -91,6 +92,7 @@ export const useSellCarForm = () => {
     address: '',
     sellerName: '',
     email: '',
+    seller_type: 'individual',
   });
 
   const validatePrice = (price: string) => {

@@ -29,7 +29,7 @@ const MobileMenu = ({
   isActive, 
   onMenuClose 
 }: MobileMenuProps) => {
-  const { user, isSignedIn, isLoading, signOut } = useUser();
+  const { user, isLoading, signOut } = useUser();
 
   const handleSignOut = () => {
     signOut();
@@ -46,7 +46,7 @@ const MobileMenu = ({
       </div>
 
       {/* User Section */}
-      {!isLoading && isSignedIn && user ? (
+      {!isLoading && user ? (
         <div className="flex items-center space-x-3 px-4 py-3 border-b border-border mb-4">
           <Avatar className="h-12 w-12 border border-gray-200">
             <AvatarFallback className="bg-primary/10 text-primary text-sm">
@@ -105,7 +105,7 @@ const MobileMenu = ({
         
         {/* Mobile Actions */}
         <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-          {!isLoading && isSignedIn ? (
+          {!isLoading && user ? (
             <Link to="/profile" onClick={onMenuClose}>
               <Button variant="outline" size="sm" className="w-full justify-start">
                 <UserIcon className="h-4 w-4 mr-2" />

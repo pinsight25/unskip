@@ -31,7 +31,14 @@ const YearSelector = ({ formData, setFormData }: YearSelectorProps) => {
           <SelectTrigger>
             <SelectValue placeholder="Select year" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             {yearOptions.map((year) => (
               <SelectItem key={year} value={year}>{year}</SelectItem>
             ))}
@@ -48,7 +55,14 @@ const YearSelector = ({ formData, setFormData }: YearSelectorProps) => {
           <SelectTrigger>
             <SelectValue placeholder="Select registration year" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             {yearOptions.map((year) => (
               <SelectItem key={year} value={year}>{year}</SelectItem>
             ))}

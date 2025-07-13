@@ -21,11 +21,8 @@ const DealerInventory = () => {
   const { dealerId } = useParams();
   const [sortBy, setSortBy] = useState('');
   
-  console.log('DealerInventory rendered with dealerId:', dealerId);
-  
   // Find dealer by ID or slug
   const dealer = findDealerByIdOrSlug(dealerId || '1');
-  console.log('Final dealer found:', dealer?.name);
 
   // Fallback if dealer not found
   if (!dealer) {

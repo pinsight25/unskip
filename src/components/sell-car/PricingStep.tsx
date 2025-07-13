@@ -17,17 +17,23 @@ import { updateFormField } from '@/utils/formHelpers';
 interface PricingStepProps {
   formData: SellCarFormData;
   setFormData: (updater: (prev: SellCarFormData) => SellCarFormData) => void;
+  updateFormData: (updates: Partial<SellCarFormData>) => void;
   validatePrice: (price: string) => { valid: boolean; message: string };
 }
 
-const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps) => {
+const PricingStep = ({ formData, setFormData, updateFormData, validatePrice }: PricingStepProps) => {
+  const [insuranceOpen, setInsuranceOpen] = useState(false);
+  const [serviceOpen, setServiceOpen] = useState(false);
+
   const handleFieldChange = (field: keyof SellCarFormData, value: any) => {
-    setFormData(prev => updateFormField(prev, field, value));
+    console.log('🔄 Field changed:', field, value);
+    updateFormData({ [field]: value });
   };
 
-  const handleDateSelect = (field: keyof SellCarFormData, date: Date | undefined) => {
+  const handleDateSelect = (field: keyof SellCarFormData, date: Date | undefined, closePopover?: () => void) => {
     if (date) {
       handleFieldChange(field, date.toISOString());
+      if (closePopover) closePopover();
     }
   };
 
@@ -59,6 +65,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               onChange={(e) => handleFieldChange('price', e.target.value)}
               placeholder="e.g., 450000"
               className="text-lg font-semibold"
+              aria-label="Asking price in rupees"
             />
             {formData.price && !validatePrice(formData.price).valid && (
               <p className="text-sm text-red-600">{validatePrice(formData.price).message}</p>
@@ -89,6 +96,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 placeholder="70"
                 min="50"
                 max="95"
+                aria-label="Minimum offer percentage"
               />
               <p className="text-xs text-gray-500">
                 Buyers can make offers starting from {formData.offerPercentage || 70}% of your asking price
@@ -148,10 +156,17 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 Insurance Type *
               </Label>
               <Select value={formData.insuranceType} onValueChange={(value) => handleFieldChange('insuranceType', value)}>
-                <SelectTrigger>
+                <SelectTrigger id="insuranceType">
                   <SelectValue placeholder="Select insurance type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent 
+                  position="popper"
+                  side="bottom"
+                  align="start"
+                  sideOffset={4}
+                  className="max-h-[300px] overflow-y-auto z-50"
+                  onPointerDownOutside={(e) => e.preventDefault()}
+                >
                   <SelectItem value="Comprehensive">Comprehensive</SelectItem>
                   <SelectItem value="Third Party">Third Party</SelectItem>
                 </SelectContent>
@@ -162,7 +177,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               <Label className="text-sm font-medium">
                 Insurance Valid Till *
               </Label>
-              <Popover>
+              <Popover open={insuranceOpen} onOpenChange={setInsuranceOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -179,11 +194,11 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0" align="start" side="bottom">
                   <Calendar
                     mode="single"
                     selected={formData.insuranceValidTill ? new Date(formData.insuranceValidTill) : undefined}
-                    onSelect={(date) => handleDateSelect('insuranceValidTill', date)}
+                    onSelect={(date) => handleDateSelect('insuranceValidTill', date, () => setInsuranceOpen(false))}
                     disabled={(date) => date < new Date()}
                     initialFocus
                     className="pointer-events-auto"
@@ -219,7 +234,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
               <Label className="text-sm font-medium">
                 Last Service Date *
               </Label>
-              <Popover>
+              <Popover open={serviceOpen} onOpenChange={setServiceOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -236,11 +251,11 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0" align="start" side="bottom">
                   <Calendar
                     mode="single"
                     selected={formData.lastServiceDate ? new Date(formData.lastServiceDate) : undefined}
-                    onSelect={(date) => handleDateSelect('lastServiceDate', date)}
+                    onSelect={(date) => handleDateSelect('lastServiceDate', date, () => setServiceOpen(false))}
                     disabled={(date) => date > new Date()}
                     initialFocus
                     className="pointer-events-auto"
@@ -257,7 +272,7 @@ const PricingStep = ({ formData, setFormData, validatePrice }: PricingStepProps)
                 <SelectTrigger>
                   <SelectValue placeholder="Select service center type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={5} className="max-h-[300px]">
                   <SelectItem value="Authorized">Authorized Service Center</SelectItem>
                   <SelectItem value="Local Garage">Local Garage</SelectItem>
                 </SelectContent>

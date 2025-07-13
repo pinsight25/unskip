@@ -25,6 +25,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={(e) => onFileUpload('gstCertificate', e.target.files)}
                 className="hidden"
+                aria-label="Upload GST certificate"
               />
               <label htmlFor="gstCertificate" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
                 <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
@@ -47,6 +48,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={(e) => onFileUpload('shopLicense', e.target.files)}
                 className="hidden"
+                aria-label="Upload shop license"
               />
               <label htmlFor="shopLicense" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
                 <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
@@ -70,6 +72,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
                 multiple
                 onChange={(e) => onFileUpload('shopPhotos', e.target.files)}
                 className="hidden"
+                aria-label="Upload shop photos"
               />
               <label htmlFor="shopPhotos" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
                 <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />

@@ -54,7 +54,6 @@ export const useAccessoryForm = () => {
   };
 
   const validateStep = (step: number): boolean => {
-    console.log(`Validating accessory step ${step}:`, formData);
     
     switch (step) {
       case 1:
@@ -65,14 +64,6 @@ export const useAccessoryForm = () => {
           formData.priceMin?.trim() &&
           parseFloat(formData.priceMin) > 0
         );
-        console.log('Accessory Step 1 validation:', {
-          name: !!formData.name?.trim(),
-          category: !!formData.category?.trim(),
-          brand: !!formData.brand?.trim(),
-          priceMin: !!formData.priceMin?.trim(),
-          priceMinValid: parseFloat(formData.priceMin) > 0,
-          result: step1Valid
-        });
         return step1Valid;
         
       case 2:
@@ -80,11 +71,6 @@ export const useAccessoryForm = () => {
           formData.description?.trim() && 
           formData.condition?.trim()
         );
-        console.log('Accessory Step 2 validation:', {
-          description: !!formData.description?.trim(),
-          condition: !!formData.condition?.trim(),
-          result: step2Valid
-        });
         return step2Valid;
         
       case 3:
@@ -98,14 +84,6 @@ export const useAccessoryForm = () => {
           nameValid &&
           formData.location?.trim()
         );
-        console.log('Accessory Step 3 validation:', {
-          phone: formData.phone,
-          phoneValid,
-          phoneDigits: formData.phone?.replace(/\D/g, '').length,
-          sellerName: !!formData.sellerName?.trim(),
-          location: !!formData.location?.trim(),
-          result: step3Valid
-        });
         return step3Valid;
         
       default:

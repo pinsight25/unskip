@@ -44,7 +44,7 @@ const OTPVerificationStep = ({
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 flex items-center space-x-3">
         <Phone className="h-5 w-5 text-gray-500" />
         <span className="text-sm font-medium flex-1 text-gray-700">{phoneNumber}</span>
-        <Button variant="ghost" size="sm" onClick={onEditPhone} className="h-8 w-8 p-0 rounded-full">
+        <Button variant="ghost" size="sm" onClick={onEditPhone} className="h-8 w-8 p-0 rounded-full" aria-label="Edit phone number">
           <Edit className="h-4 w-4" />
         </Button>
         <Badge className="bg-green-100 text-green-700 border-green-200">
@@ -149,7 +149,7 @@ const OTPVerificationStep = ({
       </div>
 
       <div className="text-center">
-        <Button variant="ghost" size="sm" onClick={onResendOTP} disabled={isSendingOTP} className="text-xs text-gray-500 hover:text-primary">
+        <Button variant="ghost" size="sm" onClick={onResendOTP} disabled={isSendingOTP} className="text-xs text-gray-500 hover:text-primary" aria-label="Resend OTP">
           {isSendingOTP ? 'Sending...' : 'Didn\'t receive OTP? Resend'}
         </Button>
       </div>

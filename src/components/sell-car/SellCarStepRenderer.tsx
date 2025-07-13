@@ -13,6 +13,7 @@ interface SellCarStepRendererProps {
   currentStep: number;
   formData: SellCarFormData;
   setFormData: (updater: (prev: SellCarFormData) => SellCarFormData) => void;
+  updateFormData: (updates: Partial<SellCarFormData>) => void;
   validatePrice: (price: string) => { valid: boolean; message: string };
   validateKilometersDriven: (km: string) => { valid: boolean; message: string };
 }
@@ -21,6 +22,7 @@ const SellCarStepRenderer = ({
   currentStep, 
   formData, 
   setFormData, 
+  updateFormData,
   validatePrice, 
   validateKilometersDriven 
 }: SellCarStepRendererProps) => {
@@ -49,6 +51,7 @@ const SellCarStepRenderer = ({
           <CarDetailsStep 
             formData={formData}
             setFormData={setFormData}
+            updateFormData={updateFormData}
             validateKilometersDriven={validateKilometersDriven}
           />
         );
@@ -57,6 +60,7 @@ const SellCarStepRenderer = ({
           <PricingStep 
             formData={formData}
             setFormData={setFormData}
+            updateFormData={updateFormData}
             validatePrice={validatePrice}
           />
         );
@@ -64,14 +68,14 @@ const SellCarStepRenderer = ({
         if (isMobile) {
           return (
             <div className="bg-white rounded-lg p-6 pb-40">
-              <PhotosStep />
+              <PhotosStep formData={formData} setFormData={setFormData} updateFormData={updateFormData} />
             </div>
           );
         } else {
           return (
             <Card className="shadow-lg">
               <CardContent className="p-6">
-                <PhotosStep />
+                <PhotosStep formData={formData} setFormData={setFormData} updateFormData={updateFormData} />
               </CardContent>
             </Card>
           );
@@ -81,6 +85,7 @@ const SellCarStepRenderer = ({
           <LocationContactStep 
             formData={formData}
             setFormData={setFormData}
+            updateFormData={updateFormData}
             onPhoneVerification={handlePhoneVerification}
           />
         );

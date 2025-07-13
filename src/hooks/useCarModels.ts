@@ -23,18 +23,21 @@ export const useCarModels = (makeId?: string) => {
     const fetchModels = async () => {
       try {
         setIsLoading(true);
+        console.log('Fetching car models for makeId:', makeId);
         const { data, error } = await supabase
           .from('car_models')
           .select('id, name, make_id, sort_order')
           .eq('make_id', makeId)
           .eq('is_active', true)
           .order('sort_order');
-
+        console.log('Models fetched:', data);
+        console.log('Models error:', error);
         if (error) throw error;
         setModels(data || []);
       } catch (err) {
         console.error('Error fetching car models:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch car models');
+        setModels([]);
       } finally {
         setIsLoading(false);
       }

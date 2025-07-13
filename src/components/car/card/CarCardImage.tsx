@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Eye, Heart } from 'lucide-react';
+import { Heart, Eye, Shield, Award, Building2 } from 'lucide-react';
 import { Car } from '@/types/car';
 
 interface CarCardImageProps {
@@ -12,6 +12,8 @@ interface CarCardImageProps {
 }
 
 const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
+  // Debug logging for badge display
+  console.log('CarCardImage car:', { title: car.title, featured: car.featured, verified: car.verified, dealerVerified: car.seller?.dealerVerified });
   return (
     <div className="relative w-full h-[200px] overflow-hidden">
       <Link to={`/car/${car.id}`}>
@@ -23,18 +25,32 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
       </Link>
       
       {/* Badges */}
-      <div className="absolute top-3 left-3 flex flex-col gap-2">
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
         {car.featured && (
-          <Badge className="bg-amber-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-sm">
+          <Badge className="bg-amber-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg">
             Featured
           </Badge>
         )}
         {car.verified && (
-          <Badge className="bg-green-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-sm">
+          <Badge className="bg-green-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg">
             <Shield className="h-3 w-3 mr-1" />
             Verified
           </Badge>
         )}
+        {/* Dealer verification badge - use car.seller_type only */}
+        {car.seller_type === 'dealer' && car.seller?.dealerVerified === true && (
+          <Badge className="bg-blue-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg">
+            <Building2 className="h-3 w-3 mr-1" />
+            Verified Dealer
+          </Badge>
+        )}
+        {car.seller_type === 'dealer' && car.seller?.dealerVerified === false && (
+          <Badge className="bg-gray-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg">
+            <Building2 className="h-3 w-3 mr-1" />
+            Unverified Dealer
+          </Badge>
+        )}
+        {/* No dealer badge for individual/owner */}
       </div>
 
       {/* Save Button */}

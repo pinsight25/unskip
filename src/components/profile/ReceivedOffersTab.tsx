@@ -203,14 +203,7 @@ const ReceivedOffersTab = () => {
             })}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No offers received yet</h3>
-            <p className="text-gray-600 mb-6">When buyers make offers on your cars, they'll appear here</p>
-            <p className="text-sm text-gray-500">Make sure to enable "Accept Offers" when posting your cars to receive offers</p>
-          </div>
+          <p className="text-gray-500 text-center mt-8">No offers received yet</p>
         )}
       </Card>
     </div>

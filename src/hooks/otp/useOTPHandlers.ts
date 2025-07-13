@@ -179,12 +179,7 @@ export const useOTPHandlers = ({
             
             // Sign in the user
             const userData = userRecord.userData;
-            signIn(phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''), {
-              name: userData.name,
-              email: userData.email || '',
-              city: 'city' in userData ? userData.city || '' : '',
-              gender: 'gender' in userData ? userData.gender : undefined
-            });
+            await signIn(phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''));
             
             setIsVerified(true);
             setIsVerifying(false);
@@ -307,12 +302,7 @@ export const useOTPHandlers = ({
 
       console.log('✅ Profile updated successfully:', data);
       
-      signIn(user.phone!, {
-        name: profileData.name.trim(),
-        email: profileData.email.trim(),
-        city: profileData.city,
-        gender: profileData.gender
-      });
+      await signIn(user.phone!);
       
       toast({
         title: "Welcome!",

@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { Camera, Upload, Phone, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CustomInput } from '@/components/ui/CustomInput';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { CustomTextarea } from '@/components/ui/CustomTextarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
 
@@ -78,6 +78,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               onChange={(e) => handleImageUpload(e.target.files)}
               className="hidden"
               id="image-upload"
+              aria-label="Upload product photos"
             />
             <label htmlFor="image-upload">
               <Button type="button" variant="outline" className="cursor-pointer">
@@ -98,6 +99,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
                   <button
                     onClick={() => removeImage(index)}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label={`Remove photo ${index + 1}`}
                   >
                     ×
                   </button>
@@ -123,7 +125,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
                 <User className="h-4 w-4" />
                 Your Name *
               </Label>
-              <Input
+              <CustomInput
                 id="sellerName"
                 type="text"
                 value={formData.sellerName}
@@ -134,7 +136,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
             </div>
             <div>
               <Label htmlFor="phone">Phone Number *</Label>
-              <Input
+              <CustomInput
                 id="phone"
                 type="tel"
                 value={formData.phone}
@@ -150,7 +152,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
 
           <div>
             <Label htmlFor="email">Email Address (Optional)</Label>
-            <Input
+            <CustomInput
               id="email"
               type="email"
               value={formData.email}
@@ -164,7 +166,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               <MapPin className="h-4 w-4" />
               Location *
             </Label>
-            <Input
+            <CustomInput
               id="location"
               value={formData.location}
               onChange={(e) => onUpdate({ location: e.target.value })}
@@ -175,7 +177,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
 
           <div>
             <Label htmlFor="additionalInfo">Additional Information (Optional)</Label>
-            <Textarea
+            <CustomTextarea
               id="additionalInfo"
               value={formData.additionalInfo}
               onChange={(e) => onUpdate({ additionalInfo: e.target.value })}

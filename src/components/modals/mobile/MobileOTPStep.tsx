@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { CustomInput } from '@/components/ui/CustomInput';
 import { Badge } from '@/components/ui/badge';
 import { Phone, Edit, Loader } from 'lucide-react';
 
@@ -32,7 +32,7 @@ const MobileOTPStep = ({
       <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-3">
         <Phone className="h-5 w-5 text-muted-foreground" />
         <span className="text-base font-medium flex-1">{phoneNumber}</span>
-        <Button variant="ghost" size="sm" onClick={onEditPhone}>
+        <Button variant="ghost" size="sm" onClick={onEditPhone} aria-label="Edit phone number">
           <Edit className="h-4 w-4" />
         </Button>
         <Badge variant="outline" className="bg-white">
@@ -41,14 +41,16 @@ const MobileOTPStep = ({
       </div>
 
       <div className="space-y-4">
-        <label className="text-base font-medium">Enter 6-digit OTP</label>
-        <Input
+        <label htmlFor="otp-input" className="text-base font-medium">Enter 6-digit OTP</label>
+        <CustomInput
+          id="otp-input"
           placeholder="000000"
           value={otp}
           onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
           className="text-center text-2xl tracking-widest h-14"
           inputMode="numeric"
           maxLength={6}
+          aria-label="OTP Code"
         />
         {error && (
           <p className="text-sm text-red-600">{error}</p>
@@ -56,7 +58,7 @@ const MobileOTPStep = ({
       </div>
 
       <div className="text-center">
-        <Button variant="ghost" size="sm" className="text-sm" onClick={onResendOTP} disabled={isSendingOTP}>
+        <Button variant="ghost" size="sm" className="text-sm" onClick={onResendOTP} disabled={isSendingOTP} aria-label="Resend OTP">
           {isSendingOTP ? 'Sending...' : 'Didn\'t receive OTP? Resend'}
         </Button>
       </div>

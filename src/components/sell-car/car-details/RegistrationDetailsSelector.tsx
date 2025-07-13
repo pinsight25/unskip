@@ -33,7 +33,14 @@ const RegistrationDetailsSelector = ({ formData, setFormData }: RegistrationDeta
           <SelectTrigger>
             <SelectValue placeholder="Select state" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="Delhi">Delhi</SelectItem>
             <SelectItem value="Mumbai">Mumbai</SelectItem>
             <SelectItem value="Karnataka">Karnataka</SelectItem>

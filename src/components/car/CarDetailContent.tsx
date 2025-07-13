@@ -57,6 +57,7 @@ const CarDetailContent = ({
               title={car.title}
               featured={car.featured}
               verified={car.verified}
+              seller={car.seller}
             />
             
             {/* Car Title and Price - Now above toggles */}

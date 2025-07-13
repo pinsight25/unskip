@@ -24,7 +24,6 @@ const Dealers = () => {
   });
 
   const handleApplyFilters = () => {
-    console.log('Filters applied:', { selectedLocation, selectedBrand });
   };
 
   const handleClearFilters = () => {

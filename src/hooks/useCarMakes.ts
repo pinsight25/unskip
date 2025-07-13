@@ -18,17 +18,20 @@ export const useCarMakes = () => {
     const fetchMakes = async () => {
       try {
         setIsLoading(true);
+        console.log('Fetching car makes...');
         const { data, error } = await supabase
           .from('car_makes')
           .select('id, name, logo_url, sort_order')
           .eq('is_active', true)
           .order('sort_order');
-
+        console.log('Makes fetched:', data);
+        console.log('Makes error:', error);
         if (error) throw error;
         setMakes(data || []);
       } catch (err) {
         console.error('Error fetching car makes:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch car makes');
+        setMakes([]);
       } finally {
         setIsLoading(false);
       }

@@ -34,24 +34,24 @@ const queryClient = new QueryClient();
 // App content component that uses the UserContext
 const AppContent = () => {
   const { isLoading } = useUser();
-  const [forceLoad, setForceLoad] = useState(false);
+  // Remove forceLoad logic
+  // const [forceLoad, setForceLoad] = useState(false);
 
-  // Force load after 5 seconds regardless of auth state
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      console.warn('🚨 FORCING APP TO LOAD after 5 seconds');
-      setForceLoad(true);
-    }, 5000);
+  // Remove forced load useEffect
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     console.warn('🚨 FORCING APP TO LOAD after 5 seconds');
+  //     setForceLoad(true);
+  //   }, 5000);
+  //   return () => clearTimeout(timeoutId);
+  // }, []);
 
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  if (isLoading && !forceLoad) {
+  if (isLoading) {
     return (
       <LoadingScreen 
         message="Loading..." 
         timeout={3000}
-        onTimeout={() => setForceLoad(true)}
+        // onTimeout={() => setForceLoad(true)}
       />
     );
   }

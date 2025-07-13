@@ -2,15 +2,15 @@
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
+import { carService } from '@/services/carService';
 
 export const useProfileHandlers = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signOut } = useUser();
+  const { signOut, user } = useUser();
 
   const handleEditProfile = (newProfile: any) => {
     // In real app, this would update user context
-    console.log('Profile updated:', newProfile);
   };
 
   const handleSignOut = () => {
@@ -34,16 +34,25 @@ export const useProfileHandlers = () => {
     });
   };
 
-  const confirmDeleteListing = (
-    setDeleteModal: (modal: { isOpen: boolean; listingId: string | null; title: string }) => void
+  const confirmDeleteListing = async (
+    setDeleteModal: (modal: { isOpen: boolean; listingId: string | null; title: string }) => void,
+    listingId: string | null
   ) => {
-    setTimeout(() => {
-      setDeleteModal({ isOpen: false, listingId: null, title: '' });
+    if (!listingId || !user) return;
+    const result = await carService.deleteCarListing(listingId, user.id);
+    setDeleteModal({ isOpen: false, listingId: null, title: '' });
+    if (result.success) {
       toast({
         title: "Listing Deleted",
         description: "Your listing has been deleted successfully",
       });
-    }, 1000);
+    } else {
+      toast({
+        title: "Delete Failed",
+        description: "There was a problem deleting your listing.",
+        variant: "destructive"
+      });
+    }
   };
 
   return {

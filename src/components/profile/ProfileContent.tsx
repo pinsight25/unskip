@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
+import { supabase } from '@/lib/supabase';
 
 interface ProfileContentProps {
   user: any;
@@ -19,6 +21,7 @@ interface ProfileContentProps {
     totalOffers: number;
   };
   isLoading: boolean;
+  isRefetching?: boolean;
   error: string | null;
   onEditProfile: () => void;
   onSignOut: () => void;
@@ -31,17 +34,38 @@ const ProfileContent = ({
   accessories,
   stats,
   isLoading,
+  isRefetching,
   error,
   onEditProfile,
   onSignOut,
   onDeleteListing
 }: ProfileContentProps) => {
-  
-  // Mock dealer info - in real app this would come from user context
-  const dealerInfo = user?.dealerVerified ? {
-    businessName: 'Premium Auto Solutions',
-    verified: true
-  } : null;
+  const [dealerInfo, setDealerInfo] = useState<{
+    businessName: string;
+    verified: boolean;
+    pending: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchDealerInfo = async () => {
+      if (!user?.id) return;
+      const { data, error } = await supabase
+        .from('dealers')
+        .select('business_name, verification_status')
+        .eq('user_id', user.id)
+        .single();
+      if (data) {
+        setDealerInfo({
+          businessName: data.business_name,
+          verified: data.verification_status === 'verified',
+          pending: data.verification_status !== 'verified',
+        });
+      } else {
+        setDealerInfo(null);
+      }
+    };
+    fetchDealerInfo();
+  }, [user?.id]);
 
   // Calculate total active listings
   const activeListings = listings.filter(l => l.status === 'active');
@@ -112,6 +136,7 @@ const ProfileContent = ({
                 listings={listings}
                 accessories={accessories}
                 isLoading={isLoading}
+                isRefetching={isRefetching}
                 error={error}
                 onDeleteListing={onDeleteListing}
               />

@@ -9,6 +9,7 @@ interface RegistrationNavigationProps {
   onNextStep: () => void;
   onSubmit: () => void;
   canProceed: boolean;
+  isSubmitting?: boolean;
 }
 
 const RegistrationNavigation = ({
@@ -17,7 +18,8 @@ const RegistrationNavigation = ({
   onPrevStep,
   onNextStep,
   onSubmit,
-  canProceed
+  canProceed,
+  isSubmitting = false
 }: RegistrationNavigationProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8 pt-4 pb-20 lg:pb-4">
@@ -39,10 +41,10 @@ const RegistrationNavigation = ({
         <Button 
           onClick={onSubmit} 
           className="w-full sm:w-auto flex items-center bg-green-600 hover:bg-green-700"
-          disabled={!canProceed}
+          disabled={!canProceed || isSubmitting}
         >
           <CheckCircle className="h-4 w-4 mr-2" />
-          Submit Application
+          {isSubmitting ? 'Submitting...' : 'Submit Application'}
         </Button>
       )}
     </div>

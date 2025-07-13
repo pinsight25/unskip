@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { updateFormField } from '@/utils/formHelpers';
+import { supabase } from '@/lib/supabase';
+import { useUser } from '@/contexts/UserContext';
+import { uploadToCloudinary, uploadMultipleToCloudinary } from '@/utils/uploadHelpers';
+
+const STORAGE_KEY = 'dealerRegistrationFormData';
 
 export interface DealerFormData {
   businessName: string;
@@ -32,35 +37,97 @@ export interface DealerFormData {
 
 export const useDealerRegistrationForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<DealerFormData>({
-    businessName: '',
-    contactPerson: '',
-    phone: '',
-    email: '',
-    businessCategory: '',
-    brandsDealWith: [],
-    specialization: '',
-    gstNumber: '',
-    shopAddress: '',
-    pincode: '',
-    establishmentYear: '',
-    websiteUrl: '',
-    googleMapsLink: '',
-    operatingHours: {
-      openingTime: '',
-      closingTime: '',
-      is24x7: false,
-    },
-    documents: {
-      gstCertificate: null,
-      shopLicense: null,
-      shopPhotos: [],
-    },
-    agreeToTerms: false,
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormDataState] = useState<DealerFormData>(() => {
+    // Load from localStorage on mount
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Files cannot be persisted, so reset them
+        if (parsed.documents) {
+          parsed.documents.gstCertificate = null;
+          parsed.documents.shopLicense = null;
+          parsed.documents.shopPhotos = [];
+        }
+        return parsed;
+      } catch (e) {
+        return {
+          businessName: '',
+          contactPerson: '',
+          phone: '',
+          email: '',
+          businessCategory: '',
+          brandsDealWith: [],
+          specialization: '',
+          gstNumber: '',
+          shopAddress: '',
+          pincode: '',
+          establishmentYear: '',
+          websiteUrl: '',
+          googleMapsLink: '',
+          operatingHours: {
+            openingTime: '',
+            closingTime: '',
+            is24x7: false,
+          },
+          documents: {
+            gstCertificate: null,
+            shopLicense: null,
+            shopPhotos: [],
+          },
+          agreeToTerms: false,
+        };
+      }
+    }
+    return {
+      businessName: '',
+      contactPerson: '',
+      phone: '',
+      email: '',
+      businessCategory: '',
+      brandsDealWith: [],
+      specialization: '',
+      gstNumber: '',
+      shopAddress: '',
+      pincode: '',
+      establishmentYear: '',
+      websiteUrl: '',
+      googleMapsLink: '',
+      operatingHours: {
+        openingTime: '',
+        closingTime: '',
+        is24x7: false,
+      },
+      documents: {
+        gstCertificate: null,
+        shopLicense: null,
+        shopPhotos: [],
+      },
+      agreeToTerms: false,
+    };
   });
-  
+
+  // Save to localStorage on every change (except files)
+  useEffect(() => {
+    const { documents, ...rest } = formData;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, gstCertificate: null, shopLicense: null, shopPhotos: [] } }));
+  }, [formData]);
+
+  // Helper to update form data and persist
+  const setFormData = (updater: (prev: DealerFormData) => DealerFormData) => {
+    setFormDataState(prev => {
+      const updated = updater(prev);
+      // Save to localStorage (except files)
+      const { documents, ...rest } = updated;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, gstCertificate: null, shopLicense: null, shopPhotos: [] } }));
+      return updated;
+    });
+  };
+
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
   const totalSteps = 3;
   const progress = (currentStep / totalSteps) * 100;
 
@@ -106,7 +173,6 @@ export const useDealerRegistrationForm = () => {
   };
 
   const validateStep = (step: number) => {
-    console.log(`Validating step ${step}:`, formData);
     
     switch (step) {
       case 1:
@@ -119,16 +185,6 @@ export const useDealerRegistrationForm = () => {
           formData.brandsDealWith?.length > 0 &&
           formData.specialization?.trim()
         );
-        console.log('Step 1 validation:', {
-          businessName: !!formData.businessName?.trim(),
-          contactPerson: !!formData.contactPerson?.trim(),
-          phone: !!formData.phone?.trim(),
-          email: !!formData.email?.trim(),
-          businessCategory: !!formData.businessCategory?.trim(),
-          brandsDealWith: formData.brandsDealWith?.length > 0,
-          specialization: !!formData.specialization?.trim(),
-          result: step1Valid
-        });
         return step1Valid;
         
       case 2:
@@ -139,14 +195,6 @@ export const useDealerRegistrationForm = () => {
           formData.pincode?.trim() && 
           formData.establishmentYear?.trim()
         );
-        console.log('Step 2 validation:', {
-          gstNumber: !!formData.gstNumber?.trim(),
-          gstValid: validateGST(formData.gstNumber),
-          shopAddress: !!formData.shopAddress?.trim(),
-          pincode: !!formData.pincode?.trim(),
-          establishmentYear: !!formData.establishmentYear?.trim(),
-          result: step2Valid
-        });
         return step2Valid;
         
       case 3:
@@ -156,13 +204,6 @@ export const useDealerRegistrationForm = () => {
           formData.documents.shopPhotos?.length > 0 && 
           formData.agreeToTerms === true
         );
-        console.log('Step 3 validation:', {
-          gstCertificate: !!formData.documents.gstCertificate,
-          shopLicense: !!formData.documents.shopLicense,
-          shopPhotos: formData.documents.shopPhotos?.length > 0,
-          agreeToTerms: formData.agreeToTerms === true,
-          result: step3Valid
-        });
         return step3Valid;
         
       default:
@@ -190,21 +231,90 @@ export const useDealerRegistrationForm = () => {
     }
   };
 
-  const handleSubmit = () => {
-    if (validateStep(3)) {
-      console.log('Submitting dealer registration:', formData);
-      
-      const dealerSlug = generateDealerSlug(formData.businessName);
-      
+  const handleSubmit = async () => {
+    if (!validateStep(3)) {
       toast({
-        title: "Application Submitted!",
-        description: "Your dealer profile has been created and is pending verification.",
+        title: "Please fill all required fields",
+        description: "Complete all fields before submitting.",
+        variant: "destructive",
       });
-      
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to register as a dealer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Generate slug from business name
+      const slug = formData.businessName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+      // Upload documents to Cloudinary
+      const gstCertUrl = await uploadToCloudinary(formData.documents.gstCertificate!, 'unskip/dealers/documents');
+      const shopLicenseUrl = await uploadToCloudinary(formData.documents.shopLicense!, 'unskip/dealers/documents');
+      const shopPhotosUrls = await uploadMultipleToCloudinary(formData.documents.shopPhotos, 'unskip/dealers/photos');
+
+      // Insert into dealers table
+      const { data: dealer, error } = await supabase
+        .from('dealers')
+        .insert({
+          user_id: user.id,
+          slug: slug,
+          business_name: formData.businessName,
+          contact_person: formData.contactPerson,
+          phone: formData.phone,
+          email: formData.email,
+          business_category: formData.businessCategory,
+          specialization: formData.specialization,
+          brands_deal_with: formData.brandsDealWith,
+          gst_number: formData.gstNumber,
+          shop_address: formData.shopAddress,
+          pincode: formData.pincode,
+          establishment_year: parseInt(formData.establishmentYear),
+          gst_certificate_url: gstCertUrl,
+          shop_license_url: shopLicenseUrl,
+          shop_photos_urls: shopPhotosUrls,
+          verification_status: 'pending',
+          verified: false
+        })
+        .select()
+        .single();
+      if (error) throw error;
+
+      // Update user as dealer
+      await supabase
+        .from('users')
+        .update({ user_type: 'dealer' })
+        .eq('id', user.id);
+
+      toast({
+        title: "Registration successful!",
+        description: "Your dealer profile has been created and is pending verification. You can start posting cars immediately.",
+      });
+
+      // Clear saved form data
+      localStorage.removeItem(STORAGE_KEY);
+
       setTimeout(() => {
-        // Route to the new dealer page with pending status
-        navigate(`/dealers/${dealerSlug}`);
+        navigate('/profile');
       }, 2000);
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error?.message || 'Failed to register. Please try again.',
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -213,6 +323,7 @@ export const useDealerRegistrationForm = () => {
     totalSteps,
     progress,
     formData,
+    isSubmitting,
     validateGST,
     handleInputChange,
     handleFileUpload,

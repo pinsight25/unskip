@@ -8,6 +8,7 @@ import ListingCard from './listings/ListingCard';
 import AccessoryCard from './listings/AccessoryCard';
 import EmptyListingsState from './listings/EmptyListingsState';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from 'lucide-react';
 
 interface Listing {
   id: string;
@@ -69,15 +70,17 @@ interface MyListingsTabProps {
   listings: Listing[];
   accessories: Accessory[];
   isLoading: boolean;
+  isRefetching?: boolean;
   error: string | null;
   onDeleteListing: (listingId: string, title: string) => void;
 }
 
-const MyListingsTab = ({ listings, accessories, isLoading, error, onDeleteListing }: MyListingsTabProps) => {
+const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, onDeleteListing }: MyListingsTabProps) => {
   console.log('MyListingsTab: Component rendered with props:', {
     listingsCount: listings?.length || 0,
     accessoriesCount: accessories?.length || 0,
     isLoading,
+    isRefetching,
     error,
     listings: listings,
     accessories: accessories
@@ -129,7 +132,11 @@ const MyListingsTab = ({ listings, accessories, isLoading, error, onDeleteListin
   // Show empty state when no active listings
   if (totalActive === 0) {
     console.log('MyListingsTab: No active listings, showing empty state');
-    return <EmptyListingsState />;
+    return (
+      <Card className="p-4 md:p-6">
+        <p className="text-gray-500 text-center mt-8">No cars listed yet</p>
+      </Card>
+    );
   }
 
   // Helper function to format date relative to now
@@ -164,7 +171,7 @@ const MyListingsTab = ({ listings, accessories, isLoading, error, onDeleteListin
   });
 
   return (
-    <Card className="p-4 md:p-6">
+    <Card className="p-4 md:p-6 relative">
       <div className="space-y-6">
         {/* Cars Section */}
         {listingsWithDate.length > 0 && (
@@ -218,6 +225,11 @@ const MyListingsTab = ({ listings, accessories, isLoading, error, onDeleteListin
           </div>
         )}
       </div>
+      {isRefetching && (
+        <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20">
+          <Loader2 className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      )}
     </Card>
   );
 };

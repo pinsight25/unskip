@@ -17,6 +17,7 @@ const DealerRegister = () => {
     totalSteps,
     progress,
     formData,
+    isSubmitting,
     validateGST,
     handleInputChange,
     handleFileUpload,
@@ -103,6 +104,7 @@ const DealerRegister = () => {
                   onNextStep={nextStep}
                   onSubmit={handleSubmit}
                   canProceed={!!validateStep(currentStep)}
+                  isSubmitting={isSubmitting}
                 />
               </CardContent>
             </Card>

@@ -21,6 +21,7 @@ const Home = () => {
     selectedCar,
     isMobile,
     isRefreshing,
+    loading,
     offerStatuses,
     handleFilterChange,
     handleTypeFilter,
@@ -88,6 +89,11 @@ const Home = () => {
             onTestDrive={handleTestDriveClick}
             getOfferStatus={getOfferStatus}
           />
+        ) : loading ? (
+          <div className="text-center py-12">
+            <div className="text-lg font-semibold text-gray-900 mb-2">Loading cars...</div>
+            <div className="text-gray-600">Fetching the latest listings from our database</div>
+          </div>
         ) : (
           <HomeResults
             filteredCars={filteredCars}

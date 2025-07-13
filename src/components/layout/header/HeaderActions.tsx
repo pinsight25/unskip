@@ -14,33 +14,18 @@ interface HeaderActionsProps {
 }
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
-  const { user, isSignedIn, isLoading, signOut } = useUser();
+  const { user, isLoading, signOut } = useUser();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
 
-  // Debug logging to understand the state
-  console.log('🔴 HEADERACTIONS DEBUG:', {
-    user: user,
-    isSignedIn: isSignedIn,
-    isLoading: isLoading,
-    condition1_showLoading: isLoading,
-    condition2_signedInWithUser: isSignedIn && user,
-    condition3_signedInNoUser: isSignedIn && !user,
-    condition4_notSignedIn: !isSignedIn,
-    timestamp: new Date().toISOString()
-  });
-
   const handleSignOut = async () => {
-    console.log('🔴 HeaderActions: Sign out button clicked');
     try {
       await signOut();
-      console.log('🔴 HeaderActions: Sign out completed');
     } catch (error) {
       console.error('🔴 HeaderActions: Sign out failed:', error);
     }
   };
 
   const handleSignInClick = () => {
-    console.log('🔴 HeaderActions: Sign in button clicked');
     setIsSignInModalOpen(true);
   };
 
@@ -65,7 +50,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
           <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
         </div>
-      ) : isSignedIn && user ? (
+      ) : user ? (
         // Show user profile when signed in AND user data is available
         <>
           <DropdownMenu>
@@ -93,10 +78,8 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <span className="text-xs text-green-600 font-medium">✓ Signed In</span>
         </>
-      ) : isSignedIn && !user ? (
-        // Show setting up when signed in but no user data yet
+      ) : isLoading ? (
         <>
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 border border-gray-200">
@@ -107,7 +90,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
             </Avatar>
             <span className="body-text font-medium text-gray-700">Setting up...</span>
           </div>
-          <span className="text-xs text-orange-600 font-medium">Loading profile...</span>
         </>
       ) : (
         // Show sign in when not signed in
@@ -124,17 +106,14 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
             </Avatar>
             <span className="body-text font-medium text-gray-700">Sign In</span>
           </button>
-          <span className="text-xs text-gray-500 font-medium">Not signed in</span>
         </>
       )}
-      
       {/* Post Car Button */}
       <Link to="/sell">
         <Button size="default" className="font-semibold px-6 shadow-sm">
           Post Your Car
         </Button>
       </Link>
-
       <SignInModal 
         isOpen={isSignInModalOpen}
         onClose={() => setIsSignInModalOpen(false)}

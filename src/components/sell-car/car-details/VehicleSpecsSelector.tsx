@@ -25,7 +25,14 @@ const VehicleSpecsSelector = ({ formData, setFormData }: VehicleSpecsSelectorPro
           <SelectTrigger>
             <SelectValue placeholder="Select capacity" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="2">2 Seater</SelectItem>
             <SelectItem value="4">4 Seater</SelectItem>
             <SelectItem value="5">5 Seater</SelectItem>
@@ -44,7 +51,14 @@ const VehicleSpecsSelector = ({ formData, setFormData }: VehicleSpecsSelectorPro
           <SelectTrigger>
             <SelectValue placeholder="Select fuel type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="Petrol">Petrol</SelectItem>
             <SelectItem value="Diesel">Diesel</SelectItem>
             <SelectItem value="Electric">Electric</SelectItem>
@@ -63,7 +77,14 @@ const VehicleSpecsSelector = ({ formData, setFormData }: VehicleSpecsSelectorPro
           <SelectTrigger>
             <SelectValue placeholder="Select transmission" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="Manual">Manual</SelectItem>
             <SelectItem value="Automatic">Automatic</SelectItem>
           </SelectContent>
@@ -79,7 +100,14 @@ const VehicleSpecsSelector = ({ formData, setFormData }: VehicleSpecsSelectorPro
           <SelectTrigger>
             <SelectValue placeholder="Select owners" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="1">1st Owner</SelectItem>
             <SelectItem value="2">2nd Owner</SelectItem>
             <SelectItem value="3">3rd Owner</SelectItem>

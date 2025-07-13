@@ -9,6 +9,7 @@ const SellCar = () => {
     currentStep,
     formData,
     setFormData,
+    updateFormData,
     activeCarListings,
     carLimit,
     isEditMode,
@@ -17,7 +18,10 @@ const SellCar = () => {
     handleNext,
     handlePrevious,
     handleSubmit,
-    handleBackToHome
+    handleBackToHome,
+    clearFormData,
+    canSubmit,
+    userType
   } = useSellCarLogic();
 
   return (
@@ -26,13 +30,16 @@ const SellCar = () => {
         currentStep={currentStep}
         activeCarListings={activeCarListings}
         carLimit={carLimit}
+        userType={userType}
         onBackClick={handleBackToHome}
+        onClearForm={clearFormData}
       />
 
       <SellCarStepRenderer
         currentStep={currentStep}
         formData={formData}
         setFormData={setFormData}
+        updateFormData={updateFormData}
         validatePrice={validatePrice}
         validateKilometersDriven={validateKilometersDriven}
       />
@@ -46,6 +53,7 @@ const SellCar = () => {
         onPrevious={handlePrevious}
         onNext={handleNext}
         onSubmit={handleSubmit}
+        canSubmit={canSubmit}
       />
     </div>
   );

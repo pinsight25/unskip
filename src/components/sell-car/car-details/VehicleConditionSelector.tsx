@@ -44,7 +44,14 @@ const VehicleConditionSelector = ({ formData, setFormData, validateKilometersDri
           <SelectTrigger>
             <SelectValue placeholder="Select color" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            className="max-h-[300px] overflow-y-auto z-50"
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <SelectItem value="White">White</SelectItem>
             <SelectItem value="Silver">Silver</SelectItem>
             <SelectItem value="Black">Black</SelectItem>

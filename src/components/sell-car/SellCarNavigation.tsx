@@ -11,6 +11,7 @@ interface SellCarNavigationProps {
   onPrevious: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  canSubmit: () => boolean;
 }
 
 const SellCarNavigation = ({ 
@@ -21,7 +22,8 @@ const SellCarNavigation = ({
   isEditMode = false,
   onPrevious, 
   onNext, 
-  onSubmit 
+  onSubmit,
+  canSubmit
 }: SellCarNavigationProps) => {
   const canProceed = () => {
     if (currentStep === 4) {
@@ -57,7 +59,7 @@ const SellCarNavigation = ({
           {currentStep === 4 ? (
             <Button
               onClick={onSubmit}
-              disabled={!canProceed()}
+              disabled={!canSubmit()}
               className="flex items-center gap-2 px-8"
               size="lg"
             >

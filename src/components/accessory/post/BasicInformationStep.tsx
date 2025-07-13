@@ -30,10 +30,10 @@ const BasicInformationStep = ({ formData, onUpdate }: BasicInformationStepProps)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="category">Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => onUpdate('category', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
+                          <Select value={formData.category} onValueChange={(value) => onUpdate('category', value)}>
+              <SelectTrigger id="category">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
                 <SelectContent>
                   {accessoryCategories.filter(cat => cat.id !== 'all').map((category) => (
                     <SelectItem key={category.id} value={category.id}>

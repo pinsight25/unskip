@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Settings, LogOut, Shield } from 'lucide-react';
+import { Settings, LogOut, Shield, Clock } from 'lucide-react';
 
 interface ProfileHeaderProps {
   profile: {
@@ -14,6 +14,7 @@ interface ProfileHeaderProps {
   dealerInfo?: {
     businessName: string;
     verified: boolean;
+    pending: boolean;
   } | null;
   onEditProfile: () => void;
   onSignOut: () => void;
@@ -43,12 +44,16 @@ const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut }: Profil
                 Verified Dealer
               </Badge>
             )}
+            {dealerInfo?.pending && !dealerInfo.verified && (
+              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                <Clock className="h-3 w-3 mr-1" />
+                Pending Verification
+              </Badge>
+            )}
           </div>
-          
-          {dealerInfo?.verified && (
+          {dealerInfo?.businessName && (
             <p className="text-gray-600 mb-2">Owner of {dealerInfo.businessName}</p>
           )}
-          
           <p className="text-gray-600 mb-4">Member since March 2024</p>
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             <Button 

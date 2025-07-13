@@ -10,16 +10,19 @@ import { updateFormField } from '@/utils/formHelpers';
 interface CarDetailsStepProps {
   formData: SellCarFormData;
   setFormData: (updater: (prev: SellCarFormData) => SellCarFormData) => void;
+  updateFormData: (updates: Partial<SellCarFormData>) => void;
   validateKilometersDriven: (km: string) => { valid: boolean; message: string };
 }
 
-const CarDetailsStep = ({ formData, setFormData, validateKilometersDriven }: CarDetailsStepProps) => {
+const CarDetailsStep = ({ formData, setFormData, updateFormData, validateKilometersDriven }: CarDetailsStepProps) => {
   const handleMakeChange = (value: string) => {
-    setFormData(prev => updateFormField(prev, 'make', value));
+    console.log('🔄 Make changed to:', value);
+    updateFormData({ make: value });
   };
 
   const handleModelChange = (value: string) => {
-    setFormData(prev => updateFormField(prev, 'model', value));
+    console.log('🔄 Model changed to:', value);
+    updateFormData({ model: value });
   };
 
   return (
