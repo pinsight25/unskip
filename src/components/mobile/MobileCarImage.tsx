@@ -33,7 +33,7 @@ const MobileCarImage = ({
   return (
     <div className="relative">
       <div 
-        className="relative h-48 bg-gray-100 overflow-hidden"
+        className="relative h-48 bg-gray-100 overflow-hidden rounded-lg"
         onTouchStart={(e) => {
           e.stopPropagation();
           const touchStart = e.touches[0].clientX;
@@ -51,7 +51,7 @@ const MobileCarImage = ({
         <img 
           src={images[currentImageIndex]} 
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg"
         />
         
         <MobileCarBadges featured={featured} verified={verified} />

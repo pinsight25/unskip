@@ -15,12 +15,12 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
   // Debug logging for badge display
   console.log('CarCardImage car:', { title: car.title, featured: car.featured, verified: car.verified, dealerVerified: car.seller?.dealerVerified });
   return (
-    <div className="relative w-full h-[200px] overflow-hidden">
+    <div className="relative w-full h-[200px] overflow-hidden rounded-lg">
       <Link to={`/car/${car.id}`}>
         <img
           src={car.images[0]}
           alt={car.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer rounded-lg"
         />
       </Link>
       
