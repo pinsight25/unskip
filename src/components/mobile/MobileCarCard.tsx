@@ -4,6 +4,7 @@ import MobileCarImage from './MobileCarImage';
 import MobileCarPrice from './MobileCarPrice';
 import MobileCarDetails from './MobileCarDetails';
 import MobileCarActions from './MobileCarActions';
+import { useUser } from '@/contexts/UserContext';
 
 interface MobileCarCardProps {
   car: any;
@@ -25,6 +26,8 @@ const MobileCarCard = ({
   offerStatus 
 }: MobileCarCardProps) => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const isOwner = user && user.id === car.seller.id;
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on interactive elements
@@ -83,6 +86,8 @@ const MobileCarCard = ({
             e?.stopPropagation();
             onTestDrive();
           }}
+          isOwner={isOwner}
+          onViewOffers={isOwner ? () => alert('View Offers for this car') : undefined}
         />
       </div>
     </Card>

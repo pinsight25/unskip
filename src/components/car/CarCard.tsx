@@ -10,6 +10,7 @@ import CarCardPrice from './card/CarCardPrice';
 import CarCardSpecs from './card/CarCardSpecs';
 import CarCardSeller from './card/CarCardSeller';
 import CarCardActions from './card/CarCardActions';
+import { useUser } from '@/contexts/UserContext';
 
 interface CarCardProps {
   car: Car;
@@ -23,6 +24,8 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
   const [isVerified, setIsVerified] = useState(false);
   const [offerMade, setOfferMade] = useState(false);
   const { toast } = useToast();
+  const { user } = useUser();
+  const isOwner = user && user.id === car.seller.id;
 
   const handleMakeOffer = () => {
     if (!isVerified) {
@@ -89,26 +92,29 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
                 onMakeOffer={handleMakeOffer}
                 onChat={handleChat}
                 offerMade={offerMade}
+                isOwner={isOwner}
               />
             </div>
           </div>
         </CardContent>
       </Card>
-
-      <OfferModal
-        isOpen={showOfferModal}
-        onClose={() => setShowOfferModal(false)}
-        car={car}
-        onSubmit={handleOfferSubmit}
-      />
-
-      <OTPModal
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
-        onSuccess={handleOTPSuccess}
-        phoneNumber="+91 98765 43210"
-        purpose="make an offer"
-      />
+      {!isOwner && (
+        <>
+          <OfferModal
+            isOpen={showOfferModal}
+            onClose={() => setShowOfferModal(false)}
+            car={car}
+            onSubmit={handleOfferSubmit}
+          />
+          <OTPModal
+            isOpen={showOTPModal}
+            onClose={() => setShowOTPModal(false)}
+            onSuccess={handleOTPSuccess}
+            phoneNumber="+91 98765 43210"
+            purpose="make an offer"
+          />
+        </>
+      )}
     </>
   );
 };

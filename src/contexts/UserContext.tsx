@@ -14,6 +14,7 @@ export interface User {
   avatar?: string;
   isVerified?: boolean;
   userType?: 'regular' | 'premium' | 'dealer';
+  phone_verified?: boolean;
 }
 
 interface UserContextType {
@@ -113,7 +114,8 @@ const syncUserFromDatabase = async (
         gender: userData.gender || undefined,
         avatar: userData.avatar || undefined,
         isVerified: userData.is_verified || undefined,
-        userType: userData.user_type || undefined
+        userType: userData.user_type || undefined,
+        phone_verified: 'phone_verified' in userData ? Boolean((userData as any).phone_verified) : false,
       });
     } else if (mounted.current) {
       setUser(null);

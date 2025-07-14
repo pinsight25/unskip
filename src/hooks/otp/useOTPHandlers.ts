@@ -4,6 +4,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useUserRecord } from './useUserRecord';
+import type { TablesUpdate } from '@/integrations/supabase/types';
 
 interface ProfileData {
   name: string;
@@ -172,6 +173,16 @@ export const useOTPHandlers = ({
         try {
           console.log('🔄 Creating/getting user record...');
           const userRecord = await createOrGetUserRecord(data.user, phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''));
+          
+          // NEW: Update phone_verified status to true
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ phone_verified: true } as any)
+            .eq('id', data.user.id);
+          if (updateError) {
+            console.error('Error updating phone verification status:', updateError);
+            // Don't throw - user is still authenticated
+          }
           
           if (userRecord?.isExisting) {
             console.log('👤 Existing user found:', userRecord.userData);

@@ -163,6 +163,13 @@ export const useUserListings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  // Refetch on window focus
+  useEffect(() => {
+    const handleFocus = () => fetchUserListings(true);
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [user?.id]);
+
   return {
     carListings,
     accessoryListings,

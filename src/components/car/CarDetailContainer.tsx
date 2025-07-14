@@ -87,6 +87,9 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         onMakeOffer={handleMakeOffer}
         onChatClick={handleChatClick}
         onTestDrive={handleTestDrive}
+        sellerId={car.seller.id}
+        onViewOffers={() => {/* TODO: navigate to offers tab */}}
+        onMarkSold={() => {/* TODO: mark car as sold */}}
       />
 
       <CarDetailModals

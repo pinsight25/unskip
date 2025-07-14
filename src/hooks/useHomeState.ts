@@ -141,6 +141,9 @@ export const useHomeState = () => {
       });
       return carsMapped;
     },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Car, Package } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
@@ -45,6 +45,19 @@ const ProfileContent = ({
     verified: boolean;
     pending: boolean;
   } | null>(null);
+
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab === 'received-offers' || tab === 'offers') {
+      setActiveTab('offers');
+    } else {
+      setActiveTab('listings');
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchDealerInfo = async () => {
@@ -120,7 +133,7 @@ const ProfileContent = ({
           </Card>
 
           {/* Tabs */}
-          <Tabs defaultValue="listings" className="w-full">
+          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as 'listings' | 'offers')} className="w-full">
             <TabsList className="grid w-full grid-cols-2 section-gap">
               <TabsTrigger value="listings">
                 My Listings ({totalActive})

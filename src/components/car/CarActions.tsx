@@ -4,18 +4,52 @@ import { Badge } from '@/components/ui/badge';
 import { IndianRupee, MessageCircle, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOfferContext } from '@/contexts/OfferContext';
+import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CarActionsProps {
   carId: string;
+  sellerId: string;
   offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
   onMakeOffer: () => void;
   onChatClick: () => void;
   onTestDrive: () => void;
+  onViewOffers?: () => void;
+  onMarkSold?: () => void;
+  offerCount?: number;
 }
 
-const CarActions = ({ carId, offerStatus, onMakeOffer, onChatClick, onTestDrive }: CarActionsProps) => {
+const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, onTestDrive, onViewOffers, onMarkSold, offerCount }: CarActionsProps) => {
+  const { user } = useUser();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { hasOffered } = useOfferContext();
+
+  if (!user) {
+    return (
+      <Button className="w-full bg-primary text-white font-medium" onClick={() => navigate('/signin')}>
+        Sign In to Make Offer
+      </Button>
+    );
+  }
+
+  const isOwner = user.id === sellerId;
+
+  if (isOwner) {
+    return (
+      <div className="space-y-3">
+        <Button className="w-full bg-primary text-white font-medium" onClick={() => navigate(`/sell?edit=${carId}`)}>
+          ✏️ Edit Listing
+        </Button>
+        <Button className="w-full" variant="outline" onClick={onViewOffers}>
+          👁️ View Offers {offerCount ? `(${offerCount})` : ''}
+        </Button>
+        <Button className="w-full" variant="outline" onClick={onMarkSold}>
+          ✓ Mark as Sold
+        </Button>
+      </div>
+    );
+  }
 
   const handleChatClick = () => {
     if (!hasOffered(carId)) {

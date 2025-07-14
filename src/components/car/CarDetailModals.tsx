@@ -1,6 +1,6 @@
 
 import { Car } from '@/types/car';
-import OfferModal from '@/components/modals/OfferModal';
+import MakeOfferModal from '@/components/car-details/MakeOfferModal';
 import OTPModal from '@/components/modals/OTPModal';
 import TestDriveModal from '@/components/modals/TestDriveModal';
 
@@ -31,11 +31,16 @@ const CarDetailModals = ({
 }: CarDetailModalsProps) => {
   return (
     <>
-      <OfferModal
+      <MakeOfferModal
         isOpen={showOfferModal}
         onClose={onCloseOfferModal}
-        car={car}
-        onSubmit={onOfferSubmit}
+        car={{
+          id: car.id,
+          title: car.title,
+          price: car.price,
+          images: (car.images || []).map(url => ({ url })),
+          seller_id: car.seller.id,
+        }}
       />
 
       <OTPModal

@@ -1,9 +1,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Calendar, IndianRupee } from 'lucide-react';
+import { MessageCircle, Calendar, IndianRupee, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOfferContext } from '@/contexts/OfferContext';
+import { useNavigate } from 'react-router-dom';
 
 interface MobileCarActionsProps {
   carId: string;
@@ -11,6 +12,8 @@ interface MobileCarActionsProps {
   onMakeOffer: (e?: React.MouseEvent) => void;
   onChat: (e?: React.MouseEvent) => void;
   onTestDrive: (e?: React.MouseEvent) => void;
+  isOwner?: boolean;
+  onViewOffers?: () => void;
 }
 
 const MobileCarActions = ({
@@ -18,10 +21,13 @@ const MobileCarActions = ({
   offerStatus,
   onMakeOffer,
   onChat,
-  onTestDrive
+  onTestDrive,
+  isOwner,
+  onViewOffers
 }: MobileCarActionsProps) => {
   const { toast } = useToast();
   const { hasOffered } = useOfferContext();
+  const navigate = useNavigate();
 
   const handleChatClick = (e?: React.MouseEvent) => {
     if (!hasOffered(carId)) {
@@ -86,40 +92,51 @@ const MobileCarActions = ({
     <div className="space-y-3 pb-4">
       {/* Primary Action */}
       <div className="flex gap-2">
-        {getOfferButton()}
+        {!isOwner && getOfferButton()}
+        {isOwner && (
+          <Button
+            size="sm"
+            className="flex-1 bg-cyan-600 text-white hover:bg-cyan-700"
+            onClick={() => navigate('/profile?tab=received-offers')}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            View Offers
+          </Button>
+        )}
       </div>
-      
       {/* Secondary Actions with consistent styling */}
-      <div className="flex gap-2">
-        <Button 
-          size="sm" 
-          variant="outline"
-          onClick={handleChatClick}
-          disabled={!offered}
-          className={`flex-1 ${
-            offered 
-              ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
-              : 'border-gray-300 text-gray-500'
-          }`}
-        >
-          <MessageCircle className="h-4 w-4 mr-1" />
-          Chat
-        </Button>
-        <Button 
-          size="sm" 
-          variant="outline" 
-          onClick={handleTestDriveClick}
-          disabled={!offered}
-          className={`flex-1 ${
-            offered
-              ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500'
-              : 'border-gray-300 text-gray-500'
-          }`}
-        >
-          <Calendar className="h-4 w-4 mr-1" />
-          Test Drive
-        </Button>
-      </div>
+      {!isOwner && (
+        <div className="flex gap-2">
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={handleChatClick}
+            disabled={!offered}
+            className={`flex-1 ${
+              offered 
+                ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
+                : 'border-gray-300 text-gray-500'
+            }`}
+          >
+            <MessageCircle className="h-4 w-4 mr-1" />
+            Chat
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={handleTestDriveClick}
+            disabled={!offered}
+            className={`flex-1 ${
+              offered
+                ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500'
+                : 'border-gray-300 text-gray-500'
+            }`}
+          >
+            <Calendar className="h-4 w-4 mr-1" />
+            Test Drive
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

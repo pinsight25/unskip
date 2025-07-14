@@ -16,6 +16,10 @@ interface CarDetailContentProps {
   onMakeOffer: () => void;
   onChatClick: () => void;
   onTestDrive: () => void;
+  sellerId: string;
+  onViewOffers?: () => void;
+  onMarkSold?: () => void;
+  offerCount?: number;
 }
 
 const CarDetailContent = ({
@@ -23,7 +27,11 @@ const CarDetailContent = ({
   offerStatus,
   onMakeOffer,
   onChatClick,
-  onTestDrive
+  onTestDrive,
+  sellerId,
+  onViewOffers,
+  onMarkSold,
+  offerCount
 }: CarDetailContentProps) => {
   const navigate = useNavigate();
 
@@ -99,10 +107,14 @@ const CarDetailContent = ({
             {/* Action buttons - Now below seller card */}
             <CarActions
               carId={car.id}
+              sellerId={sellerId}
               offerStatus={offerStatus}
               onMakeOffer={onMakeOffer}
               onChatClick={onChatClick}
               onTestDrive={onTestDrive}
+              onViewOffers={onViewOffers}
+              onMarkSold={onMarkSold}
+              offerCount={offerCount}
             />
           </div>
         </div>
