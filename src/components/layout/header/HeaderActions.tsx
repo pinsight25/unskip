@@ -72,7 +72,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+              <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </DropdownMenuItem>

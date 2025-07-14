@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface CarModel {
@@ -10,41 +10,23 @@ export interface CarModel {
 }
 
 export const useCarModels = (makeId?: string) => {
-  const [models, setModels] = useState<CarModel[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!makeId) {
-      setModels([]);
-      return;
-    }
-
-    const fetchModels = async () => {
-      try {
-        setIsLoading(true);
-        console.log('Fetching car models for makeId:', makeId);
-        const { data, error } = await supabase
-          .from('car_models')
-          .select('id, name, make_id, sort_order')
-          .eq('make_id', makeId)
-          .eq('is_active', true)
-          .order('sort_order');
-        console.log('Models fetched:', data);
-        console.log('Models error:', error);
-        if (error) throw error;
-        setModels(data || []);
-      } catch (err) {
-        console.error('Error fetching car models:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch car models');
-        setModels([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchModels();
-  }, [makeId]);
-
+  const {
+    data: models = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['car-models', makeId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('car_models')
+        .select('id, name, make_id, sort_order')
+        .eq('make_id', makeId)
+        .eq('is_active', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!makeId,
+  });
   return { models, isLoading, error };
 };
