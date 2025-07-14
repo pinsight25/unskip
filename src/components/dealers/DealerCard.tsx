@@ -17,6 +17,7 @@ interface DealerCardProps {
     establishmentYear: string;
     carsInStock: number;
     verified: boolean;
+    verification_status?: string;
     brands: string[];
     shopPhoto?: string;
   };
@@ -48,16 +49,26 @@ const DealerCard = ({ dealer }: DealerCardProps) => {
           />
         )}
         <div className="absolute inset-0 bg-black/20"></div>
-        
-        {/* Verified Badge */}
-        {dealer.verified && (
+        {/* Verification Status Badge */}
+        {dealer.verification_status === 'verified' ? (
           <div className="absolute top-2 right-2">
             <Badge className="bg-green-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
-              <Shield className="h-3 w-3 mr-1" />
-              Verified
+              ✓ Verified
             </Badge>
           </div>
-        )}
+        ) : dealer.verification_status === 'pending' ? (
+          <div className="absolute top-2 right-2">
+            <Badge className="bg-yellow-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
+              Pending Verification
+            </Badge>
+          </div>
+        ) : dealer.verification_status === 'rejected' ? (
+          <div className="absolute top-2 right-2">
+            <Badge className="bg-red-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
+              Verification Failed
+            </Badge>
+          </div>
+        ) : null}
       </div>
 
       <CardContent className="p-4">

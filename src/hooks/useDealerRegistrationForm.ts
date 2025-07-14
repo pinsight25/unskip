@@ -307,12 +307,20 @@ export const useDealerRegistrationForm = () => {
       setTimeout(() => {
         navigate('/profile');
       }, 2000);
-    } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: error?.message || 'Failed to register. Please try again.',
-        variant: "destructive",
-      });
+    } catch (error: any) {
+      if (error?.code === '23505' || (error?.message && error.message.includes('unique_user_dealer'))) {
+        toast({
+          title: 'Dealer profile already exists',
+          description: 'You already have a dealer profile. Only one dealer profile is allowed per user.',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: "Registration failed",
+          description: error?.message || 'Failed to register. Please try again.',
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

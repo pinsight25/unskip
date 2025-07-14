@@ -23,7 +23,7 @@ const Dealers = () => {
       const { data, error } = await supabase
         .from('dealers')
         .select('*')
-        .eq('verification_status', 'verified')
+        .order('verification_status', { ascending: true })
         .order('created_at', { ascending: false });
       if (error) {
         setError('Failed to load dealers.');
@@ -42,6 +42,7 @@ const Dealers = () => {
             establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
             carsInStock: 0, // TODO: fetch real count if needed
             verified: dealer.verification_status === 'verified',
+            verification_status: dealer.verification_status,
             brands: dealer.brands_deal_with || [],
             shopPhoto: '', // TODO: fetch from dealer_documents if needed
           }))
