@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/CustomInput';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Loader } from 'lucide-react';
 
 interface EditProfileModalProps {
@@ -68,6 +68,9 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile, onSave }: EditProfi
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
+          <DialogDescription>
+            Update your profile details.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

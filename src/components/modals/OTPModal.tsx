@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import PhoneVerificationStep from './otp/PhoneVerificationStep';
 import OTPVerificationStep from './otp/OTPVerificationStep';
 import VerificationSuccessStep from './otp/VerificationSuccessStep';
@@ -79,6 +79,10 @@ const OTPModal = ({ isOpen, onClose, onSuccess, phoneNumber: initialPhone, purpo
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white rounded-3xl">
+        <DialogHeader>
+          <DialogTitle>Verify Your Phone</DialogTitle>
+          <DialogDescription>Enter the OTP sent to your phone.</DialogDescription>
+        </DialogHeader>
         <OTPModalHeader purpose={purpose} />
 
         <div className="space-y-6 p-2">

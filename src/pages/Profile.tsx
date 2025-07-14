@@ -128,6 +128,7 @@ const Profile = () => {
         onEditProfile={() => setIsEditProfileOpen(true)}
         onSignOut={() => setIsSignOutModalOpen(true)}
         onDeleteListing={handleDeleteListingWrapper}
+        refetch={refetch}
       />
       <ProfileModals
         isEditProfileOpen={isEditProfileOpen}

@@ -7,6 +7,7 @@ import { useChatManager } from '@/hooks/useChatManager';
 import { useOfferContext } from '@/contexts/OfferContext';
 import CarDetailContent from './CarDetailContent';
 import CarDetailModals from './CarDetailModals';
+import SignInModal from '@/components/modals/SignInModal';
 
 interface CarDetailContainerProps {
   car: Car;
@@ -21,6 +22,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const { toast } = useToast();
 
   const handleMakeOffer = () => {
@@ -90,6 +92,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         sellerId={car.seller.id}
         onViewOffers={() => {/* TODO: navigate to offers tab */}}
         onMarkSold={() => {/* TODO: mark car as sold */}}
+        setSignInModalOpen={() => setIsSignInModalOpen(true)}
       />
 
       <CarDetailModals
@@ -104,6 +107,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         onOfferSubmit={handleOfferSubmit}
         onTestDriveScheduled={handleTestDriveScheduled}
       />
+      <SignInModal isOpen={isSignInModalOpen} onClose={() => setIsSignInModalOpen(false)} />
     </>
   );
 };

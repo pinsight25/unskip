@@ -20,6 +20,7 @@ interface CarDetailContentProps {
   onViewOffers?: () => void;
   onMarkSold?: () => void;
   offerCount?: number;
+  setSignInModalOpen?: () => void;
 }
 
 const CarDetailContent = ({
@@ -31,7 +32,8 @@ const CarDetailContent = ({
   sellerId,
   onViewOffers,
   onMarkSold,
-  offerCount
+  offerCount,
+  setSignInModalOpen
 }: CarDetailContentProps) => {
   const navigate = useNavigate();
 
@@ -115,6 +117,7 @@ const CarDetailContent = ({
               onViewOffers={onViewOffers}
               onMarkSold={onMarkSold}
               offerCount={offerCount}
+              setSignInModalOpen={setSignInModalOpen}
             />
           </div>
         </div>

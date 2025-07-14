@@ -159,7 +159,12 @@ export const useUserListings = () => {
   };
 
   useEffect(() => {
-    fetchUserListings();
+    if (user?.id) {
+      fetchUserListings();
+    } else {
+      setIsLoading(false);
+      setError('Please sign in to view listings');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 

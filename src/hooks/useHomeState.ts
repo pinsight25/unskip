@@ -171,7 +171,16 @@ export const useHomeState = () => {
       const max = currentFilters.priceRange[1] ?? Infinity;
       return car.price >= min && car.price <= max;
     });
-    setFilteredCars(filtered);
+    // Only update if the filtered array is actually different
+    setFilteredCars(prev => {
+      if (
+        prev.length === filtered.length &&
+        prev.every((car, idx) => car.id === filtered[idx].id)
+      ) {
+        return prev; // No change, don't trigger a re-render
+      }
+      return filtered;
+    });
   }, [cars, currentFilters]);
 
   useEffect(() => {
@@ -298,6 +307,8 @@ export const useHomeState = () => {
     handleOTPSuccess,
     handleOfferSubmit,
     handlePullToRefresh,
-    getOfferStatus
+    getOfferStatus,
+    error,
+    refetch
   };
 };

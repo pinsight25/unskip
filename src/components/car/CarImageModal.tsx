@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
@@ -26,6 +26,10 @@ const CarImageModal = ({ images, isOpen, onClose, initialIndex, carTitle }: CarI
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl w-full h-[80vh] p-0">
+        <DialogHeader>
+          <DialogTitle className="sr-only">{carTitle}</DialogTitle>
+          <DialogDescription className="sr-only">Image gallery for this car.</DialogDescription>
+        </DialogHeader>
         <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
           <Button
             variant="ghost"

@@ -17,17 +17,20 @@ interface CarActionsProps {
   onViewOffers?: () => void;
   onMarkSold?: () => void;
   offerCount?: number;
+  setSignInModalOpen?: () => void; // Added for modal integration
 }
 
-const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, onTestDrive, onViewOffers, onMarkSold, offerCount }: CarActionsProps) => {
+const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, onTestDrive, onViewOffers, onMarkSold, offerCount, setSignInModalOpen }: CarActionsProps) => {
   const { user } = useUser();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasOffered } = useOfferContext();
 
   if (!user) {
+    // TODO: Replace with your actual modal open logic, e.g. from context or props
+    const openSignInModal = typeof setSignInModalOpen === 'function' ? setSignInModalOpen : () => { /* TODO: integrate with modal system */ };
     return (
-      <Button className="w-full bg-primary text-white font-medium" onClick={() => navigate('/signin')}>
+      <Button className="w-full bg-primary text-white font-medium" onClick={openSignInModal}>
         Sign In to Make Offer
       </Button>
     );

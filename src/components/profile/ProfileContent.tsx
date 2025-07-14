@@ -26,6 +26,7 @@ interface ProfileContentProps {
   onEditProfile: () => void;
   onSignOut: () => void;
   onDeleteListing: (listingId: string, title: string) => void;
+  refetch: () => void; // Add refetch as required prop
 }
 
 const ProfileContent = ({
@@ -38,7 +39,8 @@ const ProfileContent = ({
   error,
   onEditProfile,
   onSignOut,
-  onDeleteListing
+  onDeleteListing,
+  refetch // Destructure refetch
 }: ProfileContentProps) => {
   const [dealerInfo, setDealerInfo] = useState<{
     businessName: string;
@@ -152,6 +154,7 @@ const ProfileContent = ({
                 isRefetching={isRefetching}
                 error={error}
                 onDeleteListing={onDeleteListing}
+                refetch={refetch}
               />
             </TabsContent>
 

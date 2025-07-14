@@ -73,9 +73,10 @@ interface MyListingsTabProps {
   isRefetching?: boolean;
   error: string | null;
   onDeleteListing: (listingId: string, title: string) => void;
+  refetch?: () => void; // Make refetch optional
 }
 
-const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, onDeleteListing }: MyListingsTabProps) => {
+const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, onDeleteListing, refetch }: MyListingsTabProps) => {
   console.log('MyListingsTab: Component rendered with props:', {
     listingsCount: listings?.length || 0,
     accessoriesCount: accessories?.length || 0,
@@ -86,10 +87,12 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
     accessories: accessories
   });
 
+  const safeRefetch = refetch || (() => {});
+
   const { handleEditListing, handleDuplicateListing, handleEditAccessory } = useListingHandlers();
 
-  // Show loading state
-  if (isLoading) {
+  // Show loading state only if there is no data
+  if (isLoading && listings.length === 0 && accessories.length === 0) {
     console.log('MyListingsTab: Showing loading state');
     return (
       <Card className="p-4 md:p-6">
@@ -113,7 +116,8 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
       <Card className="p-4 md:p-6">
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">{error}</p>
-          <p className="text-gray-600">Please try refreshing the page</p>
+          <p className="text-gray-600 mb-4">Please try refreshing the page</p>
+          <button onClick={safeRefetch} className="btn btn-primary">Retry</button>
         </div>
       </Card>
     );
@@ -134,7 +138,12 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
     console.log('MyListingsTab: No active listings, showing empty state');
     return (
       <Card className="p-4 md:p-6">
-        <p className="text-gray-500 text-center mt-8">No cars listed yet</p>
+        <p className="text-gray-500 text-center mt-8 mb-4">No cars listed yet</p>
+        <div className="flex justify-center">
+          <a href="/sell-car">
+            <button className="btn btn-secondary">Post Your First Car</button>
+          </a>
+        </div>
       </Card>
     );
   }
@@ -170,8 +179,14 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
     accessoriesWithRequiredFields: accessoriesWithRequiredFields.length
   });
 
+  // Subtle spinner overlay for background refetch
   return (
     <Card className="p-4 md:p-6 relative">
+      {isRefetching && (
+        <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20">
+          <Loader2 className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      )}
       <div className="space-y-6">
         {/* Cars Section */}
         {listingsWithDate.length > 0 && (
@@ -196,12 +211,10 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
             </div>
           </div>
         )}
-
         {/* Separator */}
         {listingsWithDate.length > 0 && accessoriesWithRequiredFields.length > 0 && (
           <Separator />
         )}
-
         {/* Accessories Section */}
         {accessoriesWithRequiredFields.length > 0 && (
           <div>
@@ -225,11 +238,6 @@ const MyListingsTab = ({ listings, accessories, isLoading, isRefetching, error, 
           </div>
         )}
       </div>
-      {isRefetching && (
-        <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20">
-          <Loader2 className="animate-spin h-8 w-8 text-primary" />
-        </div>
-      )}
     </Card>
   );
 };
