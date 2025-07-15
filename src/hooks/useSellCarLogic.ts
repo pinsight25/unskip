@@ -433,6 +433,14 @@ export const useSellCarLogic = () => {
       });
       setCurrentStep(1);
     },
-    canSubmit: formData.termsAccepted && formData.phoneVerified && formData.make && formData.model && formData.year && formData.city && formData.phone && formData.price
+    canSubmit: () => (
+      formData.termsAccepted &&
+      formData.make &&
+      formData.model &&
+      formData.year &&
+      formData.city &&
+      formData.phone &&
+      formData.price
+    )
   };
 };

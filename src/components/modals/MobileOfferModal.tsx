@@ -11,6 +11,8 @@ import { PricingAlert } from '@/types/car';
 import { IndianRupee, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatIndianPrice } from '@/utils/priceFormatter';
+import MobileOTPModal from '@/components/modals/MobileOTPModal';
+import { useUser } from '@/contexts/UserContext';
 
 interface MobileOfferModalProps {
   isOpen: boolean;
@@ -20,6 +22,7 @@ interface MobileOfferModalProps {
 }
 
 const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalProps) => {
+  const { user } = useUser();
   const [offerAmount, setOfferAmount] = useState('');
   const [message, setMessage] = useState('');
   const [buyerName, setBuyerName] = useState('');
@@ -27,6 +30,7 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
   const [pricingAlert, setPricingAlert] = useState<PricingAlert | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const [showOTPModal, setShowOTPModal] = useState(false);
 
   const calculatePricingAlert = (offerAmount: number): PricingAlert => {
     const askingPrice = car.price;
@@ -75,6 +79,11 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
       return;
     }
 
+    if (!user?.phone_verified) {
+      setShowOTPModal(true);
+      return;
+    }
+
     setIsSubmitting(true);
     
     setTimeout(() => {
@@ -94,6 +103,12 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
       setIsSubmitting(false);
       onClose();
     }, 1000);
+  };
+
+  // On OTP success, allow offer submission
+  const handleOTPSuccess = () => {
+    setShowOTPModal(false);
+    handleSubmit();
   };
 
   const resetForm = () => {
@@ -248,6 +263,15 @@ const MobileOfferModal = ({ isOpen, onClose, car, onSubmit }: MobileOfferModalPr
           </div>
         </div>
       </DialogContent>
+      {showOTPModal && (
+        <MobileOTPModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          onSuccess={handleOTPSuccess}
+          phoneNumber={buyerPhone}
+          purpose="make an offer"
+        />
+      )}
     </Dialog>
   );
 };

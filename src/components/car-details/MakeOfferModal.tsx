@@ -6,6 +6,10 @@ import { useUser } from '@/contexts/UserContext';
 import { offerService } from '@/services/offerService';
 import { formatIndianPrice } from '@/utils/priceFormatter';
 import OTPModal from '@/components/modals/OTPModal';
+import { useOTPAuth } from '@/hooks/useOTPAuth';
+import PhoneVerificationStep from '@/components/modals/otp/PhoneVerificationStep';
+import OTPVerificationStep from '@/components/modals/otp/OTPVerificationStep';
+import VerificationSuccessStep from '@/components/modals/otp/VerificationSuccessStep';
 
 interface MakeOfferModalProps {
   isOpen: boolean;
@@ -31,6 +35,11 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
+
+  // Use real OTP logic
+  const otpAuth = useOTPAuth({
+    onClose: () => setShowOTPModal(false)
+  }) as any; // allow setStep usage
 
   const minAcceptable = Math.floor(car.price * 0.7);
   const showLowOfferWarning = form.amount < minAcceptable;
@@ -81,15 +90,18 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
       return;
     }
     if (!user?.phone_verified) {
+      otpAuth.setPhoneNumber(form.phone);
+      otpAuth.setStep('phone');
       setShowOTPModal(true);
       return;
     }
     await submitOffer();
   };
 
-  const handleOTPSuccess = () => {
+  // On OTP success, submit offer
+  const handleOTPSuccess = async () => {
     setShowOTPModal(false);
-    submitOffer();
+    await submitOffer();
   };
 
   const handleClose = () => {
@@ -184,13 +196,40 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
         </div>
       </DialogContent>
       {showOTPModal && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          onSuccess={handleOTPSuccess}
-          phoneNumber={form.phone}
-          purpose="make an offer"
-        />
+        <Dialog open={showOTPModal} onOpenChange={() => setShowOTPModal(false)}>
+          <DialogContent className="sm:max-w-md border-0 shadow-2xl bg-white rounded-3xl">
+            {/* Phone verification step */}
+            {otpAuth.step === 'phone' && (
+              <PhoneVerificationStep
+                phoneNumber={otpAuth.phoneNumber}
+                onPhoneChange={otpAuth.setPhoneNumber}
+                onSendOTP={otpAuth.handleSendOTP}
+                onCancel={() => setShowOTPModal(false)}
+                error={otpAuth.error}
+                phoneDigits={otpAuth.phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '')}
+              />
+            )}
+            {/* OTP verification step */}
+            {otpAuth.step === 'otp' && (
+              <OTPVerificationStep
+                phoneNumber={otpAuth.phoneNumber}
+                otp={otpAuth.otp}
+                onOtpChange={otpAuth.setOtp}
+                onVerifyOTP={async () => {
+                  await otpAuth.handleVerifyOTP();
+                  if (otpAuth.isVerified) handleOTPSuccess();
+                }}
+                onEditPhone={otpAuth.editPhoneNumber}
+                error={otpAuth.error}
+                isVerifying={otpAuth.isVerifying}
+              />
+            )}
+            {/* Success step (optional) */}
+            {otpAuth.isVerified && (
+              <VerificationSuccessStep isOpen={showOTPModal} onClose={() => setShowOTPModal(false)} />
+            )}
+          </DialogContent>
+        </Dialog>
       )}
     </Dialog>
   );

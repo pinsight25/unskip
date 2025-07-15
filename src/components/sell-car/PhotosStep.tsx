@@ -250,6 +250,7 @@ const PhotosStep = ({ formData = {}, setFormData, updateFormData, onUpdate }: Ph
         <div className="text-sm text-gray-600">
           <p className="mb-1">Include exterior, interior, engine, and documents photos. Upload up to 10 photos.</p>
           <p className="text-xs text-blue-600">💡 Tip: First photo will be your cover photo</p>
+          <p className="text-xs text-gray-500 mt-1">You can select multiple images at once using your desktop. On some mobile devices, you may only be able to select one image at a time due to browser limitations.</p>
         </div>
       </div>
       <input

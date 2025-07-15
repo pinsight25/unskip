@@ -53,6 +53,22 @@ const Profile = () => {
     }
   }, [location.search, refetch]);
 
+  // Auto-scroll to new listing if scrollTo param is present
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const scrollToId = params.get('scrollTo');
+    if (scrollToId) {
+      setTimeout(() => {
+        const el = document.getElementById(`listing-${scrollToId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('highlight-listing');
+          setTimeout(() => el.classList.remove('highlight-listing'), 2000);
+        }
+      }, 500); // Wait for listings to render
+    }
+  }, [location.search, carListings]);
+
   const userWithDealer = user ? {
     ...user,
     dealerVerified: true

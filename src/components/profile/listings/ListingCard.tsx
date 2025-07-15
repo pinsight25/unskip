@@ -73,7 +73,7 @@ const ListingCard = ({
   const imageUrl = listing.coverImageUrl || fallbackImage;
   const navigate = useNavigate();
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div id={`listing-${listing.id}`} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
       <div className="flex flex-col md:flex-row gap-4">
         <Link to={`/car/${listing.id}`} className="w-full md:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden block group">
           <img

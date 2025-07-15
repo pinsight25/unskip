@@ -70,6 +70,7 @@ export const useOTPAuth = (props?: UseOTPAuthProps) => {
     handleVerifyOTP,
     handleCompleteProfile,
     resetModal,
-    editPhoneNumber
+    editPhoneNumber,
+    setStep // explicitly include setStep
   };
 };
