@@ -5,6 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useUserRecord } from './useUserRecord';
 import type { TablesUpdate } from '@/integrations/supabase/types';
+import { useRef, useState, useEffect } from 'react';
+import { formatPhoneForAuth, formatPhoneForDB } from '@/utils/phoneUtils';
 
 interface ProfileData {
   name: string;
@@ -47,10 +49,29 @@ export const useOTPHandlers = ({
   const navigate = useNavigate();
   const { createOrGetUserRecord } = useUserRecord();
 
+  const [otpRequestId, setOtpRequestId] = useState<string | null>(null);
+
+  // Reset otpRequestId when modal closes
+  useEffect(() => {
+    if (typeof onClose === 'function') {
+      setOtpRequestId(null);
+    }
+  }, [onClose]);
+
+  console.log('✅ OTP Handler initialized with send guard');
+
   const handleSendOTP = async () => {
+    const requestId = Date.now().toString();
+    if (otpRequestId) {
+      console.log('⚠️ OTP request already in progress, ignoring duplicate');
+      return;
+    }
+    setOtpRequestId(requestId);
+
     const phoneDigits = phoneNumber.replace(/^\+91\s?/, '').replace(/\D/g, '');
     if (phoneDigits.length < 10) {
       setError('Please enter a valid phone number');
+      setOtpRequestId(null);
       return;
     }
 
@@ -58,21 +79,17 @@ export const useOTPHandlers = ({
     setError('');
 
     try {
-      const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
-      
-      console.log('🔵 SENDING OTP:');
-      console.log('- Phone:', formattedPhone);
-      console.log('- Current localStorage auth:', localStorage.getItem('sb-qrzueqtkvjamvuljgaix-auth-token'));
-      
+      const formattedPhone = formatPhoneForAuth(phoneNumber);
+      console.log('🔵 SENDING OTP - REQUEST ID:', requestId);
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
+        options: { shouldCreateUser: true }
       });
-
       if (error) {
         console.error('❌ OTP send error:', error);
         setError(error.message || 'Failed to send OTP. Please try again.');
       } else {
-        console.log('✅ OTP sent successfully');
+        console.log('✅ OTP sent successfully - REQUEST ID:', requestId);
         setStep('otp');
         toast({
           title: "OTP Sent",
@@ -84,11 +101,12 @@ export const useOTPHandlers = ({
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSendingOTP(false);
+      // Do not reset otpRequestId here; only reset on modal close or error
     }
   };
 
   const verifyOTPWithRetry = async (attempt = 1, maxAttempts = 3): Promise<any> => {
-    const formattedPhone = phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, '');
+    const formattedPhone = formatPhoneForAuth(phoneNumber);
     
     console.log(`🔵 OTP VERIFICATION ATTEMPT ${attempt}/${maxAttempts}:`);
     console.log('- Phone:', formattedPhone);
@@ -172,16 +190,22 @@ export const useOTPHandlers = ({
         // Create or get user record immediately after auth success
         try {
           console.log('🔄 Creating/getting user record...');
-          const userRecord = await createOrGetUserRecord(data.user, phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''));
+          const userRecord = await createOrGetUserRecord(data.user, formatPhoneForDB(phoneNumber));
           
-          // NEW: Update phone_verified status to true
-          const { error: updateError } = await supabase
-            .from('users')
-            .update({ phone_verified: true } as any)
-            .eq('id', data.user.id);
-          if (updateError) {
-            console.error('Error updating phone verification status:', updateError);
-            // Don't throw - user is still authenticated
+          // Only update is_verified for existing users
+          if (userRecord?.isExisting) {
+            const { data: updateData, error: updateError } = await supabase
+              .from('users')
+              .update({ is_verified: true, updated_at: new Date().toISOString() })
+              .eq('id', data.user.id)
+              .select()
+              .single();
+            console.log('[OTP] Update is_verified result:', updateData);
+            console.log('[OTP] Update is_verified error:', updateError);
+            if (updateError) {
+              console.error('Error updating phone verification status:', updateError);
+              // Don't throw - user is still authenticated
+            }
           }
           
           if (userRecord?.isExisting) {
@@ -190,7 +214,7 @@ export const useOTPHandlers = ({
             
             // Sign in the user
             const userData = userRecord.userData;
-            await signIn(phoneNumber.startsWith('+91') ? phoneNumber : '+91' + phoneNumber.replace(/\D/g, ''));
+            await signIn(formatPhoneForDB(phoneNumber));
             
             setIsVerified(true);
             setIsVerifying(false);
@@ -285,20 +309,22 @@ export const useOTPHandlers = ({
         return;
       }
 
-      // Update the existing basic user record with profile data
-      const updatedUserData = {
-        name: profileData.name.trim(),
-        email: profileData.email.trim() || null,
+      // Ensure city is included in the upsert payload
+      const userRecord = {
+        name: profileData.name,
+        email: profileData.email,
         city: profileData.city,
-        gender: profileData.gender,
-        updated_at: new Date().toISOString()
+        phone: formatPhoneForDB(phoneNumber),
+        gender: null,
+        user_type: 'regular' as const,
+        is_verified: true
       };
       
-      console.log('📝 Updating user profile with:', updatedUserData);
+      console.log('📝 Updating user profile with:', userRecord);
       
       const { data, error: profileError } = await supabase
         .from('users')
-        .update(updatedUserData)
+        .update(userRecord)
         .eq('id', user.id)
         .select()
         .single();
@@ -313,7 +339,7 @@ export const useOTPHandlers = ({
 
       console.log('✅ Profile updated successfully:', data);
       
-      await signIn(user.phone!);
+      await signIn(formatPhoneForDB(phoneNumber));
       
       toast({
         title: "Welcome!",

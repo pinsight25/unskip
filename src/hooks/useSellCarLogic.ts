@@ -8,6 +8,9 @@ import { FREE_LIMITS, getCarLimit, canPostMoreCars, getUpgradeMessage } from '@/
 import { carService } from '@/services/carService';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/lib/supabase';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import type { TablesInsert } from '@/integrations/supabase/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useSellCarLogic = () => {
   const navigate = useNavigate();
@@ -21,6 +24,7 @@ export const useSellCarLogic = () => {
   const { formData, setFormData, validatePrice, validateKilometersDriven } = useSellCarForm();
   const { user } = useUser();
   const [activeCarListings, setActiveCarListings] = useState(0);
+  const queryClient = useQueryClient();
 
   // Get user type from user context, fallback to 'regular' if not set
   const userType = user?.userType === 'dealer' ? 'dealer' : 'regular';
@@ -251,6 +255,20 @@ export const useSellCarLogic = () => {
     fetchActiveCarListings();
   }, [user?.id]);
 
+  // Sync phoneVerified and user info with actual user status
+  useEffect(() => {
+    if (user && user.isVerified) {
+      setFormData(prev => ({
+        ...prev,
+        phoneVerified: true,
+        phone: formatPhoneForDB(user.phone),
+        sellerName: user.name,
+        email: user.email
+      }));
+      // DO NOT clear sessionStorage here; preserve form data through verification
+    }
+  }, [user, setFormData]);
+
   const handleNext = () => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
@@ -342,17 +360,108 @@ export const useSellCarLogic = () => {
     }
 
     try {
-      // Simulate API call or call your carService here
-      // await carService.submitCar(formData);
-      toast({
-        title: isEditMode ? "Listing Updated!" : "Car Posted Successfully!",
-        description: isEditMode
-          ? "Your car listing has been updated."
-          : "Your car listing is now live and buyers can contact you.",
+      // Actual Supabase insert
+      const carInsert: TablesInsert<'cars'> = {
+        seller_id: user.id,
+        title: `${formData.year} ${formData.make} ${formData.model}`,
+        make: formData.make,
+        model: formData.model,
+        variant: formData.variant,
+        year: parseInt(formData.year),
+        price: parseFloat(formData.price),
+        city: formData.city,
+        area: formData.area,
+        registration_year: formData.registrationYear ? parseInt(formData.registrationYear) : null,
+        registration_state: formData.registrationState,
+        fitness_certificate_valid_till: formData.fitnessCertificateValidTill || null,
+        number_of_owners: formData.numberOfOwners ? parseInt(formData.numberOfOwners) : 1,
+        seating_capacity: formData.seatingCapacity ? parseInt(formData.seatingCapacity) : 5,
+        fuel_type: formData.fuelType as TablesInsert<'cars'>['fuel_type'],
+        transmission: formData.transmission as TablesInsert<'cars'>['transmission'],
+        kilometers_driven: formData.kilometersDriven ? parseInt(formData.kilometersDriven) : 0,
+        color: formData.color,
+        accept_offers: formData.acceptOffers,
+        offer_percentage: formData.offerPercentage ? parseInt(formData.offerPercentage) : 70,
+        insurance_valid_till: formData.insuranceValidTill || null,
+        insurance_type: formData.insuranceType as TablesInsert<'cars'>['insurance_type'],
+        insurance_valid: formData.insuranceValid,
+        last_service_date: formData.lastServiceDate || null,
+        service_center_type: formData.serviceCenterType as TablesInsert<'cars'>['service_center_type'],
+        service_history: formData.serviceHistory,
+        authorized_service_center: formData.authorizedServiceCenter,
+        rto_transfer_support: formData.rtoTransferSupport,
+        no_accident_history: formData.noAccidentHistory,
+        is_rent_available: formData.isRentAvailable,
+        daily_rate: formData.dailyRate ? parseFloat(formData.dailyRate) : null,
+        weekly_rate: formData.weeklyRate ? parseFloat(formData.weeklyRate) : null,
+        security_deposit: formData.securityDeposit ? parseFloat(formData.securityDeposit) : null,
+        address: formData.address,
+        landmark: formData.landmark,
+        description: formData.description,
+        status: 'active',
+        created_at: new Date().toISOString(),
+      };
+      const { data, error } = await supabase
+        .from('cars')
+        .insert(carInsert)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Failed to save car:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save car. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Insert car images after car is created
+      const nonNullPhotos: (string | { cloudinaryUrl?: string })[] = formData.photos.filter(isNotNull);
+      const carImageRecords = nonNullPhotos.map((photo, index) => {
+        if (typeof photo === 'object' && 'cloudinaryUrl' in photo && photo.cloudinaryUrl) {
+          return {
+            car_id: data.id,
+            image_url: photo.cloudinaryUrl,
+            sort_order: index,
+            is_cover: index === 0
+          };
+        } else {
+          return {
+            car_id: data.id,
+            image_url: photo as string,
+            sort_order: index,
+            is_cover: index === 0
+          };
+        }
       });
-      // Clear form/sessionStorage and navigate home
+      await supabase.from('car_images').insert(carImageRecords);
+
+      // Store carPosted info in localStorage with timestamp and carId
+      const postData = {
+        timestamp: Date.now(),
+        carId: data.id
+      };
+      localStorage.setItem('carPosted', JSON.stringify(postData));
+
+      // Set carsListUpdated flag for Home page refresh
+      const carsListData = {
+        timestamp: Date.now(),
+        action: 'post',
+        carId: data.id
+      };
+      localStorage.setItem('carsListUpdated', JSON.stringify(carsListData));
+      
+      console.log('Setting flags after car post:', {
+        carPosted: postData,
+        carsListUpdated: carsListData
+      });
+
+      // Clear form/sessionStorage and invalidate listings cache, then navigate to profile
       sessionStorage.removeItem('sellCarFormData');
-      navigate('/');
+      queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      navigate('/profile');
     } catch (error) {
       toast({
         title: "Submission Failed",
@@ -366,6 +475,60 @@ export const useSellCarLogic = () => {
   const handleBackToHome = () => {
     navigate('/');
   };
+
+  // Add a function to clear form and sessionStorage when user starts a new listing or clicks 'Clear Form'
+  const handleClearForm = () => {
+    setFormData({
+      make: '',
+      model: '',
+      variant: '',
+      year: '',
+      registrationYear: '',
+      registrationState: '',
+      fitnessCertificateValidTill: '',
+      numberOfOwners: '1',
+      seatingCapacity: '5',
+      fuelType: '',
+      transmission: '',
+      kilometersDriven: '',
+      color: '',
+      price: '',
+      acceptOffers: true,
+      offerPercentage: '70',
+      insuranceValidTill: '',
+      insuranceType: 'Comprehensive',
+      insuranceValid: false,
+      lastServiceDate: '',
+      serviceCenterType: '',
+      serviceHistory: false,
+      authorizedServiceCenter: false,
+      rtoTransferSupport: false,
+      noAccidentHistory: false,
+      isRentAvailable: false,
+      dailyRate: '',
+      weeklyRate: '',
+      securityDeposit: '',
+      photos: [],
+      coverPhotoIndex: 0,
+      city: '',
+      area: '',
+      landmark: '',
+      phone: user?.phone || '',
+      phoneVerified: false,
+      description: '',
+      termsAccepted: false,
+      address: '',
+      sellerName: '',
+      email: '',
+      seller_type: userType as 'individual' | 'dealer'
+    });
+    sessionStorage.removeItem('sellCarFormData');
+  };
+
+  // Type guard for non-null values
+  function isNotNull<T>(value: T | null | undefined): value is T {
+    return value !== null && value !== undefined;
+  }
 
   // --- Return all necessary values ---
   return {
@@ -383,6 +546,7 @@ export const useSellCarLogic = () => {
     handlePhoneVerification,
     handleSubmit,
     handleBackToHome,
+    handleClearForm,
     user,
     userType,
     clearFormData: () => {

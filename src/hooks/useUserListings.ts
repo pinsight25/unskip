@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { CarListing, AccessoryListing, UserStats } from '@/types/userListings';
 import { transformCarsData, transformAccessoriesData } from '@/utils/userListingsTransformers';
+import { formatPhoneForDB } from '@/utils/phoneUtils';
 
 export const useUserListings = () => {
   const { user } = useUser();
@@ -30,7 +31,7 @@ export const useUserListings = () => {
       console.log('[useUserListings] Fetching listings for user:', user?.id);
       if (!user?.id) {
         console.error('[useUserListings] No user ID available');
-        setError('Please sign in to view listings');
+        setError(null); // Do not set a hardcoded sign-in error
         setIsLoading(false);
         setIsRefetching(false);
         setHasFetchedOnce(true);
@@ -55,12 +56,43 @@ export const useUserListings = () => {
       // Fetch seller name for each car (should be the current user, but for consistency)
       let sellerName = '';
       if (user?.id) {
-        const { data: sellerData } = await supabase
+        // When looking up user by phone, use formatPhoneForDB and add logging
+        console.log('[useUserListings] Looking up user with phone:', user.phone);
+        console.log('[useUserListings] Formatted phone for DB:', formatPhoneForDB(user.phone));
+        const { data: userData, error: userError } = await supabase
           .from('users')
-          .select('name')
-          .eq('id', user.id)
+          .select('id')
+          .eq('phone', formatPhoneForDB(user.phone))
           .single();
-        sellerName = sellerData?.name || 'Individual Seller';
+        console.log('[useUserListings] User lookup result:', userData);
+        console.log('[useUserListings] User lookup error:', userError);
+        if (userError) {
+          console.error('[useUserListings] Error fetching user by phone:', userError);
+          // Fallback to ID lookup if phone lookup fails
+          const { data: userDataById, error: userErrorById } = await supabase
+            .from('users')
+            .select('name')
+            .eq('id', user.id)
+            .single();
+          if (userErrorById) {
+            console.error('[useUserListings] Error fetching user by ID:', userErrorById);
+            sellerName = 'Individual Seller';
+          } else {
+            sellerName = userDataById?.name || 'Individual Seller';
+          }
+        } else {
+          const { data: userDataById, error: userErrorById } = await supabase
+            .from('users')
+            .select('name')
+            .eq('id', userData?.id)
+            .single();
+          if (userErrorById) {
+            console.error('[useUserListings] Error fetching user by ID:', userErrorById);
+            sellerName = 'Individual Seller';
+          } else {
+            sellerName = userDataById?.name || 'Individual Seller';
+          }
+        }
       }
       // Fetch cover image for each car
       const carsWithImages = await Promise.all((cars || []).map(async (car) => {
@@ -128,6 +160,19 @@ export const useUserListings = () => {
         setHasFetchedOnce(true);
         return;
       }
+      // Only fetch dealer info if user is actually a dealer
+      let dealerInfo = null;
+      if (user.userType === 'dealer') {
+        const { data: dealerData, error: dealerError } = await supabase
+          .from('dealers')
+          .select('business_name, verification_status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (dealerError && !isSupabase406(dealerError)) {
+          console.error('[useUserListings] Dealer query error:', dealerError);
+        }
+        dealerInfo = dealerData || null;
+      }
       // Stats
       const totalCars = carsWithImages.length;
       const activeCars = carsWithImages.filter((c) => c.status === 'active').length;
@@ -150,6 +195,9 @@ export const useUserListings = () => {
       console.error('[useUserListings] Failed to fetch listings:', error);
       setError('Failed to fetch car listings');
       setHasFetchedOnce(true);
+      setIsLoading(false);
+      setIsRefetching(false);
+      setShowSkeleton(false);
     } finally {
       setIsLoading(false);
       setIsRefetching(false);
@@ -163,7 +211,7 @@ export const useUserListings = () => {
       fetchUserListings();
     } else {
       setIsLoading(false);
-      setError('Please sign in to view listings');
+      setError(null); // Do not set a hardcoded sign-in error
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
@@ -186,3 +234,8 @@ export const useUserListings = () => {
     refetch: () => fetchUserListings(true)
   };
 };
+
+// Utility to handle Supabase 406 errors gracefully
+function isSupabase406(error) {
+  return error && (error.status === 406 || error.code === 'PGRST116');
+}

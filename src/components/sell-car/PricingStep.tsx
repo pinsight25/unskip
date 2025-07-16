@@ -40,7 +40,7 @@ const PricingStep = ({ formData, setFormData, updateFormData, validatePrice }: P
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold mb-4">Pricing & Additional Details</h2>
+        <h2 className="text-xl font-semibold mb-4">Pricing</h2>
         <p className="text-gray-600 text-sm mb-6">
           Set your asking price and provide vehicle condition information
         </p>
@@ -106,16 +106,15 @@ const PricingStep = ({ formData, setFormData, updateFormData, validatePrice }: P
         </div>
       </div>
 
-      {/* Description Section */}
+      {/* Car Description Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <FileText className="h-5 w-5 text-primary" />
           <h3 className="font-semibold">Car Description</h3>
         </div>
-
         <div className="space-y-2">
           <Label htmlFor="description" className="text-sm font-medium">
-            Description (optional)
+            Car Description (optional)
           </Label>
           <Textarea
             id="description"

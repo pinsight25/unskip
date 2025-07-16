@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Heart, Search } from 'lucide-react';
 import { mockCars } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
-import OfferModal from '@/components/modals/OfferModal';
-import MobileOfferModal from '@/components/modals/MobileOfferModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Saved = () => {
@@ -130,27 +128,6 @@ const Saved = () => {
           )}
         </div>
       </div>
-
-      {/* Offer Modal */}
-      {selectedCar && (
-        <>
-          {isMobile ? (
-            <MobileOfferModal
-              isOpen={showOfferModal}
-              onClose={() => setShowOfferModal(false)}
-              car={selectedCar}
-              onSubmit={handleOfferSubmit}
-            />
-          ) : (
-            <OfferModal
-              isOpen={showOfferModal}
-              onClose={() => setShowOfferModal(false)}
-              car={selectedCar}
-              onSubmit={handleOfferSubmit}
-            />
-          )}
-        </>
-      )}
     </ResponsiveLayout>
   );
 };

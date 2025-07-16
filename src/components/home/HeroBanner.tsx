@@ -52,10 +52,8 @@ const HeroBanner = () => {
             className="absolute inset-0 bg-cover bg-center transition-all duration-500"
             style={{ backgroundImage: `url(${currentBanner.image})` }}
           />
-          
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/50" />
-          
+          {/* Restored Dark Overlay for text readability */}
+          <div className="absolute inset-0 bg-black/40" />
           {/* Content - Positioned in upper area */}
           <div className="relative z-10 flex flex-col items-center justify-start h-full text-center px-8 pt-8 md:pt-12">
             <h1 className="text-xl md:text-4xl font-bold mb-2 text-white">

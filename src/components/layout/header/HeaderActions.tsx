@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MessageCircle, User, LogOut } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
-import SignInModal from '@/components/modals/SignInModal';
+import { useAuthModal } from '@/contexts/AuthModalContext';
 
 interface HeaderActionsProps {
   carsSoldToday: number;
@@ -15,7 +15,7 @@ interface HeaderActionsProps {
 
 const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   const { user, isLoading, signOut } = useUser();
-  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const { openSignInModal } = useAuthModal();
 
   const handleSignOut = async () => {
     try {
@@ -23,10 +23,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
     } catch (error) {
       console.error('🔴 HeaderActions: Sign out failed:', error);
     }
-  };
-
-  const handleSignInClick = () => {
-    setIsSignInModalOpen(true);
   };
 
   return (
@@ -42,7 +38,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           )}
         </div>
       </Link>
-      
       {/* Profile/Sign In Section - FIXED LOGIC */}
       {isLoading ? (
         // Show loading state only when actually loading
@@ -95,7 +90,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
         // Show sign in when not signed in
         <>
           <button 
-            onClick={handleSignInClick}
+            onClick={() => openSignInModal()}
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
             <Avatar className="h-10 w-10 border border-gray-200">
@@ -114,10 +109,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           Post Your Car
         </Button>
       </Link>
-      <SignInModal 
-        isOpen={isSignInModalOpen}
-        onClose={() => setIsSignInModalOpen(false)}
-      />
     </div>
   );
 };

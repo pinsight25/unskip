@@ -4,11 +4,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Car } from '@/types/car';
 
 interface TestDriveHandlers {
-  showTestDriveModal: boolean;
   testDriveSelectedCar: Car | null;
   handleTestDriveClick: (car: any) => void;
   handleTestDriveScheduled: (booking: any) => void;
-  setShowTestDriveModal: (show: boolean) => void;
   setTestDriveSelectedCar: (car: Car | null) => void;
 }
 
@@ -17,7 +15,6 @@ interface UseHomeTestDriveHandlersProps {
 }
 
 export const useHomeTestDriveHandlers = ({ getOfferStatus }: UseHomeTestDriveHandlersProps): TestDriveHandlers => {
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
   const { toast } = useToast();
 
@@ -43,7 +40,6 @@ export const useHomeTestDriveHandlers = ({ getOfferStatus }: UseHomeTestDriveHan
     
     if (status === 'accepted') {
       setTestDriveSelectedCar(car);
-      setShowTestDriveModal(true);
     }
     
     if (status === 'rejected') {
@@ -60,16 +56,13 @@ export const useHomeTestDriveHandlers = ({ getOfferStatus }: UseHomeTestDriveHan
       title: "Test Drive Scheduled!",
       description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
     });
-    setShowTestDriveModal(false);
     setTestDriveSelectedCar(null);
   };
 
   return {
-    showTestDriveModal,
     testDriveSelectedCar,
     handleTestDriveClick,
     handleTestDriveScheduled,
-    setShowTestDriveModal,
     setTestDriveSelectedCar
   };
 };

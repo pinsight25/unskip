@@ -15,6 +15,7 @@ import {
   BreadcrumbPage
 } from '@/components/ui/breadcrumb';
 import { ArrowLeft } from 'lucide-react';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const DealerInventory = () => {
   const { dealerId } = useParams();
@@ -81,7 +82,7 @@ const DealerInventory = () => {
               id: car.seller_id || '',
               name: dealerData.business_name,
               type: 'dealer',
-              phone: dealerData.phone || '',
+              phone: formatPhoneForAuth(dealerData.phone),
               email: dealerData.email || '',
               verified: dealerData.verification_status === 'verified',
             },

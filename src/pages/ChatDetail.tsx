@@ -6,7 +6,6 @@ import { mockChats, mockMessages } from '@/data/chatMockData';
 import { mockCars } from '@/data/mockData';
 import { ChatMessage } from '@/types/chat';
 import { useToast } from '@/hooks/use-toast';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 import ChatHeader from '@/components/chat/ChatHeader';
 import ChatMessages from '@/components/chat/ChatMessages';
 import ChatInput from '@/components/chat/ChatInput';
@@ -18,7 +17,6 @@ const ChatDetail = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   
   const chat = mockChats.find(c => c.id === chatId);
   const car = chat ? mockCars.find(c => c.id === chat.carId) : null;
@@ -78,26 +76,6 @@ const ChatDetail = () => {
     setNewMessage(text);
   };
 
-  const handleTestDriveScheduled = (booking: any) => {
-    const testDriveMessage: ChatMessage = {
-      id: Date.now().toString(),
-      chatId: chat!.id,
-      senderId: 'buyer1',
-      receiverId: chat!.sellerId,
-      content: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
-      timestamp: new Date().toISOString(),
-      seen: false,
-      type: 'test_drive'
-    };
-    
-    setMessages(prev => [...prev, testDriveMessage]);
-    
-    toast({
-      title: "Test Drive Scheduled! 🚗",
-      description: `Your test drive is confirmed for ${booking.date} at ${booking.timeSlot}`,
-    });
-  };
-
   const handleReportChat = () => {
     toast({
       title: "Chat Reported",
@@ -153,17 +131,9 @@ const ChatDetail = () => {
             onMessageChange={setNewMessage}
             onSendMessage={handleSendMessage}
             onQuickReply={handleQuickReply}
-            onTestDrive={() => setShowTestDriveModal(true)}
           />
         </div>
       </div>
-
-      <TestDriveModal
-        isOpen={showTestDriveModal}
-        onClose={() => setShowTestDriveModal(false)}
-        car={car}
-        onScheduled={handleTestDriveScheduled}
-      />
     </div>
   );
 };

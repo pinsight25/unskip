@@ -4,12 +4,22 @@ import { CustomInput } from '@/components/ui/CustomInput';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader } from 'lucide-react';
 
-interface ProfileData {
+const cities = [
+  'Chennai',
+  'Mumbai',
+  'Delhi',
+  'Bangalore',
+  'Hyderabad',
+  'Pune',
+  'Kolkata',
+  'Ahmedabad'
+];
+
+type ProfileData = {
   name: string;
   email: string;
   city: string;
-  gender: 'Male' | 'Female' | 'Other';
-}
+};
 
 interface ProfileCompletionStepProps {
   profileData: ProfileData;
@@ -28,10 +38,6 @@ const ProfileCompletionStep = ({
   error,
   isSaving
 }: ProfileCompletionStepProps) => {
-  const cities = [
-    'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad'
-  ];
-
   return (
     <>
       <div className="space-y-4">
@@ -62,29 +68,20 @@ const ProfileCompletionStep = ({
         </div>
 
         <div>
-          <label htmlFor="profile-city" className="text-sm font-semibold text-gray-700 block mb-2">City</label>
-          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })} aria-label="City">
-            <SelectTrigger id="profile-city" className="h-12 rounded-2xl border-2 focus:border-primary">
+          <label className="text-sm font-semibold text-gray-700 block mb-2">City</label>
+          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })}>
+            <SelectTrigger className="h-12 rounded-2xl border-2 focus:border-primary">
               <SelectValue placeholder="Select your city" />
             </SelectTrigger>
             <SelectContent>
-              {cities.map(city => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label htmlFor="profile-gender" className="text-sm font-semibold text-gray-700 block mb-2">Gender</label>
-          <Select value={profileData.gender} onValueChange={(value: 'Male' | 'Female' | 'Other') => setProfileData({ ...profileData, gender: value })} aria-label="Gender">
-            <SelectTrigger id="profile-gender" className="h-12 rounded-2xl border-2 focus:border-primary">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Male">Male</SelectItem>
-              <SelectItem value="Female">Female</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
+              <SelectItem value="Chennai">Chennai</SelectItem>
+              <SelectItem value="Mumbai">Mumbai</SelectItem>
+              <SelectItem value="Delhi">Delhi</SelectItem>
+              <SelectItem value="Bangalore">Bangalore</SelectItem>
+              <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+              <SelectItem value="Pune">Pune</SelectItem>
+              <SelectItem value="Kolkata">Kolkata</SelectItem>
+              <SelectItem value="Ahmedabad">Ahmedabad</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -100,7 +97,7 @@ const ProfileCompletionStep = ({
         </Button>
         <Button 
           onClick={onCompleteProfile} 
-          disabled={!profileData.name.trim() || !profileData.city || !profileData.gender || isSaving}
+          disabled={!profileData.name || !profileData.city || isSaving}
           className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
         >
           {isSaving ? (

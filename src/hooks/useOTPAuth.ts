@@ -1,6 +1,7 @@
 
 import { useOTPState } from './otp/useOTPState';
 import { useOTPHandlers } from './otp/useOTPHandlers';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 interface UseOTPAuthProps {
   onClose?: () => void;

@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useCity } from '@/contexts/CityContext';
 import { supabase } from '@/lib/supabase';
 import { useQuery } from '@tanstack/react-query';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 interface SearchFiltersType {
   query: string;
@@ -26,7 +27,6 @@ export const useHomeState = () => {
     city: ''
   });
   const [showOfferModal, setShowOfferModal] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [isVerified, setIsVerified] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -101,8 +101,8 @@ export const useHomeState = () => {
             id: car.seller_id || '',
             name: car.users?.name || 'Individual Seller',
             type: isDealer ? 'dealer' : 'individual',
-            phone: '',
-            email: '',
+            phone: formatPhoneForAuth(car.phone_number || ''),
+            email: car.email || '',
             verified: car.verified || false, // legacy, not used for dealer badge
             dealerVerified: isDealer ? (dealerInfo?.verified === true) : undefined,
             rating: 0,
@@ -242,7 +242,10 @@ export const useHomeState = () => {
   const handleMakeOffer = (car: Car) => {
     setSelectedCar(car);
     if (!isVerified) {
-      setShowOTPModal(true);
+      toast({
+        title: "OTP Required",
+        description: "Please verify your phone number to make an offer.",
+      });
     } else {
       setShowOfferModal(true);
     }
@@ -250,7 +253,6 @@ export const useHomeState = () => {
 
   const handleOTPSuccess = () => {
     setIsVerified(true);
-    setShowOTPModal(false);
     setShowOfferModal(true);
   };
 
@@ -292,8 +294,6 @@ export const useHomeState = () => {
     currentFilters,
     showOfferModal,
     setShowOfferModal,
-    showOTPModal,
-    setShowOTPModal,
     selectedCar,
     isMobile,
     isRefreshing: isFetching,

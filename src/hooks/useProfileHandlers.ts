@@ -3,14 +3,51 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 import { carService } from '@/services/carService';
+import { supabase } from '@/lib/supabase';
 
 export const useProfileHandlers = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signOut, user } = useUser();
+  const { signOut, user, setUser } = useUser();
 
-  const handleEditProfile = (newProfile: any) => {
-    // In real app, this would update user context
+  const handleEditProfile = async (newProfile: any) => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({
+          name: newProfile.name,
+          email: newProfile.email,
+          city: newProfile.city
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+      if (error) {
+        toast({
+          title: 'Profile Update Failed',
+          description: error.message,
+          variant: 'destructive'
+        });
+        return;
+      }
+      // Refresh user context
+      if (setUser) {
+        setUser({ ...user, ...data });
+      } else {
+        window.location.reload();
+      }
+      toast({
+        title: 'Profile Updated',
+        description: 'Your profile has been updated successfully.'
+      });
+    } catch (err: any) {
+      toast({
+        title: 'Profile Update Failed',
+        description: err.message || 'An error occurred.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleSignOut = () => {
@@ -45,6 +82,20 @@ export const useProfileHandlers = () => {
       toast({
         title: "Listing Deleted",
         description: "Your listing has been deleted successfully",
+      });
+      // Set carDeleted and carsListUpdated flags
+      localStorage.setItem('carDeleted', JSON.stringify({
+        timestamp: Date.now(),
+        carId: listingId,
+      }));
+      localStorage.setItem('carsListUpdated', JSON.stringify({
+        timestamp: Date.now(),
+        action: 'delete',
+        carId: listingId,
+      }));
+      console.log('Setting flags after car delete:', {
+        carDeleted: { timestamp: Date.now(), carId: listingId },
+        carsListUpdated: { timestamp: Date.now(), action: 'delete', carId: listingId }
       });
     } else {
       toast({

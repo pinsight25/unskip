@@ -1,6 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 interface Listing {
   id: string;
@@ -98,7 +99,7 @@ export const useListingHandlers = () => {
       landmark: listing.landmark || '',
       description: listing.description || '',
       sellerName: 'John Doe',
-      phone: '+91 9876543210',
+      phone: formatPhoneForDB('+91 9876543210'),
       email: 'john@example.com',
       address: '123 Main Street',
     };
@@ -109,7 +110,20 @@ export const useListingHandlers = () => {
     }));
     
     navigate(`/sell?edit=${listing.id}`);
-    
+    // Set carUpdated and carsListUpdated flags
+    localStorage.setItem('carUpdated', JSON.stringify({
+      timestamp: Date.now(),
+      carId: listing.id,
+    }));
+    localStorage.setItem('carsListUpdated', JSON.stringify({
+      timestamp: Date.now(),
+      action: 'edit',
+      carId: listing.id,
+    }));
+    console.log('Setting flags after car edit navigation:', {
+      carUpdated: { timestamp: Date.now(), carId: listing.id },
+      carsListUpdated: { timestamp: Date.now(), action: 'edit', carId: listing.id }
+    });
     toast({
       title: "Editing Listing",
       description: "Loading your listing data for editing",
@@ -152,7 +166,7 @@ export const useListingHandlers = () => {
       landmark: listing.landmark || '',
       description: listing.description || '',
       sellerName: '',
-      phone: '',
+      phone: formatPhoneForDB(''),
       email: '',
       address: '',
     };

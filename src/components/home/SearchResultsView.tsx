@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { useOfferFlow } from '@/hooks/useOfferFlow';
 import HomeModals from '@/components/home/HomeModals';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 import { useToast } from '@/hooks/use-toast';
 
 interface SearchResultsViewProps {
@@ -34,8 +33,6 @@ const SearchResultsView = ({
 }: SearchResultsViewProps) => {
   const [sortBy, setSortBy] = useState('');
   const [sortedResults, setSortedResults] = useState<Car[]>(results);
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
-  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
   
   const { toast } = useToast();
   
@@ -103,8 +100,7 @@ const SearchResultsView = ({
     }
     
     if (status === 'accepted') {
-      setTestDriveSelectedCar(car);
-      setShowTestDriveModal(true);
+      onTestDrive(car);
     }
     
     if (status === 'rejected') {
@@ -114,17 +110,6 @@ const SearchResultsView = ({
         variant: "destructive",
       });
     }
-    
-    onTestDrive(car);
-  };
-
-  const handleTestDriveScheduled = (booking: any) => {
-    toast({
-      title: "Test Drive Scheduled!",
-      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
-    });
-    setShowTestDriveModal(false);
-    setTestDriveSelectedCar(null);
   };
 
   if (results.length === 0) {
@@ -203,18 +188,6 @@ const SearchResultsView = ({
         onOTPSuccess={handleOTPSuccess}
         onOfferSubmit={handleOfferSubmit}
       />
-
-      {testDriveSelectedCar && (
-        <TestDriveModal
-          isOpen={showTestDriveModal}
-          onClose={() => {
-            setShowTestDriveModal(false);
-            setTestDriveSelectedCar(null);
-          }}
-          car={testDriveSelectedCar}
-          onScheduled={handleTestDriveScheduled}
-        />
-      )}
     </div>
   );
 };

@@ -6,7 +6,6 @@ import CarCard from '@/components/car/CarCard';
 import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { useOfferFlow } from '@/hooks/useOfferFlow';
 import HomeModals from '@/components/home/HomeModals';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 import { useToast } from '@/hooks/use-toast';
 
 interface SearchResultsProps {
@@ -19,8 +18,6 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [savedCars, setSavedCars] = useState<string[]>([]);
   const [offerStatuses, setOfferStatuses] = useState<Record<string, 'none' | 'pending' | 'accepted' | 'rejected'>>({});
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
-  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
   
   const { toast } = useToast();
   
@@ -122,8 +119,10 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
     }
     
     if (status === 'accepted') {
-      setTestDriveSelectedCar(car);
-      setShowTestDriveModal(true);
+      toast({
+        title: "Test Drive Scheduled!",
+        description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
+      });
     }
     
     if (status === 'rejected') {
@@ -140,8 +139,6 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
       title: "Test Drive Scheduled!",
       description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
     });
-    setShowTestDriveModal(false);
-    setTestDriveSelectedCar(null);
   };
 
   return (
@@ -216,18 +213,6 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
         onOTPSuccess={handleOTPSuccess}
         onOfferSubmit={handleOfferSubmitWithStatus}
       />
-
-      {testDriveSelectedCar && (
-        <TestDriveModal
-          isOpen={showTestDriveModal}
-          onClose={() => {
-            setShowTestDriveModal(false);
-            setTestDriveSelectedCar(null);
-          }}
-          car={testDriveSelectedCar}
-          onScheduled={handleTestDriveScheduled}
-        />
-      )}
     </div>
   );
 };

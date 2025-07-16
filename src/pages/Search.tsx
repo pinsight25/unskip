@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import BottomNavigation from '@/components/mobile/BottomNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
@@ -11,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import SearchHeader from '@/components/search/SearchHeader';
 import SearchFilters from '@/components/search/SearchFilters';
 import SearchResults from '@/components/search/SearchResults';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const Search = () => {
   const navigate = useNavigate();
@@ -225,7 +225,6 @@ const Search = () => {
           </div>
         </div>
       </main>
-      {!isMobile && <Footer />}
       {isMobile && <div className="h-16" />}
       {isMobile && <BottomNavigation />}
     </div>

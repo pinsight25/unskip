@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/integrations/supabase/types';
+import { formatPhoneForDB } from '@/utils/phoneUtils';
 
 // User type based on the database schema
 export interface User {
@@ -24,6 +25,7 @@ interface UserContextType {
   signOut: () => Promise<void>;
   updateUser: (updates: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
+  setUser: (user: User | null) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -65,16 +67,20 @@ const syncUserFromDatabase = async (
       
       const newUserData = {
         id: userId,
-        phone: authUser.phone || authUser.user_metadata?.phone || '',
-        name: authUser.user_metadata?.name || 'User',
-        email: authUser.email || authUser.user_metadata?.email || null,
-        created_at: new Date().toISOString(),
+        phone: formatPhoneForDB(authUser.phone),
+        name: userData?.name || authUser.user_metadata?.name || 'User',
+        email: userData?.email || authUser.email || authUser.user_metadata?.email || null,
+        city: userData?.city || null,
+        user_type: userData?.user_type || 'regular',
+        // Always include is_verified to prevent overwriting the correct value
+        is_verified: userData?.is_verified !== undefined ? userData.is_verified : true,
+        created_at: userData?.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
 
       const { data: createdUser, error: createError } = await supabase
         .from('users')
-        .insert(newUserData)
+        .upsert(newUserData, { onConflict: 'id' })
         .select()
         .single();
 
@@ -105,7 +111,8 @@ const syncUserFromDatabase = async (
         });
       }
     } else if (userData && mounted.current) {
-      setUser({
+      // After fetching userData from the users table, set the user object and log it
+      const userObj = {
         id: userData.id,
         name: userData.name,
         phone: userData.phone,
@@ -116,7 +123,11 @@ const syncUserFromDatabase = async (
         isVerified: userData.is_verified || undefined,
         userType: userData.user_type || undefined,
         phone_verified: 'phone_verified' in userData ? Boolean((userData as any).phone_verified) : false,
-      });
+      };
+      console.log('[UserContext] Setting user:', userObj);
+      console.log('[UserContext] User ID:', userObj.id);
+      console.log('[UserContext] User phone:', userObj.phone);
+      setUser(userObj);
     } else if (mounted.current) {
       setUser(null);
     }
@@ -211,11 +222,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
+    await supabase.auth.signOut();
+    setUser(null);
+    setIsLoading(false);
+    // Force reload to clear any cached state
+    window.location.href = '/';
   };
 
   const updateUser = async (updates: Partial<User>) => {
@@ -254,17 +265,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   };
 
-  const value: UserContextType = {
-    user,
-    isLoading,
-    signIn,
-    signOut,
-    updateUser,
-    refreshUser
-  };
+  // Always expose isVerified as a boolean reflecting phone_verified or is_verified
+  const userWithVerified = user ? {
+    ...user,
+    isVerified: user.phone_verified || user.isVerified || false,
+  } : null;
 
   return (
-    <UserContext.Provider value={value}>
+    <UserContext.Provider value={{ user, isLoading, signIn, signOut, updateUser, refreshUser, setUser }}>
       {children}
     </UserContext.Provider>
   );

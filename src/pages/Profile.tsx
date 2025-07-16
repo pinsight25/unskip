@@ -9,7 +9,7 @@ import ProfileModals from '@/components/profile/ProfileModals';
 import SignInPrompt from '@/components/profile/SignInPrompt';
 import LoadingScreen from '@/components/common/LoadingScreen';
 import { useState, useEffect } from 'react';
-import SignInModal from '@/components/modals/SignInModal';
+import { useAuthModal } from '@/contexts/AuthModalContext';
 import { useLocation } from 'react-router-dom';
 
 const Profile = () => {
@@ -17,6 +17,7 @@ const Profile = () => {
   const isSignedIn = !!user;
   const isMobile = useIsMobile();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [signInModalKey, setSignInModalKey] = useState(0);
   const location = useLocation();
 
   const {
@@ -69,6 +70,43 @@ const Profile = () => {
     }
   }, [location.search, carListings]);
 
+  useEffect(() => {
+    const userId = user?.id;
+    const flags = [
+      { key: 'carPosted', session: `hasRefreshed_profile_posted_${userId}` },
+      { key: 'carUpdated', session: `hasRefreshed_profile_updated_${userId}` },
+      { key: 'carDeleted', session: `hasRefreshed_profile_deleted_${userId}` },
+    ];
+
+    let didRefetch = false;
+
+    flags.forEach(({ key, session }) => {
+      const flagData = localStorage.getItem(key);
+      if (flagData && userId) {
+        try {
+          const { timestamp } = JSON.parse(flagData);
+          const timeDiff = Date.now() - timestamp;
+          if (timeDiff < 10000 && !sessionStorage.getItem(session)) {
+            localStorage.removeItem(key);
+            sessionStorage.setItem(session, 'true');
+            if (typeof refetch === 'function' && !didRefetch) {
+              refetch();
+              didRefetch = true;
+            }
+          } else {
+            localStorage.removeItem(key);
+          }
+        } catch (e) {
+          localStorage.removeItem(key);
+        }
+      }
+      // Clean up session flag after 30 seconds
+      setTimeout(() => {
+        sessionStorage.removeItem(session);
+      }, 30000);
+    });
+  }, [user?.id, refetch]);
+
   const userWithDealer = user ? {
     ...user,
     dealerVerified: true
@@ -85,7 +123,8 @@ const Profile = () => {
     }, 1500);
   };
 
-  const handleSignInClick = () => {
+  const handleShowSignInModal = () => {
+    setSignInModalKey(prev => prev + 1);
     setIsSignInModalOpen(true);
   };
 
@@ -98,11 +137,7 @@ const Profile = () => {
   if (!isSignedIn) {
     return (
       <>
-        <SignInPrompt onSignIn={handleSignInClick} />
-        <SignInModal 
-          isOpen={isSignInModalOpen}
-          onClose={() => setIsSignInModalOpen(false)}
-        />
+        <SignInPrompt onSignIn={handleShowSignInModal} />
         <ProfileModals
           isEditProfileOpen={isEditProfileOpen}
           setIsEditProfileOpen={setIsEditProfileOpen}

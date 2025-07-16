@@ -87,7 +87,7 @@ const MobileCarCard = ({
             onTestDrive();
           }}
           isOwner={isOwner}
-          onViewOffers={isOwner ? () => alert('View Offers for this car') : undefined}
+          onViewOffers={isOwner ? () => navigate('/profile?tab=received-offers') : undefined}
         />
       </div>
     </Card>

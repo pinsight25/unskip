@@ -5,6 +5,7 @@ import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import CarDetailContainer from '@/components/car/CarDetailContainer';
 import { supabase } from '@/lib/supabase';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();

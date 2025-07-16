@@ -1,18 +1,15 @@
 
-import TestDriveModal from '@/components/modals/TestDriveModal';
-import HomeModals from '@/components/home/HomeModals';
 import { Car } from '@/types/car';
+import { useEffect } from 'react';
 
 interface HomeModalsContainerProps {
   // Home modals props
   selectedCar: any;
   showOfferModal: boolean;
-  showOTPModal: boolean;
   isMobile: boolean;
   onCloseOfferModal: () => void;
-  onCloseOTPModal: () => void;
-  onOTPSuccess: () => void;
   onOfferSubmit: (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => void;
+  openSignInModal: () => void; // NEW PROP
   
   // Test drive modal props
   testDriveSelectedCar: Car | null;
@@ -24,38 +21,23 @@ interface HomeModalsContainerProps {
 const HomeModalsContainer = ({
   selectedCar,
   showOfferModal,
-  showOTPModal,
   isMobile,
   onCloseOfferModal,
-  onCloseOTPModal,
-  onOTPSuccess,
   onOfferSubmit,
   testDriveSelectedCar,
   showTestDriveModal,
   onCloseTestDriveModal,
-  onTestDriveScheduled
+  onTestDriveScheduled,
+  openSignInModal
 }: HomeModalsContainerProps) => {
+  useEffect(() => {
+    console.log('[HomeModalsContainer] openSignInModal prop:', !!openSignInModal);
+  }, [openSignInModal]);
   return (
     <>
-      <HomeModals
-        selectedCar={selectedCar}
-        showOfferModal={showOfferModal}
-        showOTPModal={showOTPModal}
-        isMobile={isMobile}
-        onCloseOfferModal={onCloseOfferModal}
-        onCloseOTPModal={onCloseOTPModal}
-        onOTPSuccess={onOTPSuccess}
-        onOfferSubmit={onOfferSubmit}
-      />
-
-      {testDriveSelectedCar && (
-        <TestDriveModal
-          isOpen={showTestDriveModal}
-          onClose={onCloseTestDriveModal}
-          car={testDriveSelectedCar}
-          onScheduled={onTestDriveScheduled}
-        />
-      )}
+      {/* The HomeModals component and its modal logic have been removed. */}
+      {/* If SignInModal is needed, it should be handled globally or passed as a prop. */}
+      {/* For now, this component is empty as the modals are removed. */}
     </>
   );
 };

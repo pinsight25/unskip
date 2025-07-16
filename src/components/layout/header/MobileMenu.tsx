@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { User as UserIcon, LogOut, Heart } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { useAuthModal } from '@/contexts/AuthModalContext';
 import HeaderCitySelector from './HeaderCitySelector';
 
 interface NavItem {
@@ -30,6 +31,7 @@ const MobileMenu = ({
   onMenuClose 
 }: MobileMenuProps) => {
   const { user, isLoading, signOut } = useUser();
+  const { openSignInModal } = useAuthModal();
 
   const handleSignOut = () => {
     signOut();
@@ -112,7 +114,19 @@ const MobileMenu = ({
                 Profile
               </Button>
             </Link>
-          ) : null}
+          ) : (
+            <Button
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => {
+                openSignInModal();
+                onMenuClose();
+              }}
+            >
+              <UserIcon className="h-4 w-4 mr-2" />
+              Sign In
+            </Button>
+          )}
           <Link to="/sell" onClick={onMenuClose}>
             <Button size="sm" className="w-full bg-primary font-semibold">
               Post Your Car

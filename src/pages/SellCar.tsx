@@ -4,16 +4,16 @@ import SellCarNavigation from '@/components/sell-car/SellCarNavigation';
 import SellCarStepRenderer from '@/components/sell-car/SellCarStepRenderer';
 import { useSellCarLogic } from '@/hooks/useSellCarLogic';
 import { useState } from 'react';
-import OTPModal from '@/components/modals/OTPModal';
 import SignInModal from '@/components/modals/SignInModal';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const SellCar = () => {
   const navigate = useNavigate();
   const { user } = useUser();
-  const [showOTPModal, setShowOTPModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [signInModalKey, setSignInModalKey] = useState(0);
   const [pendingPost, setPendingPost] = useState(false);
 
   const {
@@ -35,24 +35,30 @@ const SellCar = () => {
     userType
   } = useSellCarLogic();
 
+  const handleShowSignInModal = () => {
+    setSignInModalKey(prev => prev + 1);
+    setShowSignInModal(true);
+  };
+
   // Custom submit handler
   const handlePost = () => {
     if (!user) {
-      setShowSignInModal(true);
+      handleShowSignInModal();
       setPendingPost(true);
       return;
     }
-    if (!formData.phoneVerified) {
-      setShowOTPModal(true);
-      setPendingPost(true);
+    if (user.isVerified) {
+      // User is signed in and verified, skip phone verification
+      handleSubmit();
       return;
     }
-    handleSubmit();
+    // User is signed in but not verified, require phone verification
+    handleShowSignInModal();
+    setPendingPost(true);
   };
 
   // After successful OTP/sign-in, post and redirect to profile
   const handleAuthSuccess = () => {
-    setShowOTPModal(false);
     setShowSignInModal(false);
     setPendingPost(false);
     setFormData((prev) => ({ ...prev, phoneVerified: true }));
@@ -92,18 +98,12 @@ const SellCar = () => {
         canSubmit={() => !!canSubmit()}
       />
 
-      {/* OTP Modal */}
-      <OTPModal
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
-        onSuccess={handleAuthSuccess}
-        phoneNumber={formData.phone || ''}
-        purpose="post-listing"
-      />
       {/* Sign In Modal */}
       <SignInModal
+        key={signInModalKey}
         isOpen={showSignInModal}
         onClose={() => setShowSignInModal(false)}
+        onSuccess={handleAuthSuccess}
       />
     </div>
   );

@@ -13,7 +13,7 @@ interface EditProfileModalProps {
   onSave: (profile: any) => void;
 }
 
-const cities = [
+export const cities = [
   'Chennai',
   'Mumbai', 
   'Delhi',

@@ -6,7 +6,6 @@ import { Car } from '@/types/car';
 export const useOfferFlow = () => {
   const { isSignedIn } = useUser();
   const [showOfferModal, setShowOfferModal] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 
   const handleMakeOffer = (car: Car) => {
@@ -16,13 +15,8 @@ export const useOfferFlow = () => {
       setShowOfferModal(true);
     } else {
       // Show OTP modal first for non-signed-in users
-      setShowOTPModal(true);
+      // This logic is removed as per the edit hint.
     }
-  };
-
-  const handleOTPSuccess = () => {
-    setShowOTPModal(false);
-    setShowOfferModal(true);
   };
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
@@ -34,19 +28,15 @@ export const useOfferFlow = () => {
 
   const closeModals = () => {
     setShowOfferModal(false);
-    setShowOTPModal(false);
     setSelectedCar(null);
   };
 
   return {
     selectedCar,
     showOfferModal,
-    showOTPModal,
     handleMakeOffer,
-    handleOTPSuccess,
     handleOfferSubmit,
     closeModals,
-    setShowOfferModal,
-    setShowOTPModal
+    setShowOfferModal
   };
 };

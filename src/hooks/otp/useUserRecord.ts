@@ -32,6 +32,7 @@ export const useUserRecord = () => {
         email: authUser.email || null,
         city: null,
         gender: null,
+        is_verified: true, // Set is_verified true on creation
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };

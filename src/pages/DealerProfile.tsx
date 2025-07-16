@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertCircle, Plus, Car, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const DealerProfile = () => {
   const { dealerSlug } = useParams();
@@ -64,7 +65,7 @@ const DealerProfile = () => {
               <h2 className="text-2xl font-bold mb-2">{dealerData.businessName}</h2>
               <p className="text-gray-600 mb-1">Contact Person: {dealerData.contactPerson}</p>
               <p className="text-gray-600 mb-1">Email: {dealerData.email}</p>
-              <p className="text-gray-600 mb-1">Phone: {dealerData.phone}</p>
+              <p className="text-gray-600 mb-1">Phone: {formatPhoneForAuth(dealerData.phone)}</p>
               <p className="text-gray-600 mb-4">Address: {dealerData.address}</p>
             </div>
             <div className="text-right">

@@ -1,8 +1,6 @@
 
 import { Car } from '@/types/car';
 import MakeOfferModal from '@/components/car-details/MakeOfferModal';
-import OTPModal from '@/components/modals/OTPModal';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 
 interface CarDetailModalsProps {
   car: Car;
@@ -27,7 +25,7 @@ const CarDetailModals = ({
   onCloseTestDriveModal,
   onOTPSuccess,
   onOfferSubmit,
-  onTestDriveScheduled
+  onTestDriveScheduled,
 }: CarDetailModalsProps) => {
   return (
     <>
@@ -41,21 +39,6 @@ const CarDetailModals = ({
           images: (car.images || []).map(url => ({ url })),
           seller_id: car.seller.id,
         }}
-      />
-
-      <OTPModal
-        isOpen={showOTPModal}
-        onClose={onCloseOTPModal}
-        onSuccess={onOTPSuccess}
-        phoneNumber="+91 98765 43210"
-        purpose="make an offer"
-      />
-
-      <TestDriveModal
-        isOpen={showTestDriveModal}
-        onClose={onCloseTestDriveModal}
-        car={car}
-        onScheduled={onTestDriveScheduled}
       />
     </>
   );

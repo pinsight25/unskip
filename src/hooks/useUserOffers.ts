@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
+import { formatPhoneForDB } from '@/utils/phoneUtils';
 
 interface Offer {
   id: string;
@@ -36,7 +37,7 @@ export const useUserOffers = () => {
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('id')
-        .eq('phone', user.phone)
+        .eq('phone', formatPhoneForDB(user.phone))
         .single();
 
       if (userError || !userData) {

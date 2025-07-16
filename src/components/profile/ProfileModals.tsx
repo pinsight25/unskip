@@ -1,7 +1,6 @@
 
 import EditProfileModal from '@/components/modals/EditProfileModal';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
-import MobileOTPModal from '@/components/modals/MobileOTPModal';
 
 interface ProfileModalsProps {
   isEditProfileOpen: boolean;

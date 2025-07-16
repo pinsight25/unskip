@@ -5,7 +5,6 @@ import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
 import { useState } from 'react';
-import TestDriveModal from '@/components/modals/TestDriveModal';
 import ResultsHeader from './results/ResultsHeader';
 import RefreshControl from './results/RefreshControl';
 import EmptyResults from './results/EmptyResults';
@@ -43,9 +42,6 @@ const HomeResults = ({
   onFilterChange,
   getOfferStatus
 }: HomeResultsProps) => {
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
-  const [testDriveSelectedCar, setTestDriveSelectedCar] = useState<Car | null>(null);
-  
   const { navigateToChat } = useChatManager();
   const { toast } = useToast();
 
@@ -95,8 +91,10 @@ const HomeResults = ({
     }
     
     if (status === 'accepted') {
-      setTestDriveSelectedCar(car);
-      setShowTestDriveModal(true);
+      toast({
+        title: "Test Drive Scheduled!",
+        description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
+      });
     }
     
     if (status === 'rejected') {
@@ -113,8 +111,6 @@ const HomeResults = ({
       title: "Test Drive Scheduled!",
       description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
     });
-    setShowTestDriveModal(false);
-    setTestDriveSelectedCar(null);
   };
 
   const handleClearFilters = () => {
@@ -182,18 +178,6 @@ const HomeResults = ({
           )}
         </div>
       </div>
-
-      {testDriveSelectedCar && (
-        <TestDriveModal
-          isOpen={showTestDriveModal}
-          onClose={() => {
-            setShowTestDriveModal(false);
-            setTestDriveSelectedCar(null);
-          }}
-          car={testDriveSelectedCar}
-          onScheduled={handleTestDriveScheduled}
-        />
-      )}
     </section>
   );
 };
