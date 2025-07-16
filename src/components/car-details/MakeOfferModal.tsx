@@ -37,8 +37,9 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const minAcceptable = Math.floor(car.price * 0.7);
+  const minAcceptable = Math.floor(car.price * 0.85);
   const showLowOfferWarning = form.amount < minAcceptable;
+  const sellerName = user?.id === car.seller_id ? 'Seller' : (user?.name || 'Seller');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -101,7 +102,11 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Make an Offer</DialogTitle>
+          <DialogTitle>Connect with {sellerName}</DialogTitle>
+          <div className="text-sm text-gray-500 mt-1">
+            Seller accepts offers above <span className="font-semibold text-orange-600">₹{minAcceptable.toLocaleString()}</span> (85% of asking)
+          </div>
+          <div className="text-xs text-gray-400 mt-1">Price negotiable when you meet</div>
         </DialogHeader>
         <div className="space-y-4 py-2">
           {/* Car Info */}
@@ -165,7 +170,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
               />
             </div>
             {error && <div className="text-sm text-red-600">{error}</div>}
-            {success && <div className="text-sm text-green-600">Offer sent successfully!</div>}
+            {success && <div className="text-sm text-green-600">Offer sent! {sellerName} will review and respond.</div>}
             <Button
               type="submit"
               className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-md hover:from-orange-600 hover:to-orange-700 transition-colors"

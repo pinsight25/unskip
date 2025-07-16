@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Calendar, IndianRupee, Eye } from 'lucide-react';
+import { MessageCircle, IndianRupee, Phone, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOfferContext } from '@/contexts/OfferContext';
 import { useNavigate } from 'react-router-dom';
@@ -73,14 +73,14 @@ const MobileCarActions = ({
         return (
           <Button size="sm" variant="outline" onClick={onMakeOffer} className="flex-1">
             <IndianRupee className="h-4 w-4 mr-1" />
-            Make New Offer
+            Connect with Seller
           </Button>
         );
       default:
         return (
           <Button size="sm" onClick={onMakeOffer} className="flex-1">
             <IndianRupee className="h-4 w-4 mr-1" />
-            Make an Offer
+            Connect with Seller
           </Button>
         );
     }
@@ -111,11 +111,11 @@ const MobileCarActions = ({
             size="sm" 
             variant="outline"
             onClick={handleChatClick}
-            disabled={!offered}
+            disabled={!offered || offerStatus !== 'accepted'}
             className={`flex-1 ${
-              offered 
+              offered && offerStatus === 'accepted'
                 ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
-                : 'border-gray-300 text-gray-500'
+                : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
             }`}
           >
             <MessageCircle className="h-4 w-4 mr-1" />
@@ -124,16 +124,15 @@ const MobileCarActions = ({
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={handleTestDriveClick}
-            disabled={!offered}
+            disabled={!offered || offerStatus !== 'accepted'}
             className={`flex-1 ${
-              offered
+              offered && offerStatus === 'accepted'
                 ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500'
-                : 'border-gray-300 text-gray-500'
+                : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
             }`}
           >
-            <Calendar className="h-4 w-4 mr-1" />
-            Test Drive
+            <Phone className="h-4 w-4 mr-1" />
+            Call
           </Button>
         </div>
       )}

@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { MessageCircle, IndianRupee, Calendar, Eye } from 'lucide-react';
+import { MessageCircle, IndianRupee, Phone, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface CarCardActionsProps {
@@ -22,7 +22,7 @@ const CarCardActions = ({ onMakeOffer, onChat, offerMade, isOwner, onViewOffers 
           onClick={onMakeOffer}
         >
           <IndianRupee className="h-4 w-4 mr-1" />
-          Make an Offer
+          Connect with Seller
         </Button>
       )}
       {isOwner && (
@@ -41,7 +41,8 @@ const CarCardActions = ({ onMakeOffer, onChat, offerMade, isOwner, onViewOffers 
             variant="outline" 
             size="sm"
             onClick={onChat}
-            className="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white hover:border-orange-500 active:bg-orange-600 transition-all duration-200"
+            className={`border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white hover:border-orange-500 active:bg-orange-600 transition-all duration-200 ${!offerMade ? 'opacity-60 cursor-not-allowed' : ''}`}
+            disabled={!offerMade}
           >
             <MessageCircle className="h-4 w-4 mr-1" />
             Chat
@@ -49,10 +50,11 @@ const CarCardActions = ({ onMakeOffer, onChat, offerMade, isOwner, onViewOffers 
           <Button 
             variant="outline" 
             size="sm"
-            className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200"
+            className={`border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 ${!offerMade ? 'opacity-60 cursor-not-allowed' : ''}`}
+            disabled={!offerMade}
           >
-            <Calendar className="h-4 w-4 mr-1" />
-            Test Drive
+            <Phone className="h-4 w-4 mr-1" />
+            Call
           </Button>
         </div>
       )}

@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { IndianRupee, MessageCircle, CalendarDays } from 'lucide-react';
+import { IndianRupee, MessageCircle, Phone, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOfferContext } from '@/contexts/OfferContext';
 import { useUser } from '@/contexts/UserContext';
@@ -129,9 +129,8 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
         onClick={onMakeOffer}
       >
         <IndianRupee className="h-4 w-4 mr-2" />
-        {offerStatus === 'pending' ? 'Offer Sent' : offerStatus === 'accepted' ? 'Offer Accepted' : 'Make an Offer'}
+        {offerStatus === 'pending' ? 'Offer Sent' : offerStatus === 'accepted' ? 'Offer Accepted' : 'Connect with Seller'}
       </Button>
-      
       <div className="grid grid-cols-2 gap-3">
         <Button 
           variant={chatConfig.variant}
@@ -142,22 +141,19 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
           <MessageCircle className="h-4 w-4 mr-2" />
           {chatConfig.text}
         </Button>
-        
         <Button 
           variant="outline"
-          onClick={handleTestDriveClick}
-          disabled={!offered}
+          disabled={!offered || offerStatus !== 'accepted'}
           className={`transition-all duration-200 ${
-            offered 
+            offered && offerStatus === 'accepted'
               ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500' 
-              : 'border-gray-300 text-gray-500'
+              : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
           }`}
         >
-          <CalendarDays className="h-4 w-4 mr-2" />
-          Test Drive
+          <Phone className="h-4 w-4 mr-2" />
+          Call
         </Button>
       </div>
-      
       {offerStatus === 'accepted' && (
         <div className="mt-2">
           <Badge className="bg-green-100 text-green-800 border-green-200 w-full justify-center">
