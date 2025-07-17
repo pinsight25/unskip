@@ -18,26 +18,26 @@ import { ArrowLeft } from 'lucide-react';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 
 const DealerInventory = () => {
-  const { dealerId } = useParams();
+  const { dealerSlug } = useParams();
   const [sortBy, setSortBy] = useState('');
   const [cars, setCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Find dealer by ID or slug (from DB, not mock)
+  // Find dealer by slug (from DB, not mock)
   const [dealer, setDealer] = useState<any>(null);
 
   useEffect(() => {
     const fetchDealerAndCars = async () => {
       setLoading(true);
       setError(null);
-      // Fetch dealer by slug or id
+      // Fetch dealer by slug only
       let dealerData = null;
-      if (dealerId) {
+      if (dealerSlug) {
         const { data, error } = await supabase
           .from('dealers')
           .select('*')
-          .or(`id.eq.${dealerId},slug.eq.${dealerId}`)
+          .eq('slug', dealerSlug)
           .single();
         if (error || !data) {
           setDealer(null);
@@ -110,7 +110,7 @@ const DealerInventory = () => {
       setLoading(false);
     };
     fetchDealerAndCars();
-  }, [dealerId]);
+  }, [dealerSlug]);
 
   // Sorting
   const sortedCars = [...cars].sort((a, b) => {

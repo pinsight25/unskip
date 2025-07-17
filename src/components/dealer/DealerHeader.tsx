@@ -212,7 +212,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             Brands Available
           </h3>
           <div className="flex flex-wrap gap-2">
-            {dealer.brands.map((brand) => (
+            {(dealer.brands || []).map((brand) => (
               <Badge 
                 key={brand} 
                 variant="outline" 

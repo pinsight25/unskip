@@ -4,7 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Car, Calendar, Users, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { createSlug } from '@/data/dealers';
+// Remove: import { createSlug } from '@/data/dealers';
+
+// Add local createSlug utility
+const createSlug = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '');
+};
 
 interface DealerCardProps {
   dealer: {
@@ -20,6 +28,7 @@ interface DealerCardProps {
     verification_status?: string;
     brands: string[];
     shopPhoto?: string;
+    slug: string;
   };
 }
 
@@ -127,7 +136,7 @@ const DealerCard = ({ dealer }: DealerCardProps) => {
         </div>
 
         {/* Action Button */}
-        <Link to={`/dealers/${createSlug(dealer.name)}`}>
+        <Link to={`/dealers/${dealer.slug}`}>
           <Button className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-600 text-white font-semibold shadow-md text-sm py-2">
             View Inventory
           </Button>

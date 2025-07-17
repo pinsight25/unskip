@@ -14,6 +14,8 @@ interface DealerGridProps {
     verified: boolean;
     brands: string[];
     shopPhoto?: string;
+    verification_status?: string;
+    slug: string;
   }>;
 }
 

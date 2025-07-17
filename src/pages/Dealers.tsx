@@ -8,77 +8,15 @@ import DealerFilters from '@/components/dealers/DealerFilters';
 import DealerGrid from '@/components/dealers/DealerGrid';
 import EmptyDealerState from '@/components/dealers/EmptyDealerState';
 import { supabase } from '@/lib/supabase';
+import { useDealers } from '@/hooks/queries/useDealers';
+import { Dealer } from '@/types/dealer';
 
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
-  const [dealers, setDealers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDealers = async () => {
-      setLoading(true);
-      setError(null);
-      const { data, error } = await supabase
-        .from('dealers')
-        .select('*')
-        .order('verification_status', { ascending: true })
-        .order('created_at', { ascending: false });
-      if (error) {
-        setError('Failed to load dealers.');
-        setLoading(false);
-        return;
-      }
-      if (data) {
-        setDealers(
-          data.map((dealer: any) => ({
-            id: dealer.id,
-            name: dealer.business_name,
-            contactPerson: dealer.contact_person,
-            businessCategory: dealer.business_category || '',
-            specialization: dealer.specialization || 'All Brands',
-            location: dealer.shop_address,
-            establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
-            carsInStock: 0, // TODO: fetch real count if needed
-            verified: dealer.verification_status === 'verified',
-            verification_status: dealer.verification_status,
-            brands: dealer.brands_deal_with || [],
-            shopPhoto: '', // TODO: fetch from dealer_documents if needed
-          }))
-        );
-      }
-      setLoading(false);
-    };
-    fetchDealers();
-
-    // Supabase real-time subscription for dealers
-    const channel = supabase.channel('realtime-dealers')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'dealers',
-        },
-        () => {
-          fetchDealers();
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  // Filter dealers based on selected filters
-  const filteredDealers = dealers.filter(dealer => {
-    const locationMatch = !selectedLocation || selectedLocation === 'All Locations' || 
-                         dealer.location.toLowerCase() === selectedLocation.toLowerCase();
-    const brandMatch = !selectedBrand || selectedBrand === 'All Brands' || 
-                      dealer.brands.some((brand: string) => brand.toLowerCase() === selectedBrand.toLowerCase());
-    return locationMatch && brandMatch;
-  });
+  // Use the new useDealers hook
+  const { filteredDealers, isLoading, error, data: allDealers } = useDealers(selectedLocation, selectedBrand);
 
   const handleApplyFilters = () => {};
   const handleClearFilters = () => {
@@ -105,14 +43,14 @@ const Dealers = () => {
         {/* Results count */}
         <div className="mb-4">
           <p className="text-gray-600 text-sm">
-            {loading ? 'Loading dealers...' : `Showing ${filteredDealers.length} of ${dealers.length} dealers`}
+            {isLoading ? 'Loading dealers...' : `Showing ${filteredDealers.length} of ${(allDealers || []).length} dealers`}
           </p>
         </div>
         {/* Dealers Grid */}
-        {loading ? (
+        {isLoading ? (
           <div className="text-center py-12 text-gray-500">Loading dealers...</div>
         ) : error ? (
-          <div className="text-center py-12 text-red-500">{error}</div>
+          <div className="text-center py-12 text-red-500">{error.message || 'Failed to load dealers.'}</div>
         ) : filteredDealers.length > 0 ? (
           <DealerGrid dealers={filteredDealers} />
         ) : (
