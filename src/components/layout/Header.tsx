@@ -9,6 +9,7 @@ import DesktopNavigation from './header/DesktopNavigation';
 import HeaderActions from './header/HeaderActions';
 import HeaderCitySelector from './header/HeaderCitySelector';
 import MobileMenu from './header/MobileMenu';
+import { useToast } from '@/components/ui/use-toast';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,6 +17,7 @@ const Header = () => {
   const [carsSoldToday, setCarsSoldToday] = useState(5);
   const { user } = useUser();
   const unreadQueryRef = useRef<any>(null);
+  const { toast } = useToast();
   const { data: unreadChats = 0, refetch } = useQuery({
     queryKey: ['unreadChats', user?.id],
     queryFn: async () => {
@@ -27,12 +29,17 @@ const Header = () => {
         .eq('receiver_id', user.id)
         .eq('seen', false);
       if (error) return 0;
+      if (import.meta.env.DEV) {
+        console.log('[Header] Unread chat count refetched:', (data || []).length);
+      }
       return (data || []).length;
     },
     enabled: !!user?.id,
     refetchInterval: false // We'll use real-time instead of polling
   });
   unreadQueryRef.current = refetch;
+  // Expose for debug/fallback use from ChatDetail
+  (window as any).__unskipUnreadRefetch = refetch;
 
   // Supabase real-time subscription for unread chat messages
   useEffect(() => {

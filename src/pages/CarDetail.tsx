@@ -85,6 +85,7 @@ const CarDetail = () => {
           rtoTransferSupport: carData.rto_transfer_support,
           insurance: undefined,
           serviceHistory: undefined,
+          seller_type: 'individual',
         };
         setCar(carObj); // Set car immediately
         // Fetch images separately
@@ -123,6 +124,32 @@ const CarDetail = () => {
       }
     };
     fetchCar();
+    // Real-time subscriptions for cars and car_images
+    if (id) {
+      const channel = supabase.channel(`realtime-car-detail-${id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'cars',
+            filter: `id=eq.${id}`
+          },
+          () => { fetchCar(); }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'car_images',
+            filter: `car_id=eq.${id}`
+          },
+          () => { fetchCar(); }
+        )
+        .subscribe();
+      return () => { supabase.removeChannel(channel); mounted = false; };
+    }
     return () => { mounted = false; };
   }, [id]);
 

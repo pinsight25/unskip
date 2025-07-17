@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { Car } from '@/types/car';
 import { formatPhoneForAuth } from '@/utils/phoneUtils';
 import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 
 // Helper to map raw DB car to Car type
 function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
@@ -72,11 +73,13 @@ function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
 
 // Fetch all active cars for home/buy page
 export const useCars = () => {
+  const { toast } = useToast ? useToast() : { toast: undefined };
   const query = useQuery({
     queryKey: ['cars'],
     queryFn: async () => {
-      console.log('[React Query] Fetching cars...');
-      
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetching cars...');
+      }
       const { data: carsData, error: carsError } = await supabase
         .from('cars')
         .select(`
@@ -88,25 +91,40 @@ export const useCars = () => {
         .eq('car_images.is_cover', true)
         .order('created_at', { ascending: false });
       if (carsError) {
-        console.error('[React Query] Error fetching cars:', carsError);
+        if (import.meta.env.DEV) {
+          console.error('[React Query] Error fetching cars:', carsError);
+        }
         throw carsError;
       }
-      // Remove dealer lookup to avoid 406 error
       const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
-      console.log('[React Query] Fetched cars:', carsMapped.length);
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetched cars:', carsMapped.length);
+        // Removed debug toast
+      }
       return carsMapped;
     },
   });
 
-  // Supabase real-time subscription for cars
+  // Supabase real-time subscription for cars and car_images
   useEffect(() => {
-    const channel = supabase.channel('realtime-cars')
+    const channel = supabase.channel('realtime-cars-and-images')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'cars',
+        },
+        () => {
+          query.refetch();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'car_images',
         },
         () => {
           query.refetch();

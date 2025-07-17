@@ -87,13 +87,14 @@ const Chats = () => {
       return chatsWithLastMessage;
     },
     enabled: !!user?.id,
-    refetchInterval: 5000, // Refresh every 5 seconds for real-time updates
+    // refetchInterval: 5000, // Remove polling, rely on real-time
   });
 
-  // Supabase real-time subscription for chats
+  // Supabase real-time subscription for chats and chat_messages
   useEffect(() => {
     if (!user?.id) return;
-    const channel = supabase.channel('realtime-chats')
+    const channel = supabase.channel('realtime-chats-and-messages')
+      // Listen to changes in chats table (buyer or seller)
       .on(
         'postgres_changes',
         {
@@ -102,9 +103,7 @@ const Chats = () => {
           table: 'chats',
           filter: `buyer_id=eq.${user.id}`
         },
-        () => {
-          refetch();
-        }
+        () => { refetch(); }
       )
       .on(
         'postgres_changes',
@@ -114,9 +113,28 @@ const Chats = () => {
           table: 'chats',
           filter: `seller_id=eq.${user.id}`
         },
-        () => {
-          refetch();
-        }
+        () => { refetch(); }
+      )
+      // Listen to changes in chat_messages table (receiver or sender)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `receiver_id=eq.${user.id}`
+        },
+        () => { refetch(); }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `sender_id=eq.${user.id}`
+        },
+        () => { refetch(); }
       )
       .subscribe();
     return () => {

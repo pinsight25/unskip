@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Car } from '@/types/car';
+import { useToast } from '@/hooks/use-toast';
 
 interface ChatHeaderProps {
   car: any;
@@ -39,6 +40,7 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onBack, onReportChat, o
     : otherUser?.phone || '';
   // Robust car image fallback
   const carTitle = car ? `${car.year} ${car.brand} ${car.model}` : 'Car Details';
+  const { toast } = useToast();
   return (
     <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0 z-10">
       <div className="flex items-center gap-3">
@@ -71,16 +73,16 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onBack, onReportChat, o
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={onReportChat} className="text-orange-600">
+            <DropdownMenuItem onClick={() => toast({ title: 'Report chat', description: 'Feature coming soon!' })} className="text-orange-600">
               <Flag className="h-4 w-4 mr-2" />
               Report this chat
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onBlockUser} className="text-red-600">
+            <DropdownMenuItem onClick={() => toast({ title: 'Block user', description: 'Feature coming soon!' })} className="text-red-600">
               <Ban className="h-4 w-4 mr-2" />
               Block user
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onDeleteConversation} className="text-red-600">
+            <DropdownMenuItem onClick={() => toast({ title: 'Delete conversation', description: 'Feature coming soon!' })} className="text-red-600">
               <Trash2 className="h-4 w-4 mr-2" />
               Delete conversation
             </DropdownMenuItem>
