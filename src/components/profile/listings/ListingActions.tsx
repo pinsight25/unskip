@@ -16,30 +16,30 @@ const ListingActions = ({ onEdit, onDuplicate, onDelete, disabled }: ListingActi
         size="sm" 
         variant="outline"
         onClick={onEdit}
-        className="flex-1 md:flex-none"
+        className="flex-1 md:flex-none items-center"
         disabled={disabled}
       >
-        <Edit className="h-4 w-4 mr-1" />
+        <Edit className="h-4 w-4 mr-1 align-middle" />
         Edit
       </Button>
       <Button 
         size="sm" 
         variant="outline"
         onClick={onDuplicate}
-        className="flex-1 md:flex-none text-blue-600 hover:text-blue-700"
+        className="flex-1 md:flex-none text-blue-600 hover:text-blue-700 flex items-center justify-center"
         disabled={disabled}
       >
-        <Copy className="h-4 w-4 mr-1" />
-        Duplicate
+        <Copy className="h-4 w-4 mr-2" />
+        <span>Duplicate</span>
       </Button>
       <Button 
         size="sm" 
         variant="outline"
         onClick={onDelete}
-        className="flex-1 md:flex-none text-red-600 hover:text-red-700"
+        className="flex-1 md:flex-none text-red-600 hover:text-red-700 items-center"
         disabled={disabled}
       >
-        <Trash2 className="h-4 w-4 mr-1" />
+        <Trash2 className="h-4 w-4 mr-1 align-middle" />
         Delete
       </Button>
     </div>

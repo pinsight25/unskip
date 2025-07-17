@@ -3,7 +3,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useProfileState } from '@/hooks/useProfileState';
 import { useProfileHandlers } from '@/hooks/useProfileHandlers';
-import { useUserListings } from '@/hooks/useUserListings';
+import { useUserListings } from '@/hooks/queries/useCarQueries';
 import ProfileContent from '@/components/profile/ProfileContent';
 import ProfileModals from '@/components/profile/ProfileModals';
 import SignInPrompt from '@/components/profile/SignInPrompt';
@@ -36,15 +36,19 @@ const Profile = () => {
     confirmDeleteListing
   } = useProfileHandlers();
 
-  const {
-    carListings,
-    accessoryListings,
-    stats,
-    isLoading: listingsLoading,
-    isRefetching,
-    error,
-    refetch
-  } = useUserListings();
+  // Use React Query hook for user listings
+  const { data: listings = [], isLoading: listingsLoading, isFetching: isRefetching, error, refetch } = useUserListings(user?.id);
+
+  // Split listings into cars and accessories (if needed)
+  const carListings = Array.isArray(listings) ? listings.filter((item: any) => !item.type || item.type === 'car') : [];
+  const accessoryListings = Array.isArray(listings) ? listings.filter((item: any) => item.type === 'accessory') : [];
+
+  // Compute stats
+  const stats = {
+    totalViews: carListings.reduce((sum: number, l: any) => sum + (l.views || 0), 0),
+    activeListings: carListings.filter((l: any) => l.status === 'active').length + accessoryListings.filter((a: any) => a.status === 'active').length,
+    totalOffers: 0 // Placeholder, update if you have offers data
+  };
 
   // Force refetch when navigating back to listings tab
   useEffect(() => {
@@ -70,42 +74,7 @@ const Profile = () => {
     }
   }, [location.search, carListings]);
 
-  useEffect(() => {
-    const userId = user?.id;
-    const flags = [
-      { key: 'carPosted', session: `hasRefreshed_profile_posted_${userId}` },
-      { key: 'carUpdated', session: `hasRefreshed_profile_updated_${userId}` },
-      { key: 'carDeleted', session: `hasRefreshed_profile_deleted_${userId}` },
-    ];
-
-    let didRefetch = false;
-
-    flags.forEach(({ key, session }) => {
-      const flagData = localStorage.getItem(key);
-      if (flagData && userId) {
-        try {
-          const { timestamp } = JSON.parse(flagData);
-          const timeDiff = Date.now() - timestamp;
-          if (timeDiff < 10000 && !sessionStorage.getItem(session)) {
-            localStorage.removeItem(key);
-            sessionStorage.setItem(session, 'true');
-            if (typeof refetch === 'function' && !didRefetch) {
-              refetch();
-              didRefetch = true;
-            }
-          } else {
-            localStorage.removeItem(key);
-          }
-        } catch (e) {
-          localStorage.removeItem(key);
-        }
-      }
-      // Clean up session flag after 30 seconds
-      setTimeout(() => {
-        sessionStorage.removeItem(session);
-      }, 30000);
-    });
-  }, [user?.id, refetch]);
+  // Remove localStorage-based refresh logic - React Query handles this automatically
 
   const userWithDealer = user ? {
     ...user,
@@ -160,22 +129,16 @@ const Profile = () => {
     return <LoadingScreen message="Setting up profile..." />;
   }
 
-  const realStats = {
-    totalViews: stats.totalViews,
-    activeListings: stats.activeCars + stats.activeAccessories,
-    totalOffers: 0
-  };
-
   return (
     <>
       <ProfileContent
         user={userWithDealer}
         listings={carListings}
         accessories={accessoryListings}
-        stats={realStats}
+        stats={stats}
         isLoading={listingsLoading}
         isRefetching={isRefetching}
-        error={error}
+        error={error ? (typeof error === 'string' ? error : error.message || String(error)) : null}
         onEditProfile={() => setIsEditProfileOpen(true)}
         onSignOut={() => setIsSignOutModalOpen(true)}
         onDeleteListing={handleDeleteListingWrapper}

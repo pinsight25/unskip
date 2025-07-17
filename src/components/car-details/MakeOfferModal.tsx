@@ -30,7 +30,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   const [form, setForm] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
-    amount: car.price,
+    amount: '', // Always string
     message: '',
   });
   const [loading, setLoading] = useState(false);
@@ -38,12 +38,18 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   const [success, setSuccess] = useState(false);
 
   const minAcceptable = Math.floor(car.price * 0.85);
-  const showLowOfferWarning = form.amount < minAcceptable;
+  const showLowOfferWarning = form.amount !== '' && Number(form.amount) < minAcceptable;
   const sellerName = user?.id === car.seller_id ? 'Seller' : (user?.name || 'Seller');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: name === 'amount' ? Number(value) : value }));
+    if (name === 'amount') {
+      // Only allow digits, remove leading zeros
+      const cleanValue = value.replace(/\D/g, '').replace(/^0+/, '');
+      setForm(prev => ({ ...prev, amount: cleanValue }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const submitOffer = async () => {
@@ -60,7 +66,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
         buyer_name: form.name,
         buyer_phone: formatPhoneForDB(form.phone),
         seller_id: car.seller_id,
-        amount: form.amount,
+        amount: Number(form.amount),
         message: form.message,
       });
       setSuccess(true);
@@ -76,6 +82,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   };
 
   const handleSubmit = () => {
+    console.log('handleSubmit called'); // Debug log
     if (!user || !user.isVerified) {
       openSignInModal(() => {
         // This runs after successful auth
@@ -92,7 +99,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
     setForm({
       name: user?.name || '',
       phone: user?.phone || '',
-      amount: car.price,
+      amount: '', // Reset to empty string
       message: '',
     });
     onClose();
@@ -150,7 +157,7 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
                 min={1}
                 value={form.amount}
                 onChange={handleChange}
-                placeholder="Enter your offer"
+                placeholder={`e.g. ${car.price}`}
                 className="h-12"
                 required
               />
@@ -172,9 +179,10 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
             {error && <div className="text-sm text-red-600">{error}</div>}
             {success && <div className="text-sm text-green-600">Offer sent! {sellerName} will review and respond.</div>}
             <Button
-              type="submit"
+              type="button"
               className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-md hover:from-orange-600 hover:to-orange-700 transition-colors"
               disabled={loading}
+              onClick={handleSubmit}
             >
               {loading ? 'Submitting...' : 'Submit Offer'}
             </Button>

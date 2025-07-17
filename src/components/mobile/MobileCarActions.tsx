@@ -5,10 +5,14 @@ import { MessageCircle, IndianRupee, Phone, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOfferContext } from '@/contexts/OfferContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
+import { useUser } from '@/contexts/UserContext';
 
 interface MobileCarActionsProps {
   carId: string;
+  sellerId: string;
   offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
+  offerAmount: number | null;
   onMakeOffer: (e?: React.MouseEvent) => void;
   onChat: (e?: React.MouseEvent) => void;
   onTestDrive: (e?: React.MouseEvent) => void;
@@ -18,7 +22,9 @@ interface MobileCarActionsProps {
 
 const MobileCarActions = ({
   carId,
+  sellerId,
   offerStatus,
+  offerAmount,
   onMakeOffer,
   onChat,
   onTestDrive,
@@ -28,9 +34,11 @@ const MobileCarActions = ({
   const { toast } = useToast();
   const { hasOffered } = useOfferContext();
   const navigate = useNavigate();
+  const { user } = useUser();
 
-  const handleChatClick = (e?: React.MouseEvent) => {
-    if (!hasOffered(carId)) {
+  const handleChatClick = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (offerStatus !== 'accepted') {
       toast({
         title: "Make an offer first",
         description: "You need to make an offer before you can chat with the seller.",
@@ -38,7 +46,36 @@ const MobileCarActions = ({
       });
       return;
     }
-    onChat(e);
+    try {
+      // Check for existing chat
+      const { data: chat } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('car_id', carId)
+        .eq('buyer_id', user.id)
+        .eq('seller_id', sellerId)
+        .single();
+      if (chat) {
+        navigate(`/chats/${chat.id}`);
+      } else {
+        // Create new chat
+        const { data: newChat } = await supabase
+          .from('chats')
+          .insert({
+            car_id: carId,
+            buyer_id: user.id,
+            seller_id: sellerId,
+            status: 'active'
+          })
+          .select('id')
+          .single();
+        if (newChat) {
+          navigate(`/chats/${newChat.id}`);
+        }
+      }
+    } catch (error) {
+      toast({ title: 'Failed to open chat', variant: 'destructive' });
+    }
   };
 
   const handleTestDriveClick = (e?: React.MouseEvent) => {
@@ -59,14 +96,14 @@ const MobileCarActions = ({
         return (
           <Button size="sm" variant="secondary" disabled className="flex-1">
             <Badge variant="secondary" className="mr-2 text-xs">Pending</Badge>
-            Offer Sent
+            Offer Sent{offerAmount ? `: ₹${offerAmount}` : ''}
           </Button>
         );
       case 'accepted':
         return (
-          <Button size="sm" variant="secondary" className="flex-1 bg-green-100 text-green-800">
+          <Button size="sm" variant="secondary" className="flex-1 bg-green-100 text-green-800" disabled>
             <Badge className="mr-2 text-xs bg-green-200 text-green-800">Accepted</Badge>
-            Offer Accepted
+            Offer Accepted ✓
           </Button>
         );
       case 'rejected':
@@ -111,9 +148,9 @@ const MobileCarActions = ({
             size="sm" 
             variant="outline"
             onClick={handleChatClick}
-            disabled={!offered || offerStatus !== 'accepted'}
+            disabled={offerStatus !== 'accepted'}
             className={`flex-1 ${
-              offered && offerStatus === 'accepted'
+              offerStatus === 'accepted'
                 ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
                 : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
             }`}

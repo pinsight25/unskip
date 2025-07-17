@@ -6,8 +6,7 @@ export const formatPhoneForDB = (phone: string): string => {
 
 export const formatPhoneForAuth = (phone: string): string => {
   let formatted = phone.replace(/\s+/g, '').replace(/-/g, '');
-  if (!formatted.startsWith('+91')) {
-    formatted = '+91' + formatted;
-  }
-  return formatted;
+  // Remove all leading + and 91
+  formatted = formatted.replace(/^\+?91/, '');
+  return '+91' + formatted;
 }; 

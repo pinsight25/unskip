@@ -32,7 +32,7 @@ const DealerInventoryGrid = ({ cars }: DealerInventoryGridProps) => {
                 onMakeOffer={() => {}}
                 onChat={() => {}}
                 onTestDrive={() => {}}
-                offerStatus="none"
+                sellerId={car.seller.id}
               />
             ))}
           </div>

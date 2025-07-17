@@ -39,9 +39,16 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
   const isOwner = user.id === sellerId;
 
   if (isOwner) {
+    const handleEditListing = () => {
+      // Save edit data to sessionStorage for SellCar edit flow
+      sessionStorage.setItem('editListingData', JSON.stringify({
+        listingId: carId
+      }));
+      navigate(`/sell?edit=${carId}`);
+    };
     return (
       <div className="space-y-3">
-        <Button className="w-full bg-primary text-white font-medium" onClick={() => navigate(`/sell?edit=${carId}`)}>
+        <Button className="w-full bg-primary text-white font-medium" onClick={handleEditListing}>
           ✏️ Edit Listing
         </Button>
         <Button className="w-full" variant="outline" onClick={onViewOffers}>

@@ -106,7 +106,7 @@ const ListingCard = ({
             </span>
           </div>
         </div>
-        <div className="flex flex-col gap-2 items-end">
+        <div className="flex flex-col gap-2 items-center">
           <ListingActions
             onEdit={() => onEdit(listing)}
             onDuplicate={() => onDuplicate(listing)}

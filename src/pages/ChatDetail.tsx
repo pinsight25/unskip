@@ -1,138 +1,267 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { mockChats, mockMessages } from '@/data/chatMockData';
-import { mockCars } from '@/data/mockData';
+import { supabase } from '@/lib/supabase';
+import { useUser } from '@/contexts/UserContext';
 import { ChatMessage } from '@/types/chat';
-import { useToast } from '@/hooks/use-toast';
-import ChatHeader from '@/components/chat/ChatHeader';
+import { Car } from '@/types/car';
 import ChatMessages from '@/components/chat/ChatMessages';
 import ChatInput from '@/components/chat/ChatInput';
+import ChatHeader from '@/components/chat/ChatHeader';
+import type { Seller } from '@/types/car';
+
+function toSeller(user: any): Seller {
+  return {
+    id: user?.id || '',
+    name: user?.name || '',
+    type: user?.type || 'individual',
+    phone: user?.phone || '',
+    email: user?.email || '',
+    verified: user?.verified || false,
+    dealerVerified: user?.dealerVerified || false,
+    rating: user?.rating || 0,
+    totalSales: user?.totalSales || 0,
+    memberSince: user?.memberSince || '',
+    location: user?.location || '',
+    avatar: user?.avatar || '',
+    businessName: user?.businessName || '',
+  };
+}
+
+// Map database snake_case to UI camelCase
+function mapDbMessageToUi(msg: any): ChatMessage {
+  return {
+    id: msg.id,
+    chatId: msg.chat_id,
+    senderId: msg.sender_id,
+    receiverId: msg.receiver_id,
+    content: msg.content,
+    timestamp: msg.created_at,
+    seen: msg.seen ?? false,
+    type: msg.message_type || 'text',
+  };
+}
 
 const ChatDetail = () => {
-  const { chatId } = useParams<{ chatId: string }>();
+  const { chatId } = useParams();
+  const { user } = useUser();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  
-  const chat = mockChats.find(c => c.id === chatId);
-  const car = chat ? mockCars.find(c => c.id === chat.carId) : null;
-  
+  const [chat, setChat] = useState<any>(null);
+  const [otherUser, setOtherUser] = useState<any>(null);
+  const [car, setCar] = useState<Car | null>(null);
+  const [carImages, setCarImages] = useState<any[]>([]);
+  const [carImagesLoading, setCarImagesLoading] = useState(false);
+
+  // Fetch chat details and messages
   useEffect(() => {
-    if (chatId) {
-      const chatMessages = mockMessages.filter(msg => msg.chatId === chatId);
-      setMessages(chatMessages);
-    }
-  }, [chatId]);
+    if (!chatId || !user) return;
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !chat || !car) return;
+    const fetchChatData = async () => {
+      // Step 1: Fetch chat, car, and users
+      const { data: chatData } = await supabase
+        .from('chats')
+        .select(`
+          *,
+          car:cars!car_id(*),
+          buyer:users!buyer_id(id, name, avatar),
+          seller:users!seller_id(id, name, avatar)
+        `)
+        .eq('id', chatId)
+        .single();
+      if (!chatData) return;
+      setChat(chatData);
+      setOtherUser(user.id === chatData.buyer_id ? toSeller(chatData.seller) : toSeller(chatData.buyer));
+      // Compose a minimal Car object for ChatHeader
+      const carData = chatData.car;
+      setCar({
+        id: carData.id,
+        title: `${carData.year} ${carData.make} ${carData.model}`,
+        brand: carData.make,
+        model: carData.model,
+        variant: carData.variant,
+        year: carData.year,
+        price: carData.price,
+        images: [], // Not used, but required by type
+        mileage: carData.kilometers_driven || 0,
+        kilometersDriven: carData.kilometers_driven || 0,
+        fuelType: carData.fuel_type,
+        transmission: carData.transmission,
+        ownership: carData.number_of_owners || 1,
+        ownershipNumber: carData.number_of_owners || 1,
+        location: [carData.area, carData.city].filter(Boolean).join(', '),
+        description: carData.description || '',
+        seller: toSeller(chatData.seller),
+        seller_type: toSeller(chatData.seller).type,
+        color: carData.color,
+        landmark: carData.landmark,
+        seatingCapacity: carData.seating_capacity,
+        isRentAvailable: carData.is_rent_available,
+        rentPrice: undefined,
+        rentPolicies: undefined,
+        rentType: undefined,
+        verified: carData.verified,
+        featured: carData.featured,
+        views: carData.views || 0,
+        createdAt: carData.created_at,
+        registrationYear: carData.registration_year,
+        registrationState: carData.registration_state,
+        fitnessCertificateValidTill: carData.fitness_certificate_valid_till,
+        noAccidentHistory: carData.no_accident_history,
+        acceptOffers: carData.accept_offers,
+        offerPercentage: carData.offer_percentage,
+        insuranceValid: carData.insurance_valid,
+        insuranceValidTill: carData.insurance_valid_till,
+        insuranceType: carData.insurance_type,
+        lastServiceDate: carData.last_service_date,
+        serviceCenterType: carData.service_center_type,
+        serviceAtAuthorized: carData.authorized_service_center,
+        rtoTransferSupport: carData.rto_transfer_support,
+        insurance: undefined,
+        serviceHistory: undefined,
+      });
+      // Step 2: Fetch car_images for this car
+      setCarImagesLoading(true);
+      let carImages: any[] = [];
+      if (carData?.id) {
+        const { data: images } = await supabase
+          .from('car_images')
+          .select('id, car_id, image_url, is_cover, sort_order')
+          .eq('car_id', carData.id);
+        carImages = images || [];
+      }
+      setCarImages(carImages);
+      setCarImagesLoading(false);
 
-    const message: ChatMessage = {
+      // Get existing messages
+      const messagesData = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('chat_id', chatId)
+        .order('created_at', { ascending: true });
+      setMessages(Array.isArray(messagesData?.data) ? messagesData.data.map(mapDbMessageToUi) : []);
+    };
+    fetchChatData();
+  }, [chatId, user]);
+
+  // Real-time subscription for new messages
+  useEffect(() => {
+    if (!chatId) return;
+
+    const channel = supabase
+      .channel(`chat-${chatId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `chat_id=eq.${chatId}`
+        },
+        (payload) => {
+          // Map and add new message
+          const newMsg = mapDbMessageToUi(payload.new);
+          // Only add if not from current user (prevent duplicates)
+          if (newMsg.senderId !== user?.id) {
+            setMessages(prev => [...prev, newMsg]);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [chatId, user]);
+
+  // Send message
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !user || !otherUser || !chatId) return;
+
+    // Create optimistic message with correct shape
+    const tempMessage: ChatMessage = {
       id: Date.now().toString(),
-      chatId: chat.id,
-      senderId: 'buyer1',
-      receiverId: chat.sellerId,
-      content: newMessage,
+      chatId: chatId,
+      senderId: user.id,
+      receiverId: otherUser.id,
+      content: newMessage.trim(),
       timestamp: new Date().toISOString(),
       seen: false,
       type: 'text'
     };
-
-    setMessages(prev => [...prev, message]);
+    
+    // Add to UI immediately
+    setMessages(prev => [...prev, tempMessage]);
     setNewMessage('');
 
-    // Simulate seller response
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      const responses = [
-        'Thanks for your message!',
-        'Let me check and get back to you.',
-        'Sure, that sounds good.',
-        'When would be a good time for you?'
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      const sellerMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        chatId: chat.id,
-        senderId: chat.sellerId,
-        receiverId: 'buyer1',
-        content: randomResponse,
-        timestamp: new Date().toISOString(),
-        seen: false,
-        type: 'text'
-      };
-      
-      setMessages(prev => [...prev, sellerMessage]);
-    }, 2000);
+    // Send to database (snake_case)
+    const { error } = await supabase
+      .from('chat_messages')
+      .insert({
+        chat_id: chatId,
+        sender_id: user.id,
+        receiver_id: otherUser.id,
+        content: newMessage.trim(),
+        message_type: 'text'
+      });
+
+    if (error) {
+      console.error('Failed to send message:', error);
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(m => m.id !== tempMessage.id));
+      setNewMessage(newMessage); // Restore input
+    }
   };
 
+  // Quick reply
   const handleQuickReply = (text: string) => {
     setNewMessage(text);
   };
 
-  const handleReportChat = () => {
-    toast({
-      title: "Chat Reported",
-      description: "This chat has been reported. We'll review it shortly.",
-    });
+  // Test drive scheduling
+  const handleTestDrive = () => {
+    const message = "I'd like to schedule a test drive. When are you available?";
+    setNewMessage(message);
   };
 
-  const handleBlockUser = () => {
-    toast({
-      title: "User Blocked",
-      description: "You have blocked this user. You won't receive messages from them.",
-    });
-  };
-
-  const handleDeleteConversation = () => {
-    toast({
-      title: "Conversation Deleted",
-      description: "This conversation has been deleted.",
-    });
-    navigate('/chats');
-  };
-
-  if (!chat || !car) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center p-6">
-          <h2 className="text-xl font-semibold mb-2">Chat not found</h2>
-          <Button onClick={() => navigate('/chats')}>Back to Chats</Button>
-        </div>
-      </div>
-    );
+  if (!chat || !car || !otherUser || carImagesLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading chat...</div>;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="flex flex-col h-screen max-h-screen">
-          <ChatHeader
-            car={car}
-            onBack={() => navigate('/chats')}
-            onReportChat={handleReportChat}
-            onBlockUser={handleBlockUser}
-            onDeleteConversation={handleDeleteConversation}
-          />
+  const isBuyer = user?.id === chat?.buyer_id;
 
-          <ChatMessages
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-[calc(100vh-200px)] md:max-h-[600px]">
+        <ChatHeader 
+          car={car}
+          otherUser={otherUser}
+          currentUser={user}
+          chat={chat}
+          onBack={() => navigate('/chats')}
+          onReportChat={() => console.log('Report chat')}
+          onBlockUser={() => console.log('Block user')}
+          onDeleteConversation={() => console.log('Delete conversation')}
+          carImages={carImages}
+        />
+        <div className="h-[400px] overflow-y-auto flex-1">
+          <ChatMessages 
             messages={messages}
             isTyping={isTyping}
           />
-
-          <ChatInput
-            newMessage={newMessage}
-            onMessageChange={setNewMessage}
-            onSendMessage={handleSendMessage}
-            onQuickReply={handleQuickReply}
-          />
         </div>
+        <ChatInput
+          newMessage={newMessage}
+          onMessageChange={setNewMessage}
+          onSendMessage={handleSendMessage}
+          onQuickReply={handleQuickReply}
+          onTestDrive={handleTestDrive}
+          isBuyer={isBuyer}
+        />
       </div>
     </div>
   );

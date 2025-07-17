@@ -10,13 +10,17 @@ import RefreshControl from './results/RefreshControl';
 import EmptyResults from './results/EmptyResults';
 import ResultsGrid from './results/ResultsGrid';
 
+interface SearchFiltersType {
+  query: string;
+  type: 'all' | 'dealer' | 'individual';
+  priceRange: [number, number];
+  location: string;
+}
+
 interface HomeResultsProps {
   filteredCars: Car[];
   savedCars: string[];
-  currentFilters: {
-    query: string;
-    type: 'all' | 'dealer' | 'individual';
-  };
+  currentFilters: SearchFiltersType;
   isMobile: boolean;
   isRefreshing: boolean;
   offerStatuses: Record<string, 'none' | 'pending' | 'accepted' | 'rejected'>;
@@ -93,7 +97,7 @@ const HomeResults = ({
     if (status === 'accepted') {
       toast({
         title: "Test Drive Scheduled!",
-        description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
+        description: `Test drive scheduled!`,
       });
     }
     
@@ -104,13 +108,6 @@ const HomeResults = ({
         variant: "destructive",
       });
     }
-  };
-
-  const handleTestDriveScheduled = (booking: any) => {
-    toast({
-      title: "Test Drive Scheduled!",
-      description: `Test drive scheduled for ${booking.date} at ${booking.timeSlot}`,
-    });
   };
 
   const handleClearFilters = () => {

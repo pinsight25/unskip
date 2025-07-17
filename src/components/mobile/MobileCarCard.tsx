@@ -5,29 +5,35 @@ import MobileCarPrice from './MobileCarPrice';
 import MobileCarDetails from './MobileCarDetails';
 import MobileCarActions from './MobileCarActions';
 import { useUser } from '@/contexts/UserContext';
+import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
 
 interface MobileCarCardProps {
   car: any;
+  sellerId?: string;
   onSave: (carId: string) => void;
   isSaved: boolean;
   onMakeOffer: () => void;
   onChat: () => void;
   onTestDrive: () => void;
-  offerStatus: 'none' | 'pending' | 'accepted' | 'rejected';
 }
 
 const MobileCarCard = ({ 
   car, 
+  sellerId,
   onSave, 
   isSaved, 
   onMakeOffer, 
   onChat, 
-  onTestDrive,
-  offerStatus 
+  onTestDrive
 }: MobileCarCardProps) => {
   const navigate = useNavigate();
   const { user } = useUser();
   const isOwner = user && user.id === car.seller.id;
+
+  // Use React Query for offer status
+  const { data: offer } = useOfferStatus(car.id, user?.id);
+  const offerStatus = offer?.status || 'none';
+  const offerAmount = offer?.amount || null;
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on interactive elements
@@ -73,7 +79,9 @@ const MobileCarCard = ({
 
         <MobileCarActions
           carId={car.id}
+          sellerId={sellerId || car.seller.id}
           offerStatus={offerStatus}
+          offerAmount={offerAmount}
           onMakeOffer={(e) => {
             e?.stopPropagation();
             onMakeOffer();

@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Calendar } from 'lucide-react';
-import { quickReplies } from '@/data/chatMockData';
 
 interface ChatInputProps {
   newMessage: string;
@@ -10,6 +9,7 @@ interface ChatInputProps {
   onSendMessage: () => void;
   onQuickReply: (text: string) => void;
   onTestDrive: () => void;
+  isBuyer: boolean;
 }
 
 const ChatInput = ({ 
@@ -17,22 +17,34 @@ const ChatInput = ({
   onMessageChange, 
   onSendMessage, 
   onQuickReply, 
-  onTestDrive 
+  onTestDrive,
+  isBuyer
 }: ChatInputProps) => {
+  const quickReplies = isBuyer ? [
+    "Is this still available?",
+    "What's your best price?",
+    "Can I schedule a test drive?",
+    "Are all documents complete?"
+  ] : [
+    "Yes, it's available",
+    "Price is negotiable",
+    "You can test drive this weekend",
+    "All documents are ready"
+  ];
   return (
     <div className="bg-white border-t border-gray-200 flex-shrink-0 shadow-sm">
       {/* Quick Replies */}
       <div className="p-3 bg-gray-50/50 border-b border-gray-100">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 max-w-3xl mx-auto">
-          {quickReplies.map((reply) => (
+          {quickReplies.map((text, idx) => (
             <Button
-              key={reply.id}
+              key={idx}
               variant="outline"
               size="sm"
-              onClick={() => onQuickReply(reply.text)}
+              onClick={() => onQuickReply(text)}
               className="whitespace-nowrap text-xs flex-shrink-0 h-8 bg-white hover:bg-gray-50 border-gray-200"
             >
-              {reply.text}
+              {text}
             </Button>
           ))}
           <Button
@@ -46,7 +58,6 @@ const ChatInput = ({
           </Button>
         </div>
       </div>
-
       {/* Message Input */}
       <div className="p-4 pb-6 md:pb-4 bg-white">
         <div className="flex items-center gap-3 max-w-3xl mx-auto">

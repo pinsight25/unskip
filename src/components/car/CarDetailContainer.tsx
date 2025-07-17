@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '@/types/car';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,10 @@ import { useSupabase } from '@/contexts/SupabaseContext';
 import { useUser } from '@/contexts/UserContext';
 import CarDetailContent from './CarDetailContent';
 import CarDetailModals from './CarDetailModals';
+import { Phone, MessageCircle } from 'lucide-react';
+import MakeOfferModal from '@/components/car-details/MakeOfferModal';
+import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface CarDetailContainerProps {
   car: Car;
@@ -20,13 +24,19 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   const { makeOffer } = useOfferContext();
   const { supabase } = useSupabase();
   const { user } = useUser();
+  const queryClient = useQueryClient();
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [offerStatus, setOfferStatus] = useState<'none' | 'pending' | 'accepted' | 'rejected'>('none');
+  const { data: offer, isLoading: offerLoading } = useOfferStatus(car?.id, user?.id);
+  const offerStatus = offer?.status || 'none';
+  const offerAmount = offer?.amount || null;
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const { toast } = useToast();
+  const [offerAmountState, setOfferAmountState] = useState<number | null>(null);
+
+  // Remove useEffect and offerStatus/offerAmount state logic
 
   // Check if current user is the car owner
   const isOwner = user && user.id === car.seller.id;
@@ -51,17 +61,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
     // Mark offer as made in context
     makeOffer(car.id);
     
-    setOfferStatus('pending');
-    
-    // Simulate offer acceptance after 3 seconds
-    setTimeout(() => {
-      setOfferStatus('accepted');
-      toast({
-        title: "Offer Accepted! 🎉",
-        description: "Great news! The seller has accepted your offer. You can now chat with them.",
-      });
-    }, 3000);
-
+    // UI feedback only, do not set offerStatus directly
     toast({
       title: "Offer submitted!",
       description: "Your offer has been sent to the seller.",
@@ -69,10 +69,14 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
     setShowOfferModal(false);
   };
 
-  const handleChatClick = () => {
+  const handleChatClick = async () => {
     if (offerStatus === 'accepted') {
-      // Navigate to chat page with the car ID
-      navigateToChat(car.id);
+      try {
+        await navigateToChat(car.id, user.id, car.seller.id, toast);
+        await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
+      } catch (err) {
+        toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
+      }
     }
   };
 
@@ -138,16 +142,12 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         return;
       }
 
-      // Set flags for refresh
-      localStorage.setItem('carSold', JSON.stringify({
-        timestamp: Date.now(),
-        carId: car.id
-      }));
-      localStorage.setItem('carsListUpdated', JSON.stringify({
-        timestamp: Date.now(),
-        action: 'sold',
-        carId: car.id
-      }));
+      // Invalidate React Query cache to refresh UI
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['cars'] }),
+        queryClient.invalidateQueries({ queryKey: ['userListings'] }),
+        queryClient.invalidateQueries({ queryKey: ['receivedOffers'] })
+      ]);
       
       toast({
         title: "Car Marked as Sold! ✅",
@@ -163,6 +163,14 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleCall = () => {
+    if (offerStatus === 'accepted' && car.seller.phone) {
+      if (window.confirm(`Call ${car.seller.name} at ${car.seller.phone}?`)) {
+        window.location.href = `tel:${car.seller.phone}`;
+      }
     }
   };
 
@@ -191,6 +199,18 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         onOTPSuccess={handleOTPSuccess}
         onOfferSubmit={handleOfferSubmit}
         onTestDriveScheduled={handleTestDriveScheduled}
+      />
+
+      <MakeOfferModal
+        isOpen={showOfferModal}
+        onClose={() => setShowOfferModal(false)}
+        car={{
+          id: car.id,
+          title: car.title,
+          price: car.price,
+          images: car.images?.map(url => ({ url })) || [],
+          seller_id: car.seller.id,
+        }}
       />
     </>
   );

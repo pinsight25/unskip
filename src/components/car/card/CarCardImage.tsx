@@ -32,7 +32,7 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
           </Badge>
         )}
         {car.verified && (
-          <Badge className="bg-green-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg">
+          <Badge className="bg-green-500 text-white text-xs px-2 py-1 font-medium rounded-md shadow-lg flex items-center">
             <Shield className="h-3 w-3 mr-1" />
             Verified
           </Badge>

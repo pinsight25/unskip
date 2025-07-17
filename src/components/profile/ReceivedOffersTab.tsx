@@ -6,11 +6,82 @@ import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
 import { useUserOffers } from '@/hooks/useUserOffers';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-const ReceivedOffersTab = () => {
+export const useReceivedOffers = () => {
+  const { user } = useUser();
+  return useQuery({
+    queryKey: ['receivedOffers', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('offers')
+        .select(`*, car:cars(*), buyer:users!buyer_id(*)`)
+        .eq('seller_id', user.id)
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!user?.id
+  });
+};
+
+const ReceivedOffersTab = ({ onOffersCountChange }: { onOffersCountChange?: (count: number) => void }) => {
   const { toast } = useToast();
-  const { navigateToChat } = useChatManager();
+  const { user } = useUser();
+  const navigate = useNavigate();
   const { offers, isLoading, error, updateOfferStatus } = useUserOffers();
+  const { navigateToChat } = useChatManager();
+  const queryClient = useQueryClient();
+
+  const { data: receivedOffers = [], isLoading: offersLoading, refetch } = useQuery({
+    queryKey: ['receivedOffers', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('offers')
+        .select(`
+          *,
+          buyer:users!buyer_id(id, name, phone),
+          car:cars(id, make, model, year, price)
+        `)
+        .eq('seller_id', user.id)
+        .order('created_at', { ascending: false });
+      console.log('Received offers:', data);
+      return data || [];
+    },
+    enabled: !!user?.id,
+    refetchInterval: 5000, // Auto-refresh every 5 seconds
+  });
+
+  // Supabase real-time subscription for offers
+  useEffect(() => {
+    if (!user?.id) return;
+    const channel = supabase.channel('realtime-offers')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        () => {
+          refetch();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, refetch]);
+
+  useEffect(() => {
+    if (typeof onOffersCountChange === 'function') {
+      onOffersCountChange(receivedOffers.length);
+    }
+  }, [receivedOffers.length, onOffersCountChange]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -25,10 +96,16 @@ const ReceivedOffersTab = () => {
     return Math.round(diff);
   };
 
-  const handleAcceptOffer = async (offerId: string) => {
-    const success = await updateOfferStatus(offerId, 'accepted');
-    
+  const handleAcceptOffer = async (offer: any) => {
+    const success = await updateOfferStatus(offer.id, 'accepted');
     if (success) {
+      // Create chat after accepting offer
+      try {
+        await navigateToChat(offer.car_id, offer.buyer_id || offer.buyer?.id, user.id, toast);
+        await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
+      } catch (err) {
+        toast({ title: 'Failed to create chat', description: err.message, variant: 'destructive' });
+      }
       toast({
         title: "Offer Accepted",
         description: "The buyer has been notified. You can now chat with them.",
@@ -59,8 +136,18 @@ const ReceivedOffersTab = () => {
     }
   };
 
-  const handleChatWithBuyer = (offer: any) => {
-    navigateToChat(offer.car_id, `buyer${offer.id}`);
+  const handleChatWithBuyer = async (offer: any) => {
+    const buyerId = offer.buyer_id || offer.buyer?.id;
+    if (!buyerId) {
+      toast({ title: 'Invalid offer data', variant: 'destructive' });
+      return;
+    }
+    try {
+      await navigateToChat(offer.car_id, buyerId, user.id, toast);
+      await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
+    } catch (error) {
+      toast({ title: 'Failed to open chat', description: error.message, variant: 'destructive' });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -118,85 +205,31 @@ const ReceivedOffersTab = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <Card className="p-4 md:p-6">
-        {offers.length > 0 ? (
+        {receivedOffers.length > 0 ? (
           <div className="space-y-4">
-            {offers.map((offer) => {
-              const percentageDiff = calculatePercentageDiff(offer.offer_amount, offer.asking_price);
-              
+            {receivedOffers.map((offer) => {
+              const percentageDiff = calculatePercentageDiff(offer.amount, offer.car?.price);
               return (
                 <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex flex-col gap-4">
-                    {/* Header */}
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">{offer.car_title}</h3>
-                        <p className="text-sm text-gray-500">Posted {offer.created_at}</p>
-                      </div>
-                      {getStatusBadge(offer.status)}
-                    </div>
-
-                    {/* Offer Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Asking Price</p>
-                        <p className="font-semibold text-lg">{formatPrice(offer.asking_price)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Buyer</p>
-                        <p className="font-medium">{offer.buyer_name}</p>
-                      </div>
-                    </div>
-
-                    {/* Offer Amount */}
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-gray-600">Offer Amount</p>
-                          <p className="font-bold text-xl text-primary">{formatPrice(offer.offer_amount)}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-600">Difference</p>
-                          <p className="text-lg font-semibold">{getPercentageBadge(percentageDiff)}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col md:flex-row gap-2">
-                      {offer.status === 'pending' && (
-                        <>
-                          <Button
-                            onClick={() => handleAcceptOffer(offer.id)}
-                            className="flex-1 bg-green-600 hover:bg-green-700"
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Accept Offer
-                          </Button>
-                          <Button
-                            onClick={() => handleRejectOffer(offer.id)}
-                            variant="outline"
-                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
-                          >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Reject
-                          </Button>
-                        </>
-                      )}
-                      {offer.status === 'accepted' && (
-                        <Button
-                          onClick={() => handleChatWithBuyer(offer)}
-                          className="flex-1"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-2" />
-                          Chat with Buyer
-                        </Button>
-                      )}
-                      {offer.status === 'rejected' && (
-                        <div className="flex-1 p-2 text-center text-gray-500 text-sm">
-                          Offer rejected on {offer.created_at}
-                        </div>
-                      )}
-                    </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">{offer.car?.year} {offer.car?.make} {offer.car?.model}</h3>
+                    <p className="text-sm text-gray-500">Asking Price: ₹{offer.car?.price?.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Buyer: {offer.buyer?.name}</p>
+                    <p className="font-bold text-xl text-primary">Offer Amount: ₹{offer.amount?.toLocaleString()}</p>
+                    <p className="text-lg font-semibold">Difference: {percentageDiff > 0 ? '+' : ''}{percentageDiff}%</p>
+                  </div>
+                  <div className="flex flex-col md:flex-row gap-2 mt-2">
+                    {offer.status === 'pending' && (
+                      <>
+                        <Button onClick={() => handleAcceptOffer(offer)} className="flex-1 bg-green-600 hover:bg-green-700">Accept Offer</Button>
+                        <Button onClick={() => handleRejectOffer(offer.id)} variant="outline" className="flex-1 text-red-600 border-red-200 hover:bg-red-50">Reject</Button>
+                      </>
+                    )}
+                    {offer.status === 'accepted' && (
+                      <Button onClick={() => handleChatWithBuyer(offer)} className="flex-1">Chat with Buyer</Button>
+                    )}
                   </div>
                 </div>
               );

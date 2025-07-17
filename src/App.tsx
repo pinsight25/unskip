@@ -29,7 +29,16 @@ import ChatDetail from '@/pages/ChatDetail';
 import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // Data fresh for 5 minutes
+      gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
+      retry: 1, // Retry failed requests once
+    },
+  },
+});
 
 function App() {
   return (

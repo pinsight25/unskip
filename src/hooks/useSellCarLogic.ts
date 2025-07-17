@@ -208,11 +208,40 @@ export const useSellCarLogic = () => {
           }));
           setFormData(prevData => ({
             ...prevData,
-            ...carData,
+            make: carData.make || '',
+            model: carData.model || '',
+            variant: carData.variant || '',
             year: carData.year ? String(carData.year) : '',
             registrationYear: carData.registration_year ? String(carData.registration_year) : '',
+            registrationState: carData.registration_state || '',
+            fitnessCertificateValidTill: carData.fitness_certificate_valid_till || '',
+            numberOfOwners: carData.number_of_owners ? String(carData.number_of_owners) : '1',
+            seatingCapacity: carData.seating_capacity ? String(carData.seating_capacity) : '5',
+            fuelType: carData.fuel_type || '',
+            transmission: carData.transmission || '',
             kilometersDriven: carData.kilometers_driven ? String(carData.kilometers_driven) : '',
+            color: carData.color || '',
             price: carData.price ? String(carData.price) : '',
+            acceptOffers: carData.accept_offers ?? true,
+            offerPercentage: carData.offer_percentage ? String(carData.offer_percentage) : '70',
+            insuranceValidTill: carData.insurance_valid_till || '',
+            insuranceType: carData.insurance_type || 'Comprehensive',
+            insuranceValid: carData.insurance_valid ?? false,
+            lastServiceDate: carData.last_service_date || '',
+            serviceCenterType: carData.service_center_type || '',
+            serviceHistory: carData.service_history ?? false,
+            authorizedServiceCenter: carData.authorized_service_center ?? false,
+            rtoTransferSupport: carData.rto_transfer_support ?? false,
+            noAccidentHistory: carData.no_accident_history ?? false,
+            isRentAvailable: carData.is_rent_available ?? false,
+            dailyRate: carData.daily_rate ? String(carData.daily_rate) : '',
+            weeklyRate: carData.weekly_rate ? String(carData.weekly_rate) : '',
+            securityDeposit: carData.security_deposit ? String(carData.security_deposit) : '',
+            address: carData.address || '',
+            city: carData.city || '',
+            area: carData.area || '',
+            landmark: carData.landmark || '',
+            description: carData.description || '',
             photos: mappedPhotos.map(p => p.cloudinaryUrl),
             coverPhotoIndex: mappedPhotos.findIndex(p => p.isCover) || 0,
             phoneVerified: true,
@@ -401,14 +430,29 @@ export const useSellCarLogic = () => {
         status: 'active',
         created_at: new Date().toISOString(),
       };
+      let carId = null;
+      let carError = null;
+      if (editingListingId) {
+        // UPDATE existing car
+        const { error } = await supabase
+          .from('cars')
+          .update(carInsert)
+          .eq('id', editingListingId);
+        carId = editingListingId;
+        carError = error;
+      } else {
+        // INSERT new car
       const { data, error } = await supabase
         .from('cars')
         .insert(carInsert)
         .select()
         .single();
+        carId = data?.id;
+        carError = error;
+      }
 
-      if (error) {
-        console.error('Failed to save car:', error);
+      if (carError) {
+        console.error('Failed to save car:', carError);
         toast({
           title: "Error",
           description: "Failed to save car. Please try again.",
@@ -417,46 +461,49 @@ export const useSellCarLogic = () => {
         return;
       }
 
-      // Insert car images after car is created
-      const nonNullPhotos: (string | { cloudinaryUrl?: string })[] = formData.photos.filter(isNotNull);
-      const carImageRecords = nonNullPhotos.map((photo, index) => {
-        if (typeof photo === 'object' && 'cloudinaryUrl' in photo && photo.cloudinaryUrl) {
-          return {
-            car_id: data.id,
-            image_url: photo.cloudinaryUrl,
-            sort_order: index,
-            is_cover: index === 0
-          };
-        } else {
-          return {
-            car_id: data.id,
-            image_url: photo as string,
-            sort_order: index,
-            is_cover: index === 0
-          };
-        }
-      });
-      await supabase.from('car_images').insert(carImageRecords);
+      // Insert car images after car is created (only for new cars)
+      if (!editingListingId && carId) {
+        const nonNullPhotos: (string | { cloudinaryUrl?: string })[] = formData.photos.filter(isNotNull);
+        const carImageRecords = nonNullPhotos.map((photo, index) => {
+          if (typeof photo === 'object' && 'cloudinaryUrl' in photo && photo.cloudinaryUrl) {
+            return {
+              car_id: carId,
+              image_url: photo.cloudinaryUrl,
+              sort_order: index,
+              is_cover: index === 0
+            };
+          } else {
+            return {
+              car_id: carId,
+              image_url: photo as string,
+          sort_order: index,
+          is_cover: index === 0
+            };
+          }
+        });
+        await supabase.from('car_images').insert(carImageRecords);
+      }
 
-      // Store carPosted info in localStorage with timestamp and carId
-      const postData = {
-        timestamp: Date.now(),
-        carId: data.id
-      };
-      localStorage.setItem('carPosted', JSON.stringify(postData));
+      // Store carPosted info in localStorage with timestamp and carId (only for new cars)
+      if (!editingListingId && carId) {
+        const postData = {
+          timestamp: Date.now(),
+          carId: carId
+        };
+        localStorage.setItem('carPosted', JSON.stringify(postData));
 
-      // Set carsListUpdated flag for Home page refresh
-      const carsListData = {
-        timestamp: Date.now(),
-        action: 'post',
-        carId: data.id
-      };
-      localStorage.setItem('carsListUpdated', JSON.stringify(carsListData));
-      
-      console.log('Setting flags after car post:', {
-        carPosted: postData,
-        carsListUpdated: carsListData
-      });
+        // Set carsListUpdated flag for Home page refresh
+        const carsListData = {
+          timestamp: Date.now(),
+          action: 'post',
+          carId: carId
+        };
+        localStorage.setItem('carsListUpdated', JSON.stringify(carsListData));
+        console.log('Setting flags after car post:', {
+          carPosted: postData,
+          carsListUpdated: carsListData
+        });
+      }
 
       // Clear form/sessionStorage and invalidate listings cache, then navigate to profile
       sessionStorage.removeItem('sellCarFormData');
@@ -525,6 +572,30 @@ export const useSellCarLogic = () => {
     sessionStorage.removeItem('sellCarFormData');
   };
 
+  // Delete car and its images
+  const handleDeleteCar = async (carId: string) => {
+    if (!window.confirm('Are you sure you want to delete this car?')) return;
+    try {
+      // Delete car images first
+      await supabase
+        .from('car_images')
+        .delete()
+        .eq('car_id', carId);
+      // Then delete the car
+      const { error } = await supabase
+        .from('cars')
+        .delete()
+        .eq('id', carId);
+      if (error) throw error;
+      await queryClient.invalidateQueries({ queryKey: ['cars'] });
+      await queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      toast({ title: 'Car deleted successfully', variant: 'default' });
+    } catch (error) {
+      console.error('Delete failed:', error);
+      toast({ title: 'Failed to delete car', variant: 'destructive' });
+    }
+  };
+
   // Type guard for non-null values
   function isNotNull<T>(value: T | null | undefined): value is T {
     return value !== null && value !== undefined;
@@ -547,6 +618,7 @@ export const useSellCarLogic = () => {
     handleSubmit,
     handleBackToHome,
     handleClearForm,
+    handleDeleteCar,
     user,
     userType,
     clearFormData: () => {

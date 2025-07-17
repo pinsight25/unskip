@@ -9,7 +9,6 @@ import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
-import { supabase } from '@/lib/supabase';
 
 interface ProfileContentProps {
   user: any;
@@ -42,11 +41,8 @@ const ProfileContent = ({
   onDeleteListing,
   refetch // Destructure refetch
 }: ProfileContentProps) => {
-  const [dealerInfo, setDealerInfo] = useState<{
-    businessName: string;
-    verified: boolean;
-    pending: boolean;
-  } | null>(null);
+  // Remove dealerInfo fetching and just set to null
+  const dealerInfo = null;
 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
@@ -60,27 +56,6 @@ const ProfileContent = ({
       setActiveTab('listings');
     }
   }, [location.search]);
-
-  useEffect(() => {
-    const fetchDealerInfo = async () => {
-      if (!user?.id) return;
-      const { data, error } = await supabase
-        .from('dealers')
-        .select('business_name, verification_status')
-        .eq('user_id', user.id)
-        .single();
-      if (data) {
-        setDealerInfo({
-          businessName: data.business_name,
-          verified: data.verification_status === 'verified',
-          pending: data.verification_status !== 'verified',
-        });
-      } else {
-        setDealerInfo(null);
-      }
-    };
-    fetchDealerInfo();
-  }, [user?.id]);
 
   // Calculate total active listings
   const activeListings = listings.filter(l => l.status === 'active');
@@ -147,15 +122,7 @@ const ProfileContent = ({
 
             {/* My Listings Tab */}
             <TabsContent value="listings">
-              <MyListingsTab
-                listings={listings}
-                accessories={accessories}
-                isLoading={isLoading}
-                isRefetching={isRefetching}
-                error={error}
-                onDeleteListing={onDeleteListing}
-                refetch={refetch}
-              />
+              <MyListingsTab />
             </TabsContent>
 
             {/* Received Offers Tab */}

@@ -57,7 +57,7 @@ const CarImageGallery = ({ images, title, featured, verified, seller }: CarImage
               </Badge>
             )}
             {verified && (
-              <Badge className="bg-green-500 text-white text-xs font-medium px-2 py-1 shadow-lg">
+              <Badge className="bg-green-500 text-white text-xs font-medium px-2 py-1 shadow-lg flex items-center">
                 <Shield className="h-3 w-3 mr-1" />
                 Verified
               </Badge>

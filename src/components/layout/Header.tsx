@@ -2,7 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Menu, X, MessageCircle } from 'lucide-react';
-import { mockChats } from '@/data/chatMockData';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useUser } from '@/contexts/UserContext';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import HeaderActions from './header/HeaderActions';
@@ -13,7 +15,21 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [carsSoldToday, setCarsSoldToday] = useState(5);
-  const [unreadChats, setUnreadChats] = useState(0);
+  const { user } = useUser();
+  const { data: unreadChats = 0 } = useQuery({
+    queryKey: ['unreadChats', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      const { data, error } = await supabase
+        .from('chats')
+        .select('unread_count')
+        .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`);
+      if (error) return 0;
+      return (data || []).reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+    },
+    enabled: !!user?.id,
+    refetchInterval: 30000
+  });
   const location = useLocation();
 
   const navItems = [
@@ -29,17 +45,10 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener('scroll', handleScroll);
-    
     const salesTimer = setInterval(() => {
       setCarsSoldToday(prev => prev + (Math.random() > 0.7 ? 1 : 0));
     }, 120000);
-
-    // Calculate unread chats
-    const totalUnread = mockChats.reduce((sum, chat) => sum + chat.unreadCount, 0);
-    setUnreadChats(totalUnread);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearInterval(salesTimer);
