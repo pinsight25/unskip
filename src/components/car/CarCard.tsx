@@ -14,14 +14,16 @@ import { supabase } from '@/lib/supabase';
 import MakeOfferModal from '@/components/car-details/MakeOfferModal';
 import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
 import { useChatManager } from '@/hooks/useChatManager';
+import { useSavedCars } from '@/hooks/useSavedCars';
 
 interface CarCardProps {
   car: Car;
   onSave?: (carId: string) => void;
   isSaved?: boolean;
+  isSaving?: boolean;
 }
 
-const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
+const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProps) => {
   const { openSignInModal } = useAuthModal();
   const { user } = useUser();
   const [showOfferModal, setShowOfferModal] = useState(false);
@@ -81,7 +83,7 @@ const CarCard = ({ car, onSave, isSaved = false }: CarCardProps) => {
     <>
       <Card className="group cards-equal-height overflow-hidden w-full max-w-[350px] min-w-[260px] mx-auto">
         <CardContent className="p-0 flex flex-col h-full">
-          <CarCardImage car={car} isSaved={isSaved} onSave={handleSave} />
+          <CarCardImage car={car} isSaved={isSaved} isSaving={isSaving} onSave={handleSave} />
 
           <div className="card-padding flex-1 flex flex-col">
             {/* Title & Price */}

@@ -11,6 +11,7 @@ import SearchHeader from '@/components/search/SearchHeader';
 import SearchFilters from '@/components/search/SearchFilters';
 import SearchResults from '@/components/search/SearchResults';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const Search = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const Search = () => {
   useEffect(() => {
     fetchCars();
   }, []);
+
+  useRealtimeRefetch('cars', ['cars']);
 
   const fetchCars = async () => {
     try {

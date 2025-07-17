@@ -16,6 +16,9 @@ import {
 } from '@/components/ui/breadcrumb';
 import { ArrowLeft } from 'lucide-react';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import { useUser } from '@/contexts/UserContext';
+import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const DealerInventory = () => {
   const { dealerSlug } = useParams();
@@ -26,6 +29,8 @@ const DealerInventory = () => {
 
   // Find dealer by slug (from DB, not mock)
   const [dealer, setDealer] = useState<any>(null);
+  const { user } = useUser();
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     const fetchDealerAndCars = async () => {
@@ -53,7 +58,7 @@ const DealerInventory = () => {
       if (dealerData) {
         const { data: carsData, error: carsError } = await supabase
           .from('cars')
-          .select('*')
+          .select('*, car_images(image_url)')
           .eq('seller_id', dealerData.user_id)
           .eq('status', 'active')
           .order('created_at', { ascending: false });
@@ -69,7 +74,7 @@ const DealerInventory = () => {
             variant: car.variant,
             year: car.year,
             price: car.price,
-            images: car.images || [], // TODO: fetch car_images if needed
+            images: Array.isArray(car.car_images) ? car.car_images.map((img: any) => img.image_url) : [],
             mileage: car.kilometers_driven || 0,
             kilometersDriven: car.kilometers_driven || 0,
             fuelType: car.fuel_type,
@@ -111,6 +116,9 @@ const DealerInventory = () => {
     };
     fetchDealerAndCars();
   }, [dealerSlug]);
+
+  useRealtimeRefetch('cars', ['cars']);
+  useRealtimeRefetch('dealers', ['dealers']);
 
   // Sorting
   const sortedCars = [...cars].sort((a, b) => {
@@ -179,6 +187,12 @@ const DealerInventory = () => {
             Back to Dealers
           </Link>
         </div>
+        {/* Edit Profile Button (only for dealer owner) */}
+        {user && dealer.user_id === user.id && (
+          <div className="flex justify-end mb-4">
+            <Button onClick={() => setEditOpen(true)} variant="outline">Edit Profile</Button>
+          </div>
+        )}
         {/* Enhanced Dealer Header */}
         <DealerHeader dealer={dealer} />
         {/* Inventory Section */}
@@ -192,6 +206,26 @@ const DealerInventory = () => {
             <DealerInventoryGrid cars={sortedCars} />
           </div>
         </div>
+        {/* Edit Dealer Profile Modal */}
+        {user && dealer.user_id === user.id && (
+          <EditDealerProfileModal
+            isOpen={editOpen}
+            onClose={() => setEditOpen(false)}
+            dealer={dealer}
+            onSave={() => {
+              setEditOpen(false);
+              // Refetch dealer data after save
+              if (dealerSlug) {
+                supabase
+                  .from('dealers')
+                  .select('*')
+                  .eq('slug', dealerSlug)
+                  .single()
+                  .then(({ data }) => setDealer(data));
+              }
+            }}
+          />
+        )}
         {/* Load More Button */}
         {sortedCars.length > 0 && (
           <div className="text-center mt-8 md:mt-12 pb-8">

@@ -63,25 +63,45 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
           </div>
 
           <div>
-            <Label htmlFor="shopPhotos">Shop Photos *</Label>
+            <Label htmlFor="shopPhotos">Shop Photos * (up to 3)</Label>
             <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
               <input
                 id="shopPhotos"
                 type="file"
                 accept=".jpg,.jpeg,.png"
                 multiple
-                onChange={(e) => onFileUpload('shopPhotos', e.target.files)}
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 3) {
+                    alert('You can upload up to 3 shop photos.');
+                    e.target.value = '';
+                    return;
+                  }
+                  onFileUpload('shopPhotos', files);
+                }}
                 className="hidden"
                 aria-label="Upload shop photos"
               />
               <label htmlFor="shopPhotos" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
                 <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm text-gray-600">
-                  {formData.documents.shopPhotos.length > 0 ? 
-                    `Selected: ${formData.documents.shopPhotos.length} photos` : 
-                    'Click to upload shop photos (JPG, PNG)'
+                  {formData.documents.shopPhotos.length > 0 ?
+                    `Selected: ${formData.documents.shopPhotos.length} photo(s)` :
+                    'Click to upload up to 3 shop photos (JPG, PNG)'
                   }
                 </p>
+                {formData.documents.shopPhotos.length > 0 && (
+                  <div className="flex gap-2 mt-2">
+                    {Array.from(formData.documents.shopPhotos).slice(0, 3).map((file, idx) => (
+                      <span key={idx} className="inline-block w-8 h-8 bg-gray-100 border rounded text-xs flex items-center justify-center overflow-hidden">
+                        {file.name.length > 10 ? file.name.slice(0, 10) + '...' : file.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {formData.documents.shopPhotos.length > 3 && (
+                  <p className="text-xs text-red-500 mt-1">You can upload up to 3 photos only.</p>
+                )}
               </label>
             </div>
           </div>

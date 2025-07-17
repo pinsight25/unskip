@@ -30,6 +30,12 @@ interface DealerHeaderProps {
     verified: boolean;
     brands: string[];
     shopPhoto?: string;
+    shop_photos_urls?: string[];
+    about?: string;
+    shop_address?: string;
+    city?: string;
+    brands_deal_with?: string[];
+    slug?: string; // Added slug to the interface
   };
 }
 
@@ -57,20 +63,39 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
     }
   };
 
-  // Mock shop photo for demonstration
-  const shopPhoto = dealer.shopPhoto || 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop';
+  // Shop photos logic
+  const shopPhotos = dealer.shop_photos_urls || [];
+  const coverPhoto = shopPhotos[0] || 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop';
+  const galleryPhotos = shopPhotos.slice(1, 3);
+
+  // Brands logic
+  const brands = dealer.brands_deal_with || dealer.brands || [];
+  // Location logic
+  const location = dealer.shop_address || dealer.city || '';
 
   return (
     <div className="space-y-4">
       {/* Hero Banner with Shop Photo */}
       <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg">
         <img
-          src={shopPhoto}
+          src={coverPhoto}
           alt={`${dealer.name} shop`}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-        
+        {/* Gallery Thumbnails */}
+        {galleryPhotos.length > 0 && (
+          <div className="absolute bottom-4 right-4 flex gap-2">
+            {galleryPhotos.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`Shop photo ${idx + 2}`}
+                className="w-14 h-14 object-cover rounded-lg border-2 border-white shadow-md"
+              />
+            ))}
+          </div>
+        )}
         {/* Overlay Content */}
         <div className="absolute bottom-4 left-4 right-4 text-white">
           <div className="flex flex-col md:flex-row md:items-end justify-between">
@@ -88,7 +113,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             
             <ShareButton 
               dealerName={dealer.name}
-              dealerId={dealer.id}
+              dealerSlug={dealer.slug}
               carsCount={dealer.carsInStock}
               className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
             />
@@ -116,6 +141,11 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
                 <div className="flex items-center">
                   <Award className="h-3 w-3 mr-2 text-gray-500" />
                   <span className="text-sm">{dealer.businessCategory}</span>
+                </div>
+              )}
+              {dealer.about && (
+                <div className="flex items-center mt-2">
+                  <span className="text-sm text-gray-700">{dealer.about}</span>
                 </div>
               )}
             </div>
@@ -181,7 +211,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             <div className="space-y-2">
               <div className="flex items-start">
                 <MapPin className="h-3 w-3 mr-2 text-gray-500 mt-0.5" />
-                <span className="text-sm">{dealer.location}</span>
+                <span className="text-sm">{location || 'Location not set'}</span>
               </div>
               <div className="flex items-center">
                 <CarIcon className="h-3 w-3 mr-2 text-gray-500" />
@@ -212,15 +242,19 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
             Brands Available
           </h3>
           <div className="flex flex-wrap gap-2">
-            {(dealer.brands || []).map((brand) => (
-              <Badge 
-                key={brand} 
-                variant="outline" 
-                className="px-2 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
-              >
-                {brand}
-              </Badge>
-            ))}
+            {brands.length > 0 ? (
+              brands.map((brand) => (
+                <Badge 
+                  key={brand} 
+                  variant="outline" 
+                  className="px-2 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                >
+                  {brand}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-sm text-gray-400">No brands set</span>
+            )}
           </div>
         </CardContent>
       </Card>

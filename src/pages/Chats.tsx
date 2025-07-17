@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { formatDistanceToNow } from 'date-fns';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const Chats = () => {
   const navigate = useNavigate();
@@ -89,6 +90,9 @@ const Chats = () => {
     enabled: !!user?.id,
     // refetchInterval: 5000, // Remove polling, rely on real-time
   });
+
+  useRealtimeRefetch('chat_messages', ['chats', user?.id]);
+  useRealtimeRefetch('chats', ['chats', user?.id]);
 
   // Supabase real-time subscription for chats and chat_messages
   useEffect(() => {

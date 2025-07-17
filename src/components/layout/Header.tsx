@@ -10,6 +10,7 @@ import HeaderActions from './header/HeaderActions';
 import HeaderCitySelector from './header/HeaderCitySelector';
 import MobileMenu from './header/MobileMenu';
 import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -87,6 +88,12 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const closeMenu = () => setIsMobileMenuOpen(false);
+    window.addEventListener('closeMobileMenu', closeMenu);
+    return () => window.removeEventListener('closeMobileMenu', closeMenu);
+  }, []);
+
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
@@ -99,19 +106,12 @@ const Header = () => {
         {/* Header Layout - Improved mobile spacing */}
         <div className="flex h-16 lg:h-20 items-center justify-between gap-2 sm:gap-4">
           <Logo />
-
-          {/* Desktop Navigation */}
           <DesktopNavigation navItems={navItems} />
-
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-6">
-            {/* Desktop City Selector - Hidden on mobile */}
             <div className="hidden md:block">
               <HeaderCitySelector />
             </div>
-
-            {/* Desktop Actions */}
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
-
             {/* Mobile Chat Icon with standardized badge positioning */}
             <Link
               to="/chats"
@@ -124,7 +124,6 @@ const Header = () => {
                 </span>
               )}
             </Link>
-
             {/* Mobile Menu Button - Always visible and prioritized */}
             <button
               className="lg:hidden p-2 h-10 w-10 sm:h-12 sm:w-12 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center flex-shrink-0"

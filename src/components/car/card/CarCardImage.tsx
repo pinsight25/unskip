@@ -8,10 +8,11 @@ import { Car } from '@/types/car';
 interface CarCardImageProps {
   car: Car;
   isSaved: boolean;
+  isSaving?: boolean;
   onSave: () => void;
 }
 
-const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
+const CarCardImage = ({ car, isSaved, isSaving = false, onSave }: CarCardImageProps) => {
   // Debug logging for badge display
   console.log('CarCardImage car:', { title: car.title, featured: car.featured, verified: car.verified, dealerVerified: car.seller?.dealerVerified });
   return (
@@ -62,10 +63,15 @@ const CarCardImage = ({ car, isSaved, onSave }: CarCardImageProps) => {
             isSaved ? 'bg-red-50 hover:bg-red-100 border-red-200' : 'bg-white hover:bg-gray-50 border-gray-200'
           }`}
           onClick={onSave}
+          disabled={isSaving}
         >
-          <Heart className={`h-4 w-4 transition-colors ${
-            isSaved ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-500'
-          }`} />
+          {isSaving ? (
+            <span className="loader h-4 w-4" />
+          ) : (
+            <Heart className={`h-4 w-4 transition-colors ${
+              isSaved ? 'fill-orange-500 text-orange-500' : 'text-gray-600 hover:text-orange-500'
+            }`} />
+          )}
         </Button>
       </div>
 

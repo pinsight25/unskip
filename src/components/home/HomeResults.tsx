@@ -9,6 +9,7 @@ import ResultsHeader from './results/ResultsHeader';
 import RefreshControl from './results/RefreshControl';
 import EmptyResults from './results/EmptyResults';
 import ResultsGrid from './results/ResultsGrid';
+import { useSavedCars } from '@/hooks/useSavedCars';
 
 interface SearchFiltersType {
   query: string;
@@ -34,20 +35,36 @@ interface HomeResultsProps {
 
 const HomeResults = ({
   filteredCars,
-  savedCars,
   currentFilters,
   isMobile,
   isRefreshing,
   offerStatuses,
   onSort,
-  onSaveCar,
   onMakeOffer,
   onPullToRefresh,
   onFilterChange,
   getOfferStatus
-}: HomeResultsProps) => {
+}: Omit<HomeResultsProps, 'savedCars' | 'onSaveCar'>) => {
+  const { savedCars, saveCar, unsaveCar, isSaving } = useSavedCars();
   const { navigateToChat } = useChatManager();
   const { toast } = useToast();
+  // Remove the Verified Only filter UI and logic
+  // - Delete the <div> with the checkbox
+  // - Remove the verifiedOnly state and all references
+  // - Always show filteredCars as carsToShow
+  const carsToShow = Array.isArray(filteredCars) ? filteredCars : [];
+
+  // Defensive: savedCars is always string[] (car IDs)
+  const savedCarIds = Array.isArray(savedCars) ? savedCars : [];
+
+  // Handler to toggle save/unsave
+  const handleSaveCar = (carId: string) => {
+    if (savedCarIds?.includes(carId)) {
+      unsaveCar(carId);
+    } else {
+      saveCar(carId);
+    }
+  };
 
   const handleChatClick = (car: Car) => {
     const status = getOfferStatus(car.id);
@@ -128,8 +145,8 @@ const HomeResults = ({
 
         {/* Desktop Results Header */}
         <ResultsHeader
-          filteredCarsCount={filteredCars.length}
-          savedCarsCount={savedCars.length}
+          filteredCarsCount={carsToShow?.length ?? 0}
+          savedCarsCount={savedCars?.length ?? 0}
           currentFilters={currentFilters}
           onSort={onSort}
           onFilterChange={onFilterChange}
@@ -140,7 +157,7 @@ const HomeResults = ({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                {filteredCars.length} Cars
+                {carsToShow?.length ?? 0} Cars
               </h2>
               {currentFilters.query && (
                 <p className="text-[14px] text-gray-600 mt-1">
@@ -148,10 +165,10 @@ const HomeResults = ({
                 </p>
               )}
             </div>
-            {savedCars.length > 0 && (
+            {savedCars?.length > 0 && (
               <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
                 <Heart className="h-4 w-4 mr-1 fill-current" />
-                {savedCars.length}
+                {savedCars?.length}
               </Badge>
             )}
           </div>
@@ -159,12 +176,13 @@ const HomeResults = ({
 
         {/* Results Content with proper bottom padding */}
         <div className="pb-24 md:pb-8">
-          {filteredCars.length > 0 ? (
+          {(carsToShow?.length ?? 0) > 0 ? (
             <ResultsGrid
-              cars={filteredCars}
-              savedCars={savedCars}
+              cars={Array.isArray(filteredCars) ? filteredCars : []}
+              savedCars={Array.isArray(savedCarIds) ? savedCarIds : []}
               isMobile={isMobile}
-              onSaveCar={onSaveCar}
+              onSaveCar={handleSaveCar}
+              isSaving={isSaving}
               onMakeOffer={onMakeOffer}
               onChat={handleChatClick}
               onTestDrive={handleTestDriveClick}

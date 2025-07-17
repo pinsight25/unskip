@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 interface SellCarNavigationProps {
   currentStep: number;
@@ -12,6 +12,7 @@ interface SellCarNavigationProps {
   onNext: () => void;
   onSubmit: () => void;
   canSubmit: () => boolean;
+  isLoading?: boolean;
 }
 
 const SellCarNavigation = ({ 
@@ -23,7 +24,8 @@ const SellCarNavigation = ({
   onPrevious, 
   onNext, 
   onSubmit,
-  canSubmit
+  canSubmit,
+  isLoading = false
 }: SellCarNavigationProps) => {
   const canProceed = () => {
     if (currentStep === 4) {
@@ -59,10 +61,11 @@ const SellCarNavigation = ({
           {currentStep === 4 ? (
             <Button
               onClick={onSubmit}
-              disabled={!canSubmit()}
+              disabled={!canSubmit() || isLoading}
               className="flex items-center gap-2 px-8"
               size="lg"
             >
+              {isLoading && <Loader2 className="animate-spin h-5 w-5 mr-2" />}
               {getSubmitButtonText()}
             </Button>
           ) : (

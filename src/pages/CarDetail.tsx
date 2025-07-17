@@ -6,6 +6,7 @@ import { Car } from '@/types/car';
 import CarDetailContainer from '@/components/car/CarDetailContainer';
 import { supabase } from '@/lib/supabase';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -152,6 +153,8 @@ const CarDetail = () => {
     }
     return () => { mounted = false; };
   }, [id]);
+
+  useRealtimeRefetch('cars', ['car', id]);
 
   if (loading) {
     return (

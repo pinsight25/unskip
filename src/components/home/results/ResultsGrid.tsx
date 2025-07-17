@@ -9,6 +9,7 @@ interface ResultsGridProps {
   savedCars: string[];
   isMobile: boolean;
   onSaveCar: (carId: string) => void;
+  isSaving?: string | null;
   onMakeOffer: (car: Car) => void;
   onChat: (car: Car) => void;
   onTestDrive: (car: Car) => void;
@@ -23,7 +24,8 @@ const ResultsGrid = ({
   onMakeOffer,
   onChat,
   onTestDrive,
-  getOfferStatus
+  getOfferStatus,
+  isSaving
 }: ResultsGridProps) => {
   return (
     <>
@@ -35,6 +37,7 @@ const ResultsGrid = ({
               car={car} 
               onSave={onSaveCar}
               isSaved={savedCars.includes(car.id)}
+              isSaving={isSaving === car.id}
               onMakeOffer={() => onMakeOffer(car)}
               onChat={() => onChat(car)}
               onTestDrive={() => onTestDrive(car)}
@@ -46,6 +49,7 @@ const ResultsGrid = ({
               car={car} 
               onSave={onSaveCar}
               isSaved={savedCars.includes(car.id)}
+              isSaving={isSaving === car.id}
             />
           )
         ))}

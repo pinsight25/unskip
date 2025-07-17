@@ -440,6 +440,8 @@ export const useSellCarLogic = () => {
           .eq('id', editingListingId);
         carId = editingListingId;
         carError = error;
+        // Delete old images for this car
+        await supabase.from('car_images').delete().eq('car_id', editingListingId);
       } else {
         // INSERT new car
       const { data, error } = await supabase
@@ -461,8 +463,8 @@ export const useSellCarLogic = () => {
         return;
       }
 
-      // Insert car images after car is created (only for new cars)
-      if (!editingListingId && carId) {
+      // Insert car images after car is created or updated
+      if (carId) {
         const nonNullPhotos: (string | { cloudinaryUrl?: string })[] = formData.photos.filter(isNotNull);
         const carImageRecords = nonNullPhotos.map((photo, index) => {
           if (typeof photo === 'object' && 'cloudinaryUrl' in photo && photo.cloudinaryUrl) {
@@ -481,7 +483,9 @@ export const useSellCarLogic = () => {
             };
           }
         });
+        if (carImageRecords.length > 0) {
         await supabase.from('car_images').insert(carImageRecords);
+        }
       }
 
       // Store carPosted info in localStorage with timestamp and carId (only for new cars)

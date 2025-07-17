@@ -1,42 +1,25 @@
 import { useState } from 'react';
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card } from '@/components/ui/card';
+import CarCard from '@/components/car/CarCard';
 import { Button } from '@/components/ui/button';
 import { Heart, Search } from 'lucide-react';
-import { mockCars } from '@/data/mockData';
+import { useSavedCars } from '@/hooks/useSavedCars';
+import { useCars } from '@/hooks/queries/useCarQueries';
+import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Saved = () => {
-  const [savedCarIds, setSavedCarIds] = useState(['1', '2', '3', '4']); // Mock saved car IDs
-  const [selectedCar, setSelectedCar] = useState(null);
-  const [showOfferModal, setShowOfferModal] = useState(false);
+  const { user } = useUser();
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const savedCars = mockCars.filter(car => savedCarIds.includes(car.id));
+  const { savedCars: savedCarIds, isLoading, unsaveCar, isSaving } = useSavedCars();
+  const { data: allCars = [], isLoading: isCarsLoading } = useCars();
 
-  const handleUnsave = (carId: string) => {
-    setSavedCarIds(prev => prev.filter(id => id !== carId));
-    toast({
-      title: "Removed from Saved",
-      description: "Car removed from your wishlist",
-    });
-  };
-
-  const handleMakeOffer = (car: any) => {
-    setSelectedCar(car);
-    setShowOfferModal(true);
-  };
-
-  const handleOfferSubmit = (offer: any) => {
-    toast({
-      title: "Offer Submitted! 🎉",
-      description: "Your offer has been sent to the seller.",
-    });
-    setShowOfferModal(false);
-    setSelectedCar(null);
-  };
+  // Filter allCars to only those in savedCarIds
+  const savedCars = allCars.filter(car => savedCarIds?.includes(car.id));
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -56,7 +39,7 @@ const Saved = () => {
               <div className="text-center md:text-left">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Saved Cars</h1>
                 <p className="text-base md:text-lg text-gray-600">
-                  {savedCars.length} cars in your wishlist
+                  {savedCars?.length || 0} cars in your wishlist
                 </p>
               </div>
               <Button variant="outline" className="self-center md:self-auto hover-lift">
@@ -66,50 +49,24 @@ const Saved = () => {
             </div>
           </div>
         </div>
-
         {/* Content Section */}
         <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 pb-24 lg:pb-8">
-          {savedCars.length > 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <Card key={`skeleton-${i}`} className="overflow-hidden bg-white animate-pulse h-72" />
+              ))}
+            </div>
+          ) : savedCarIds && savedCarIds.length > 0 && savedCars.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {savedCars.map((car) => (
-                <Card key={car.id} className="overflow-hidden hover-lift bg-white cards-equal-height">
-                  <div className="relative">
-                    <img
-                      src={car.images[0]}
-                      alt={car.title}
-                      className="w-full aspect-[4/3] object-cover"
-                      loading="lazy"
-                    />
-                    <button 
-                      className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors touch-target"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUnsave(car.id);
-                      }}
-                    >
-                      <Heart className="h-5 w-5 fill-red-500 text-red-500" />
-                    </button>
-                  </div>
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-gray-900">{car.title}</h3>
-                    <p className="text-2xl font-bold text-orange-600 mb-2">{formatPrice(car.price)}</p>
-                    <p className="text-gray-600 text-sm mb-2">{car.location}</p>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-                      <span>{car.year}</span>
-                      <span>•</span>
-                      <span>{car.fuelType}</span>
-                      <span>•</span>
-                      <span>{car.transmission}</span>
-                    </div>
-                    <Button 
-                      size="default" 
-                      className="w-full touch-target-button mt-auto"
-                      onClick={() => handleMakeOffer(car)}
-                    >
-                      Make Offer
-                    </Button>
-                  </div>
-                </Card>
+                <CarCard
+                  key={car.id}
+                  car={car}
+                  onSave={() => unsaveCar(car.id)}
+                  isSaved={true}
+                  isSaving={isSaving === car.id}
+                />
               ))}
             </div>
           ) : (

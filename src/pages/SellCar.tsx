@@ -4,6 +4,7 @@ import SellCarNavigation from '@/components/sell-car/SellCarNavigation';
 import SellCarStepRenderer from '@/components/sell-car/SellCarStepRenderer';
 import { useSellCarLogic } from '@/hooks/useSellCarLogic';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import SignInModal from '@/components/modals/SignInModal';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +16,8 @@ const SellCar = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [signInModalKey, setSignInModalKey] = useState(0);
   const [pendingPost, setPendingPost] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const {
     currentStep,
@@ -41,7 +44,7 @@ const SellCar = () => {
   };
 
   // Custom submit handler
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!user) {
       handleShowSignInModal();
       setPendingPost(true);
@@ -49,7 +52,13 @@ const SellCar = () => {
     }
     if (user.isVerified) {
       // User is signed in and verified, skip phone verification
-      handleSubmit();
+      setIsLoading(true);
+      await handleSubmit();
+      setIsLoading(false);
+      toast({
+        title: 'Success',
+        description: 'Your car has been posted successfully!',
+      });
       return;
     }
     // User is signed in but not verified, require phone verification
@@ -96,6 +105,7 @@ const SellCar = () => {
         onNext={handleNext}
         onSubmit={handlePost}
         canSubmit={() => !!canSubmit()}
+        isLoading={isLoading}
       />
 
       {/* Sign In Modal */}

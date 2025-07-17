@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Calendar as ShadcnCalendar } from './calendar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const YEARS = Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 1990 + i);
+const YEARS = Array.from({ length: 2050 - 1990 + 1 }, (_, i) => 1990 + i);
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
@@ -12,9 +12,10 @@ interface CalendarWithYearProps {
   value?: Date;
   onChange?: (date: Date | undefined) => void;
   className?: string;
+  yearMonthOnly?: boolean;
 }
 
-export const CalendarWithYear: React.FC<CalendarWithYearProps> = ({ value, onChange, className }) => {
+export const CalendarWithYear: React.FC<CalendarWithYearProps> = ({ value, onChange, className, yearMonthOnly }) => {
   const [viewDate, setViewDate] = React.useState<Date>(value || new Date());
 
   React.useEffect(() => {
@@ -23,12 +24,20 @@ export const CalendarWithYear: React.FC<CalendarWithYearProps> = ({ value, onCha
 
   const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newYear = parseInt(e.target.value, 10);
-    setViewDate(prev => new Date(newYear, prev.getMonth(), 1));
+    setViewDate(prev => {
+      const newDate = new Date(newYear, prev.getMonth(), 1);
+      if (yearMonthOnly && onChange) onChange(newDate);
+      return newDate;
+    });
   };
 
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMonth = parseInt(e.target.value, 10);
-    setViewDate(prev => new Date(prev.getFullYear(), newMonth, 1));
+    setViewDate(prev => {
+      const newDate = new Date(prev.getFullYear(), newMonth, 1);
+      if (yearMonthOnly && onChange) onChange(newDate);
+      return newDate;
+    });
   };
 
   const handlePrevMonth = () => {
@@ -67,12 +76,19 @@ export const CalendarWithYear: React.FC<CalendarWithYearProps> = ({ value, onCha
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
-      <ShadcnCalendar
-        selected={value}
-        onSelect={onChange}
-        month={viewDate}
-        onMonthChange={setViewDate}
-      />
+      {yearMonthOnly ? null : (
+        <ShadcnCalendar
+          selected={value}
+          onSelect={onChange}
+          month={viewDate}
+          onMonthChange={setViewDate}
+          showOutsideDays
+          classNames={{
+            ...((ShadcnCalendar as any).defaultProps?.classNames || {}),
+            caption: 'hidden', // Hide the default caption/header
+          }}
+        />
+      )}
     </div>
   );
 };

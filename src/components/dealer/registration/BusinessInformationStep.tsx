@@ -109,6 +109,24 @@ const BusinessInformationStep = ({ formData, onInputChange }: BusinessInformatio
           <p className="text-sm text-red-500 mt-2">Please select at least one brand</p>
         )}
       </div>
+      {/* About Field */}
+      <div>
+        <Label htmlFor="about">About Your Dealership *</Label>
+        <textarea
+          id="about"
+          value={formData.about}
+          onChange={e => onInputChange('about', e.target.value.slice(0, 150))}
+          placeholder="Describe your dealership in 150 characters or less"
+          maxLength={150}
+          rows={3}
+          className="w-full max-w-md border rounded p-2 text-sm"
+          required
+        />
+        <div className="text-xs text-gray-500 mt-1">{formData.about.length}/150 characters</div>
+        {formData.about.length === 0 && (
+          <p className="text-xs text-red-500 mt-1">Please enter a short description</p>
+        )}
+      </div>
     </div>
   );
 };

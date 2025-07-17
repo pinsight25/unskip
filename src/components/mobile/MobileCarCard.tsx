@@ -12,6 +12,7 @@ interface MobileCarCardProps {
   sellerId?: string;
   onSave: (carId: string) => void;
   isSaved: boolean;
+  isSaving?: boolean;
   onMakeOffer: () => void;
   onChat: () => void;
   onTestDrive: () => void;
@@ -22,6 +23,7 @@ const MobileCarCard = ({
   sellerId,
   onSave, 
   isSaved, 
+  isSaving = false,
   onMakeOffer, 
   onChat, 
   onTestDrive
@@ -56,6 +58,7 @@ const MobileCarCard = ({
         featured={car.featured}
         verified={car.verified}
         isSaved={isSaved}
+        isSaving={isSaving}
         onSave={handleSave}
       />
 

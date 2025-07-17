@@ -15,6 +15,10 @@ const BottomNavigation = () => {
     { icon: User, label: 'Profile', path: '/profile', active: location.pathname === '/profile' }
   ];
 
+  const handleNavClick = () => {
+    window.dispatchEvent(new Event('closeMobileMenu'));
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
       {/* Modern Navigation Bar with rounded top corners */}
@@ -31,6 +35,7 @@ const BottomNavigation = () => {
                   key={item.path}
                   to={item.path}
                   className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 z-10"
+                  onClick={handleNavClick}
                 >
                   <div className="relative">
                     <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ring-4 ring-orange-100">
@@ -51,6 +56,7 @@ const BottomNavigation = () => {
                 key={item.path}
                 to={item.path}
                 className="flex flex-col items-center justify-center flex-1 py-3 min-h-[44px] relative group"
+                onClick={handleNavClick}
               >
                 {/* Active state background */}
                 {item.active && (

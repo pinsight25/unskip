@@ -10,6 +10,7 @@ import EmptyDealerState from '@/components/dealers/EmptyDealerState';
 import { supabase } from '@/lib/supabase';
 import { useDealers } from '@/hooks/queries/useDealers';
 import { Dealer } from '@/types/dealer';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -17,6 +18,7 @@ const Dealers = () => {
 
   // Use the new useDealers hook
   const { filteredDealers, isLoading, error, data: allDealers } = useDealers(selectedLocation, selectedBrand);
+  useRealtimeRefetch('dealers', ['dealers']);
 
   const handleApplyFilters = () => {};
   const handleClearFilters = () => {

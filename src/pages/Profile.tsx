@@ -11,6 +11,7 @@ import LoadingScreen from '@/components/common/LoadingScreen';
 import { useState, useEffect } from 'react';
 import { useAuthModal } from '@/contexts/AuthModalContext';
 import { useLocation } from 'react-router-dom';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const Profile = () => {
   const { user, isLoading: authLoading } = useUser();
@@ -75,6 +76,7 @@ const Profile = () => {
   }, [location.search, carListings]);
 
   // Remove localStorage-based refresh logic - React Query handles this automatically
+  useRealtimeRefetch('offers', ['offers', user?.id]);
 
   const userWithDealer = user ? {
     ...user,

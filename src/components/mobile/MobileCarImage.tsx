@@ -9,6 +9,7 @@ interface MobileCarImageProps {
   featured?: boolean;
   verified?: boolean;
   isSaved: boolean;
+  isSaving?: boolean;
   onSave: () => void;
 }
 
@@ -18,6 +19,7 @@ const MobileCarImage = ({
   featured, 
   verified, 
   isSaved, 
+  isSaving = false, 
   onSave 
 }: MobileCarImageProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -64,7 +66,11 @@ const MobileCarImage = ({
           }}
           className="absolute top-3 right-3 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-sm"
         >
-          <Heart className={`h-5 w-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+          {isSaving ? (
+            <span className="loader h-5 w-5" />
+          ) : (
+            <Heart className={`h-5 w-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+          )}
         </button>
 
         {/* Image Dots */}

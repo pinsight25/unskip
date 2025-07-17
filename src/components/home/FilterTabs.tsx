@@ -5,27 +5,30 @@ import { Badge } from '@/components/ui/badge';
 interface FilterTabsProps {
   activeType: 'all' | 'dealer' | 'individual';
   onTypeChange: (type: 'all' | 'dealer' | 'individual') => void;
+  allCarsCount: number;
+  dealersCount: number;
+  ownerCarsCount: number;
 }
 
-const FilterTabs = ({ activeType, onTypeChange }: FilterTabsProps) => {
+const FilterTabs = ({ activeType, onTypeChange, allCarsCount, dealersCount, ownerCarsCount }: FilterTabsProps) => {
   const filterTypes = [
     { 
       key: 'all' as const, 
       label: 'All Cars', 
       icon: Car, 
-      count: '2.3k+'
+      count: allCarsCount.toLocaleString()
     },
     { 
       key: 'dealer' as const, 
       label: 'Dealers', 
       icon: Building2, 
-      count: '850+'
+      count: dealersCount.toLocaleString()
     },
     { 
       key: 'individual' as const, 
       label: 'Owner Cars', 
       icon: Users, 
-      count: '1.5k+'
+      count: ownerCarsCount.toLocaleString()
     }
   ];
 

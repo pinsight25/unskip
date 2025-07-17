@@ -57,7 +57,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
                     {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="body-text font-medium text-gray-700">{user.name || 'User'}</span>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -103,12 +102,6 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           </button>
         </>
       )}
-      {/* Post Car Button */}
-      <Link to="/sell">
-        <Button size="default" className="font-semibold px-6 shadow-sm">
-          Post Your Car
-        </Button>
-      </Link>
     </div>
   );
 };

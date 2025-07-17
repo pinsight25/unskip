@@ -20,13 +20,7 @@ export interface DealerFormData {
   shopAddress: string;
   pincode: string;
   establishmentYear: string;
-  websiteUrl: string;
-  googleMapsLink: string;
-  operatingHours: {
-    openingTime: string;
-    closingTime: string;
-    is24x7: boolean;
-  };
+  about: string; // New field
   documents: {
     gstCertificate: File | null;
     shopLicense: File | null;
@@ -64,13 +58,7 @@ export const useDealerRegistrationForm = () => {
           shopAddress: '',
           pincode: '',
           establishmentYear: '',
-          websiteUrl: '',
-          googleMapsLink: '',
-          operatingHours: {
-            openingTime: '',
-            closingTime: '',
-            is24x7: false,
-          },
+          about: '',
           documents: {
             gstCertificate: null,
             shopLicense: null,
@@ -92,13 +80,7 @@ export const useDealerRegistrationForm = () => {
       shopAddress: '',
       pincode: '',
       establishmentYear: '',
-      websiteUrl: '',
-      googleMapsLink: '',
-      operatingHours: {
-        openingTime: '',
-        closingTime: '',
-        is24x7: false,
-      },
+      about: '',
       documents: {
         gstCertificate: null,
         shopLicense: null,
@@ -280,6 +262,7 @@ export const useDealerRegistrationForm = () => {
           shop_address: formData.shopAddress,
           pincode: formData.pincode,
           establishment_year: parseInt(formData.establishmentYear),
+          about: formData.about,
           gst_certificate_url: gstCertUrl,
           shop_license_url: shopLicenseUrl,
           shop_photos_urls: shopPhotosUrls,

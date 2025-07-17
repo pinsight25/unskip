@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react';
 import { useCars } from '@/hooks/queries/useCarQueries';
 import HomeHeader from '@/components/home/HomeHeader';
+import { useDealers } from '@/hooks/queries/useDealers';
 import HomeResults from '@/components/home/HomeResults';
 import SearchResultsView from '@/components/home/SearchResultsView';
 import HomeModalsContainer from '@/components/home/containers/HomeModalsContainer';
@@ -11,8 +12,12 @@ import { useHomeTestDriveHandlers } from '@/components/home/handlers/HomeTestDri
 import { useAuthModal } from '@/contexts/AuthModalContext';
 
 const Home = () => {
-  // Use React Query for car data
+  // Use only useCars for car data
   const { data: cars = [], isLoading, error, refetch } = useCars();
+  const { data: dealers = [] } = useDealers();
+  const allCarsCount = cars.length;
+  const dealersCount = dealers.length;
+  const ownerCarsCount = cars.filter(car => car.seller.type === 'individual').length;
 
   // UI state for filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,6 +95,9 @@ const Home = () => {
         onSearch={handleSearch}
         onClearSearch={() => setSearchQuery('')}
         resultCount={filteredCars.length}
+        allCarsCount={allCarsCount}
+        dealersCount={dealersCount}
+        ownerCarsCount={ownerCarsCount}
       />
       <div className="max-w-7xl mx-auto px-4 relative">
         <HomeResults

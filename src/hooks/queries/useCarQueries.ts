@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Car } from '@/types/car';
 import { formatPhoneForAuth } from '@/utils/phoneUtils';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 // Helper to map raw DB car to Car type
 function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
@@ -74,18 +75,25 @@ function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
 // Fetch all active cars for home/buy page
 export const useCars = () => {
   const { toast } = useToast ? useToast() : { toast: undefined };
-  const query = useQuery({
+  const queryClient = useQueryClient();
+  const lastRealtimeRefetch = useRef(0);
+  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
+  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+
+  const query = useQuery<any[]>({
     queryKey: ['cars'],
     queryFn: async () => {
       if (import.meta.env.DEV) {
         console.log('[React Query] Fetching cars...');
       }
-      const { data: carsData, error: carsError } = await supabase
+      const { data: carsData, error: carsError } = await (supabase as any)
         .from('cars')
         .select(`
-          *,
-          car_images!inner (image_url, is_cover, sort_order),
-          users:seller_id (id, name, is_verified, user_type, phone)
+          id, title, price, make, model, year, seller_id, status, created_at,
+          fuel_type, transmission, kilometers_driven, number_of_owners,
+          area, city, color, variant, description, featured, verified,
+          car_images(image_url, is_cover, sort_order),
+          users:seller_id(id, name, is_verified, user_type, phone)
         `)
         .eq('status', 'active')
         .eq('car_images.is_cover', true)
@@ -101,12 +109,15 @@ export const useCars = () => {
         console.log('[React Query] Fetched cars:', carsMapped.length);
         // Removed debug toast
       }
-      return carsMapped;
+      return carsMapped as any[];
     },
+    refetchInterval: POLL_INTERVAL,
+    refetchIntervalInBackground: true,
   });
 
-  // Supabase real-time subscription for cars and car_images
+  // Debounced real-time subscription
   useEffect(() => {
+    console.log('[Realtime] Subscribing to cars and car_images changes...');
     const channel = supabase.channel('realtime-cars-and-images')
       .on(
         'postgres_changes',
@@ -115,8 +126,14 @@ export const useCars = () => {
           schema: 'public',
           table: 'cars',
         },
-        () => {
-          query.refetch();
+        (payload) => {
+          console.log('[Realtime] Cars table event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating cars query...');
+            queryClient.invalidateQueries({ queryKey: ['cars'] });
+            lastRealtimeRefetch.current = now;
+          }
         }
       )
       .on(
@@ -126,43 +143,56 @@ export const useCars = () => {
           schema: 'public',
           table: 'car_images',
         },
-        () => {
-          query.refetch();
+        (payload) => {
+          console.log('[Realtime] Car images table event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating cars query...');
+            queryClient.invalidateQueries({ queryKey: ['cars'] });
+            lastRealtimeRefetch.current = now;
+          }
         }
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [query]);
+  }, [queryClient]);
 
   return query;
 };
 
 // Fetch user's listings for profile
 export const useUserListings = (userId: string | undefined) => {
-  const query = useQuery({
+  const queryClient = useQueryClient();
+  const lastRealtimeRefetch = useRef(0);
+  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
+  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+
+  const query = useQuery<any[]>({
     queryKey: ['userListings', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID required');
-      console.log('[React Query] Fetching user listings for:', userId);
-      const { data, error } = await supabase
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetching user listings for:', userId);
+      }
+      const { data, error } = await (supabase as any)
         .from('cars')
-        .select(`
-          *,
-          car_images (*)
-        `)
+        .select('id, title, price, make, model, year, seller_id, status, created_at, car_images(image_url, is_cover, sort_order)')
         .eq('seller_id', userId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return data as any[];
     },
     enabled: !!userId,
+    refetchInterval: POLL_INTERVAL,
+    refetchIntervalInBackground: true,
   });
 
-  // Supabase real-time subscription for user's listings
+  // Debounced real-time subscription for user's listings
   useEffect(() => {
     if (!userId) return;
+    console.log('[Realtime] Subscribing to user listings changes for:', userId);
     const channel = supabase.channel(`realtime-user-listings-${userId}`)
       .on(
         'postgres_changes',
@@ -172,15 +202,213 @@ export const useUserListings = (userId: string | undefined) => {
           table: 'cars',
           filter: `seller_id=eq.${userId}`
         },
-        () => {
-          query.refetch();
+        (payload) => {
+          console.log('[Realtime] User listings event received for', userId, ':', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating user listings query for', userId, '...');
+            queryClient.invalidateQueries({ queryKey: ['userListings', userId] });
+            lastRealtimeRefetch.current = now;
+          }
         }
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, query]);
+  }, [userId, queryClient]);
+
+  return query;
+};
+
+// Fetch all dealers for dealers page
+export const useDealers = () => {
+  const queryClient = useQueryClient();
+  const lastRealtimeRefetch = useRef(0);
+  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
+  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+
+  const query = useQuery<any[]>({
+    queryKey: ['dealers'],
+    queryFn: async () => {
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetching dealers...');
+      }
+      const { data, error } = await (supabase as any)
+        .from('dealers')
+        .select('id, user_id, business_name, shop_address, phone, email, brands_deal_with, shop_photos_urls, about, created_at, updated_at, verified, verification_status')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+    refetchInterval: POLL_INTERVAL,
+    refetchIntervalInBackground: true,
+  });
+
+  // Debounced real-time subscription for dealers
+  useEffect(() => {
+    console.log('[Realtime] Subscribing to dealers changes...');
+    const channel = supabase.channel('realtime-dealers')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'dealers',
+        },
+        (payload) => {
+          console.log('[Realtime] Dealers event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating dealers query...');
+            queryClient.invalidateQueries({ queryKey: ['dealers'] });
+            lastRealtimeRefetch.current = now;
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+  return query;
+};
+
+// Fetch all offers for offers page or user
+export const useOffers = (userId?: string) => {
+  const queryClient = useQueryClient();
+  const lastRealtimeRefetch = useRef(0);
+  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
+  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+
+  const query = useQuery<any[]>({
+    queryKey: userId ? ['offers', userId] : ['offers'],
+    queryFn: async () => {
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetching offers...');
+      }
+      if (userId) {
+        const { data, error } = await (supabase as any)
+          .from('offers')
+          .select('id, user_id, car_id, amount, status, created_at, updated_at')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data as any[];
+      } else {
+        const { data, error } = await (supabase as any)
+          .from('offers')
+          .select('id, user_id, car_id, amount, status, created_at, updated_at')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data as any[];
+      }
+    },
+    refetchInterval: POLL_INTERVAL,
+    refetchIntervalInBackground: true,
+  });
+
+  // Debounced real-time subscription for offers
+  useEffect(() => {
+    console.log('[Realtime] Subscribing to offers changes...');
+    const channel = supabase.channel('realtime-offers')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'offers',
+        },
+        (payload) => {
+          console.log('[Realtime] Offers event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating offers query...');
+            queryClient.invalidateQueries({ queryKey: userId ? ['offers', userId] : ['offers'] });
+            lastRealtimeRefetch.current = now;
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, userId]);
+
+  return query;
+};
+
+// Fetch all chats for a user
+export const useChats = (userId?: string) => {
+  const queryClient = useQueryClient();
+  const lastRealtimeRefetch = useRef(0);
+  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
+  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+
+  const query = useQuery<any[]>({
+    queryKey: userId ? ['chats', userId] : ['chats'],
+    queryFn: async () => {
+      if (!userId) return [];
+      if (import.meta.env.DEV) {
+        console.log('[React Query] Fetching chats for user:', userId);
+      }
+      const { data, error } = await (supabase as any)
+        .from('chats')
+        .select('id, buyer_id, seller_id, car_id, status, created_at, updated_at')
+        .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+        .order('updated_at', { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+    refetchInterval: POLL_INTERVAL,
+    refetchIntervalInBackground: true,
+  });
+
+  // Debounced real-time subscription for chats
+  useEffect(() => {
+    if (!userId) return;
+    console.log('[Realtime] Subscribing to chats changes for:', userId);
+    const channel = supabase.channel('realtime-chats')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chats',
+        },
+        (payload) => {
+          console.log('[Realtime] Chats event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating chats query for', userId, '...');
+            queryClient.invalidateQueries({ queryKey: ['chats', userId] });
+            lastRealtimeRefetch.current = now;
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+        },
+        (payload) => {
+          console.log('[Realtime] Chat messages event received:', payload);
+          const now = Date.now();
+          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
+            console.log('[Realtime] Invalidating chats query for', userId, '...');
+            queryClient.invalidateQueries({ queryKey: ['chats', userId] });
+            lastRealtimeRefetch.current = now;
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, userId]);
 
   return query;
 };

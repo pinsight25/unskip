@@ -20,6 +20,9 @@ interface HomeHeaderProps {
   onSearch?: (query: string) => void;
   onClearSearch?: () => void;
   resultCount?: number;
+  allCarsCount: number;
+  dealersCount: number;
+  ownerCarsCount: number;
 }
 
 const HomeHeader = ({ 
@@ -30,7 +33,10 @@ const HomeHeader = ({
   searchQuery = '',
   onSearch,
   onClearSearch,
-  resultCount = 0
+  resultCount = 0,
+  allCarsCount,
+  dealersCount,
+  ownerCarsCount
 }: HomeHeaderProps) => {
   if (isSearching && onSearch && onClearSearch) {
     return (
@@ -67,6 +73,9 @@ const HomeHeader = ({
           <FilterTabs 
             activeType={currentFilters.type}
             onTypeChange={onTypeChange}
+            allCarsCount={allCarsCount}
+            dealersCount={dealersCount}
+            ownerCarsCount={ownerCarsCount}
           />
         </div>
       )}

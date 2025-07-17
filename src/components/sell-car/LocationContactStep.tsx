@@ -21,46 +21,14 @@ interface LocationContactStepProps {
   onPhoneVerification: () => void;
 }
 
-// City autocomplete component
-const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
+// City autocomplete component (refactored to use cities and isLoading from parent)
+const CityAutocomplete = ({ value, onChange, cities, isLoading }: { value: string; onChange: (value: string) => void; cities: string[]; isLoading: boolean }) => {
   const [search, setSearch] = useState(value || '');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Load cities from Supabase on component mount
-  useEffect(() => {
-    const loadCities = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('cities')
-          .select('name, state')
-          .eq('is_active', true)
-          .order('name');
-        
-        if (error) throw error;
-        
-        // Format as "City, State"
-        const formattedCities = data.map(city => 
-          city.state ? `${city.name}, ${city.state}` : city.name
-        );
-        setCities(formattedCities);
-      } catch (error) {
-        console.error('Error loading cities:', error);
-        // Fallback to allow free text input
-        setCities([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCities();
-  }, []);
-
-  // Update the filter to use dynamic cities
   useEffect(() => {
     if (search.length > 1 && cities.length > 0) {
       const filtered = cities.filter(city =>
@@ -72,7 +40,6 @@ const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value
     }
   }, [search, cities]);
 
-  // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -82,7 +49,6 @@ const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -91,11 +57,10 @@ const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value
     const value = e.target.value;
     setSearch(value);
     setShowSuggestions(true);
-    // Allow free text input
     onChange(value);
   };
 
-  const selectCity = (city) => {
+  const selectCity = (city: string) => {
     setSearch(city);
     onChange(city);
     setShowSuggestions(false);
@@ -111,16 +76,14 @@ const CityAutocomplete = ({ value, onChange }: { value: string; onChange: (value
         onFocus={() => setShowSuggestions(true)}
         placeholder="Type city name (e.g., Chennai, Mumbai)"
       />
-      
       {showSuggestions && (
         <>
-          {loading && (
+          {isLoading && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md p-2 text-sm text-gray-500">
               Loading cities...
             </div>
           )}
-          
-          {!loading && suggestions.length > 0 && (
+          {!isLoading && suggestions.length > 0 && (
             <div
               ref={suggestionsRef}
               className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-[200px] overflow-y-auto z-50"
@@ -168,6 +131,8 @@ const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVer
                 console.log('🔄 City changed to:', value);
                 updateFormData({ city: value });
               }}
+              cities={cities.map(city => city.state ? `${city.name}, ${city.state}` : city.name)}
+              isLoading={citiesLoading}
             />
           </div>
           <div>

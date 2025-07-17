@@ -10,6 +10,7 @@ import ChatInput from '@/components/chat/ChatInput';
 import ChatHeader from '@/components/chat/ChatHeader';
 import type { Seller } from '@/types/car';
 import { useToast } from '@/components/ui/use-toast';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 function toSeller(user: any): Seller {
   return {
@@ -58,6 +59,9 @@ const ChatDetail = () => {
   const [carImagesLoading, setCarImagesLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  useRealtimeRefetch('chat_messages', ['chatMessages']);
+  useRealtimeRefetch('chats', ['chats']);
 
   // Fetch chat details and messages
   const fetchMessages = async (chatId: string) => {
