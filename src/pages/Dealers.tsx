@@ -51,6 +51,24 @@ const Dealers = () => {
       setLoading(false);
     };
     fetchDealers();
+
+    // Supabase real-time subscription for dealers
+    const channel = supabase.channel('realtime-dealers')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'dealers',
+        },
+        () => {
+          fetchDealers();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Filter dealers based on selected filters

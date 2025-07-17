@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,20 +15,46 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [carsSoldToday, setCarsSoldToday] = useState(5);
   const { user } = useUser();
-  const { data: unreadChats = 0 } = useQuery({
+  const unreadQueryRef = useRef<any>(null);
+  const { data: unreadChats = 0, refetch } = useQuery({
     queryKey: ['unreadChats', user?.id],
     queryFn: async () => {
       if (!user?.id) return 0;
+      // Count unread messages where receiver is current user and seen is false
       const { data, error } = await supabase
-        .from('chats')
-        .select('unread_count')
-        .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`);
+        .from('chat_messages')
+        .select('id')
+        .eq('receiver_id', user.id)
+        .eq('seen', false);
       if (error) return 0;
-      return (data || []).reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+      return (data || []).length;
     },
     enabled: !!user?.id,
-    refetchInterval: 30000
+    refetchInterval: false // We'll use real-time instead of polling
   });
+  unreadQueryRef.current = refetch;
+
+  // Supabase real-time subscription for unread chat messages
+  useEffect(() => {
+    if (!user?.id) return;
+    const channel = supabase.channel('realtime-unread-chats')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `receiver_id=eq.${user.id}`
+        },
+        () => {
+          if (unreadQueryRef.current) unreadQueryRef.current();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
   const location = useLocation();
 
   const navItems = [

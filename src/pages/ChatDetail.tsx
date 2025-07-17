@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
@@ -55,8 +55,18 @@ const ChatDetail = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [carImages, setCarImages] = useState<any[]>([]);
   const [carImagesLoading, setCarImagesLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch chat details and messages
+  const fetchMessages = async (chatId: string) => {
+    const messagesData = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('chat_id', chatId)
+      .order('created_at', { ascending: true });
+    setMessages(Array.isArray(messagesData?.data) ? messagesData.data.map(mapDbMessageToUi) : []);
+  };
+
   useEffect(() => {
     if (!chatId || !user) return;
 
@@ -137,46 +147,56 @@ const ChatDetail = () => {
       setCarImagesLoading(false);
 
       // Get existing messages
-      const messagesData = await supabase
-        .from('chat_messages')
-        .select('*')
-        .eq('chat_id', chatId)
-        .order('created_at', { ascending: true });
-      setMessages(Array.isArray(messagesData?.data) ? messagesData.data.map(mapDbMessageToUi) : []);
+      fetchMessages(chatId);
     };
     fetchChatData();
   }, [chatId, user]);
 
-  // Real-time subscription for new messages
+  // Real-time subscription for all chat message events
   useEffect(() => {
     if (!chatId) return;
-
     const channel = supabase
       .channel(`chat-${chatId}`)
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'chat_messages',
           filter: `chat_id=eq.${chatId}`
         },
-        (payload) => {
-          // Map and add new message
-          const newMsg = mapDbMessageToUi(payload.new);
-          // Only add if not from current user (prevent duplicates)
-          if (newMsg.senderId !== user?.id) {
-            setMessages(prev => [...prev, newMsg]);
-          }
+        () => {
+          fetchMessages(chatId);
         }
       )
       .subscribe();
-
-    // Cleanup
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [chatId, user]);
+  }, [chatId]);
+
+  // Mark all messages as seen when chat is opened or messages are updated
+  useEffect(() => {
+    if (!chatId || !user) return;
+    const markMessagesAsSeen = async () => {
+      await supabase
+        .from('chat_messages')
+        .update({ seen: true })
+        .eq('chat_id', chatId)
+        .eq('receiver_id', user.id)
+        .eq('seen', false);
+    };
+    if (messages.length > 0) {
+      markMessagesAsSeen();
+    }
+  }, [chatId, user, messages]);
+
+  // Auto-scroll to bottom on new message
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   // Send message
   const handleSendMessage = async () => {
@@ -253,6 +273,7 @@ const ChatDetail = () => {
             messages={messages}
             isTyping={isTyping}
           />
+          <div ref={messagesEndRef} />
         </div>
         <ChatInput
           newMessage={newMessage}

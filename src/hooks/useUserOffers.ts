@@ -138,6 +138,38 @@ export const useUserOffers = () => {
 
   useEffect(() => {
     fetchOffers();
+
+    // Supabase real-time subscription for received offers
+    let channel: any = null;
+    if (user?.phone) {
+      // Fetch user ID for filter
+      supabase
+        .from('users')
+        .select('id')
+        .eq('phone', formatPhoneForDB(user.phone))
+        .single()
+        .then(({ data: userData }) => {
+          if (userData?.id) {
+            channel = supabase.channel('realtime-received-offers')
+              .on(
+                'postgres_changes',
+                {
+                  event: '*',
+                  schema: 'public',
+                  table: 'offers',
+                  filter: `seller_id=eq.${userData.id}`
+                },
+                () => {
+                  fetchOffers();
+                }
+              )
+              .subscribe();
+          }
+        });
+    }
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [user?.phone]);
 
   return {

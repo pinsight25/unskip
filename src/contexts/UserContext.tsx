@@ -151,11 +151,33 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     timeoutId = setTimeout(() => {
       if (mounted.current) setIsLoading(false);
     }, 3000);
+
+    // Supabase real-time subscription for user profile
+    let channel: any = null;
+    if (user?.id) {
+      channel = supabase.channel('realtime-user-profile')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'users',
+            filter: `id=eq.${user.id}`
+          },
+          () => {
+            // Refetch user profile data
+            syncUserFromDatabase(user.id, setUser, setIsLoading, mounted);
+          }
+        )
+        .subscribe();
+    }
+
     return () => {
       mounted.current = false;
       if (timeoutId) clearTimeout(timeoutId);
+      if (channel) supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     const initializeAuth = async () => {

@@ -123,13 +123,11 @@ export const useCars = () => {
 
 // Fetch user's listings for profile
 export const useUserListings = (userId: string | undefined) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['userListings', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID required');
-      
       console.log('[React Query] Fetching user listings for:', userId);
-      
       const { data, error } = await supabase
         .from('cars')
         .select(`
@@ -139,11 +137,34 @@ export const useUserListings = (userId: string | undefined) => {
         .eq('seller_id', userId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      // Map to Car[] if needed, or return as-is if used for admin/profile
       return data;
     },
-    enabled: !!userId, // Only run if userId exists
+    enabled: !!userId,
   });
+
+  // Supabase real-time subscription for user's listings
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase.channel(`realtime-user-listings-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'cars',
+          filter: `seller_id=eq.${userId}`
+        },
+        () => {
+          query.refetch();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, query]);
+
+  return query;
 };
 
 // Hook to invalidate queries after actions
