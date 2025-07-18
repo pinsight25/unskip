@@ -246,29 +246,31 @@ export const useDealerRegistrationForm = () => {
       const shopPhotosUrls = await uploadMultipleToCloudinary(formData.documents.shopPhotos, 'unskip/dealers/photos');
 
       // Insert into dealers table
+      const dealerData = {
+        user_id: user?.id,
+        slug: slug,
+        business_name: formData.businessName,
+        contact_person: formData.contactPerson,
+        phone: formData.phone,
+        email: formData.email,
+        business_category: formData.businessCategory,
+        specialization: formData.specialization,
+        brands_deal_with: formData.brandsDealWith,
+        gst_number: formData.gstNumber,
+        shop_address: formData.shopAddress,
+        pincode: formData.pincode,
+        establishment_year: formData.establishmentYear ? Number(formData.establishmentYear) : null,
+        about: formData.about,
+        gst_certificate_url: gstCertUrl,
+        shop_license_url: shopLicenseUrl,
+        shop_photos_urls: shopPhotosUrls,
+        verification_status: 'pending' as 'pending',
+        verified: false
+      };
+
       const { data: dealer, error } = await supabase
         .from('dealers')
-        .insert({
-          user_id: user.id,
-          slug: slug,
-          business_name: formData.businessName,
-          contact_person: formData.contactPerson,
-          phone: formData.phone,
-          email: formData.email,
-          business_category: formData.businessCategory,
-          specialization: formData.specialization,
-          brands_deal_with: formData.brandsDealWith,
-          gst_number: formData.gstNumber,
-          shop_address: formData.shopAddress,
-          pincode: formData.pincode,
-          establishment_year: parseInt(formData.establishmentYear),
-          about: formData.about,
-          gst_certificate_url: gstCertUrl,
-          shop_license_url: shopLicenseUrl,
-          shop_photos_urls: shopPhotosUrls,
-          verification_status: 'pending',
-          verified: false
-        })
+        .insert([dealerData])
         .select()
         .single();
       if (error) throw error;

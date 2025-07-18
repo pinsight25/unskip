@@ -100,18 +100,18 @@ const BusinessInformationStep = ({ formData, onInputChange }: BusinessInformatio
         <p className="text-sm text-gray-600 mb-3">Select all brands you deal with</p>
         <MultiSelect
           options={availableBrands}
-          selected={formData.brandsDealWith}
+          selected={formData.brandsDealWith || []}
           onChange={(selected) => onInputChange('brandsDealWith', selected)}
           placeholder="Select brands (multiple allowed)"
           className="max-w-md"
         />
-        {formData.brandsDealWith.length === 0 && (
+        {(formData.brandsDealWith?.length || 0) === 0 && (
           <p className="text-sm text-red-500 mt-2">Please select at least one brand</p>
         )}
       </div>
       {/* About Field */}
       <div>
-        <Label htmlFor="about">About Your Dealership *</Label>
+        <Label htmlFor="about" className="block mb-1">About Your Dealership *</Label>
         <textarea
           id="about"
           value={formData.about}
@@ -119,13 +119,15 @@ const BusinessInformationStep = ({ formData, onInputChange }: BusinessInformatio
           placeholder="Describe your dealership in 150 characters or less"
           maxLength={150}
           rows={3}
-          className="w-full max-w-md border rounded p-2 text-sm"
+          className="w-full max-w-md border rounded p-2 text-sm mb-2"
           required
         />
-        <div className="text-xs text-gray-500 mt-1">{formData.about.length}/150 characters</div>
-        {formData.about.length === 0 && (
-          <p className="text-xs text-red-500 mt-1">Please enter a short description</p>
-        )}
+        <div className="flex items-center justify-between text-xs text-gray-500 mt-1 mb-1" style={{ maxWidth: '28rem' }}>
+          <span>{formData.about?.length || 0}/150 characters</span>
+          {(formData.about?.length || 0) === 0 && (
+            <span className="text-red-500 ml-2">Please enter a short description</span>
+          )}
+        </div>
       </div>
     </div>
   );
