@@ -1,6 +1,6 @@
 
 import { useNavigate } from 'react-router-dom';
-import { generateChatId } from '@/data/chatMockData';
+import { generateChatId } from '@/utils/chatHelpers';
 import { Chat } from '@/types/chat';
 import { supabase } from '@/lib/supabase';
 
