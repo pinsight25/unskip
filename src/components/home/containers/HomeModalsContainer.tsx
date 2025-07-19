@@ -31,7 +31,6 @@ const HomeModalsContainer = ({
   openSignInModal
 }: HomeModalsContainerProps) => {
   useEffect(() => {
-    console.log('[HomeModalsContainer] openSignInModal prop:', !!openSignInModal);
   }, [openSignInModal]);
   return (
     <>

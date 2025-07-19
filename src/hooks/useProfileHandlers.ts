@@ -93,10 +93,6 @@ export const useProfileHandlers = () => {
         action: 'delete',
         carId: listingId,
       }));
-      console.log('Setting flags after car delete:', {
-        carDeleted: { timestamp: Date.now(), carId: listingId },
-        carsListUpdated: { timestamp: Date.now(), action: 'delete', carId: listingId }
-      });
     } else {
       toast({
         title: "Delete Failed",

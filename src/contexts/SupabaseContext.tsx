@@ -29,8 +29,6 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
   useEffect(() => {
     const testConnection = async () => {
       try {
-        console.log('Testing Supabase connection...');
-        
         // Test connection by trying to select from a table
         const { data, error } = await supabase
           .from('users')
@@ -38,14 +36,11 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
           .limit(1);
         
         if (error) {
-          console.error('Supabase connection error:', error);
           setIsConnected(false);
         } else {
-          console.log('✅ Supabase connection successful!');
           setIsConnected(true);
         }
       } catch (error) {
-        console.error('❌ Supabase connection failed:', error);
         setIsConnected(false);
       } finally {
         setIsLoading(false);

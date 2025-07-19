@@ -11,6 +11,15 @@ import { supabase } from '@/lib/supabase';
 import { useDealers } from '@/hooks/queries/useDealers';
 import { Dealer } from '@/types/dealer';
 import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const DealerSkeletonGrid = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <Skeleton key={i} className="h-40 w-full rounded-lg" />
+    ))}
+  </div>
+);
 
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -25,6 +34,18 @@ const Dealers = () => {
     setSelectedLocation('');
     setSelectedBrand('');
   };
+
+  // Show skeletons only on first load (no data and loading)
+  if (!allDealers && isLoading) {
+    return (
+      <div className="bg-white min-h-screen">
+        <DealerHeader />
+        <div className="max-width-container-wide py-4 pb-24 lg:pb-8">
+          <DealerSkeletonGrid />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen">
@@ -45,15 +66,13 @@ const Dealers = () => {
         {/* Results count */}
         <div className="mb-4">
           <p className="text-gray-600 text-sm">
-            {isLoading ? 'Loading dealers...' : `Showing ${filteredDealers.length} of ${(allDealers || []).length} dealers`}
+            Showing {filteredDealers ? filteredDealers.length : 0} of {(allDealers || []).length} dealers
           </p>
         </div>
         {/* Dealers Grid */}
-        {isLoading ? (
-          <div className="text-center py-12 text-gray-500">Loading dealers...</div>
-        ) : error ? (
-          <div className="text-center py-12 text-red-500">{error.message || 'Failed to load dealers.'}</div>
-        ) : filteredDealers.length > 0 ? (
+        {error ? (
+          <div className="text-center py-12 text-red-500">Something went wrong. Try again.</div>
+        ) : filteredDealers && filteredDealers.length > 0 ? (
           <DealerGrid dealers={filteredDealers} />
         ) : (
           <EmptyDealerState onClearFilters={handleClearFilters} />

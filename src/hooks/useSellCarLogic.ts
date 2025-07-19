@@ -40,7 +40,7 @@ export const useSellCarLogic = () => {
       try {
         sessionStorage.setItem('sellCarFormData', JSON.stringify(newData));
       } catch (error) {
-        console.error('Failed to save:', error);
+        // console.error('Failed to save:', error);
       }
       
       return newData;
@@ -454,7 +454,7 @@ export const useSellCarLogic = () => {
       }
 
       if (carError) {
-        console.error('Failed to save car:', carError);
+        // console.error('Failed to save car:', carError);
         toast({
           title: "Error",
           description: "Failed to save car. Please try again.",
@@ -503,10 +503,10 @@ export const useSellCarLogic = () => {
           carId: carId
         };
         localStorage.setItem('carsListUpdated', JSON.stringify(carsListData));
-        console.log('Setting flags after car post:', {
-          carPosted: postData,
-          carsListUpdated: carsListData
-        });
+        // console.log('Setting flags after car post:', {
+        //   carPosted: postData,
+        //   carsListUpdated: carsListData
+        // });
       }
 
       // Clear form/sessionStorage and invalidate listings cache, then navigate to profile
@@ -595,7 +595,7 @@ export const useSellCarLogic = () => {
       await queryClient.invalidateQueries({ queryKey: ['userListings'] });
       toast({ title: 'Car deleted successfully', variant: 'default' });
     } catch (error) {
-      console.error('Delete failed:', error);
+      // console.error('Delete failed:', error);
       toast({ title: 'Failed to delete car', variant: 'destructive' });
     }
   };

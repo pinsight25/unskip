@@ -6,6 +6,8 @@ import MobileCarDetails from './MobileCarDetails';
 import MobileCarActions from './MobileCarActions';
 import { useUser } from '@/contexts/UserContext';
 import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
+import { useCarViewCount } from '@/hooks/useCarViews';
+import { Eye } from 'lucide-react';
 
 interface MobileCarCardProps {
   car: any;
@@ -37,6 +39,8 @@ const MobileCarCard = ({
   const offerStatus = offer?.status || 'none';
   const offerAmount = offer?.amount || null;
 
+  const { data: viewCount = 0 } = useCarViewCount(car.id);
+
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on interactive elements
     const target = e.target as HTMLElement;
@@ -57,6 +61,8 @@ const MobileCarCard = ({
         title={car.title}
         featured={car.featured}
         verified={car.verified}
+        seller_type={car.seller_type}
+        dealerVerified={car.seller?.dealerVerified}
         isSaved={isSaved}
         isSaving={isSaving}
         onSave={handleSave}
@@ -79,6 +85,11 @@ const MobileCarCard = ({
           location={car.location}
           seller={car.seller}
         />
+
+        <div className="flex items-center text-sm text-gray-500">
+          <Eye className="w-4 h-4 mr-1" />
+          <span>{viewCount}</span>
+        </div>
 
         <MobileCarActions
           carId={car.id}

@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase';
 export const useUserRecord = () => {
   const createOrGetUserRecord = async (authUser: any, phone: string) => {
     try {
-      console.log('🔍 Creating/getting user record for:', authUser.id);
       
       // First try to get existing user
       const { data: existingUserData, error: fetchError } = await supabase
@@ -14,17 +13,14 @@ export const useUserRecord = () => {
         .maybeSingle();
 
       if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('❌ Error fetching user:', fetchError);
         // Don't throw - we'll create a basic record instead
       }
 
       if (existingUserData) {
-        console.log('✅ User record exists:', existingUserData);
         return { isExisting: true, userData: existingUserData };
       }
 
       // Create basic user record if it doesn't exist
-      console.log('📝 Creating basic user record...');
       const basicUserData = {
         id: authUser.id,
         phone: phone,
@@ -44,7 +40,6 @@ export const useUserRecord = () => {
         .single();
 
       if (insertError) {
-        console.error('❌ Error creating user record:', insertError);
         // Return basic info even if DB insert fails
         return { 
           isExisting: false, 
@@ -56,11 +51,9 @@ export const useUserRecord = () => {
         };
       }
 
-      console.log('✅ Created basic user record:', newUserData);
       return { isExisting: false, userData: newUserData };
 
     } catch (err) {
-      console.error('❌ Error in createOrGetUserRecord:', err);
       // Return basic fallback
       return { 
         isExisting: false, 

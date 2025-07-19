@@ -55,7 +55,6 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
       formattedPhone = '+91' + formattedPhone;
     }
     setFormattedPhoneNumber(formattedPhone);
-    console.log('🔵 SENDING OTP to:', formattedPhone);
     setLoading(true);
     setError('');
     try {
@@ -64,10 +63,8 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         options: { shouldCreateUser: true }
       });
       if (error) throw error;
-      console.log('✅ OTP sent successfully');
       setStep('otp');
     } catch (err: any) {
-      console.error('❌ Error sending OTP:', err);
       setError(err.message || 'Failed to send OTP');
     } finally {
       setLoading(false);
@@ -77,7 +74,6 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
   // Verify OTP
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🔵 VERIFYING OTP:', otp);
     setLoading(true);
     setError('');
     try {
@@ -88,7 +84,6 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         formattedPhone = '+91' + formattedPhone;
       }
       const phoneToVerify = formattedPhoneNumber || formattedPhone;
-      console.log('📱 Verifying with phone:', phoneToVerify);
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneToVerify,
         token: otp,
@@ -96,7 +91,6 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
       });
       if (error) throw error;
       if (!data.user) throw new Error('No user returned');
-      console.log('✅ OTP verified, user:', data.user.id);
       setUserId(data.user.id);
       // Check if user needs profile
       const { data: userData } = await supabase
@@ -105,14 +99,11 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         .eq('id', data.user.id)
         .single();
       if (!userData?.name || userData.name === 'User' || !userData?.email) {
-        console.log('📝 New user - showing profile form');
         setStep('profile');
       } else {
-        console.log('✅ Existing user - completing sign in');
         handleSuccess();
       }
     } catch (err: any) {
-      console.error('❌ Error verifying OTP:', err);
       if (err.message?.includes('expired')) {
         setError('OTP has expired. Please request a new one.');
       } else if (err.message?.includes('invalid')) {
@@ -147,7 +138,6 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
   };
 
   const handleSuccess = () => {
-    console.log('🎉 Sign in complete!');
     handleClose();
     onSuccess?.();
   };

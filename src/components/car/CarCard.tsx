@@ -15,6 +15,7 @@ import MakeOfferModal from '@/components/car-details/MakeOfferModal';
 import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
 import { useChatManager } from '@/hooks/useChatManager';
 import { useSavedCars } from '@/hooks/useSavedCars';
+import { useCarViewCount } from '@/hooks/useCarViews';
 
 interface CarCardProps {
   car: Car;
@@ -31,6 +32,8 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
   const { toast } = useToast();
   const isOwner = user && user.id === car.seller.id;
   const { navigateToChat } = useChatManager();
+  const { data: viewCount = 0 } = useCarViewCount(car.id);
+  const { saveCar, unsaveCar } = useSavedCars();
 
   // Use React Query for offer status (backend-driven)
   const { data: offer } = useOfferStatus(car.id, user?.id);
@@ -75,7 +78,6 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
   };
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
-    console.log('Offer submitted:', offer);
     // No local offerMade state needed
   };
 
@@ -83,7 +85,13 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
     <>
       <Card className="group cards-equal-height overflow-hidden w-full max-w-[350px] min-w-[260px] mx-auto">
         <CardContent className="p-0 flex flex-col h-full">
-          <CarCardImage car={car} isSaved={isSaved} isSaving={isSaving} onSave={handleSave} />
+          <CarCardImage
+            car={car}
+            isSaved={isSaved}
+            isSaving={isSaving}
+            onSave={() => saveCar(car.id)}
+            onUnsave={() => unsaveCar(car.id)}
+          />
 
           <div className="card-padding flex-1 flex flex-col">
             {/* Title & Price */}

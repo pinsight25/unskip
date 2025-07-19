@@ -21,7 +21,7 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
     try {
       await signOut();
     } catch (error) {
-      console.error('🔴 HeaderActions: Sign out failed:', error);
+      // console.error('🔴 HeaderActions: Sign out failed:', error);
     }
   };
 

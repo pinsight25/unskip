@@ -24,7 +24,6 @@ export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSuccess = useCallback((callback?: () => void) => {
-    console.log('AuthModalContext: onSuccess called');
     closeSignInModal();
     if (callback && typeof callback === 'function') {
       callback();

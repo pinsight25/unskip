@@ -120,10 +120,6 @@ export const useListingHandlers = () => {
       action: 'edit',
       carId: listing.id,
     }));
-    console.log('Setting flags after car edit navigation:', {
-      carUpdated: { timestamp: Date.now(), carId: listing.id },
-      carsListUpdated: { timestamp: Date.now(), action: 'edit', carId: listing.id }
-    });
     toast({
       title: "Editing Listing",
       description: "Loading your listing data for editing",

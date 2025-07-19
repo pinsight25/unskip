@@ -20,9 +20,10 @@ interface ChatHeaderProps {
   onBlockUser: () => void;
   onDeleteConversation: () => void;
   carImages?: any[];
+  onBack: () => void;
 }
 
-const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUser, onDeleteConversation, carImages = [] }: ChatHeaderProps) => {
+const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUser, onDeleteConversation, carImages = [], onBack }: ChatHeaderProps) => {
   // Get cover image from carImages or fallback
   let carImageUrl = '/placeholder-car.jpg';
   if (Array.isArray(carImages) && carImages.length > 0) {
@@ -42,11 +43,14 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUs
   const { toast } = useToast();
   return (
     <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0 z-10">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 md:gap-4 px-2 md:px-4" style={{paddingTop:'env(safe-area-inset-top,20px)'}}>
+        <button onClick={onBack} className="md:hidden mr-2 p-2 rounded-full hover:bg-gray-100 focus:outline-none" style={{minWidth:44, minHeight:44}}>
+          <ArrowLeft className="h-5 w-5" />
+        </button>
         <img
           src={carImageUrl}
           alt={car?.make ? `${car.make} ${car.model}` : 'Car'}
-          className="w-12 h-12 rounded object-cover border"
+          className="w-12 h-12 rounded-full object-cover border"
           onError={(e) => {
             e.currentTarget.src = '/placeholder-car.jpg';
           }}
@@ -59,7 +63,7 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUs
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100">
+            <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100" style={{minWidth:44, minHeight:44}}>
               <MoreVertical className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>

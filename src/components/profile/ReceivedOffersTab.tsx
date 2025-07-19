@@ -28,32 +28,13 @@ export const useReceivedOffers = () => {
   });
 };
 
-const ReceivedOffersTab = ({ onOffersCountChange }: { onOffersCountChange?: (count: number) => void }) => {
+const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[]; onOffersCountChange?: (count: number) => void }) => {
   const { toast } = useToast();
   const { user } = useUser();
   const navigate = useNavigate();
-  const { offers, isLoading, error, updateOfferStatus } = useUserOffers();
+  const { offers: userOffers, isLoading, error, updateOfferStatus } = useUserOffers();
   const { navigateToChat } = useChatManager();
   const queryClient = useQueryClient();
-
-  const { data: receivedOffers = [], isLoading: offersLoading, refetch } = useQuery({
-    queryKey: ['receivedOffers', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('offers')
-        .select(`
-          *,
-          buyer:users!buyer_id(id, name, phone),
-          car:cars(id, make, model, year, price)
-        `)
-        .eq('seller_id', user.id)
-        .order('created_at', { ascending: false });
-      console.log('Received offers:', data);
-      return data || [];
-    },
-    enabled: !!user?.id,
-    refetchInterval: 5000, // Auto-refresh every 5 seconds
-  });
 
   // Supabase real-time subscription for offers
   useEffect(() => {
@@ -68,20 +49,20 @@ const ReceivedOffersTab = ({ onOffersCountChange }: { onOffersCountChange?: (cou
           filter: `seller_id=eq.${user.id}`
         },
         () => {
-          refetch();
+          // No need to refetch here as receivedOffers is a prop
         }
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id, refetch]);
+  }, [user?.id]);
 
   useEffect(() => {
     if (typeof onOffersCountChange === 'function') {
-      onOffersCountChange(receivedOffers.length);
+      onOffersCountChange(offers.length);
     }
-  }, [receivedOffers.length, onOffersCountChange]);
+  }, [offers.length, onOffersCountChange]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -205,9 +186,9 @@ const ReceivedOffersTab = ({ onOffersCountChange }: { onOffersCountChange?: (cou
   return (
     <div className="max-w-4xl mx-auto">
       <Card className="p-4 md:p-6">
-        {receivedOffers.length > 0 ? (
+        {offers.length > 0 ? (
           <div className="space-y-4">
-            {receivedOffers.map((offer) => {
+            {offers.map((offer) => {
               const percentageDiff = calculatePercentageDiff(offer.amount, offer.car?.price);
               return (
                 <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">

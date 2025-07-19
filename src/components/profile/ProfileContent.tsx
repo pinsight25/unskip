@@ -9,43 +9,91 @@ import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
 interface ProfileContentProps {
-  user: any;
+  user?: any;
   listings: any[];
-  accessories: any[];
-  stats: {
+  accessories?: any[];
+  stats?: {
     totalViews: number;
     activeListings: number;
     totalOffers: number;
   };
-  isLoading: boolean;
+  isLoading?: boolean;
   isRefetching?: boolean;
-  error: string | null;
-  onEditProfile: () => void;
-  onSignOut: () => void;
-  onDeleteListing: (listingId: string, title: string) => void;
-  refetch: () => void; // Add refetch as required prop
+  error?: string | null;
+  onEditProfile?: () => void;
+  onSignOut?: () => void;
+  onDeleteListing?: (listingId: string, title: string) => void;
 }
 
 const ProfileContent = ({
-  user,
+  user = null,
   listings,
-  accessories,
-  stats,
-  isLoading,
-  isRefetching,
-  error,
-  onEditProfile,
-  onSignOut,
-  onDeleteListing,
-  refetch // Destructure refetch
+  accessories = [],
+  isLoading = false,
+  isRefetching = false,
+  error = null,
+  onEditProfile = () => {},
+  onSignOut = () => {},
+  onDeleteListing = () => {},
 }: ProfileContentProps) => {
   // Remove dealerInfo fetching and just set to null
   const dealerInfo = null;
 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
+
+  // Fetch received offers for the current user (as seller)
+  const { data: receivedOffers = [], refetch } = useQuery({
+    queryKey: ['received-offers', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*, car:cars(*)')
+        .eq('seller_id', user.id)
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!user?.id,
+    staleTime: Infinity,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+
+  // Fetch real stats for the dashboard
+  const { data: stats = { totalViews: 0, activeListings: 0, offersReceived: 0 } } = useQuery({
+    queryKey: ['profile-stats', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return { totalViews: 0, activeListings: 0, offersReceived: 0 };
+      // Get total views
+      const { count: viewsCount } = await supabase
+        .from('car_views')
+        .select('*', { count: 'exact', head: true })
+        .eq('seller_id', user.id);
+      // Get active listings count
+      const { count: listingsCount } = await supabase
+        .from('cars')
+        .select('*', { count: 'exact', head: true })
+        .eq('seller_id', user.id)
+        .eq('status', 'active');
+      // Get offers received count
+      const { count: offersCount } = await supabase
+        .from('offers')
+        .select('*', { count: 'exact', head: true })
+        .eq('seller_id', user.id);
+      return {
+        totalViews: viewsCount || 0,
+        activeListings: listingsCount || 0,
+        offersReceived: offersCount || 0
+      };
+    },
+    enabled: !!user?.id,
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -56,6 +104,12 @@ const ProfileContent = ({
       setActiveTab('listings');
     }
   }, [location.search]);
+
+  useEffect(() => {
+    if (activeTab === 'offers') {
+      refetch();
+    }
+  }, [activeTab, refetch]);
 
   // Calculate total active listings
   const activeListings = listings.filter(l => l.status === 'active');
@@ -116,7 +170,7 @@ const ProfileContent = ({
                 My Listings ({totalActive})
               </TabsTrigger>
               <TabsTrigger value="offers">
-                Received Offers ({stats.totalOffers})
+                Received Offers ({receivedOffers.length})
               </TabsTrigger>
             </TabsList>
 
@@ -127,7 +181,7 @@ const ProfileContent = ({
 
             {/* Received Offers Tab */}
             <TabsContent value="offers">
-              <ReceivedOffersTab />
+              <ReceivedOffersTab offers={receivedOffers} />
             </TabsContent>
           </Tabs>
         </div>

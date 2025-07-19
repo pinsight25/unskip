@@ -19,7 +19,7 @@ export const OfferProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         setOfferedCars(JSON.parse(stored));
       } catch (error) {
-        console.error('Failed to parse offered cars from session storage:', error);
+        // console.error('Failed to parse offered cars from session storage:', error);
       }
     }
   }, []);

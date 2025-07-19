@@ -21,7 +21,6 @@ export const useOfferFlow = () => {
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
     // Handle offer submission logic here
-    console.log('Offer submitted:', offer);
     setShowOfferModal(false);
     setSelectedCar(null);
   };

@@ -10,7 +10,6 @@ export const useChatManager = () => {
   // Async version for real chat creation
   const createOrGetChat = async (carId: string, buyerId: string, sellerId: string, toast?: (opts: any) => void) => {
     try {
-      console.log('[ChatManager] Checking for existing chat:', { carId, buyerId, sellerId });
       const { data: existing, error } = await supabase
         .from('chats')
         .select('id')
@@ -19,16 +18,13 @@ export const useChatManager = () => {
         .eq('seller_id', sellerId)
         .maybeSingle();
       if (error) {
-        console.error('[ChatManager] Error checking chat:', error);
         if (toast) toast({ title: 'Error checking chat', description: error.message, variant: 'destructive' });
         throw error;
       }
       if (existing) {
-        console.log('[ChatManager] Existing chat found:', existing.id);
         return existing.id;
       }
       // Create new chat
-      console.log('[ChatManager] Creating new chat:', { carId, buyerId, sellerId });
       const { data: newChat, error: createError } = await supabase
         .from('chats')
         .insert({
@@ -43,14 +39,11 @@ export const useChatManager = () => {
         .select('id')
         .single();
       if (createError) {
-        console.error('[ChatManager] Error creating chat:', createError);
         if (toast) toast({ title: 'Failed to create chat', description: createError.message, variant: 'destructive' });
         throw createError;
       }
-      console.log('[ChatManager] New chat created:', newChat.id);
       return newChat.id;
     } catch (err) {
-      console.error('[ChatManager] Unexpected error:', err);
       if (toast) toast({ title: 'Unexpected error', description: err.message, variant: 'destructive' });
       throw err;
     }
@@ -62,7 +55,6 @@ export const useChatManager = () => {
       const chatId = await createOrGetChat(carId, buyerId, sellerId, toast);
       navigate(`/chats/${chatId}`);
     } catch (err) {
-      console.error('[ChatManager] Failed to navigate to chat:', err);
       if (toast) toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
     }
   };

@@ -128,7 +128,6 @@ const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVer
             <CityAutocomplete
               value={formData.city}
               onChange={(value) => {
-                console.log('🔄 City changed to:', value);
                 updateFormData({ city: value });
               }}
               cities={cities.map(city => city.state ? `${city.name}, ${city.state}` : city.name)}
@@ -142,7 +141,6 @@ const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVer
               placeholder="e.g., Andheri East, Koramangala"
               value={formData.area}
               onChange={(e) => {
-                console.log('🔄 Area changed to:', e.target.value);
                 updateFormData({ area: e.target.value });
               }}
             />

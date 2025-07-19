@@ -6,7 +6,7 @@ interface ProfileStatsProps {
   stats: {
     totalViews: number;
     activeListings: number;
-    totalOffers: number;
+    offersReceived: number;
   };
 }
 
@@ -26,7 +26,7 @@ const ProfileStats = ({ stats }: ProfileStatsProps) => {
         </Card>
         <Card className="p-4 text-center">
           <MessageCircle className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{stats.totalOffers}</p>
+          <p className="text-2xl font-bold">{stats.offersReceived}</p>
           <p className="text-sm text-gray-600">Offers Received</p>
         </Card>
       </div>

@@ -16,12 +16,10 @@ interface CarDetailsStepProps {
 
 const CarDetailsStep = ({ formData, setFormData, updateFormData, validateKilometersDriven }: CarDetailsStepProps) => {
   const handleMakeChange = (value: string) => {
-    console.log('🔄 Make changed to:', value);
     updateFormData({ make: value });
   };
 
   const handleModelChange = (value: string) => {
-    console.log('🔄 Model changed to:', value);
     updateFormData({ model: value });
   };
 

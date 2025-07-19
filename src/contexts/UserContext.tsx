@@ -59,7 +59,7 @@ const syncUserFromDatabase = async (
       .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('🔵 USER QUERY ERROR:', error);
+      // console.error('🔵 USER QUERY ERROR:', error);
     }
 
     // If no user exists, create one
@@ -85,7 +85,7 @@ const syncUserFromDatabase = async (
         .single();
 
       if (createError) {
-        console.error('🔵 Error creating user:', createError);
+        // console.error('🔵 Error creating user:', createError);
         // Even if creation fails, set basic user data
         if (mounted.current) {
           setUser({
@@ -124,15 +124,15 @@ const syncUserFromDatabase = async (
         userType: userData.user_type || undefined,
         phone_verified: 'phone_verified' in userData ? Boolean((userData as any).phone_verified) : false,
       };
-      console.log('[UserContext] Setting user:', userObj);
-      console.log('[UserContext] User ID:', userObj.id);
-      console.log('[UserContext] User phone:', userObj.phone);
+      // console.log('[UserContext] Setting user:', userObj);
+      // console.log('[UserContext] User ID:', userObj.id);
+      // console.log('[UserContext] User phone:', userObj.phone);
       setUser(userObj);
     } else if (mounted.current) {
       setUser(null);
     }
   } catch (err) {
-    console.error('🔵 SYNC ERROR:', err);
+    // console.error('🔵 SYNC ERROR:', err);
     if (mounted.current) {
       setUser(null);
     }
@@ -187,7 +187,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
-          console.error('🔵 Session error:', sessionError);
+          // console.error('🔵 Session error:', sessionError);
           setIsLoading(false);
           return;
         }
@@ -218,7 +218,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         return () => subscription.unsubscribe();
       } catch (error) {
-        console.error('🔵 Auth initialization error:', error);
+        // console.error('🔵 Auth initialization error:', error);
         if (mounted.current) {
           setIsLoading(false);
         }
@@ -238,7 +238,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       });
       return { error };
     } catch (error) {
-      console.error('Sign in error:', error);
+      // console.error('Sign in error:', error);
       return { error };
     }
   };
@@ -264,13 +264,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         .eq('id', user.id);
 
       if (error) {
-        console.error('Update user error:', error);
+        // console.error('Update user error:', error);
         return;
       }
 
       setUser(prev => prev ? { ...prev, ...updates } : null);
     } catch (error) {
-      console.error('Update user error:', error);
+      // console.error('Update user error:', error);
     }
   };
 
@@ -283,7 +283,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
       }
     } catch (error) {
-      console.error('Refresh user error:', error);
+      // console.error('Refresh user error:', error);
     }
   };
 

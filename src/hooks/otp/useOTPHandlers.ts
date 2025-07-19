@@ -58,12 +58,9 @@ export const useOTPHandlers = ({
     }
   }, [onClose]);
 
-  console.log('✅ OTP Handler initialized with send guard');
-
   const handleSendOTP = async () => {
     const requestId = Date.now().toString();
     if (otpRequestId) {
-      console.log('⚠️ OTP request already in progress, ignoring duplicate');
       return;
     }
     setOtpRequestId(requestId);
@@ -80,16 +77,13 @@ export const useOTPHandlers = ({
 
     try {
       const formattedPhone = formatPhoneForAuth(phoneNumber);
-      console.log('🔵 SENDING OTP - REQUEST ID:', requestId);
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
         options: { shouldCreateUser: true }
       });
       if (error) {
-        console.error('❌ OTP send error:', error);
         setError(error.message || 'Failed to send OTP. Please try again.');
       } else {
-        console.log('✅ OTP sent successfully - REQUEST ID:', requestId);
         setStep('otp');
         toast({
           title: "OTP Sent",
@@ -97,7 +91,6 @@ export const useOTPHandlers = ({
         });
       }
     } catch (err) {
-      console.error('❌ Unexpected OTP send error:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSendingOTP(false);
@@ -107,11 +100,6 @@ export const useOTPHandlers = ({
 
   const verifyOTPWithRetry = async (attempt = 1, maxAttempts = 3): Promise<any> => {
     const formattedPhone = formatPhoneForAuth(phoneNumber);
-    
-    console.log(`🔵 OTP VERIFICATION ATTEMPT ${attempt}/${maxAttempts}:`);
-    console.log('- Phone:', formattedPhone);
-    console.log('- OTP:', otp);
-    console.log('- Timestamp:', new Date().toISOString());
     
     try {
       // Create a promise that will timeout after 45 seconds
@@ -128,20 +116,10 @@ export const useOTPHandlers = ({
       });
 
       const result = await Promise.race([verificationPromise, timeoutPromise]);
-      console.log(`✅ OTP verification completed on attempt ${attempt}:`, result);
       return result;
     } catch (error: any) {
-      console.error(`❌ OTP verification error on attempt ${attempt}:`, {
-        message: error.message,
-        code: error.code,
-        status: error.status,
-        details: error.details,
-        hint: error.hint
-      });
-
       // If it's a timeout and we have retries left, try again
       if (error.message?.includes('timeout') && attempt < maxAttempts) {
-        console.log(`🔄 Retrying OTP verification (attempt ${attempt + 1}/${maxAttempts})...`);
         await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
         return verifyOTPWithRetry(attempt + 1, maxAttempts);
       }
@@ -160,12 +138,10 @@ export const useOTPHandlers = ({
     setError('');
     
     try {
-      console.log('🔵 STARTING OTP VERIFICATION PROCESS');
       
       const { data, error } = await verifyOTPWithRetry();
 
       if (error) {
-        console.error('❌ Final OTP verification error:', error);
         let errorMessage = 'Invalid OTP. Please try again.';
         
         // Provide more specific error messages
@@ -185,11 +161,10 @@ export const useOTPHandlers = ({
       } 
       
       if (data.user) {
-        console.log('✅ OTP verified successfully:', data.user.id);
         
         // Create or get user record immediately after auth success
         try {
-          console.log('🔄 Creating/getting user record...');
+          
           const userRecord = await createOrGetUserRecord(data.user, formatPhoneForDB(phoneNumber));
           
           // Only update is_verified for existing users
@@ -200,16 +175,12 @@ export const useOTPHandlers = ({
               .eq('id', data.user.id)
               .select()
               .single();
-            console.log('[OTP] Update is_verified result:', updateData);
-            console.log('[OTP] Update is_verified error:', updateError);
             if (updateError) {
-              console.error('Error updating phone verification status:', updateError);
               // Don't throw - user is still authenticated
             }
           }
           
           if (userRecord?.isExisting) {
-            console.log('👤 Existing user found:', userRecord.userData);
             setExistingUser(userRecord.userData);
             
             // Sign in the user
@@ -231,7 +202,6 @@ export const useOTPHandlers = ({
             
             return { isExistingUser: true };
           } else {
-            console.log('👤 New user - showing profile form');
             setIsVerified(true);
             setTimeout(() => {
               setStep('profile');
@@ -241,7 +211,6 @@ export const useOTPHandlers = ({
             return { isExistingUser: false };
           }
         } catch (userRecordError) {
-          console.error('❌ Error creating/getting user record:', userRecordError);
           // Continue with auth but show profile form
           setIsVerified(true);
           setTimeout(() => {
@@ -252,15 +221,9 @@ export const useOTPHandlers = ({
           return { isExistingUser: false };
         }
       } else {
-        console.error('❌ No user data in verification response');
         setError('Verification failed. Please try again.');
       }
     } catch (err: any) {
-      console.error('❌ Unexpected verification error:', {
-        message: err.message,
-        stack: err.stack,
-        name: err.name
-      });
       
       let errorMessage = 'An unexpected error occurred. Please try again.';
       if (err.message?.includes('timeout')) {
@@ -291,20 +254,15 @@ export const useOTPHandlers = ({
     setError('');
 
     try {
-      console.log('🔍 Starting profile completion process...');
       
       const { data: { user }, error: authError } = await supabase.auth.getUser();
-      console.log('Auth user:', user);
-      console.log('Auth error:', authError);
       
       if (authError) {
-        console.error('❌ Auth error:', authError);
         setError('Authentication error. Please try signing in again.');
         return;
       }
       
       if (!user) {
-        console.error('❌ No authenticated user found');
         setError('No authenticated user found. Please try signing in again.');
         return;
       }
@@ -320,7 +278,6 @@ export const useOTPHandlers = ({
         is_verified: true
       };
       
-      console.log('📝 Updating user profile with:', userRecord);
       
       const { data, error: profileError } = await supabase
         .from('users')
@@ -329,15 +286,12 @@ export const useOTPHandlers = ({
         .select()
         .single();
 
-      console.log('📊 Update response data:', data);
       
       if (profileError) {
-        console.error('❌ Profile update error:', profileError);
         setError(`Failed to update profile: ${profileError.message}`);
         return;
       }
 
-      console.log('✅ Profile updated successfully:', data);
       
       await signIn(formatPhoneForDB(phoneNumber));
       
@@ -358,7 +312,6 @@ export const useOTPHandlers = ({
       
       return { success: true };
     } catch (err) {
-      console.error('❌ Unexpected profile completion error:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSaving(false);

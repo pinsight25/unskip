@@ -18,8 +18,6 @@ interface CarImageGalleryProps {
 }
 
 const CarImageGallery = ({ images, title, featured, verified, seller }: CarImageGalleryProps) => {
-  // Debug logging for badge display
-  console.log('CarImageGallery props:', { title, featured, verified, seller });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
 

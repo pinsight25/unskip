@@ -27,10 +27,9 @@ export function ProfileForm({ userId, phone, onComplete }: ProfileFormProps) {
         })
         .eq('id', userId);
       if (error) throw error;
-      console.log('[ProfileForm] Profile updated successfully');
       onComplete();
     } catch (error) {
-      console.error('[ProfileForm] Error:', error);
+      // console.error('[ProfileForm] Error:', error);
     } finally {
       setLoading(false);
     }

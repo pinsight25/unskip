@@ -10,11 +10,11 @@ interface CarCardImageProps {
   isSaved: boolean;
   isSaving?: boolean;
   onSave: () => void;
+  onUnsave?: () => void;
 }
 
-const CarCardImage = ({ car, isSaved, isSaving = false, onSave }: CarCardImageProps) => {
+const CarCardImage = ({ car, isSaved, isSaving = false, onSave, onUnsave }: CarCardImageProps) => {
   // Debug logging for badge display
-  console.log('CarCardImage car:', { title: car.title, featured: car.featured, verified: car.verified, dealerVerified: car.seller?.dealerVerified });
   return (
     <div className="relative w-full h-[200px] overflow-hidden rounded-lg">
       <Link to={`/car/${car.id}`}>
@@ -62,7 +62,7 @@ const CarCardImage = ({ car, isSaved, isSaving = false, onSave }: CarCardImagePr
           className={`h-8 w-8 p-0 shadow-md rounded-full border ${
             isSaved ? 'bg-red-50 hover:bg-red-100 border-red-200' : 'bg-white hover:bg-gray-50 border-gray-200'
           }`}
-          onClick={onSave}
+          onClick={isSaved ? onUnsave : onSave}
           disabled={isSaving}
         >
           {isSaving ? (

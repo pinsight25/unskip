@@ -402,6 +402,35 @@ export type Database = {
           },
         ]
       }
+      car_views: {
+        Row: {
+          id: string
+          car_id: string
+          viewer_id: string | null
+          seller_id: string
+          viewed_at: string
+          ip_address: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          car_id: string
+          viewer_id?: string | null
+          seller_id: string
+          viewed_at?: string
+          ip_address?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          car_id?: string
+          viewer_id?: string | null
+          seller_id?: string
+          viewed_at?: string
+          ip_address?: string | null
+          created_at?: string
+        }
+      }
       chat_messages: {
         Row: {
           chat_id: string
@@ -412,6 +441,7 @@ export type Database = {
           receiver_id: string
           seen: boolean | null
           sender_id: string
+          read_at: string | null
         }
         Insert: {
           chat_id: string
@@ -422,6 +452,7 @@ export type Database = {
           receiver_id: string
           seen?: boolean | null
           sender_id: string
+          read_at?: string | null
         }
         Update: {
           chat_id?: string
@@ -432,6 +463,7 @@ export type Database = {
           receiver_id?: string
           seen?: boolean | null
           sender_id?: string
+          read_at?: string | null
         }
         Relationships: [
           {

@@ -26,7 +26,6 @@ const PricingStep = ({ formData, setFormData, updateFormData, validatePrice }: P
   const [serviceOpen, setServiceOpen] = useState(false);
 
   const handleFieldChange = (field: keyof SellCarFormData, value: any) => {
-    console.log('🔄 Field changed:', field, value);
     updateFormData({ [field]: value });
   };
 

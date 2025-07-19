@@ -8,6 +8,8 @@ interface MobileCarImageProps {
   title: string;
   featured?: boolean;
   verified?: boolean;
+  seller_type?: 'individual' | 'dealer';
+  dealerVerified?: boolean;
   isSaved: boolean;
   isSaving?: boolean;
   onSave: () => void;
@@ -18,6 +20,8 @@ const MobileCarImage = ({
   title, 
   featured, 
   verified, 
+  seller_type,
+  dealerVerified,
   isSaved, 
   isSaving = false, 
   onSave 
@@ -56,7 +60,12 @@ const MobileCarImage = ({
           className="w-full h-full object-cover rounded-lg"
         />
         
-        <MobileCarBadges featured={featured} verified={verified} />
+        <MobileCarBadges 
+          featured={featured} 
+          verified={verified} 
+          seller_type={seller_type}
+          dealerVerified={dealerVerified}
+        />
 
         {/* Save Button */}
         <button

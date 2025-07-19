@@ -17,6 +17,26 @@ interface Offer {
   message?: string;
 }
 
+// Add OfferRow type for the Supabase response
+
+type OfferRow = {
+  id: string;
+  car_id: string;
+  buyer_name: string;
+  buyer_phone: string;
+  amount: number;
+  status: string;
+  message?: string;
+  created_at: string;
+  cars?: {
+    title?: string;
+    price?: number;
+    make?: string;
+    model?: string;
+    year?: number;
+  }[];
+};
+
 export const useUserOffers = () => {
   const { user } = useUser();
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -41,7 +61,6 @@ export const useUserOffers = () => {
         .single();
 
       if (userError || !userData) {
-        console.error('Error fetching user:', userError);
         setError('Failed to fetch user data');
         return;
       }
@@ -70,28 +89,29 @@ export const useUserOffers = () => {
         .order('created_at', { ascending: false });
 
       if (offersError) {
-        console.error('Error fetching offers:', offersError);
         setError('Failed to fetch offers');
         return;
       }
 
       // Transform the data
-      const transformedOffers: Offer[] = (offersData || []).map(offer => ({
-        id: offer.id,
-        car_id: offer.car_id,
-        car_title: offer.cars.title || `${offer.cars.year} ${offer.cars.make} ${offer.cars.model}`,
-        asking_price: offer.cars.price,
-        buyer_name: offer.buyer_name,
-        buyer_phone: offer.buyer_phone,
-        offer_amount: offer.amount,
-        status: offer.status as 'pending' | 'accepted' | 'rejected',
-        created_at: formatRelativeDate(offer.created_at),
-        message: offer.message || undefined
-      }));
+      const transformedOffers: Offer[] = (offersData || []).map((offer: OfferRow) => {
+        const car = Array.isArray(offer.cars) ? offer.cars[0] : offer.cars;
+        return {
+          id: offer.id,
+          car_id: offer.car_id,
+          car_title: car?.title || `${car?.year || ''} ${car?.make || ''} ${car?.model || ''}`.trim(),
+          asking_price: car?.price ?? 0,
+          buyer_name: offer.buyer_name,
+          buyer_phone: offer.buyer_phone,
+          offer_amount: offer.amount,
+          status: offer.status as 'pending' | 'accepted' | 'rejected',
+          created_at: formatRelativeDate(offer.created_at),
+          message: offer.message || undefined
+        };
+      });
 
       setOffers(transformedOffers);
     } catch (err) {
-      console.error('Error in fetchOffers:', err);
       setError('Failed to fetch offers');
     } finally {
       setIsLoading(false);
@@ -118,7 +138,6 @@ export const useUserOffers = () => {
         .eq('id', offerId);
 
       if (error) {
-        console.error('Error updating offer:', error);
         return false;
       }
 
@@ -131,7 +150,6 @@ export const useUserOffers = () => {
 
       return true;
     } catch (err) {
-      console.error('Error updating offer status:', err);
       return false;
     }
   };

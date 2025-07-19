@@ -79,77 +79,39 @@ export const useCars = () => {
   const lastRealtimeRefetch = useRef(0);
   const POLL_INTERVAL = 30000; // 30 seconds fallback polling
   const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
-  const [timedOut, setTimedOut] = useState(false);
 
   const query = useQuery<any[]>({
     queryKey: ['cars'],
     queryFn: async () => {
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetching cars...');
+      const { data: carsData, error: carsError } = await (supabase as any)
+        .from('cars')
+        .select(`
+          id, title, price, make, model, year, seller_id, status, created_at,
+          fuel_type, transmission, kilometers_driven, number_of_owners,
+          area, city, color, variant, description, featured, verified,
+          car_images(image_url, is_cover, sort_order),
+          users:seller_id(id, name, is_verified, user_type, phone)
+        `)
+        .eq('status', 'active')
+        .eq('car_images.is_cover', true)
+        .order('created_at', { ascending: false });
+      if (carsError) {
+        throw carsError;
       }
-      setTimedOut(false);
-      let timeoutId: any;
-      const timeoutPromise = new Promise<any[]>((_, reject) => {
-        timeoutId = setTimeout(() => {
-          setTimedOut(true);
-          reject(new Error('Request timed out after 10 seconds'));
-        }, 10000);
-      });
-      try {
-        const carsPromise = (async () => {
-          const { data: carsData, error: carsError } = await (supabase as any)
-            .from('cars')
-            .select(`
-              id, title, price, make, model, year, seller_id, status, created_at,
-              fuel_type, transmission, kilometers_driven, number_of_owners,
-              area, city, color, variant, description, featured, verified,
-              car_images(image_url, is_cover, sort_order),
-              users:seller_id(id, name, is_verified, user_type, phone)
-            `)
-            .eq('status', 'active')
-            .eq('car_images.is_cover', true)
-            .order('created_at', { ascending: false });
-          if (carsError) {
-            if (import.meta.env.DEV) {
-              console.error('[React Query] Error fetching cars:', carsError);
-            }
-            throw carsError;
-          }
-          const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
-          if (import.meta.env.DEV) {
-            console.log('[React Query] Fetched cars:', carsMapped.length);
-          }
-          return carsMapped as any[];
-        })();
-        const result = await Promise.race([carsPromise, timeoutPromise]);
-        clearTimeout(timeoutId);
-        return result;
-      } catch (err) {
-        clearTimeout(timeoutId);
-        if (import.meta.env.DEV) {
-          console.error('[React Query] Cars query error:', err);
-        }
-        throw err;
-      }
+      const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
+      return carsMapped as any[];
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
     placeholderData: [],
-    retry: (failureCount, error) => {
-      if (failureCount > 3) return false;
-      // Exponential backoff: 1s, 2s, 4s, 8s
-      const delay = Math.pow(2, failureCount) * 1000;
-      if (import.meta.env.DEV) {
-        console.warn(`[React Query] Cars query retry #${failureCount} after ${delay}ms`, error);
-      }
-      return true;
-    },
-    retryDelay: (attempt) => Math.pow(2, attempt) * 1000,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    // Use React Query default retry logic
   });
 
   // Debounced real-time subscription
   useEffect(() => {
-    console.log('[Realtime] Subscribing to cars and car_images changes...');
     const channel = supabase.channel('realtime-cars-and-images')
       .on(
         'postgres_changes',
@@ -158,11 +120,9 @@ export const useCars = () => {
           schema: 'public',
           table: 'cars',
         },
-        (payload) => {
-          console.log('[Realtime] Cars table event received:', payload);
+        () => {
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating cars query...');
             queryClient.invalidateQueries({ queryKey: ['cars'] });
             lastRealtimeRefetch.current = now;
           }
@@ -175,22 +135,17 @@ export const useCars = () => {
           schema: 'public',
           table: 'car_images',
         },
-        (payload) => {
-          console.log('[Realtime] Car images table event received:', payload);
+        () => {
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating cars query...');
             queryClient.invalidateQueries({ queryKey: ['cars'] });
             lastRealtimeRefetch.current = now;
           }
         }
       )
       .subscribe();
-    // Fallback polling log
+    // Fallback polling
     const pollInterval = setInterval(() => {
-      if (import.meta.env.DEV) {
-        console.log('[Fallback Polling] Refetching cars due to polling interval');
-      }
       queryClient.invalidateQueries({ queryKey: ['cars'] });
     }, POLL_INTERVAL * 2); // Fallback every 60s
     return () => {
@@ -199,7 +154,7 @@ export const useCars = () => {
     };
   }, [queryClient]);
 
-  return { ...query, timedOut };
+  return query;
 };
 
 // Fetch user's listings for profile
@@ -213,9 +168,6 @@ export const useUserListings = (userId: string | undefined) => {
     queryKey: ['userListings', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID required');
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetching user listings for:', userId);
-      }
       const { data, error } = await (supabase as any)
         .from('cars')
         .select('id, title, price, make, model, year, seller_id, status, created_at, car_images(image_url, is_cover, sort_order)')
@@ -227,12 +179,12 @@ export const useUserListings = (userId: string | undefined) => {
     enabled: !!userId,
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
+    staleTime: Infinity,
   });
 
   // Debounced real-time subscription for user's listings
   useEffect(() => {
     if (!userId) return;
-    console.log('[Realtime] Subscribing to user listings changes for:', userId);
     const channel = supabase.channel(`realtime-user-listings-${userId}`)
       .on(
         'postgres_changes',
@@ -243,10 +195,8 @@ export const useUserListings = (userId: string | undefined) => {
           filter: `seller_id=eq.${userId}`
         },
         (payload) => {
-          console.log('[Realtime] User listings event received for', userId, ':', payload);
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating user listings query for', userId, '...');
             queryClient.invalidateQueries({ queryKey: ['userListings', userId] });
             lastRealtimeRefetch.current = now;
           }
@@ -271,9 +221,6 @@ export const useDealers = () => {
   const query = useQuery<any[]>({
     queryKey: ['dealers'],
     queryFn: async () => {
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetching dealers...');
-      }
       const { data, error } = await (supabase as any)
         .from('dealers')
         .select('id, user_id, business_name, shop_address, phone, email, brands_deal_with, shop_photos_urls, about, created_at, updated_at, verified, verification_status')
@@ -283,11 +230,11 @@ export const useDealers = () => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
+    staleTime: Infinity,
   });
 
   // Debounced real-time subscription for dealers
   useEffect(() => {
-    console.log('[Realtime] Subscribing to dealers changes...');
     const channel = supabase.channel('realtime-dealers')
       .on(
         'postgres_changes',
@@ -297,10 +244,8 @@ export const useDealers = () => {
           table: 'dealers',
         },
         (payload) => {
-          console.log('[Realtime] Dealers event received:', payload);
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating dealers query...');
             queryClient.invalidateQueries({ queryKey: ['dealers'] });
             lastRealtimeRefetch.current = now;
           }
@@ -325,9 +270,6 @@ export const useOffers = (userId?: string) => {
   const query = useQuery<any[]>({
     queryKey: userId ? ['offers', userId] : ['offers'],
     queryFn: async () => {
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetching offers...');
-      }
       if (userId) {
         const { data, error } = await (supabase as any)
           .from('offers')
@@ -347,11 +289,11 @@ export const useOffers = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
+    staleTime: Infinity,
   });
 
   // Debounced real-time subscription for offers
   useEffect(() => {
-    console.log('[Realtime] Subscribing to offers changes...');
     const channel = supabase.channel('realtime-offers')
       .on(
         'postgres_changes',
@@ -361,10 +303,8 @@ export const useOffers = (userId?: string) => {
           table: 'offers',
         },
         (payload) => {
-          console.log('[Realtime] Offers event received:', payload);
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating offers query...');
             queryClient.invalidateQueries({ queryKey: userId ? ['offers', userId] : ['offers'] });
             lastRealtimeRefetch.current = now;
           }
@@ -390,9 +330,6 @@ export const useChats = (userId?: string) => {
     queryKey: userId ? ['chats', userId] : ['chats'],
     queryFn: async () => {
       if (!userId) return [];
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetching chats for user:', userId);
-      }
       const { data, error } = await (supabase as any)
         .from('chats')
         .select('id, buyer_id, seller_id, car_id, status, created_at, updated_at')
@@ -403,12 +340,12 @@ export const useChats = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
+    staleTime: Infinity,
   });
 
   // Debounced real-time subscription for chats
   useEffect(() => {
     if (!userId) return;
-    console.log('[Realtime] Subscribing to chats changes for:', userId);
     const channel = supabase.channel('realtime-chats')
       .on(
         'postgres_changes',
@@ -418,10 +355,8 @@ export const useChats = (userId?: string) => {
           table: 'chats',
         },
         (payload) => {
-          console.log('[Realtime] Chats event received:', payload);
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating chats query for', userId, '...');
             queryClient.invalidateQueries({ queryKey: ['chats', userId] });
             lastRealtimeRefetch.current = now;
           }
@@ -435,10 +370,8 @@ export const useChats = (userId?: string) => {
           table: 'chat_messages',
         },
         (payload) => {
-          console.log('[Realtime] Chat messages event received:', payload);
           const now = Date.now();
           if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            console.log('[Realtime] Invalidating chats query for', userId, '...');
             queryClient.invalidateQueries({ queryKey: ['chats', userId] });
             lastRealtimeRefetch.current = now;
           }
@@ -459,7 +392,6 @@ export const useInvalidateCarQueries = () => {
   
   return {
     invalidateAll: async () => {
-      console.log('[React Query] Invalidating all car queries...');
       await queryClient.invalidateQueries({ queryKey: ['cars'] });
       await queryClient.invalidateQueries({ queryKey: ['userListings'] });
     },

@@ -13,12 +13,14 @@ import { Phone, MessageCircle } from 'lucide-react';
 import MakeOfferModal from '@/components/car-details/MakeOfferModal';
 import { useOfferStatus } from '@/hooks/queries/useOfferStatus';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTrackCarView } from '@/hooks/useCarViews';
 
 interface CarDetailContainerProps {
   car: Car;
 }
 
 const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
+  useTrackCarView(car);
   const navigate = useNavigate();
   const { navigateToChat } = useChatManager();
   const { makeOffer } = useOfferContext();
@@ -56,7 +58,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
-    console.log('Offer submitted:', offer);
     
     // Mark offer as made in context
     makeOffer(car.id);
@@ -92,7 +93,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleOpenSignInModal = () => {
-    console.log('[CarDetailContainer] Opening SignInModal');
     setIsSignInModalOpen(true);
   };
 
@@ -133,7 +133,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
         .eq('id', car.id);
       
       if (error) {
-        console.error('Error marking car as sold:', error);
         toast({
           title: "Error",
           description: "Failed to mark car as sold. Please try again.",
@@ -157,7 +156,6 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
       // Navigate back to profile
       navigate('/profile');
     } catch (error) {
-      console.error('Error marking car as sold:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",

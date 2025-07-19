@@ -23,10 +23,6 @@ interface MakeOfferModalProps {
 const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car }) => {
   const { openSignInModal } = useAuthModal();
   const { user } = useUser();
-  console.log('[MakeOfferModal] Rendered with props:', { 
-    openSignInModal: !!openSignInModal,
-    isVerified: user?.isVerified 
-  });
   const [form, setForm] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -82,7 +78,6 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
   };
 
   const handleSubmit = () => {
-    console.log('handleSubmit called'); // Debug log
     if (!user || !user.isVerified) {
       openSignInModal(() => {
         // This runs after successful auth

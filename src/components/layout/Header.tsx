@@ -30,9 +30,6 @@ const Header = () => {
         .eq('receiver_id', user.id)
         .eq('seen', false);
       if (error) return 0;
-      if (import.meta.env.DEV) {
-        console.log('[Header] Unread chat count refetched:', (data || []).length);
-      }
       return (data || []).length;
     },
     enabled: !!user?.id,

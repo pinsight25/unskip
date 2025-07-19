@@ -53,7 +53,6 @@ export const useOfferManagement = () => {
           .single();
 
         if (chatError) {
-          console.error('Chat creation error:', chatError);
           toast({
             title: "Warning",
             description: "Offer accepted but chat creation failed. Please try messaging the buyer manually.",
@@ -96,7 +95,6 @@ export const useOfferManagement = () => {
       }, 1500);
 
     } catch (error) {
-      console.error('Unexpected error:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",

@@ -27,7 +27,6 @@ export const useOTPState = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const resetModal = () => {
-    console.log('🔄 Resetting modal state...');
     
     // Reset all step-related states
     setStep('phone');
@@ -54,7 +53,6 @@ export const useOTPState = () => {
     // Clear existing user data
     setExistingUser(null);
     
-    console.log('✅ Modal state reset complete');
   };
 
   const editPhoneNumber = () => {

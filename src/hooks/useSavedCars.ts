@@ -30,7 +30,6 @@ export function useSavedCars() {
   // Real-time subscription for saved_cars
   useEffect(() => {
     if (!user?.id) return;
-    console.log(`[Realtime] Subscribing to saved_cars for user ${user.id}...`);
     const channel = supabase.channel(`realtime-saved-cars-${user.id}`)
       .on(
         'postgres_changes',
@@ -41,8 +40,6 @@ export function useSavedCars() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log('[Realtime] saved_cars event received:', payload);
-          console.log('[Realtime] Invalidating savedCars query...');
           queryClient.invalidateQueries({ queryKey: ['savedCars', user.id] });
         }
       )

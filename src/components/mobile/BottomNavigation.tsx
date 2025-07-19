@@ -2,10 +2,14 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, Plus, Heart, User } from 'lucide-react';
+import { useSavedCars } from '@/hooks/useSavedCars';
+import { useUser } from '@/contexts/UserContext';
 
 const BottomNavigation = () => {
   const location = useLocation();
-  const [savedCount] = useState(3);
+  const { user } = useUser();
+  const { savedCars } = useSavedCars();
+  const savedCount = user && savedCars ? savedCars.length : 0;
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/', active: location.pathname === '/' },
@@ -69,9 +73,9 @@ const BottomNavigation = () => {
                       ? 'text-orange-500' 
                       : 'text-gray-500 group-hover:text-gray-700'
                   }`} />
-                  {item.badge && item.badge > 0 && (
+                  {item.label === 'Saved' && savedCount > 0 && (
                     <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center font-bold border-2 border-white shadow-sm">
-                      {item.badge}
+                      {savedCount}
                     </div>
                   )}
                 </div>

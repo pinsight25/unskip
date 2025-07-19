@@ -22,7 +22,6 @@ const HomeModals = ({
   openSignInModal
 }: HomeModalsProps) => {
   useEffect(() => {
-    console.log('[HomeModals] openSignInModal prop:', !!openSignInModal);
   }, [openSignInModal]);
   const { user } = useUser();
 

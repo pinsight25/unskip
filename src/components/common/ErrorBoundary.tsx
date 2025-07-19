@@ -23,8 +23,9 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Remove console.error, but keep error boundary logic
+    // Optionally, send error to an external service here
   }
 
   private handleReload = () => {

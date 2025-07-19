@@ -12,13 +12,16 @@ import { useUser } from '@/contexts/UserContext';
 import { formatDistanceToNow } from 'date-fns';
 import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useMessages } from '@/hooks/useMessages';
 
-const Chats = () => {
+const Chats = ({ onBack }: { onBack?: () => void }) => {
   const navigate = useNavigate();
   const { user } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [carImagesMap, setCarImagesMap] = useState<Record<string, any[]>>({});
   const [carImagesLoading, setCarImagesLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   // Fetch real chats from database
   const { data: chats = [], isLoading, refetch } = useQuery({
@@ -43,7 +46,7 @@ const Chats = () => {
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
         .order('updated_at', { ascending: false });
       if (error) {
-        console.error('Error fetching chats:', error);
+        // console.error('Error fetching chats:', error);
         return [];
       }
       // Step 2: Fetch car_images for all cars in batch
@@ -90,6 +93,21 @@ const Chats = () => {
     },
     enabled: !!user?.id,
     // refetchInterval: 5000, // Remove polling, rely on real-time
+  });
+
+  const { data: allMessages = [] } = useQuery({
+    queryKey: ['allMessages', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user?.id,
+    staleTime: 10000,
   });
 
   useRealtimeRefetch('chat_messages', ['chats', user?.id]);
@@ -192,17 +210,18 @@ const Chats = () => {
     );
   }
 
+  // Render chat list for both desktop and mobile
   return (
     <div className="w-full max-w-[380px] h-screen border-r border-gray-200 bg-white flex flex-col" style={{ minWidth: 0 }}>
-      {/* Sidebar Header */}
-      <div className="px-4 py-1 border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center gap-2" style={{ marginTop: 0, paddingTop: 0 }}>
-        <button onClick={() => navigate('/')} className="mr-1 text-gray-500 hover:text-primary focus:outline-none">
+      {/* DESKTOP HEADER (always visible on md+) */}
+      <div className="hidden md:flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+        <button onClick={() => (onBack ? onBack() : navigate('/'))} className="mr-2 text-gray-500 hover:text-primary focus:outline-none">
           <span className="text-xl">&larr;</span>
         </button>
         <h2 className="text-lg font-bold text-gray-900 tracking-tight">My Chats</h2>
       </div>
-      {/* Search Bar */}
-      <div className="relative p-2 border-b border-gray-100 bg-white" style={{ marginTop: 0, paddingTop: 0 }}>
+      {/* DESKTOP SEARCH BAR (always visible on md+) */}
+      <div className="hidden md:block relative p-2 border-b border-gray-100 bg-white">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           type="text"
@@ -212,72 +231,76 @@ const Chats = () => {
           className="pl-9 py-2 text-sm rounded bg-gray-50 border border-gray-200"
         />
       </div>
-      {/* Chats List */}
-      <div className="flex-1 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 56px - 48px)' }}>
+      {/* MOBILE HEADER (only visible on mobile) */}
+      <div className="flex md:hidden items-center gap-2 px-4 py-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+        <button onClick={() => (onBack ? onBack() : navigate('/'))} className="mr-2 text-gray-500 hover:text-primary focus:outline-none">
+          <span className="text-xl">&larr;</span>
+        </button>
+        <h2 className="text-lg font-bold text-gray-900 tracking-tight">My Chats</h2>
+      </div>
+      {/* MOBILE SEARCH BAR (only visible on mobile) */}
+      <div className="block md:hidden relative p-2 border-b border-gray-100 bg-white">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Input
+          type="text"
+          placeholder="Search chats..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 py-3 text-base rounded bg-gray-50 border border-gray-200 min-h-[44px]"
+          style={{minHeight:44}}
+        />
+      </div>
+      {/* Chat list container - always render for both desktop and mobile */}
+      <div className="flex-1 overflow-y-auto min-h-0 pt-14 md:pt-0" style={{maxHeight:'calc(100dvh - 56px - 48px)'}}>
         {filteredChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
             <MessageCircle className="h-8 w-8 text-gray-400 mx-auto mb-4" />
             <h3 className="text-base font-medium text-gray-900 mb-2">No chats yet</h3>
             <p className="text-gray-500 text-sm">
-              {searchQuery 
-                ? 'No chats found matching your search'
-                : 'Start a conversation by making an offer on a car'}
+              {searchQuery ? 'No chats found matching your search' : 'Start a conversation by making an offer on a car'}
             </p>
           </div>
         ) : (
           filteredChats.map((chat) => {
-            const otherUser = user?.id === chat.buyer_id ? chat.seller : chat.buyer;
-            const isBuyer = user?.id === chat.buyer_id;
             const carImage = chat.carImageUrl || '/placeholder-car.jpg';
-            const isUnread = chat.unread_count > 0;
+            const unreadCount = allMessages.filter(
+              m => m.chat_id === chat.id && m.sender_id !== user?.id && !m.read_at
+            ).length;
             return (
               <div
                 key={chat.id}
-                className="flex items-center gap-3 px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition group relative"
-                style={{ minHeight: 56 }}
+                className="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition group relative min-h-[64px]"
+                style={{minHeight:64, minWidth:0, touchAction:'manipulation'}}
                 onClick={() => navigate(`/chats/${chat.id}`)}
               >
                 {/* Car Image */}
-                <div className="relative flex-shrink-0">
-                  <img
-                    src={carImage}
-                    alt={`${chat.car?.make || ''} ${chat.car?.model || ''}`}
-                    className="w-11 h-11 rounded object-cover border"
-                    onError={(e) => {
-                      e.currentTarget.src = '/placeholder-car.jpg';
-                    }}
-                  />
+                <img
+                  src={carImage}
+                  alt={`${chat.car?.make || ''} ${chat.car?.model || ''}`}
+                  className="w-12 h-12 rounded-full object-cover border"
+                  style={{minWidth:48, minHeight:48}}
+                  onError={(e) => { e.currentTarget.src = '/placeholder-car.jpg'; }}
+                />
+                {/* Car Info */}
+                <div className="flex-1 ml-3 min-w-0">
+                  <div className="font-semibold text-base truncate">
+                    {(chat.car?.year || '')} {(chat.car?.make || '')} {(chat.car?.model || '')}
+                  </div>
+                  <div className="text-sm text-gray-600 truncate mt-1">
+                    {chat.last_message?.content || 'No messages yet'}
+                  </div>
                 </div>
-                {/* Chat Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 text-sm truncate max-w-[140px]">
-                      {(chat.car?.year || '')} {(chat.car?.make || '')} {(chat.car?.model || '')}
-                    </h3>
-                    {chat.last_message && (
-                      <span className="text-xs text-gray-400 ml-2">
-                        {formatTime(chat.last_message.created_at)}
-                      </span>
-                    )}
+                {/* Time and Unread Badge */}
+                <div className="text-right ml-2 flex flex-col items-end min-w-[56px]">
+                  <div className="text-xs text-gray-500 mb-1">
+                    {chat.last_message ? formatTime(chat.last_message.created_at) : ''}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-gray-600 truncate max-w-[100px]">
-                      {otherUser?.name || (isBuyer ? 'Seller' : 'Buyer')}
-                    </span>
-                  </div>
-                  {chat.last_message && (
-                    <p className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">
-                      {chat.last_message.sender_id === user?.id && 'You: '}
-                      {chat.last_message.content}
-                    </p>
+                  {unreadCount > 0 && (
+                    <div className="bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center ml-2">
+                      {unreadCount}
+                    </div>
                   )}
                 </div>
-                {/* Unread badge (WhatsApp style) */}
-                {isUnread && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 bg-green-500 text-white text-xs rounded-full px-2 py-0.5 min-w-[20px] text-center shadow">
-                    {chat.unread_count}
-                  </div>
-                )}
               </div>
             );
           })

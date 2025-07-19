@@ -86,7 +86,6 @@ const PhotosStep = ({ formData = {}, setFormData, updateFormData, onUpdate }: Ph
       const data = await response.json();
       return data.secure_url;
     } catch (error) {
-      console.error('Upload error:', error);
       throw error;
     }
   };
@@ -121,7 +120,6 @@ const PhotosStep = ({ formData = {}, setFormData, updateFormData, onUpdate }: Ph
         setUploading(true);
         try {
           const cloudinaryUrl = await uploadToCloudinary(file);
-          console.log('✅ Cloudinary upload successful:', cloudinaryUrl);
           const newPhoto = {
             id: Date.now().toString() + '-' + i,
             file: file,
@@ -144,15 +142,12 @@ const PhotosStep = ({ formData = {}, setFormData, updateFormData, onUpdate }: Ph
         setCoverPhotoIndex(0);
         // Update parent formData with full photo objects
         if (updateFormData) {
-          console.log('📸 Updating photos via updateFormData:', updatedPhotos);
           updateFormData({ photos: updatedPhotos, coverPhotoIndex: 0 });
         } else if (onUpdate) {
           onUpdate({ ...formData, photos: updatedPhotos });
         } else if (setFormData) {
           setFormData((prev: any) => ({ ...prev, photos: updatedPhotos, coverPhotoIndex: 0 }));
         }
-        console.log('📸 Photos after update:', updatedPhotos);
-        console.log('📦 FormData after update:', { ...formData, photos: updatedPhotos });
         toast({ title: 'Photos Added', description: `Successfully added ${newPhotos.length} photo${newPhotos.length > 1 ? 's' : ''}` });
       }
     } finally {
@@ -239,9 +234,6 @@ const PhotosStep = ({ formData = {}, setFormData, updateFormData, onUpdate }: Ph
   // Calculate slots to show
   const slots = Math.max(photos.length + 1, MIN_SLOTS);
   const canAddMore = photos.length < MAX_PHOTOS;
-
-  console.log('PhotosStep render - photos:', photos);
-  console.log('PhotosStep render - formData.photos:', formData.photos);
 
   return (
     <div className="space-y-4 pb-6">
