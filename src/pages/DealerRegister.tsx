@@ -1,9 +1,10 @@
 
 import { useNavigate } from 'react-router-dom';
-import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useDealerRegistrationForm } from '@/hooks/useDealerRegistrationForm';
 import BusinessInformationStep from '@/components/dealer/registration/BusinessInformationStep';
 import LegalLocationStep from '@/components/dealer/registration/LegalLocationStep';
@@ -26,6 +27,7 @@ const DealerRegister = () => {
     prevStep,
     handleSubmit,
     setFormData,
+    fieldErrors,
   } = useDealerRegistrationForm();
 
   const handleTermsChange = (checked: boolean | 'indeterminate') => {
@@ -67,6 +69,7 @@ const DealerRegister = () => {
           <BusinessInformationStep
             formData={formData}
             onInputChange={handleInputChange}
+            fieldErrors={fieldErrors}
           />
         );
       case 2:
@@ -100,7 +103,8 @@ const DealerRegister = () => {
       formData.email &&
       formData.businessCategory &&
       formData.specialization &&
-      formData.brandsDealWith && formData.brandsDealWith.length > 0
+      formData.brandsDealWith && formData.brandsDealWith.length > 0 &&
+      formData.about && formData.about.trim().length > 0
     );
   } else if (currentStep === 2) {
     canProceed = Boolean(
@@ -120,62 +124,62 @@ const DealerRegister = () => {
   }
 
   return (
-    <ResponsiveLayout>
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-8">
-              <button
-                onClick={() => navigate('/dealers')}
-                className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dealers
-              </button>
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">Become a Dealer</h1>
-              <p className="text-gray-600">Join our network of trusted automotive dealers</p>
-            </div>
+    <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-8 lg:pb-32 responsive-header-spacing">
+      {/* Back Button and Clear Form */}
+      <div className="mb-6 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/dealers')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dealers
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={clearDealerForm}
+          className="flex items-center gap-2 text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+          Clear Form
+        </Button>
+      </div>
 
-            <Card className="shadow-lg">
-              <CardContent className="p-6">
-                {/* Clear Form Button */}
-                <div className="flex justify-end mb-4">
-                  <button
-                    onClick={clearDealerForm}
-                    className="text-destructive border border-destructive px-3 py-1 rounded hover:bg-red-50 font-medium text-sm"
-                    type="button"
-                  >
-                    Clear Form
-                  </button>
-                </div>
-                {/* Progress Bar */}
-                <div className="mb-8">
-                  <div className="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>Step {currentStep} of {totalSteps}</span>
-                    <span>{Math.round(progress)}% Complete</span>
-                  </div>
-                  <Progress value={progress} className="w-full" />
-                </div>
-
-                {/* Step Content */}
-                {renderCurrentStep()}
-
-                {/* Navigation Buttons */}
-                <RegistrationNavigation
-                  currentStep={currentStep}
-                  totalSteps={totalSteps}
-                  onPrevStep={prevStep}
-                  onNextStep={nextStep}
-                  onSubmit={handleSubmit}
-                  canProceed={canProceed}
-                  isSubmitting={isSubmitting}
-                />
-              </CardContent>
-            </Card>
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold">Become a Dealer</h1>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">Step {currentStep} of {totalSteps}</Badge>
+            <Badge variant="default" className="text-xs">
+              {Math.round(progress)}% Complete
+            </Badge>
           </div>
         </div>
+        <Progress value={progress} className="h-2" />
       </div>
-    </ResponsiveLayout>
+
+      {/* Form Content */}
+      <Card className="shadow-lg">
+        <CardContent className="p-6">
+          {/* Step Content */}
+          {renderCurrentStep()}
+
+          {/* Navigation Buttons */}
+          <RegistrationNavigation
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onPrevStep={prevStep}
+            onNextStep={nextStep}
+            onSubmit={handleSubmit}
+            canProceed={canProceed}
+            isSubmitting={isSubmitting}
+          />
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

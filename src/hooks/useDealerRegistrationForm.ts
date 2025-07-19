@@ -213,15 +213,67 @@ export const useDealerRegistrationForm = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const validateCurrentStep = () => {
+    const errors: Record<string, string> = {};
+    
+    if (currentStep === 1) {
+      if (!formData.businessName) errors.businessName = 'Business name is required';
+      if (!formData.contactPerson) errors.contactPerson = 'Contact person is required';
+      if (!formData.phone) errors.phone = 'Phone number is required';
+      if (!formData.email) errors.email = 'Email is required';
+      if (!formData.businessCategory) errors.businessCategory = 'Business category is required';
+      if (!formData.specialization) errors.specialization = 'Specialization is required';
+      if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) errors.brandsDealWith = 'Select at least one brand';
+      if (!formData.about || formData.about.trim().length === 0) errors.about = 'About is required';
+    } else if (currentStep === 2) {
+      if (!formData.gstNumber) errors.gstNumber = 'GST number is required';
+      if (!formData.shopAddress) errors.shopAddress = 'Shop address is required';
+      if (!formData.pincode) errors.pincode = 'Pincode is required';
+      if (!formData.establishmentYear) errors.establishmentYear = 'Establishment year is required';
+    } else if (currentStep === 3) {
+      if (!formData.documents.gstCertificate) errors.gstCertificate = 'GST certificate is required';
+      if (!formData.documents.shopLicense) errors.shopLicense = 'Shop license is required';
+      if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) errors.shopPhotos = 'At least one shop photo is required';
+      if (!formData.agreeToTerms) errors.agreeToTerms = 'You must agree to the terms';
+    }
+    
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const nextStep = () => {
-    if (validateForm()) {
+    if (validateCurrentStep()) {
       if (currentStep < totalSteps) {
         setCurrentStep(currentStep + 1);
       }
     } else {
+      // Get specific missing fields for better error message
+      const missingFields = [];
+      if (currentStep === 1) {
+        if (!formData.businessName) missingFields.push('Business Name');
+        if (!formData.contactPerson) missingFields.push('Contact Person');
+        if (!formData.phone) missingFields.push('Phone Number');
+        if (!formData.email) missingFields.push('Email Address');
+        if (!formData.businessCategory) missingFields.push('Business Category');
+        if (!formData.specialization) missingFields.push('Specialization');
+        if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) missingFields.push('Brands Dealt With');
+        if (!formData.about || formData.about.trim().length === 0) missingFields.push('About Your Dealership');
+      } else if (currentStep === 2) {
+        if (!formData.gstNumber) missingFields.push('GST Number');
+        if (!formData.shopAddress) missingFields.push('Shop Address');
+        if (!formData.pincode) missingFields.push('Pincode');
+        if (!formData.establishmentYear) missingFields.push('Establishment Year');
+      } else if (currentStep === 3) {
+        if (!formData.documents.gstCertificate) missingFields.push('GST Certificate');
+        if (!formData.documents.shopLicense) missingFields.push('Shop License');
+        if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) missingFields.push('Shop Photos');
+        if (!formData.agreeToTerms) missingFields.push('Terms Agreement');
+      }
+
+      const missingFieldsText = missingFields.join(', ');
       toast({
-        title: "Please fill all required fields",
-        description: "Complete all fields before proceeding to the next step.",
+        title: "Missing Required Fields",
+        description: `Please fill in: ${missingFieldsText}`,
         variant: "destructive",
       });
     }

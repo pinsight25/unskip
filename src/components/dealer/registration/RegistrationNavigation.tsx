@@ -33,7 +33,11 @@ const RegistrationNavigation = ({
         Previous
       </Button>
       {currentStep < totalSteps ? (
-        <Button onClick={onNextStep} className="w-full sm:w-auto flex items-center">
+        <Button 
+          onClick={onNextStep} 
+          disabled={!canProceed}
+          className="w-full sm:w-auto flex items-center"
+        >
           Next
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
