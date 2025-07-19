@@ -111,6 +111,7 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
                 offerStatus={offerStatus}
                 offerAmount={offerAmount}
                 isOwner={isOwner}
+                sellerPhone={car.seller.phone} // Pass seller phone
               />
             </div>
           </div>

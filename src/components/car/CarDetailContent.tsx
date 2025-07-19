@@ -118,6 +118,7 @@ const CarDetailContent = ({
               onMarkSold={onMarkSold}
               offerCount={offerCount}
               setSignInModalOpen={setSignInModalOpen}
+              sellerPhone={car.seller.phone} // Pass seller phone
             />
           </div>
         </div>

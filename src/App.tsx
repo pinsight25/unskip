@@ -24,7 +24,8 @@ import AccessoryDetail from '@/pages/AccessoryDetail';
 import Search from '@/pages/Search';
 import Saved from '@/pages/Saved';
 import Profile from '@/pages/Profile';
-import Chats from '@/pages/Chats';
+import ChatPage from '@/pages/ChatPage';
+import EmptyChatState from '@/pages/EmptyChatState';
 import ChatDetail from '@/pages/ChatDetail';
 import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
@@ -67,8 +68,10 @@ function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/saved" element={<Saved />} />
                         <Route path="/profile" element={<Profile />} />
-                        <Route path="/chats" element={<Chats />} />
-                        <Route path="/chats/:chatId" element={<ChatDetail />} />
+                        <Route path="/chats" element={<ChatPage />}>
+                          <Route index element={<EmptyChatState />} />
+                          <Route path=":chatId" element={<ChatDetail />} />
+                        </Route>
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/privacy" element={<Privacy />} />
                       </Routes>

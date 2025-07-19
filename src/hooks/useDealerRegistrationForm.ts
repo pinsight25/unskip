@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { updateFormField } from '@/utils/formHelpers';
@@ -112,6 +112,26 @@ export const useDealerRegistrationForm = () => {
   const { user } = useUser();
   const totalSteps = 3;
   const progress = (currentStep / totalSteps) * 100;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const businessNameRef = useRef<HTMLInputElement>(null);
+  const contactPersonRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const businessCategoryRef = useRef<HTMLDivElement>(null);
+  const specializationRef = useRef<HTMLDivElement>(null);
+  const brandsDealWithRef = useRef<HTMLDivElement>(null);
+  const gstNumberRef = useRef<HTMLInputElement>(null);
+  const shopAddressRef = useRef<HTMLInputElement>(null);
+  const pincodeRef = useRef<HTMLInputElement>(null);
+  const establishmentYearRef = useRef<HTMLInputElement>(null);
+  const aboutRef = useRef<HTMLTextAreaElement>(null);
+  const gstCertRef = useRef<HTMLInputElement>(null);
+  const shopLicenseRef = useRef<HTMLInputElement>(null);
+  const shopPhotosRef = useRef<HTMLInputElement>(null);
+  const termsRef = useRef<HTMLInputElement>(null);
+
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Generate dealer slug from business name
   const generateDealerSlug = (businessName: string) => {
@@ -154,47 +174,47 @@ export const useDealerRegistrationForm = () => {
     }
   };
 
-  const validateStep = (step: number) => {
-    
-    switch (step) {
-      case 1:
-        const step1Valid = !!(
-          formData.businessName?.trim() && 
-          formData.contactPerson?.trim() && 
-          formData.phone?.trim() && 
-          formData.email?.trim() && 
-          formData.businessCategory?.trim() && 
-          formData.brandsDealWith?.length > 0 &&
-          formData.specialization?.trim()
-        );
-        return step1Valid;
-        
-      case 2:
-        const step2Valid = !!(
-          formData.gstNumber?.trim() && 
-          validateGST(formData.gstNumber) && 
-          formData.shopAddress?.trim() && 
-          formData.pincode?.trim() && 
-          formData.establishmentYear?.trim()
-        );
-        return step2Valid;
-        
-      case 3:
-        const step3Valid = !!(
-          formData.documents.gstCertificate && 
-          formData.documents.shopLicense && 
-          formData.documents.shopPhotos?.length > 0 && 
-          formData.agreeToTerms === true
-        );
-        return step3Valid;
-        
-      default:
-        return false;
-    }
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.businessName) errors.businessName = 'Business name is required';
+    if (!formData.contactPerson) errors.contactPerson = 'Contact person is required';
+    if (!formData.phone) errors.phone = 'Phone number is required';
+    if (!formData.email) errors.email = 'Email is required';
+    if (!formData.businessCategory) errors.businessCategory = 'Business category is required';
+    if (!formData.specialization) errors.specialization = 'Specialization is required';
+    if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) errors.brandsDealWith = 'Select at least one brand';
+    if (!formData.gstNumber) errors.gstNumber = 'GST number is required';
+    if (!formData.shopAddress) errors.shopAddress = 'Shop address is required';
+    if (!formData.pincode) errors.pincode = 'Pincode is required';
+    if (!formData.establishmentYear) errors.establishmentYear = 'Establishment year is required';
+    if (!formData.about) errors.about = 'About is required';
+    if (!formData.documents.gstCertificate) errors.gstCertificate = 'GST certificate is required';
+    if (!formData.documents.shopLicense) errors.shopLicense = 'Shop license is required';
+    if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) errors.shopPhotos = 'At least one shop photo is required';
+    if (!formData.agreeToTerms) errors.agreeToTerms = 'You must agree to the terms';
+    setFieldErrors(errors);
+    // Focus the first invalid field
+    if (errors.businessName) businessNameRef.current?.focus();
+    else if (errors.contactPerson) contactPersonRef.current?.focus();
+    else if (errors.phone) phoneRef.current?.focus();
+    else if (errors.email) emailRef.current?.focus();
+    else if (errors.businessCategory) businessCategoryRef.current?.focus();
+    else if (errors.specialization) specializationRef.current?.focus();
+    else if (errors.brandsDealWith) brandsDealWithRef.current?.focus();
+    else if (errors.gstNumber) gstNumberRef.current?.focus();
+    else if (errors.shopAddress) shopAddressRef.current?.focus();
+    else if (errors.pincode) pincodeRef.current?.focus();
+    else if (errors.establishmentYear) establishmentYearRef.current?.focus();
+    else if (errors.about) aboutRef.current?.focus();
+    else if (errors.gstCertificate) gstCertRef.current?.focus();
+    else if (errors.shopLicense) shopLicenseRef.current?.focus();
+    else if (errors.shopPhotos) shopPhotosRef.current?.focus();
+    else if (errors.agreeToTerms) termsRef.current?.focus();
+    return Object.keys(errors).length === 0;
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep)) {
+    if (validateForm()) {
       if (currentStep < totalSteps) {
         setCurrentStep(currentStep + 1);
       }
@@ -214,12 +234,9 @@ export const useDealerRegistrationForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(3)) {
-      toast({
-        title: "Please fill all required fields",
-        description: "Complete all fields before submitting.",
-        variant: "destructive",
-      });
+    setErrorMessage(null);
+    if (!validateForm()) {
+      setIsSubmitting(false);
       return;
     }
 
@@ -234,6 +251,30 @@ export const useDealerRegistrationForm = () => {
 
     setIsSubmitting(true);
     try {
+      // Check if dealer already exists for this user
+      const { data: existing } = await supabase
+        .from('dealers')
+        .select('id')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+      if (existing) {
+        setErrorMessage('You have already registered as a dealer.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if GST number already exists
+      const { data: existingGst } = await supabase
+        .from('dealers')
+        .select('id')
+        .eq('gst_number', formData.gstNumber)
+        .maybeSingle();
+      if (existingGst) {
+        setErrorMessage('GST number already exists. Please use a unique GST number.');
+        setIsSubmitting(false);
+        return;
+      }
+
       // Generate slug from business name
       const slug = formData.businessName
         .toLowerCase()
@@ -273,6 +314,9 @@ export const useDealerRegistrationForm = () => {
         .insert([dealerData])
         .select()
         .single();
+      if (error) {
+        alert(JSON.stringify(error, null, 2));
+      }
       if (error) throw error;
 
       // Update user as dealer
@@ -320,10 +364,28 @@ export const useDealerRegistrationForm = () => {
     validateGST,
     handleInputChange,
     handleFileUpload,
-    validateStep,
+    validateForm,
     nextStep,
     prevStep,
     handleSubmit,
     setFormData,
+    errorMessage,
+    businessNameRef,
+    contactPersonRef,
+    phoneRef,
+    emailRef,
+    businessCategoryRef,
+    specializationRef,
+    brandsDealWithRef,
+    gstNumberRef,
+    shopAddressRef,
+    pincodeRef,
+    establishmentYearRef,
+    aboutRef,
+    gstCertRef,
+    shopLicenseRef,
+    shopPhotosRef,
+    termsRef,
+    fieldErrors,
   };
 };

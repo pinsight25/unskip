@@ -18,6 +18,7 @@ interface MobileCarActionsProps {
   onTestDrive: (e?: React.MouseEvent) => void;
   isOwner?: boolean;
   onViewOffers?: () => void;
+  sellerPhone?: string; // <-- Add sellerPhone prop
 }
 
 const MobileCarActions = ({
@@ -29,7 +30,8 @@ const MobileCarActions = ({
   onChat,
   onTestDrive,
   isOwner,
-  onViewOffers
+  onViewOffers,
+  sellerPhone
 }: MobileCarActionsProps) => {
   const { toast } = useToast();
   const { hasOffered } = useOfferContext();
@@ -90,6 +92,14 @@ const MobileCarActions = ({
     onTestDrive(e);
   };
 
+  // Add call handler
+  const handleCall = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (sellerPhone) {
+      window.location.href = `tel:${sellerPhone}`;
+    }
+  };
+
   const getOfferButton = () => {
     switch (offerStatus) {
       case 'pending':
@@ -129,7 +139,19 @@ const MobileCarActions = ({
     <div className="space-y-3 pb-4">
       {/* Primary Action */}
       <div className="flex gap-2">
-        {!isOwner && getOfferButton()}
+        {!isOwner && (
+          offerStatus === 'accepted' ? (
+            <Button
+              size="sm"
+              className="flex-1 bg-green-100 text-green-700 border border-green-500 font-semibold"
+              variant="secondary"
+              disabled
+            >
+              <Badge className="mr-2 text-xs bg-green-200 text-green-800">Accepted</Badge>
+              Offer Accepted ✓
+            </Button>
+          ) : getOfferButton()
+        )}
         {isOwner && (
           <Button
             size="sm"
@@ -151,7 +173,7 @@ const MobileCarActions = ({
             disabled={offerStatus !== 'accepted'}
             className={`flex-1 ${
               offerStatus === 'accepted'
-                ? 'border-orange-500 text-orange-500 hover:bg-orange-600 hover:text-white hover:border-orange-600'
+                ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white hover:border-green-500'
                 : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
             }`}
           >
@@ -161,10 +183,11 @@ const MobileCarActions = ({
           <Button 
             size="sm" 
             variant="outline" 
-            disabled={!offered || offerStatus !== 'accepted'}
+            onClick={handleCall}
+            disabled={offerStatus !== 'accepted' || !sellerPhone}
             className={`flex-1 ${
-              offered && offerStatus === 'accepted'
-                ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500'
+              offerStatus === 'accepted' && sellerPhone
+                ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white hover:border-green-500'
                 : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
             }`}
           >

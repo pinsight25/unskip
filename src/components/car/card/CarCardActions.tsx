@@ -10,10 +10,17 @@ interface CarCardActionsProps {
   offerAmount: number | null;
   isOwner?: boolean;
   onViewOffers?: () => void;
+  sellerPhone?: string; // <-- Add sellerPhone prop
 }
 
-const CarCardActions = ({ onMakeOffer, onChat, offerStatus, offerAmount, isOwner, onViewOffers }: CarCardActionsProps) => {
+const CarCardActions = ({ onMakeOffer, onChat, offerStatus, offerAmount, isOwner, onViewOffers, sellerPhone }: CarCardActionsProps) => {
   const navigate = useNavigate();
+  // Add call handler
+  const handleCall = () => {
+    if (sellerPhone) {
+      window.location.href = `tel:${sellerPhone}`;
+    }
+  };
   return (
     <div className="space-y-3">
       {!isOwner && offerStatus === 'none' && (
@@ -60,7 +67,7 @@ const CarCardActions = ({ onMakeOffer, onChat, offerStatus, offerAmount, isOwner
             <Button variant="outline" size="sm" onClick={onChat}>
               <MessageCircle className="h-4 w-4 mr-1" />Chat
             </Button>
-            <Button variant="outline" size="sm" onClick={() => {}}>
+            <Button variant="outline" size="sm" onClick={handleCall} disabled={!sellerPhone}>
               <Phone className="h-4 w-4 mr-1" />Call
             </Button>
           </div>

@@ -11,6 +11,9 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import type { Seller } from '@/types/car';
 import { useToast } from '@/components/ui/use-toast';
 import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import { Check, Clock } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import Chats from './Chats';
 
 function toSeller(user: any): Seller {
   return {
@@ -57,20 +60,26 @@ const ChatDetail = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [carImages, setCarImages] = useState<any[]>([]);
   const [carImagesLoading, setCarImagesLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // <-- Add loading state
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Optimistic message sending
+  const [pendingMessages, setPendingMessages] = useState<ChatMessage[]>([]);
 
   useRealtimeRefetch('chat_messages', ['chatMessages']);
   useRealtimeRefetch('chats', ['chats']);
 
   // Fetch chat details and messages
   const fetchMessages = async (chatId: string) => {
+    setLoading(true); // <-- Set loading true before fetch
     const messagesData = await supabase
       .from('chat_messages')
       .select('*')
       .eq('chat_id', chatId)
       .order('created_at', { ascending: true });
     setMessages(Array.isArray(messagesData?.data) ? messagesData.data.map(mapDbMessageToUi) : []);
+    setLoading(false); // <-- Set loading false after fetch
   };
 
   useEffect(() => {
@@ -316,43 +325,44 @@ const ChatDetail = () => {
     }
   }, [messages]);
 
-  // Send message
+  // Optimistic send
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !user || !otherUser || !chatId) return;
-
-    // Create optimistic message with correct shape
-    const tempMessage: ChatMessage = {
-      id: Date.now().toString(),
-      chatId: chatId,
+    // Create optimistic message
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg: ChatMessage = {
+      id: tempId,
+      chatId,
       senderId: user.id,
       receiverId: otherUser.id,
       content: newMessage.trim(),
       timestamp: new Date().toISOString(),
       seen: false,
-      type: 'text'
+      type: 'text',
+      pending: true,
     };
-    
-    // Add to UI immediately
-    setMessages(prev => [...prev, tempMessage]);
+    setPendingMessages((prev) => [...prev, optimisticMsg]);
     setNewMessage('');
-
-    // Send to database (snake_case)
-    const { error } = await supabase
+    // Send to DB
+    const { data, error } = await supabase
       .from('chat_messages')
       .insert({
         chat_id: chatId,
         sender_id: user.id,
         receiver_id: otherUser.id,
-        content: newMessage.trim(),
-        message_type: 'text'
-      });
-
+        content: optimisticMsg.content,
+        message_type: 'text',
+      })
+      .select()
+      .single();
     if (error) {
-      console.error('Failed to send message:', error);
-      // Remove optimistic message on error
-      setMessages(prev => prev.filter(m => m.id !== tempMessage.id));
-      setNewMessage(newMessage); // Restore input
+      // Mark as failed
+      setPendingMessages((prev) => prev.map((m) => m.id === tempId ? { ...m, failed: true } : m));
+      return;
     }
+    // Replace optimistic with real message
+    setPendingMessages((prev) => prev.filter((m) => m.id !== tempId));
+    setMessages((prev) => [...prev, mapDbMessageToUi(data)]);
   };
 
   // Quick reply
@@ -366,42 +376,37 @@ const ChatDetail = () => {
     setNewMessage(message);
   };
 
-  if (!chat || !car || !otherUser || carImagesLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading chat...</div>;
-  }
+  // Merge messages and pendingMessages for display
+  const allMessages = [...messages, ...pendingMessages];
 
-  const isBuyer = user?.id === chat?.buyer_id;
+  const HEADER_HEIGHT = 64; // px
+  const INPUT_HEIGHT = 80; // px
 
+  // WhatsApp-like layout with sticky header/input and scrollable messages
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-[calc(100vh-200px)] md:max-h-[600px]">
-        <ChatHeader 
-          car={car}
-          otherUser={otherUser}
-          currentUser={user}
-          chat={chat}
-          onBack={() => navigate('/chats')}
-          onReportChat={() => console.log('Report chat')}
-          onBlockUser={() => console.log('Block user')}
-          onDeleteConversation={() => console.log('Delete conversation')}
-          carImages={carImages}
-        />
-        <div className="h-[400px] overflow-y-auto flex-1">
-          <ChatMessages 
-            messages={messages}
-            isTyping={isTyping}
-          />
-          <div ref={messagesEndRef} />
-        </div>
-        <ChatInput
-          newMessage={newMessage}
-          onMessageChange={setNewMessage}
-          onSendMessage={handleSendMessage}
-          onQuickReply={handleQuickReply}
-          onTestDrive={handleTestDrive}
-          isBuyer={isBuyer}
-        />
-      </div>
+    <div className="flex-1 flex flex-col h-full">
+      {/* Chat Header (no back arrow, 3-dot menu on right) */}
+      <ChatHeader
+        car={car}
+        otherUser={otherUser}
+        currentUser={user}
+        chat={chat}
+        carImages={carImages}
+        onReportChat={() => toast({ title: 'Report chat', description: 'Feature coming soon!' })}
+        onBlockUser={() => toast({ title: 'Block user', description: 'Feature coming soon!' })}
+        onDeleteConversation={() => toast({ title: 'Delete conversation', description: 'Feature coming soon!' })}
+      />
+      {/* Messages */}
+      <ChatMessages messages={[...messages, ...pendingMessages]} isTyping={isTyping} user={user} otherUser={otherUser} />
+      {/* Input */}
+      <ChatInput
+        newMessage={newMessage}
+        onMessageChange={setNewMessage}
+        onSendMessage={handleSendMessage}
+        onQuickReply={handleQuickReply}
+        onTestDrive={handleTestDrive}
+        isBuyer={user?.id === chat?.buyer_id}
+      />
     </div>
   );
 };

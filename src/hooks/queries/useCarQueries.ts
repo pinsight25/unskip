@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Car } from '@/types/car';
 import { formatPhoneForAuth } from '@/utils/phoneUtils';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import type { UseQueryResult } from '@tanstack/react-query';
 
@@ -79,6 +79,7 @@ export const useCars = () => {
   const lastRealtimeRefetch = useRef(0);
   const POLL_INTERVAL = 30000; // 30 seconds fallback polling
   const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
+  const [timedOut, setTimedOut] = useState(false);
 
   const query = useQuery<any[]>({
     queryKey: ['cars'],
@@ -86,33 +87,64 @@ export const useCars = () => {
       if (import.meta.env.DEV) {
         console.log('[React Query] Fetching cars...');
       }
-      const { data: carsData, error: carsError } = await (supabase as any)
-        .from('cars')
-        .select(`
-          id, title, price, make, model, year, seller_id, status, created_at,
-          fuel_type, transmission, kilometers_driven, number_of_owners,
-          area, city, color, variant, description, featured, verified,
-          car_images(image_url, is_cover, sort_order),
-          users:seller_id(id, name, is_verified, user_type, phone)
-        `)
-        .eq('status', 'active')
-        .eq('car_images.is_cover', true)
-        .order('created_at', { ascending: false });
-      if (carsError) {
+      setTimedOut(false);
+      let timeoutId: any;
+      const timeoutPromise = new Promise<any[]>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          setTimedOut(true);
+          reject(new Error('Request timed out after 10 seconds'));
+        }, 10000);
+      });
+      try {
+        const carsPromise = (async () => {
+          const { data: carsData, error: carsError } = await (supabase as any)
+            .from('cars')
+            .select(`
+              id, title, price, make, model, year, seller_id, status, created_at,
+              fuel_type, transmission, kilometers_driven, number_of_owners,
+              area, city, color, variant, description, featured, verified,
+              car_images(image_url, is_cover, sort_order),
+              users:seller_id(id, name, is_verified, user_type, phone)
+            `)
+            .eq('status', 'active')
+            .eq('car_images.is_cover', true)
+            .order('created_at', { ascending: false });
+          if (carsError) {
+            if (import.meta.env.DEV) {
+              console.error('[React Query] Error fetching cars:', carsError);
+            }
+            throw carsError;
+          }
+          const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
+          if (import.meta.env.DEV) {
+            console.log('[React Query] Fetched cars:', carsMapped.length);
+          }
+          return carsMapped as any[];
+        })();
+        const result = await Promise.race([carsPromise, timeoutPromise]);
+        clearTimeout(timeoutId);
+        return result;
+      } catch (err) {
+        clearTimeout(timeoutId);
         if (import.meta.env.DEV) {
-          console.error('[React Query] Error fetching cars:', carsError);
+          console.error('[React Query] Cars query error:', err);
         }
-        throw carsError;
+        throw err;
       }
-      const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
-      if (import.meta.env.DEV) {
-        console.log('[React Query] Fetched cars:', carsMapped.length);
-        // Removed debug toast
-      }
-      return carsMapped as any[];
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
+    placeholderData: [],
+    retry: (failureCount, error) => {
+      if (failureCount > 3) return false;
+      // Exponential backoff: 1s, 2s, 4s, 8s
+      const delay = Math.pow(2, failureCount) * 1000;
+      if (import.meta.env.DEV) {
+        console.warn(`[React Query] Cars query retry #${failureCount} after ${delay}ms`, error);
+      }
+      return true;
+    },
+    retryDelay: (attempt) => Math.pow(2, attempt) * 1000,
   });
 
   // Debounced real-time subscription
@@ -154,12 +186,20 @@ export const useCars = () => {
         }
       )
       .subscribe();
+    // Fallback polling log
+    const pollInterval = setInterval(() => {
+      if (import.meta.env.DEV) {
+        console.log('[Fallback Polling] Refetching cars due to polling interval');
+      }
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+    }, POLL_INTERVAL * 2); // Fallback every 60s
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(pollInterval);
     };
   }, [queryClient]);
 
-  return query;
+  return { ...query, timedOut };
 };
 
 // Fetch user's listings for profile

@@ -99,6 +99,7 @@ const MobileCarCard = ({
           }}
           isOwner={isOwner}
           onViewOffers={isOwner ? () => navigate('/profile?tab=received-offers') : undefined}
+          sellerPhone={car.seller.phone} // Pass seller phone
         />
       </div>
     </Card>

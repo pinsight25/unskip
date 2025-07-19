@@ -21,7 +21,7 @@ const DealerRegister = () => {
     validateGST,
     handleInputChange,
     handleFileUpload,
-    validateStep,
+    validateForm,
     nextStep,
     prevStep,
     handleSubmit,
@@ -33,6 +33,31 @@ const DealerRegister = () => {
       ...prev,
       agreeToTerms: checked === true
     }));
+  };
+
+  // Add clearDealerForm function
+  const clearDealerForm = () => {
+    setFormData(() => ({
+      businessName: '',
+      contactPerson: '',
+      phone: '',
+      email: '',
+      businessCategory: '',
+      brandsDealWith: [],
+      specialization: '',
+      gstNumber: '',
+      shopAddress: '',
+      pincode: '',
+      establishmentYear: '',
+      about: '',
+      documents: {
+        gstCertificate: null,
+        shopLicense: null,
+        shopPhotos: [],
+      },
+      agreeToTerms: false,
+    }));
+    localStorage.removeItem('dealerRegistrationFormData');
   };
 
   const renderCurrentStep = () => {
@@ -65,6 +90,35 @@ const DealerRegister = () => {
     }
   };
 
+  // Step-specific canProceed logic to avoid infinite re-renders
+  let canProceed = false;
+  if (currentStep === 1) {
+    canProceed = Boolean(
+      formData.businessName &&
+      formData.contactPerson &&
+      formData.phone &&
+      formData.email &&
+      formData.businessCategory &&
+      formData.specialization &&
+      formData.brandsDealWith && formData.brandsDealWith.length > 0
+    );
+  } else if (currentStep === 2) {
+    canProceed = Boolean(
+      formData.gstNumber &&
+      formData.shopAddress &&
+      formData.pincode &&
+      formData.establishmentYear &&
+      formData.about
+    );
+  } else if (currentStep === 3) {
+    canProceed = Boolean(
+      formData.documents.gstCertificate &&
+      formData.documents.shopLicense &&
+      formData.documents.shopPhotos && formData.documents.shopPhotos.length > 0 &&
+      formData.agreeToTerms
+    );
+  }
+
   return (
     <ResponsiveLayout>
       <div className="pt-16 md:pt-20">
@@ -84,6 +138,16 @@ const DealerRegister = () => {
 
             <Card className="shadow-lg">
               <CardContent className="p-6">
+                {/* Clear Form Button */}
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={clearDealerForm}
+                    className="text-destructive border border-destructive px-3 py-1 rounded hover:bg-red-50 font-medium text-sm"
+                    type="button"
+                  >
+                    Clear Form
+                  </button>
+                </div>
                 {/* Progress Bar */}
                 <div className="mb-8">
                   <div className="flex justify-between text-sm text-gray-600 mb-2">
@@ -103,7 +167,7 @@ const DealerRegister = () => {
                   onPrevStep={prevStep}
                   onNextStep={nextStep}
                   onSubmit={handleSubmit}
-                  canProceed={!!validateStep(currentStep)}
+                  canProceed={canProceed}
                   isSubmitting={isSubmitting}
                 />
               </CardContent>

@@ -18,9 +18,10 @@ interface CarActionsProps {
   onMarkSold?: () => void;
   offerCount?: number;
   setSignInModalOpen?: () => void; // Added for modal integration
+  sellerPhone?: string; // <-- Add sellerPhone prop
 }
 
-const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, onTestDrive, onViewOffers, onMarkSold, offerCount, setSignInModalOpen }: CarActionsProps) => {
+const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, onTestDrive, onViewOffers, onMarkSold, offerCount, setSignInModalOpen, sellerPhone }: CarActionsProps) => {
   const { user } = useUser();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -85,6 +86,12 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
     onTestDrive();
   };
 
+  const handleCall = () => {
+    if (sellerPhone) {
+      window.location.href = `tel:${sellerPhone}`;
+    }
+  };
+
   const getChatButtonConfig = () => {
     const offered = hasOffered(carId);
     switch (offerStatus) {
@@ -131,29 +138,47 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
 
   return (
     <div className="space-y-3">
-      <Button 
-        className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
-        onClick={onMakeOffer}
-      >
-        <IndianRupee className="h-4 w-4 mr-2" />
-        {offerStatus === 'pending' ? 'Offer Sent' : offerStatus === 'accepted' ? 'Offer Accepted' : 'Connect with Seller'}
-      </Button>
+      {/* Main Offer Button */}
+      {offerStatus === 'accepted' ? (
+        <Button
+          className="w-full bg-green-100 text-green-700 border border-green-500 font-semibold"
+          variant="secondary"
+          disabled
+        >
+          <IndianRupee className="h-4 w-4 mr-2 text-green-600" />
+          Offer Accepted ✓
+        </Button>
+      ) : (
+        <Button 
+          className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
+          onClick={onMakeOffer}
+        >
+          <IndianRupee className="h-4 w-4 mr-2" />
+          {offerStatus === 'pending' ? 'Offer Sent' : 'Connect with Seller'}
+        </Button>
+      )}
+      {/* Chat/Call Buttons */}
       <div className="grid grid-cols-2 gap-3">
         <Button 
-          variant={chatConfig.variant}
+          variant="outline"
           onClick={handleChatClick}
-          disabled={chatConfig.disabled}
-          className={`transition-all duration-200 ${chatConfig.className}`}
+          disabled={offerStatus !== 'accepted'}
+          className={`transition-all duration-200 ${
+            offerStatus === 'accepted'
+              ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white hover:border-green-500'
+              : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
+          }`}
         >
           <MessageCircle className="h-4 w-4 mr-2" />
-          {chatConfig.text}
+          Chat
         </Button>
         <Button 
           variant="outline"
-          disabled={!offered || offerStatus !== 'accepted'}
+          onClick={handleCall}
+          disabled={offerStatus !== 'accepted' || !sellerPhone}
           className={`transition-all duration-200 ${
-            offered && offerStatus === 'accepted'
-              ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500' 
+            offerStatus === 'accepted' && sellerPhone
+              ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white hover:border-green-500'
               : 'border-gray-300 text-gray-500 opacity-60 cursor-not-allowed'
           }`}
         >

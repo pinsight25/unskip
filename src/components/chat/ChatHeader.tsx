@@ -16,14 +16,13 @@ interface ChatHeaderProps {
   otherUser: any;
   currentUser: any;
   chat: any;
-  onBack: () => void;
   onReportChat: () => void;
   onBlockUser: () => void;
   onDeleteConversation: () => void;
   carImages?: any[];
 }
 
-const ChatHeader = ({ car, otherUser, currentUser, chat, onBack, onReportChat, onBlockUser, onDeleteConversation, carImages = [] }: ChatHeaderProps) => {
+const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUser, onDeleteConversation, carImages = [] }: ChatHeaderProps) => {
   // Get cover image from carImages or fallback
   let carImageUrl = '/placeholder-car.jpg';
   if (Array.isArray(carImages) && carImages.length > 0) {
@@ -44,14 +43,6 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onBack, onReportChat, o
   return (
     <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0 z-10">
       <div className="flex items-center gap-3">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={onBack}
-          className="p-2 hover:bg-gray-100"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
         <img
           src={carImageUrl}
           alt={car?.make ? `${car.make} ${car.model}` : 'Car'}

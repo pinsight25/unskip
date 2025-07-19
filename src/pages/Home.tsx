@@ -10,10 +10,12 @@ import { useHomeOfferHandlers } from '@/components/home/handlers/HomeOfferHandle
 import { useHomeChatHandlers } from '@/components/home/handlers/HomeChatHandlers';
 import { useHomeTestDriveHandlers } from '@/components/home/handlers/HomeTestDriveHandlers';
 import { useAuthModal } from '@/contexts/AuthModalContext';
+import { Skeleton } from '@/components/ui/skeleton';
+// Remove ErrorState and ConnectionStatusIndicator imports
 
 const Home = () => {
   // Use only useCars for car data
-  const { data: cars = [], isLoading, error, refetch } = useCars();
+  const { data: cars = [], isLoading, isFetching } = useCars();
   const { data: dealers = [] } = useDealers();
   const allCarsCount = cars.length;
   const dealersCount = dealers.length;
@@ -61,24 +63,14 @@ const Home = () => {
   // Provide a stub getOfferStatus function
   const getOfferStatus = (carId: string) => 'none' as const;
 
-  if (isLoading) {
+  // Show skeleton loader only if there is no cached data (first visit)
+  if (isLoading && (!cars || cars.length === 0)) {
     return (
-      <div className="text-center py-12">
-        <div className="text-lg font-semibold text-gray-900 mb-2">Loading cars...</div>
-        <div className="text-gray-600">Fetching the latest listings from our database</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-lg font-semibold text-red-600 mb-2">Failed to load cars.</div>
-        <div className="text-gray-600 mb-4">{error.message || "Something went wrong."}</div>
-        <div className="space-x-4">
-          <button onClick={() => refetch()} className="btn btn-primary">
-            Retry
-          </button>
+      <div className="relative min-h-[400px]">
+        <div className="flex flex-wrap gap-6 justify-center opacity-60">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="w-[320px] h-[340px] mb-4" />
+          ))}
         </div>
       </div>
     );
@@ -86,6 +78,9 @@ const Home = () => {
 
   return (
     <div className="bg-gray-50 relative">
+      {/* Show cached data banner if not loading and data is from cache */}
+      {/* Placeholder: You can add logic to detect cached data if needed */}
+      {/* <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-medium">Showing cached results</div> */}
       <HomeHeader
         currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}
         onFilterChange={() => {}}
@@ -102,13 +97,11 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 relative">
         <HomeResults
           filteredCars={filteredCars}
-          savedCars={[]}
           currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}
           isMobile={false}
-          isRefreshing={false}
+          isRefreshing={isFetching}
           offerStatuses={{}}
           onSort={() => {}}
-          onSaveCar={() => {}}
           onMakeOffer={() => {}}
           onPullToRefresh={() => {}}
           onFilterChange={() => {}}

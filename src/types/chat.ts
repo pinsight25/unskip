@@ -8,6 +8,8 @@ export interface ChatMessage {
   timestamp: string;
   seen: boolean;
   type: 'text' | 'system' | 'test_drive';
+  pending?: boolean;
+  failed?: boolean;
 }
 
 export interface Chat {
