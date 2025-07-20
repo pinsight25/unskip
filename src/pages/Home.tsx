@@ -18,7 +18,8 @@ const Home = () => {
   const { data: cars = [], isLoading, isFetching } = useCars();
   const { data: dealers = [] } = useDealers();
   const allCarsCount = cars.length;
-  const dealersCount = dealers.length;
+  // Count cars where seller.type === 'dealer'
+  const dealerCarsCount = cars.filter(car => car.seller.type === 'dealer').length;
   const ownerCarsCount = cars.filter(car => car.seller.type === 'individual').length;
 
   // UI state for filters
@@ -91,7 +92,7 @@ const Home = () => {
         onClearSearch={() => setSearchQuery('')}
         resultCount={filteredCars.length}
         allCarsCount={allCarsCount}
-        dealersCount={dealersCount}
+        dealersCount={dealerCarsCount}
         ownerCarsCount={ownerCarsCount}
       />
       <div className="max-w-7xl mx-auto px-4 relative">
