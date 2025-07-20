@@ -47,13 +47,17 @@ const DealerRegister = () => {
       businessCategory: '',
       brandsDealWith: [],
       specialization: '',
-      gstNumber: '',
       shopAddress: '',
       pincode: '',
       establishmentYear: '',
       about: '',
+      panNumber: '',
+      aadhaarNumber: '',
+      businessDocType: 'gst_certificate',
+      businessDocNumber: '',
       documents: {
-        gstCertificate: null,
+        businessDocument: null,
+        panCard: null,
         shopLicense: null,
         shopPhotos: [],
       },
@@ -95,6 +99,9 @@ const DealerRegister = () => {
 
   // Step-specific canProceed logic to avoid infinite re-renders
   let canProceed = false;
+  // Debug logs for canProceed and required fields
+  console.log('Current Step:', currentStep);
+  console.log('formData:', formData);
   if (currentStep === 1) {
     canProceed = Boolean(
       formData.businessName &&
@@ -106,21 +113,27 @@ const DealerRegister = () => {
       formData.brandsDealWith && formData.brandsDealWith.length > 0 &&
       formData.about && formData.about.trim().length > 0
     );
+    console.log('canProceed step 1:', canProceed);
   } else if (currentStep === 2) {
     canProceed = Boolean(
-      formData.gstNumber &&
       formData.shopAddress &&
       formData.pincode &&
       formData.establishmentYear &&
       formData.about
     );
+    console.log('canProceed step 2:', canProceed);
   } else if (currentStep === 3) {
     canProceed = Boolean(
-      formData.documents.gstCertificate &&
-      formData.documents.shopLicense &&
-      formData.documents.shopPhotos && formData.documents.shopPhotos.length > 0 &&
+      formData.documents.businessDocument &&
+      formData.documents.panCard &&
+      formData.documents.shopPhotos && formData.documents.shopPhotos.length >= 1 &&
       formData.agreeToTerms
     );
+    console.log('canProceed step 3:', canProceed);
+    console.log('businessDocument:', formData.documents.businessDocument);
+    console.log('panCard:', formData.documents.panCard);
+    console.log('shopPhotos:', formData.documents.shopPhotos);
+    console.log('agreeToTerms:', formData.agreeToTerms);
   }
 
   return (

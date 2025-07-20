@@ -1,7 +1,8 @@
 
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload } from 'lucide-react';
+import { Upload, X, ImagePlus } from 'lucide-react';
+import { useState, useRef } from 'react';
 import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
 
 interface DocumentUploadStepProps {
@@ -11,101 +12,164 @@ interface DocumentUploadStepProps {
 }
 
 const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentUploadStepProps) => {
+  // Always derive previews from formData
+  const photoPreviews = (formData.documents.shopPhotos || []).map((file: File) => URL.createObjectURL(file));
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const panCardInputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic label for business document
+  const businessDocLabel =
+    formData.businessDocType === 'gst_certificate' ? 'GST Certificate' :
+    formData.businessDocType === 'msme_certificate' ? 'MSME/Udyam Certificate' :
+    formData.businessDocType === 'shop_license' ? 'Shop & Establishment License' :
+    formData.businessDocType === 'trade_license' ? 'Trade License' :
+    'Business Registration Document';
+
+  // Handle shop photos
+  const handleShopPhotosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    // Combine existing and new files, up to 3
+    const existingFiles = formData.documents.shopPhotos || [];
+    const newFiles = Array.from(files);
+    const combined = [...existingFiles, ...newFiles].slice(0, 3);
+    const dataTransfer = new DataTransfer();
+    combined.forEach(file => dataTransfer.items.add(file));
+    onFileUpload('shopPhotos', dataTransfer.files);
+  };
+  const handleRemovePhoto = (idx: number) => {
+    const newFiles = formData.documents.shopPhotos.filter((_: File, i: number) => i !== idx);
+    const dataTransfer = new DataTransfer();
+    newFiles.forEach((file: File) => dataTransfer.items.add(file));
+    onFileUpload('shopPhotos', dataTransfer.files);
+  };
+
+  // Set cover photo (move to front)
+  const handleSetCoverPhoto = (idx: number) => {
+    const files = formData.documents.shopPhotos;
+    if (!files || files.length < 2 || idx === 0) return;
+    const newFiles = [files[idx], ...files.slice(0, idx), ...files.slice(idx + 1)];
+    const dataTransfer = new DataTransfer();
+    newFiles.forEach((file: File) => dataTransfer.items.add(file));
+    onFileUpload('shopPhotos', dataTransfer.files);
+  };
+
+  // Handle business document upload
+  const handleBusinessDocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFileUpload('businessDocument', e.target.files);
+  };
+
+  // Handle PAN card upload
+  const handlePanCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFileUpload('panCard', e.target.files);
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-4">Document Upload</h2>
         <div className="space-y-4">
+          {/* Business Document Upload */}
           <div>
-            <Label htmlFor="gstCertificate">GST Certificate *</Label>
-            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
-              <input
-                id="gstCertificate"
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) => onFileUpload('gstCertificate', e.target.files)}
-                className="hidden"
-                aria-label="Upload GST certificate"
-              />
-              <label htmlFor="gstCertificate" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                <p className="text-sm text-gray-600">
-                  {formData.documents.gstCertificate ? 
-                    `Selected: ${formData.documents.gstCertificate.name}` : 
-                    'Click to upload GST certificate (PDF, JPG, PNG)'
-                  }
-                </p>
-              </label>
-            </div>
+            <Label htmlFor="businessDocument">{businessDocLabel} *</Label>
+            <input
+              id="businessDocument"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={handleBusinessDocChange}
+              className="hidden"
+              aria-label={`Upload ${businessDocLabel}`}
+              ref={fileInputRef}
+            />
+            <label htmlFor="businessDocument" className="cursor-pointer w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+              <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-600">
+                {formData.documents.businessDocument ?
+                  `Selected: ${formData.documents.businessDocument.name}` :
+                  `Click to upload ${businessDocLabel} (PDF, JPG, PNG)`
+                }
+              </p>
+            </label>
           </div>
-
+          {/* PAN Card Upload */}
           <div>
-            <Label htmlFor="shopLicense">Shop License/Registration *</Label>
-            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
-              <input
-                id="shopLicense"
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) => onFileUpload('shopLicense', e.target.files)}
-                className="hidden"
-                aria-label="Upload shop license"
-              />
-              <label htmlFor="shopLicense" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                <p className="text-sm text-gray-600">
-                  {formData.documents.shopLicense ? 
-                    `Selected: ${formData.documents.shopLicense.name}` : 
-                    'Click to upload shop license (PDF, JPG, PNG)'
-                  }
-                </p>
-              </label>
-            </div>
+            <Label htmlFor="panCard">PAN Card *</Label>
+            <input
+              id="panCard"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={handlePanCardChange}
+              className="hidden"
+              aria-label="Upload PAN Card"
+              ref={panCardInputRef}
+            />
+            <label htmlFor="panCard" className="cursor-pointer w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+              <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-600">
+                {formData.documents.panCard ?
+                  `Selected: ${formData.documents.panCard.name}` :
+                  'Click to upload PAN Card (PDF, JPG, PNG)'
+                }
+              </p>
+            </label>
           </div>
-
-          <div>
-            <Label htmlFor="shopPhotos">Shop Photos * (up to 3)</Label>
-            <div className="w-full h-24 md:w-32 md:h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 text-center">
-              <input
-                id="shopPhotos"
-                type="file"
-                accept=".jpg,.jpeg,.png"
-                multiple
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (files && files.length > 3) {
-                    alert('You can upload up to 3 shop photos.');
-                    e.target.value = '';
-                    return;
-                  }
-                  onFileUpload('shopPhotos', files);
-                }}
-                className="hidden"
-                aria-label="Upload shop photos"
-              />
-              <label htmlFor="shopPhotos" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                <p className="text-sm text-gray-600">
-                  {formData.documents.shopPhotos.length > 0 ?
-                    `Selected: ${formData.documents.shopPhotos.length} photo(s)` :
-                    'Click to upload up to 3 shop photos (JPG, PNG)'
-                  }
-                </p>
-                {formData.documents.shopPhotos.length > 0 && (
-                  <div className="flex gap-2 mt-2">
-                    {Array.from(formData.documents.shopPhotos).slice(0, 3).map((file, idx) => (
-                      <span key={idx} className="inline-block w-8 h-8 bg-gray-100 border rounded text-xs flex items-center justify-center overflow-hidden">
-                        {file.name.length > 10 ? file.name.slice(0, 10) + '...' : file.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {formData.documents.shopPhotos.length > 3 && (
-                  <p className="text-xs text-red-500 mt-1">You can upload up to 3 photos only.</p>
-                )}
-              </label>
+          {/* Shop Photos Upload (unchanged) */}
+          <Label htmlFor="shopPhotos">Shop Photos * (up to 3)</Label>
+          <input
+            ref={fileInputRef}
+            id="shopPhotos"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleShopPhotosChange}
+            className="hidden"
+            aria-label="Upload shop photos"
+          />
+          <div className="w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+              {photoPreviews.map((preview, idx) => (
+                <div key={idx} className="relative group w-full h-24 md:h-28 rounded-lg overflow-hidden border-2 border-gray-200">
+                  <img src={preview} alt={`Shop photo ${idx + 1}`} className="w-full h-full object-cover" />
+                  {/* Cover badge */}
+                  {idx === 0 && (
+                    <span className="absolute top-1 left-1 bg-orange-500 text-white text-xs px-2 py-0.5 rounded z-10">Cover</span>
+                  )}
+                  {/* Set as Cover button for non-cover photos */}
+                  {idx > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleSetCoverPhoto(idx)}
+                      className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-0.5 rounded z-10 hover:bg-blue-600"
+                    >
+                      Set as Cover
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePhoto(idx)}
+                    className="absolute top-1 right-1 h-6 w-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors z-10"
+                    aria-label={`Remove shop photo ${idx + 1}`}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {photoPreviews.length < 3 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg h-24 md:h-28 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  <ImagePlus className="h-6 w-6 text-gray-400 mb-1" />
+                  <span className="text-xs text-gray-500">Add Photo</span>
+                </button>
+              )}
             </div>
+            {photoPreviews.length > 0 && (
+              <p className="text-xs text-gray-600 mt-2">{photoPreviews.length}/3 photos selected</p>
+            )}
           </div>
-
+          {/* Terms & Conditions */}
           <div className="flex items-center space-x-2">
             <Checkbox
               id="agreeToTerms"

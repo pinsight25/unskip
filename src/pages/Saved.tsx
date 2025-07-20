@@ -15,8 +15,8 @@ const Saved = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const { savedCars: savedCarIds, isLoading, unsaveCar, isSaving } = useSavedCars();
-  const { data: allCars = [], isLoading: isCarsLoading } = useCars();
+  const { savedCars: savedCarIds, unsaveCar, isSaving } = useSavedCars();
+  const { data: allCars = [] } = useCars();
 
   // Filter allCars to only those in savedCarIds
   const savedCars = allCars.filter(car => savedCarIds?.includes(car.id));
@@ -51,22 +51,10 @@ const Saved = () => {
         </div>
         {/* Content Section */}
         <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 pb-24 lg:pb-8">
-          {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <Card key={`skeleton-${i}`} className="overflow-hidden bg-white animate-pulse h-72" />
-              ))}
-            </div>
-          ) : savedCarIds && savedCarIds.length > 0 && savedCars.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {savedCars && savedCars.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {savedCars.map((car) => (
-                <CarCard
-                  key={car.id}
-                  car={car}
-                  onSave={() => unsaveCar(car.id)}
-                  isSaved={true}
-                  isSaving={isSaving === car.id}
-                />
+                <CarCard key={car.id} car={car} />
               ))}
             </div>
           ) : (

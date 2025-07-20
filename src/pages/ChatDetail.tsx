@@ -408,11 +408,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
       </div>
     );
   }
-  if (!isLoading && messages.length === 0) {
-    return <div className="flex-1 flex flex-col h-full items-center justify-center text-gray-500">No messages yet.</div>;
-  }
-  // Only show skeleton on true first load
-  return <div className="flex-1 flex flex-col h-full items-center justify-center">Loading...</div>;
+  return <div className="flex-1 flex flex-col h-full items-center justify-center text-gray-500">No messages yet.</div>;
 };
 
 export default ChatDetail;

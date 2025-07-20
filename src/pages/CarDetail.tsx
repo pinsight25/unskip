@@ -156,21 +156,6 @@ const CarDetail = () => {
 
   useRealtimeRefetch('cars', ['car', id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 responsive-header-spacing">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <div className="text-lg font-semibold text-gray-900 mb-2">Loading car details...</div>
-            <div className="text-gray-600">Fetching information from our database</div>
-            <div className="text-sm text-gray-500 mt-2">This should take just a few seconds</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error || !car) {
     return (
       <div className="min-h-screen bg-gray-50 responsive-header-spacing">

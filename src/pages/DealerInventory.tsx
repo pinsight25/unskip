@@ -24,7 +24,6 @@ const DealerInventory = () => {
   const { dealerSlug } = useParams();
   const [sortBy, setSortBy] = useState('');
   const [cars, setCars] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Find dealer by slug (from DB, not mock)
@@ -34,7 +33,6 @@ const DealerInventory = () => {
 
   useEffect(() => {
     const fetchDealerAndCars = async () => {
-      setLoading(true);
       setError(null);
       // Fetch dealer by slug only
       let dealerData = null;
@@ -48,7 +46,6 @@ const DealerInventory = () => {
           setDealer(null);
           setCars([]);
           setError('Dealer not found');
-          setLoading(false);
           return;
         }
         dealerData = data;
@@ -112,7 +109,6 @@ const DealerInventory = () => {
           })));
         }
       }
-      setLoading(false);
     };
     fetchDealerAndCars();
   }, [dealerSlug]);
@@ -136,9 +132,6 @@ const DealerInventory = () => {
     }
   });
 
-  if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading dealer inventory...</div>;
-  }
   if (error || !dealer) {
     return (
       <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">

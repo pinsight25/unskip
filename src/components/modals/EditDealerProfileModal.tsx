@@ -22,13 +22,20 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
     businessCategory: dealer.business_category || '',
     brandsDealWith: dealer.brands_deal_with || [],
     specialization: dealer.specialization || '',
-    gstNumber: dealer.gst_number || '',
+    panNumber: dealer.pan_number || '',
+    aadhaarNumber: dealer.aadhaar_last_four ? 'XXXXXXXX' + dealer.aadhaar_last_four : '',
+    businessDocType: dealer.business_doc_type || 'gst_certificate',
+    businessDocNumber: dealer.business_doc_number || '',
+    businessDocUrl: dealer.business_doc_url || '',
+    panCardUrl: dealer.pan_card_url || '',
     shopAddress: dealer.shop_address || '',
     pincode: dealer.pincode || '',
     establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
     about: dealer.about || '',
     shopPhotos: [], // new uploads
     shopPhotosUrls: dealer.shop_photos_urls || [], // existing
+    businessDocument: null,
+    panCard: null,
   });
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
@@ -42,6 +49,15 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
     setFormData(prev => ({ ...prev, shopPhotos: Array.from(files) }));
   };
 
+  const handleBusinessDocUpload = (files) => {
+    if (!files) return;
+    setFormData(prev => ({ ...prev, businessDocument: files[0] }));
+  };
+  const handlePanCardUpload = (files) => {
+    if (!files) return;
+    setFormData(prev => ({ ...prev, panCard: files[0] }));
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     setError('');
@@ -49,6 +65,14 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
       let shopPhotosUrls = formData.shopPhotosUrls;
       if (formData.shopPhotos.length > 0) {
         shopPhotosUrls = await uploadMultipleToCloudinary(formData.shopPhotos, 'unskip/dealers/photos');
+      }
+      let businessDocUrl = formData.businessDocUrl;
+      if (formData.businessDocument) {
+        businessDocUrl = await uploadToCloudinary(formData.businessDocument, 'unskip/dealers/documents');
+      }
+      let panCardUrl = formData.panCardUrl;
+      if (formData.panCard) {
+        panCardUrl = await uploadToCloudinary(formData.panCard, 'unskip/dealers/documents');
       }
       const { error: updateError } = await supabase
         .from('dealers')
@@ -60,7 +84,12 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
           business_category: formData.businessCategory,
           brands_deal_with: formData.brandsDealWith,
           specialization: formData.specialization,
-          gst_number: formData.gstNumber,
+          pan_number: formData.panNumber,
+          aadhaar_last_four: formData.aadhaarNumber.slice(-4),
+          business_doc_type: formData.businessDocType,
+          business_doc_number: formData.businessDocNumber,
+          business_doc_url: businessDocUrl,
+          pan_card_url: panCardUrl,
           shop_address: formData.shopAddress,
           pincode: formData.pincode,
           establishment_year: parseInt(formData.establishmentYear),
@@ -136,6 +165,53 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
                 placeholder="Select brands (multiple allowed)"
               />
             </div>
+            {/* Legal & Document Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">PAN Number *</label>
+                <Input value={formData.panNumber} onChange={e => setFormData(f => ({ ...f, panNumber: e.target.value.toUpperCase() }))} maxLength={10} placeholder="ABCDE1234F" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Aadhaar Number *</label>
+                <Input value={formData.aadhaarNumber} onChange={e => setFormData(f => ({ ...f, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))} maxLength={12} placeholder="XXXX XXXX 1234" />
+                {formData.aadhaarNumber.length === 12 && (
+                  <p className="text-xs text-gray-500 mt-1">Will be stored as: XXXX XXXX {formData.aadhaarNumber.slice(-4)}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Business Document Type *</label>
+                <Select value={formData.businessDocType} onValueChange={v => setFormData(f => ({ ...f, businessDocType: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Select document type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gst_certificate">GST Certificate</SelectItem>
+                    <SelectItem value="msme_certificate">MSME/Udyam Certificate</SelectItem>
+                    <SelectItem value="shop_license">Shop & Establishment License</SelectItem>
+                    <SelectItem value="trade_license">Trade License</SelectItem>
+                    <SelectItem value="other">Other Business Registration</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Document Number *</label>
+                <Input value={formData.businessDocNumber} onChange={e => setFormData(f => ({ ...f, businessDocNumber: e.target.value.toUpperCase() }))} placeholder="Enter document number" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium">Business Document *</label>
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => handleBusinessDocUpload(e.target.files)} className="block mt-2" />
+                {formData.businessDocUrl && (
+                  <a href={formData.businessDocUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline mt-1 inline-block">View Current Document</a>
+                )}
+                {formData.businessDocument && <span className="text-xs text-green-600 ml-2">New file selected: {formData.businessDocument.name}</span>}
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium">PAN Card *</label>
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => handlePanCardUpload(e.target.files)} className="block mt-2" />
+                {formData.panCardUrl && (
+                  <a href={formData.panCardUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline mt-1 inline-block">View Current PAN Card</a>
+                )}
+                {formData.panCard && <span className="text-xs text-green-600 ml-2">New file selected: {formData.panCard.name}</span>}
+              </div>
+            </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium">Shop Address *</label>
               <Input value={formData.shopAddress} onChange={e => setFormData(f => ({ ...f, shopAddress: e.target.value }))} />
@@ -174,7 +250,7 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
                 <div key={idx} className="flex flex-col items-center">
                   <img src={url} alt={`Shop photo ${idx + 1}`} className="w-16 h-16 object-cover rounded border" />
                   {idx !== 0 && (
-                    <Button size="xs" className="mt-1 text-xs px-2 py-1" variant="outline" onClick={() => {
+                    <Button size="sm" className="mt-1 text-xs px-2 py-1" variant="outline" onClick={() => {
                       // Move this photo to the first position
                       setFormData(f => {
                         const arr = [...f.shopPhotosUrls];

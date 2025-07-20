@@ -12,6 +12,7 @@ import { useDealers } from '@/hooks/queries/useDealers';
 import { Dealer } from '@/types/dealer';
 import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCars } from '@/hooks/queries/useCarQueries';
 
 const DealerSkeletonGrid = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -26,26 +27,21 @@ const Dealers = () => {
   const [selectedBrand, setSelectedBrand] = useState('');
 
   // Use the new useDealers hook
-  const { filteredDealers, isLoading, error, data: allDealers } = useDealers(selectedLocation, selectedBrand);
+  const { filteredDealers, error, data: allDealers } = useDealers(selectedLocation, selectedBrand);
+  const { data: allCars = [] } = useCars();
   useRealtimeRefetch('dealers', ['dealers']);
+
+  // Compute car count for each dealer
+  const dealersWithCarCount = (filteredDealers || []).map(dealer => ({
+    ...dealer,
+    carsInStock: allCars.filter(car => car.seller_id === dealer.id && car.status === 'active').length
+  }));
 
   const handleApplyFilters = () => {};
   const handleClearFilters = () => {
     setSelectedLocation('');
     setSelectedBrand('');
   };
-
-  // Show skeletons only on first load (no data and loading)
-  if (!allDealers && isLoading) {
-    return (
-      <div className="bg-white min-h-screen">
-        <DealerHeader />
-        <div className="max-width-container-wide py-4 pb-24 lg:pb-8">
-          <DealerSkeletonGrid />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white min-h-screen">
@@ -72,8 +68,8 @@ const Dealers = () => {
         {/* Dealers Grid */}
         {error ? (
           <div className="text-center py-12 text-red-500">Something went wrong. Try again.</div>
-        ) : filteredDealers && filteredDealers.length > 0 ? (
-          <DealerGrid dealers={filteredDealers} />
+        ) : dealersWithCarCount && dealersWithCarCount.length > 0 ? (
+          <DealerGrid dealers={dealersWithCarCount} />
         ) : (
           <EmptyDealerState onClearFilters={handleClearFilters} />
         )}

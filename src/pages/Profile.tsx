@@ -29,7 +29,7 @@ const ProfileSkeleton = () => (
 );
 
 const Profile = () => {
-  const { user, isLoading: loading } = useUser();
+  const { user } = useUser();
   const { data: listings = [] } = useUserListings(user?.id);
   const profileState = useProfileState();
   const profileHandlers = useProfileHandlers();
@@ -39,7 +39,6 @@ const Profile = () => {
     openSignInModal();
   };
 
-  if (loading) return <ProfileSkeleton />;
   if (!user) {
     return <SignInPrompt onSignIn={handleSignIn} />;
   }

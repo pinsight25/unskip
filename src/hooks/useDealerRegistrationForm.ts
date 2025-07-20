@@ -16,13 +16,17 @@ export interface DealerFormData {
   businessCategory: string;
   brandsDealWith: string[];
   specialization: string;
-  gstNumber: string;
   shopAddress: string;
   pincode: string;
   establishmentYear: string;
   about: string; // New field
+  panNumber: string;
+  aadhaarNumber: string;
+  businessDocType: 'gst_certificate' | 'msme_certificate' | 'shop_license' | 'trade_license' | 'other';
+  businessDocNumber: string;
   documents: {
-    gstCertificate: File | null;
+    businessDocument: File | null;
+    panCard: File | null;
     shopLicense: File | null;
     shopPhotos: File[];
   };
@@ -40,7 +44,8 @@ export const useDealerRegistrationForm = () => {
         const parsed = JSON.parse(saved);
         // Files cannot be persisted, so reset them
         if (parsed.documents) {
-          parsed.documents.gstCertificate = null;
+          parsed.documents.businessDocument = null;
+          parsed.documents.panCard = null;
           parsed.documents.shopLicense = null;
           parsed.documents.shopPhotos = [];
         }
@@ -54,13 +59,17 @@ export const useDealerRegistrationForm = () => {
           businessCategory: '',
           brandsDealWith: [],
           specialization: '',
-          gstNumber: '',
           shopAddress: '',
           pincode: '',
           establishmentYear: '',
           about: '',
+          panNumber: '',
+          aadhaarNumber: '',
+          businessDocType: 'gst_certificate',
+          businessDocNumber: '',
           documents: {
-            gstCertificate: null,
+            businessDocument: null,
+            panCard: null,
             shopLicense: null,
             shopPhotos: [],
           },
@@ -76,13 +85,17 @@ export const useDealerRegistrationForm = () => {
       businessCategory: '',
       brandsDealWith: [],
       specialization: '',
-      gstNumber: '',
       shopAddress: '',
       pincode: '',
       establishmentYear: '',
       about: '',
+      panNumber: '',
+      aadhaarNumber: '',
+      businessDocType: 'gst_certificate',
+      businessDocNumber: '',
       documents: {
-        gstCertificate: null,
+        businessDocument: null,
+        panCard: null,
         shopLicense: null,
         shopPhotos: [],
       },
@@ -93,7 +106,7 @@ export const useDealerRegistrationForm = () => {
   // Save to localStorage on every change (except files)
   useEffect(() => {
     const { documents, ...rest } = formData;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, gstCertificate: null, shopLicense: null, shopPhotos: [] } }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, businessDocument: null, panCard: null, shopLicense: null, shopPhotos: [] } }));
   }, [formData]);
 
   // Helper to update form data and persist
@@ -102,7 +115,7 @@ export const useDealerRegistrationForm = () => {
       const updated = updater(prev);
       // Save to localStorage (except files)
       const { documents, ...rest } = updated;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, gstCertificate: null, shopLicense: null, shopPhotos: [] } }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...rest, documents: { ...documents, businessDocument: null, panCard: null, shopLicense: null, shopPhotos: [] } }));
       return updated;
     });
   };
@@ -121,7 +134,6 @@ export const useDealerRegistrationForm = () => {
   const businessCategoryRef = useRef<HTMLDivElement>(null);
   const specializationRef = useRef<HTMLDivElement>(null);
   const brandsDealWithRef = useRef<HTMLDivElement>(null);
-  const gstNumberRef = useRef<HTMLInputElement>(null);
   const shopAddressRef = useRef<HTMLInputElement>(null);
   const pincodeRef = useRef<HTMLInputElement>(null);
   const establishmentYearRef = useRef<HTMLInputElement>(null);
@@ -183,13 +195,9 @@ export const useDealerRegistrationForm = () => {
     if (!formData.businessCategory) errors.businessCategory = 'Business category is required';
     if (!formData.specialization) errors.specialization = 'Specialization is required';
     if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) errors.brandsDealWith = 'Select at least one brand';
-    if (!formData.gstNumber) errors.gstNumber = 'GST number is required';
-    if (!formData.shopAddress) errors.shopAddress = 'Shop address is required';
-    if (!formData.pincode) errors.pincode = 'Pincode is required';
-    if (!formData.establishmentYear) errors.establishmentYear = 'Establishment year is required';
     if (!formData.about) errors.about = 'About is required';
-    if (!formData.documents.gstCertificate) errors.gstCertificate = 'GST certificate is required';
-    if (!formData.documents.shopLicense) errors.shopLicense = 'Shop license is required';
+    if (!formData.documents.businessDocument) errors.businessDocument = 'Business document is required';
+    if (!formData.documents.panCard) errors.panCard = 'PAN card is required';
     if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) errors.shopPhotos = 'At least one shop photo is required';
     if (!formData.agreeToTerms) errors.agreeToTerms = 'You must agree to the terms';
     setFieldErrors(errors);
@@ -201,13 +209,9 @@ export const useDealerRegistrationForm = () => {
     else if (errors.businessCategory) businessCategoryRef.current?.focus();
     else if (errors.specialization) specializationRef.current?.focus();
     else if (errors.brandsDealWith) brandsDealWithRef.current?.focus();
-    else if (errors.gstNumber) gstNumberRef.current?.focus();
-    else if (errors.shopAddress) shopAddressRef.current?.focus();
-    else if (errors.pincode) pincodeRef.current?.focus();
-    else if (errors.establishmentYear) establishmentYearRef.current?.focus();
     else if (errors.about) aboutRef.current?.focus();
-    else if (errors.gstCertificate) gstCertRef.current?.focus();
-    else if (errors.shopLicense) shopLicenseRef.current?.focus();
+    else if (errors.businessDocument) gstCertRef.current?.focus();
+    else if (errors.panCard) shopLicenseRef.current?.focus();
     else if (errors.shopPhotos) shopPhotosRef.current?.focus();
     else if (errors.agreeToTerms) termsRef.current?.focus();
     return Object.keys(errors).length === 0;
@@ -226,14 +230,17 @@ export const useDealerRegistrationForm = () => {
       if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) errors.brandsDealWith = 'Select at least one brand';
       if (!formData.about || formData.about.trim().length === 0) errors.about = 'About is required';
     } else if (currentStep === 2) {
-      if (!formData.gstNumber) errors.gstNumber = 'GST number is required';
+      if (!formData.panNumber || !formData.panNumber.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)) errors.panNumber = 'Valid PAN number is required';
+      if (!formData.aadhaarNumber || formData.aadhaarNumber.length !== 12) errors.aadhaarNumber = 'Valid 12-digit Aadhaar number is required';
+      if (!formData.businessDocType) errors.businessDocType = 'Business document type is required';
+      if (!formData.businessDocNumber) errors.businessDocNumber = 'Business document number is required';
       if (!formData.shopAddress) errors.shopAddress = 'Shop address is required';
       if (!formData.pincode) errors.pincode = 'Pincode is required';
       if (!formData.establishmentYear) errors.establishmentYear = 'Establishment year is required';
     } else if (currentStep === 3) {
-      if (!formData.documents.gstCertificate) errors.gstCertificate = 'GST certificate is required';
-      if (!formData.documents.shopLicense) errors.shopLicense = 'Shop license is required';
-      if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) errors.shopPhotos = 'At least one shop photo is required';
+      if (!formData.documents.businessDocument) errors.businessDocument = 'Business document is required';
+      if (!formData.documents.panCard) errors.panCard = 'PAN card is required';
+      if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length < 1) errors.shopPhotos = 'At least one shop photo is required';
       if (!formData.agreeToTerms) errors.agreeToTerms = 'You must agree to the terms';
     }
     
@@ -259,13 +266,16 @@ export const useDealerRegistrationForm = () => {
         if (!formData.brandsDealWith || formData.brandsDealWith.length === 0) missingFields.push('Brands Dealt With');
         if (!formData.about || formData.about.trim().length === 0) missingFields.push('About Your Dealership');
       } else if (currentStep === 2) {
-        if (!formData.gstNumber) missingFields.push('GST Number');
+        if (!formData.panNumber) missingFields.push('PAN Number');
+        if (!formData.aadhaarNumber) missingFields.push('Aadhaar Number');
+        if (!formData.businessDocType) missingFields.push('Business Document Type');
+        if (!formData.businessDocNumber) missingFields.push('Business Document Number');
         if (!formData.shopAddress) missingFields.push('Shop Address');
         if (!formData.pincode) missingFields.push('Pincode');
         if (!formData.establishmentYear) missingFields.push('Establishment Year');
       } else if (currentStep === 3) {
-        if (!formData.documents.gstCertificate) missingFields.push('GST Certificate');
-        if (!formData.documents.shopLicense) missingFields.push('Shop License');
+        if (!formData.documents.businessDocument) missingFields.push('Business Document');
+        if (!formData.documents.panCard) missingFields.push('PAN Card');
         if (!formData.documents.shopPhotos || formData.documents.shopPhotos.length === 0) missingFields.push('Shop Photos');
         if (!formData.agreeToTerms) missingFields.push('Terms Agreement');
       }
@@ -315,18 +325,6 @@ export const useDealerRegistrationForm = () => {
         return;
       }
 
-      // Check if GST number already exists
-      const { data: existingGst } = await supabase
-        .from('dealers')
-        .select('id')
-        .eq('gst_number', formData.gstNumber)
-        .maybeSingle();
-      if (existingGst) {
-        setErrorMessage('GST number already exists. Please use a unique GST number.');
-        setIsSubmitting(false);
-        return;
-      }
-
       // Generate slug from business name
       const slug = formData.businessName
         .toLowerCase()
@@ -334,8 +332,8 @@ export const useDealerRegistrationForm = () => {
         .replace(/(^-|-$)/g, '');
 
       // Upload documents to Cloudinary
-      const gstCertUrl = await uploadToCloudinary(formData.documents.gstCertificate!, 'unskip/dealers/documents');
-      const shopLicenseUrl = await uploadToCloudinary(formData.documents.shopLicense!, 'unskip/dealers/documents');
+      const businessDocUrl = await uploadToCloudinary(formData.documents.businessDocument!, 'unskip/dealers/documents');
+      const panCardUrl = await uploadToCloudinary(formData.documents.panCard!, 'unskip/dealers/documents');
       const shopPhotosUrls = await uploadMultipleToCloudinary(formData.documents.shopPhotos, 'unskip/dealers/photos');
 
       // Insert into dealers table
@@ -349,13 +347,16 @@ export const useDealerRegistrationForm = () => {
         business_category: formData.businessCategory,
         specialization: formData.specialization,
         brands_deal_with: formData.brandsDealWith,
-        gst_number: formData.gstNumber,
         shop_address: formData.shopAddress,
         pincode: formData.pincode,
         establishment_year: formData.establishmentYear ? Number(formData.establishmentYear) : null,
         about: formData.about,
-        gst_certificate_url: gstCertUrl,
-        shop_license_url: shopLicenseUrl,
+        pan_number: formData.panNumber,
+        aadhaar_last_four: formData.aadhaarNumber.slice(-4),
+        business_doc_type: formData.businessDocType,
+        business_doc_number: formData.businessDocNumber,
+        business_doc_url: businessDocUrl,
+        pan_card_url: panCardUrl,
         shop_photos_urls: shopPhotosUrls,
         verification_status: 'pending' as 'pending',
         verified: false
@@ -429,7 +430,6 @@ export const useDealerRegistrationForm = () => {
     businessCategoryRef,
     specializationRef,
     brandsDealWithRef,
-    gstNumberRef,
     shopAddressRef,
     pincodeRef,
     establishmentYearRef,

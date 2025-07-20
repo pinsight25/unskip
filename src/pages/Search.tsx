@@ -137,11 +137,6 @@ const Search = () => {
 
   const makes = [...new Set(cars.map(car => car.make))];
 
-  // Show skeleton only on true first load
-  if (loading && !cars.length) {
-    return <SearchSkeleton />;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="flex-1 pt-2">

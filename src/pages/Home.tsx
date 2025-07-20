@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const Home = () => {
   // Use only useCars for car data
-  const { data: cars = [], isLoading, isFetching } = useCars();
+  const { data: cars = [] } = useCars();
   const { data: dealers = [] } = useDealers();
   const allCarsCount = cars.length;
   // Count cars where seller.type === 'dealer'
@@ -64,19 +64,6 @@ const Home = () => {
   // Provide a stub getOfferStatus function
   const getOfferStatus = (carId: string) => 'none' as const;
 
-  // Show skeleton loader only if there is no cached data (first visit)
-  if (isLoading && (!cars || cars.length === 0)) {
-    return (
-      <div className="relative min-h-[400px]">
-        <div className="flex flex-wrap gap-6 justify-center opacity-60">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="w-[320px] h-[340px] mb-4" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gray-50 relative">
       {/* Show cached data banner if not loading and data is from cache */}
@@ -100,7 +87,7 @@ const Home = () => {
           filteredCars={filteredCars}
           currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}
           isMobile={false}
-          isRefreshing={isFetching}
+          isRefreshing={false}
           offerStatuses={{}}
           onSort={() => {}}
           onMakeOffer={() => {}}
