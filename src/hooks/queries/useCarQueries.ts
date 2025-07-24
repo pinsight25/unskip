@@ -7,9 +7,8 @@ import { useToast } from '@/components/ui/use-toast';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 // Helper to map raw DB car to Car type
-function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
-  const isDealer = car.users?.user_type === 'dealer';
-  const dealerInfo = isDealer ? dealersMap[car.seller_id] : undefined;
+function mapDbCarToCar(car: any, dealerData: any = {}, userData: any = {}) : Car {
+  const isDealer = userData && userData.user_type === 'dealer';
   return {
     id: car.id,
     title: `${car.year} ${car.make} ${car.model}`,
@@ -31,17 +30,17 @@ function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
     description: car.description || '',
     seller: {
       id: car.seller_id || '',
-      name: car.users?.name || 'Individual Seller',
-      type: isDealer ? 'dealer' : 'individual',
-      phone: formatPhoneForAuth(car.phone_number || ''),
-      email: car.email || '',
-      verified: car.verified || false,
-      dealerVerified: isDealer ? (dealerInfo?.verified === true) : undefined,
+      name: isDealer ? (dealerData?.business_name || userData?.name || 'Dealer') : (userData?.name || 'Individual Seller'),
+      type: userData?.user_type || 'individual',
+      phone: userData?.phone || '',
+      email: userData?.email || '',
+      verified: userData?.is_verified || false,
+      dealerVerified: isDealer ? (dealerData?.verification_status === 'verified') : undefined,
       rating: 0,
       totalSales: 0,
       memberSince: car.created_at ? new Date(car.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 'N/A',
       avatar: '',
-      businessName: '',
+      businessName: dealerData?.business_name || '',
       location: [car.area, car.city].filter(Boolean).join(', '),
     },
     color: car.color,
@@ -68,7 +67,8 @@ function mapDbCarToCar(car: any, dealersMap: Record<string, any> = {}) : Car {
     rtoTransferSupport: car.rto_transfer_support,
     insurance: undefined,
     serviceHistory: undefined,
-    seller_type: car.users?.user_type || 'individual',
+    seller_type: userData?.user_type || 'individual',
+    status: car.status,
   };
 }
 
@@ -83,28 +83,107 @@ export const useCars = () => {
   const query = useQuery<any[]>({
     queryKey: ['cars'],
     queryFn: async () => {
-      const { data: carsData, error: carsError } = await (supabase as any)
+      console.log('🔍 useCars: Starting cars query...');
+      
+      // First, get all cars
+      const { data: carsData, error: carsError } = await supabase
         .from('cars')
         .select(`
           id, title, price, make, model, year, seller_id, status, created_at,
           fuel_type, transmission, kilometers_driven, number_of_owners,
           area, city, color, variant, description, featured, verified,
-          car_images(image_url, is_cover, sort_order),
-          users:seller_id(id, name, is_verified, user_type, phone)
+          car_images(image_url, is_cover, sort_order)
         `)
         .eq('status', 'active')
-        .eq('car_images.is_cover', true)
         .order('created_at', { ascending: false });
+        
+      console.log('🔍 useCars: Cars query result:', { carsData: carsData?.length, carsError });
+        
       if (carsError) {
+        console.error('❌ useCars: Cars query error:', carsError);
         throw carsError;
       }
-      const carsMapped: Car[] = (carsData || []).map((car: any) => mapDbCarToCar(car, {}));
+
+      // Get unique seller IDs
+      const sellerIds = [...new Set(carsData?.map(car => car.seller_id).filter(Boolean) || [])];
+      console.log('🔍 useCars: Seller IDs:', sellerIds);
+
+      // Fetch user data for all sellers
+      let usersData: any[] = [];
+      if (sellerIds.length > 0) {
+        const { data: users, error: usersError } = await supabase
+          .from('users')
+          .select('id, name, phone, email, user_type, is_verified')
+          .in('id', sellerIds);
+        
+        console.log('🔍 useCars: Users query result:', { users: users?.length, usersError });
+        
+        if (usersError) {
+          console.error('❌ useCars: Users query error:', usersError);
+        } else {
+          usersData = users || [];
+        }
+      }
+
+      // Fetch dealer data for dealer users
+      let dealersData: any[] = [];
+      const dealerUserIds = usersData.filter(user => user.user_type === 'dealer').map(user => user.id);
+      if (dealerUserIds.length > 0) {
+        const { data: dealers, error: dealersError } = await supabase
+          .from('dealers')
+          .select('user_id, business_name, verification_status')
+          .in('user_id', dealerUserIds);
+        
+        console.log('🔍 useCars: Dealers query result:', { dealers: dealers?.length, dealersError });
+        
+        if (dealersError) {
+          console.error('❌ useCars: Dealers query error:', dealersError);
+        } else {
+          dealersData = dealers || [];
+        }
+      }
+
+      // Create maps for quick lookup
+      const usersMap = new Map();
+      usersData.forEach(user => {
+        usersMap.set(user.id, user);
+      });
+
+      const dealersMap = new Map();
+      dealersData.forEach(dealer => {
+        dealersMap.set(dealer.user_id, dealer);
+      });
+
+      // Map cars with user and dealer data
+      const carsMapped: Car[] = (carsData || []).map((car: any) => {
+        const userData = usersMap.get(car.seller_id);
+        const dealerData = dealersMap.get(car.seller_id);
+        const mappedCar = mapDbCarToCar(car, dealerData, userData);
+        
+        console.log('🔍 useCars: Mapped car:', {
+          id: mappedCar.id,
+          title: mappedCar.title,
+          seller: {
+            name: mappedCar.seller.name,
+            type: mappedCar.seller.type,
+            dealerVerified: mappedCar.seller.dealerVerified,
+            businessName: mappedCar.seller.businessName
+          },
+          seller_type: mappedCar.seller_type,
+          userData: userData ? { id: userData.id, name: userData.name, user_type: userData.user_type } : null,
+          dealerData: dealerData ? { user_id: dealerData.user_id, business_name: dealerData.business_name, verification_status: dealerData.verification_status } : null
+        });
+        
+        return mappedCar;
+      });
+      
+      console.log(`✅ useCars: Mapped ${carsMapped.length} cars`);
       return carsMapped as any[];
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
     placeholderData: [],
-    staleTime: Infinity,
+    staleTime: 0, // Force refetch for debugging
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     // Use React Query default retry logic

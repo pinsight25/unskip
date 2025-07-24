@@ -1,28 +1,13 @@
-export interface Accessory {
-  id: string;
-  name: string;
-  brand: string;
-  category: AccessoryCategory;
-  price: {
-    min: number;
-    max: number;
-  };
-  images: string[];
-  description: string;
-  features: string[];
-  compatibility: string[]; // Car models
-  availability: 'in-stock' | 'order' | 'out-of-stock';
-  seller: AccessorySeller;
-  location: string;
-  views: number;
-  createdAt: string;
-  featured: boolean;
-  condition: string;
-  warranty?: string; // Added from form
-  installationAvailable?: boolean; // Added from form
-  email?: string; // Added from form
-  whatsappContact?: boolean; // Added from form
-  additionalInfo?: string; // Added from form
+import { Tables } from '@/integrations/supabase/types'
+
+export type Accessory = Tables<'accessories'> & {
+  seller?: {
+    id: string
+    full_name: string
+    phone: string
+    dealerVerified: boolean
+    seller_type: string
+  }
 }
 
 export interface AccessorySeller {

@@ -1,12 +1,13 @@
 
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { mockAccessories } from '@/data/accessoryMockData';
+import { useAccessory, useAccessories } from '@/hooks/queries/useAccessories';
 import { Accessory } from '@/types/accessory';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
@@ -15,11 +16,39 @@ import RelatedAccessories from '@/components/accessory/detail/RelatedAccessories
 const AccessoryDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const accessory: Accessory | undefined = mockAccessories.find((acc) => acc.id === id);
   const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
 
-  if (!accessory) {
+  const { data: accessory, isLoading, error } = useAccessory(id!);
+  const { data: allAccessories = [] } = useAccessories();
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
+        <div className="flex items-center space-x-4 mb-6">
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Skeleton className="h-96 w-full" />
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-8 w-1/3" />
+              </div>
+            </div>
+          </div>
+          <div className="lg:col-span-1">
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !accessory) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center">
@@ -31,11 +60,11 @@ const AccessoryDetail = () => {
     );
   }
 
-  const formatPrice = (price: { min: number; max: number }) => {
-    if (price.min === price.max) {
-      return `₹${price.min.toLocaleString('en-IN')}`;
+  const formatPrice = (priceMin: number, priceMax?: number | null) => {
+    if (!priceMax || priceMin === priceMax) {
+      return `₹${priceMin.toLocaleString('en-IN')}`;
     }
-    return `₹${price.min.toLocaleString('en-IN')} - ₹${price.max.toLocaleString('en-IN')}`;
+    return `₹${priceMin.toLocaleString('en-IN')} - ₹${priceMax.toLocaleString('en-IN')}`;
   };
 
   const getConditionColor = (condition: string) => {
@@ -49,17 +78,29 @@ const AccessoryDetail = () => {
   };
 
   const handleChat = () => {
-    toast({
-      title: "Starting Chat",
-      description: `Connecting you with ${accessory.seller.shopName}`,
-    });
+    if (accessory.whatsapp_contact && accessory.phone) {
+      // Open WhatsApp with pre-filled message
+      const message = `Hi! I'm interested in your ${accessory.name} listed on Unskip. Can you provide more details?`;
+      const whatsappUrl = `https://wa.me/91${accessory.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    } else {
+      toast({
+        title: "Contact Information",
+        description: `Call ${accessory.phone} to inquire about this accessory`,
+      });
+    }
   };
 
   const handleCall = () => {
-    toast({
-      title: "Calling Seller",
-      description: `Calling ${accessory.seller.shopName}`,
-    });
+    if (accessory.phone) {
+      window.open(`tel:${accessory.phone}`, '_self');
+    } else {
+      toast({
+        title: "No Phone Number",
+        description: "Phone number not available for this seller",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleShare = () => {
@@ -74,9 +115,14 @@ const AccessoryDetail = () => {
   };
 
   // Get related accessories (same category, different products)
-  const relatedAccessories = mockAccessories
+  const relatedAccessories = allAccessories
     .filter(acc => acc.category === accessory.category && acc.id !== accessory.id)
     .slice(0, 4);
+
+  // Use real images from accessory data, fallback to placeholder if none
+  const images = accessory.images && accessory.images.length > 0 
+    ? accessory.images 
+    : ['https://via.placeholder.com/600x400?text=Accessory+Image'];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
@@ -104,12 +150,12 @@ const AccessoryDetail = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AccessoryImageGallery
-              images={accessory.images}
+              images={images}
               name={accessory.name}
               selectedImage={selectedImage}
               onImageSelect={setSelectedImage}
-              featured={accessory.featured}
-              verified={accessory.seller.verified}
+              featured={accessory.featured || false}
+              verified={accessory.verified_seller || false}
             />
 
             <AccessoryInfo
@@ -129,11 +175,11 @@ const AccessoryDetail = () => {
           </Card>
 
           {/* Additional Information */}
-          {accessory.additionalInfo && (
+          {accessory.additional_info && (
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg mb-4">Additional Details</h3>
-                <p className="text-gray-700 leading-relaxed">{accessory.additionalInfo}</p>
+                <p className="text-gray-700 leading-relaxed">{accessory.additional_info}</p>
               </CardContent>
             </Card>
           )}
@@ -142,11 +188,25 @@ const AccessoryDetail = () => {
         {/* Right Column - Seller Info (1/3 width) */}
         <div className="lg:col-span-1 space-y-6">
           <AccessorySellerCard 
-            seller={accessory.seller} 
+            seller={{
+              id: accessory.seller_id,
+              name: accessory.seller_name,
+              shopName: accessory.seller_name,
+              type: accessory.verified_seller ? 'dealer' : 'individual',
+              phone: accessory.phone,
+              email: accessory.email || '',
+              verified: accessory.verified_seller || false,
+              totalSales: 0,
+              memberSince: accessory.created_at || '',
+              location: accessory.location,
+              specialization: [accessory.category],
+              brandsCarried: [accessory.brand],
+              responseTime: 'Usually responds within 1 hour'
+            }}
             onChat={handleChat}
             onCall={handleCall}
             email={accessory.email}
-            whatsappContact={accessory.whatsappContact}
+            whatsappContact={accessory.whatsapp_contact}
           />
         </div>
       </div>

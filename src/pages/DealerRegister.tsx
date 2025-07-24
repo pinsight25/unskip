@@ -29,7 +29,6 @@ const DealerRegister = () => {
     handleSubmit,
     setFormData,
     fieldErrors,
-    setIsSubmitting,
   } = useDealerRegistrationForm();
 
   const { toast } = useToast();

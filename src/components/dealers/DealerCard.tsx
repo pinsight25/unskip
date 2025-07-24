@@ -2,7 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Car, Calendar, Users, Shield } from 'lucide-react';
+import { MapPin, Car, Calendar, Users, Shield, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 // Remove: import { createSlug } from '@/data/dealers';
 
@@ -24,6 +24,7 @@ interface DealerCardProps {
     location: string;
     establishmentYear: string;
     carsInStock: number;
+    accessoriesInStock?: number;
     verified: boolean;
     verification_status?: string;
     brands: string[];
@@ -106,9 +107,15 @@ const DealerCard = ({ dealer }: DealerCardProps) => {
             </div>
           </div>
           
-          <div className="flex items-center bg-blue-50 p-2 rounded-lg">
-            <Car className="h-3 w-3 mr-2 text-blue-600" />
-            <span className="text-xs font-medium">{dealer.carsInStock || 0} cars</span>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center bg-blue-50 p-2 rounded-lg">
+              <Car className="h-3 w-3 mr-2 text-blue-600" />
+              <span className="text-xs font-medium">{dealer.carsInStock || 0} cars</span>
+            </div>
+            <div className="flex items-center bg-orange-50 p-2 rounded-lg">
+              <Package className="h-3 w-3 mr-2 text-orange-600" />
+              <span className="text-xs font-medium">{dealer.accessoriesInStock || 0} accessories</span>
+            </div>
           </div>
         </div>
 

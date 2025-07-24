@@ -38,6 +38,7 @@ export interface Car {
   featured: boolean;
   views: number;
   createdAt: string;
+  status?: string;
   // Fields from Sell Car form - flat structure to match components
   registrationYear?: number;
   registrationState?: string;

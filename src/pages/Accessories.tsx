@@ -1,7 +1,7 @@
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { mockAccessories } from '@/data/accessoryMockData';
+import { useAccessories } from '@/hooks/queries/useAccessories';
 import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
 import AccessoryHeader from '@/components/accessories/AccessoryHeader';
 import AccessoryFiltersComponent from '@/components/accessories/AccessoryFilters';
@@ -24,53 +24,19 @@ const Accessories = () => {
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const filteredAccessories = useMemo(() => {
-    let filtered = mockAccessories;
+  // Convert filters to database query format
+  const dbFilters = {
+    search: filters.search || undefined,
+    category: filters.category !== 'all' ? filters.category : undefined,
+    // Only pass price filters if both min and max are meaningful
+    ...(filters.priceRange[0] > 0 && filters.priceRange[1] > 0 ? {
+      priceMin: filters.priceRange[0],
+      priceMax: filters.priceRange[1]
+    } : {}),
+    location: filters.location || undefined,
+  };
 
-    // Search filter
-    if (filters.search) {
-      filtered = filtered.filter(accessory =>
-        accessory.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        accessory.brand.toLowerCase().includes(filters.search.toLowerCase()) ||
-        accessory.compatibility.some(model => 
-          model.toLowerCase().includes(filters.search.toLowerCase())
-        )
-      );
-    }
-
-    // Category filter
-    if (filters.category !== 'all') {
-      filtered = filtered.filter(accessory => accessory.category === filters.category);
-    }
-
-    // Price range filter
-    filtered = filtered.filter(accessory => 
-      accessory.price.min >= filters.priceRange[0] && 
-      accessory.price.max <= filters.priceRange[1]
-    );
-
-    // Sort
-    switch (filters.sortBy) {
-      case 'price-low':
-        filtered.sort((a, b) => a.price.min - b.price.min);
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => b.price.max - a.price.max);
-        break;
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      default:
-        // Relevance - featured first, then by views
-        filtered.sort((a, b) => {
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          return b.views - a.views;
-        });
-    }
-
-    return filtered;
-  }, [filters]);
+  const { data: accessories = [], isLoading, error } = useAccessories(dbFilters);
 
   const handleCategoryFilter = (category: AccessoryCategory | 'all') => {
     setFilters(prev => ({ ...prev, category }));
@@ -116,14 +82,16 @@ const Accessories = () => {
           setViewMode={setViewMode}
           filters={filters}
           onSortChange={handleSortChange}
-          filteredCount={filteredAccessories.length}
+          filteredCount={accessories.length}
         />
 
         {/* Results Grid */}
         <AccessoryResults
-          accessories={filteredAccessories}
+          accessories={accessories}
           viewMode={viewMode}
           onClearFilters={handleClearFilters}
+          isLoading={isLoading}
+          error={error}
         />
       </div>
     </div>

@@ -10,6 +10,7 @@ export interface Dealer {
   city?: string;
   establishmentYear: string;
   carsInStock: number;
+  accessoriesInStock?: number;
   verified: boolean;
   brands: string[];
   shopPhoto?: string;

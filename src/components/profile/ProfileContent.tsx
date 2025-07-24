@@ -80,18 +80,24 @@ const ProfileContent = ({
   });
 
   // Fetch real stats for the dashboard
-  const { data: stats = { totalViews: 0, activeListings: 0, offersReceived: 0 } } = useQuery({
+  const { data: stats = { totalViews: 0, activeCarListings: 0, activeAccessoryListings: 0, offersReceived: 0 } } = useQuery({
     queryKey: ['profile-stats', user?.id],
     queryFn: async () => {
-      if (!user?.id) return { totalViews: 0, activeListings: 0, offersReceived: 0 };
+      if (!user?.id) return { totalViews: 0, activeCarListings: 0, activeAccessoryListings: 0, offersReceived: 0 };
       // Get total views
       const { count: viewsCount } = await supabase
         .from('car_views')
         .select('*', { count: 'exact', head: true })
         .eq('seller_id', user.id);
-      // Get active listings count
-      const { count: listingsCount } = await supabase
+      // Get active car listings count
+      const { count: carListingsCount } = await supabase
         .from('cars')
+        .select('*', { count: 'exact', head: true })
+        .eq('seller_id', user.id)
+        .eq('status', 'active');
+      // Get active accessory listings count
+      const { count: accessoryListingsCount } = await supabase
+        .from('accessories')
         .select('*', { count: 'exact', head: true })
         .eq('seller_id', user.id)
         .eq('status', 'active');
@@ -102,7 +108,8 @@ const ProfileContent = ({
         .eq('seller_id', user.id);
       return {
         totalViews: viewsCount || 0,
-        activeListings: listingsCount || 0,
+        activeCarListings: carListingsCount || 0,
+        activeAccessoryListings: accessoryListingsCount || 0,
         offersReceived: offersCount || 0
       };
     },
@@ -125,10 +132,6 @@ const ProfileContent = ({
       refetch();
     }
   }, [activeTab, refetch]);
-
-  // Debug logging to check user data
-  console.log('ProfileContent - User data:', user);
-  console.log('ProfileContent - User type:', user?.userType);
 
   // Calculate total active listings
   const activeListings = listings.filter(l => l.status === 'active');
@@ -168,37 +171,18 @@ const ProfileContent = ({
           <Card className="p-6 section-gap">
             <h3 className="text-lg font-semibold mb-4 text-center">Quick Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {user?.userType === 'dealer' ? (
-                <>
-                  <Link to="/dealer/dashboard">
-                    <Button className="w-full h-14 text-base font-semibold" size="lg">
-                      <Store className="h-5 w-5 mr-3" />
-                      Dealer Dashboard
-                    </Button>
-                  </Link>
-                  <Link to="/sell-car">
-                    <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
-                      <Car className="h-5 w-5 mr-3" />
-                      Add Car to Inventory
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/sell-car">
-                    <Button className="w-full h-14 text-base font-semibold" size="lg">
-                      <Car className="h-5 w-5 mr-3" />
-                      Post Your Car
-                    </Button>
-                  </Link>
-                  <Link to="/post-accessory">
-                    <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
-                      <Package className="h-5 w-5 mr-3" />
-                      Post Accessory
-                    </Button>
-                  </Link>
-                </>
-              )}
+              <Link to="/sell-car">
+                <Button className="w-full h-14 text-base font-semibold" size="lg">
+                  <Car className="h-5 w-5 mr-3" />
+                  Post Your Car
+                </Button>
+              </Link>
+              <Link to="/post-accessory">
+                <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
+                  <Package className="h-5 w-5 mr-3" />
+                  Post Accessory
+                </Button>
+              </Link>
             </div>
           </Card>
 

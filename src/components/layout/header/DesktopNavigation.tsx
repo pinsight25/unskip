@@ -33,19 +33,6 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
           )}
         </Link>
       ))}
-      {user?.userType === 'dealer' && (
-        <Link
-          to="/dealer/dashboard"
-          className={`text-base font-semibold transition-all duration-300 hover:text-primary relative py-2 ${
-            isActive('/dealer/dashboard') ? 'text-primary' : 'text-foreground/80'
-          }`}
-        >
-          Dealer Dashboard
-          {isActive('/dealer/dashboard') && (
-            <div className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full" />
-          )}
-        </Link>
-      )}
       {/* Saved with Heart Icon */}
       <Link
         to="/saved"

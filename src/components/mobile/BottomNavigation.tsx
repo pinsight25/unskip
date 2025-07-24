@@ -18,11 +18,7 @@ const BottomNavigation = () => {
     { icon: User, label: 'Profile', path: '/profile', active: location.pathname === '/profile' }
   ];
 
-  if (user?.userType === 'dealer') {
-    navItems.splice(2, 0, { icon: Plus, label: 'Dealer Dashboard', path: '/dealer/dashboard', active: location.pathname.startsWith('/dealer') });
-  } else {
-    navItems.splice(2, 0, { icon: Plus, label: 'Sell', path: '/sell-car', active: location.pathname === '/sell-car' || location.pathname === '/sell' });
-  }
+  navItems.splice(2, 0, { icon: Plus, label: 'Sell', path: '/sell-car', active: location.pathname === '/sell-car' || location.pathname === '/sell' });
 
   const handleNavClick = () => {
     window.dispatchEvent(new Event('closeMobileMenu'));

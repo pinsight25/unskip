@@ -12,7 +12,8 @@ import {
   Building, 
   User, 
   Mail,
-  Award
+  Award,
+  Package
 } from 'lucide-react';
 
 interface DealerHeaderProps {
@@ -27,6 +28,7 @@ interface DealerHeaderProps {
     location: string;
     establishmentYear?: string;
     carsInStock: number;
+    accessoriesInStock?: number;
     verified: boolean;
     brands: string[];
     shopPhoto?: string;
@@ -217,6 +219,12 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
                 <CarIcon className="h-3 w-3 mr-2 text-gray-500" />
                 <span className="text-sm">
                   {dealer.carsInStock === 0 ? 'No cars' : `${dealer.carsInStock}+ cars`} in stock
+                </span>
+              </div>
+              <div className="flex items-center">
+                <Package className="h-3 w-3 mr-2 text-gray-500" />
+                <span className="text-sm">
+                  {dealer.accessoriesInStock === 0 ? 'No accessories' : `${dealer.accessoriesInStock}+ accessories`} in stock
                 </span>
               </div>
             </div>

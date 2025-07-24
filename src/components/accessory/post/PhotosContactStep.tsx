@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { CustomTextarea } from '@/components/ui/CustomTextarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AccessoryFormData } from '@/hooks/useAccessoryForm';
+import { cloudinaryConfig } from '@/config/cloudinary';
 
 interface PhotosContactStepProps {
   formData: AccessoryFormData;
@@ -14,23 +15,73 @@ interface PhotosContactStepProps {
   onPhoneVerification: () => void;
 }
 
+interface PhotoData {
+  id: string;
+  preview: string;
+  cloudinaryUrl?: string;
+  isCover?: boolean;
+}
+
 const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
   const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = (files: FileList | null) => {
-    if (!files) return;
+  // Convert existing images to PhotoData format
+  const photos: PhotoData[] = (formData.images || []).map((img, idx) => ({
+    id: `existing-${idx}`,
+    preview: img,
+    cloudinaryUrl: img,
+    isCover: idx === 0
+  }));
+
+  // Cloudinary upload function
+  const uploadToCloudinary = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+    formData.append('folder', 'unskip/accessories');
+
+    const response = await fetch(cloudinaryConfig.uploadUrl, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  };
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || uploading) return;
     
-    const newImages: string[] = [];
-    Array.from(files).forEach(file => {
-      if (file.type.startsWith('image/')) {
-        const url = URL.createObjectURL(file);
-        newImages.push(url);
+    setUploading(true);
+    try {
+      const newPhotos: PhotoData[] = [];
+      
+      for (const file of Array.from(files)) {
+        if (file.type.startsWith('image/')) {
+          const cloudinaryUrl = await uploadToCloudinary(file);
+          newPhotos.push({
+            id: `new-${Date.now()}-${Math.random()}`,
+            preview: URL.createObjectURL(file),
+            cloudinaryUrl: cloudinaryUrl,
+            isCover: photos.length === 0 && newPhotos.length === 0
+          });
+        }
       }
-    });
-    
-    onUpdate({
-      images: [...formData.images, ...newImages].slice(0, 8)
-    });
+      
+      const updatedPhotos = [...photos, ...newPhotos].slice(0, 8);
+      onUpdate({
+        images: updatedPhotos.map(p => p.cloudinaryUrl || p.preview)
+      });
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -40,8 +91,10 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
   };
 
   const removeImage = (index: number) => {
-    const updatedImages = formData.images.filter((_, i) => i !== index);
-    onUpdate({ images: updatedImages });
+    const updatedPhotos = photos.filter((_, i) => i !== index);
+    onUpdate({ 
+      images: updatedPhotos.map(p => p.cloudinaryUrl || p.preview)
+    });
   };
 
   return (
@@ -70,7 +123,9 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
           >
             <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
             <p className="text-lg font-medium mb-2">Add Product Photos</p>
-            <p className="text-gray-600 mb-4">Drag and drop or click to upload (Max 8 photos)</p>
+            <p className="text-gray-600 mb-4">
+              {uploading ? 'Uploading...' : 'Drag and drop or click to upload (Max 8 photos)'}
+            </p>
             <input
               type="file"
               multiple
@@ -79,20 +134,26 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               className="hidden"
               id="image-upload"
               aria-label="Upload product photos"
+              disabled={uploading}
             />
             <label htmlFor="image-upload">
-              <Button type="button" variant="outline" className="cursor-pointer">
-                Choose Files
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="cursor-pointer"
+                disabled={uploading}
+              >
+                {uploading ? 'Uploading...' : 'Choose Files'}
               </Button>
             </label>
           </div>
 
-          {formData.images.length > 0 && (
+          {photos.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              {formData.images.map((image, index) => (
-                <div key={index} className="relative group">
+              {photos.map((photo, index) => (
+                <div key={photo.id} className="relative group">
                   <img
-                    src={image}
+                    src={photo.cloudinaryUrl || photo.preview}
                     alt={`Product ${index + 1}`}
                     className="w-full h-24 object-cover rounded-lg border"
                   />
@@ -100,6 +161,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
                     onClick={() => removeImage(index)}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                     aria-label={`Remove photo ${index + 1}`}
+                    disabled={uploading}
                   >
                     ×
                   </button>
@@ -128,7 +190,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
               <CustomInput
                 id="sellerName"
                 type="text"
-                value={formData.sellerName}
+                value={formData.sellerName || ''}
                 onChange={(e) => onUpdate({ sellerName: e.target.value })}
                 placeholder="Enter your full name"
                 required
@@ -155,7 +217,7 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
             <CustomInput
               id="email"
               type="email"
-              value={formData.email}
+              value={formData.email || ''}
               onChange={(e) => onUpdate({ email: e.target.value })}
               placeholder="your.email@example.com"
             />
@@ -179,8 +241,8 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
             <Label htmlFor="additionalInfo">Additional Information (Optional)</Label>
             <CustomTextarea
               id="additionalInfo"
-              value={formData.additionalInfo}
-              onChange={(e) => onUpdate({ additionalInfo: e.target.value })}
+              value={formData.additional_info || ''}
+              onChange={(e) => onUpdate({ additional_info: e.target.value })}
               placeholder="Any additional details about the accessory..."
               rows={3}
             />

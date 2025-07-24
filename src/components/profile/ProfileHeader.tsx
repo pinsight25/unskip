@@ -30,11 +30,6 @@ const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut, onEditDe
     return null;
   }
 
-  // Debug logging to check user data
-  console.log('Profile data:', profile);
-  console.log('User type:', profile?.userType);
-  console.log('Is dealer:', profile?.userType === 'dealer');
-
   const isDealer = profile?.userType === 'dealer';
   return (
     <Card className="p-4 md:p-6 section-gap">
@@ -87,24 +82,6 @@ const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut, onEditDe
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
-            {isDealer && (
-              <>
-                <Link to="/dealer/dashboard">
-                  <Button variant="secondary" size="sm">
-                    <Store className="h-4 w-4 mr-2" />
-                    Dealer Dashboard
-                  </Button>
-                </Link>
-                <Link to={`/dealers/${profile.slug || ''}`}>
-                  <Button variant="secondary" size="sm">
-                    View My Dealership
-                  </Button>
-                </Link>
-                <Button variant="secondary" size="sm" onClick={onEditDealerProfile}>
-                  Edit Shop Profile
-                </Button>
-              </>
-            )}
           </div>
         </div>
       </div>

@@ -12,12 +12,17 @@ interface AccessoryCardProps {
 }
 
 const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => {
-  const formatPrice = (price: { min: number; max: number }) => {
-    if (price.min === price.max) {
-      return `₹${price.min.toLocaleString('en-IN')}`;
+  const formatPrice = (priceMin: number, priceMax?: number | null) => {
+    if (!priceMax || priceMin === priceMax) {
+      return `₹${priceMin.toLocaleString('en-IN')}`;
     }
-    return `₹${price.min.toLocaleString('en-IN')} - ₹${price.max.toLocaleString('en-IN')}`;
+    return `₹${priceMin.toLocaleString('en-IN')} - ₹${priceMax.toLocaleString('en-IN')}`;
   };
+
+  // Use real images from accessory data, fallback to placeholder if none
+  const imageUrl = accessory.images && accessory.images.length > 0 
+    ? accessory.images[0] 
+    : 'https://via.placeholder.com/300x300?text=Accessory';
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -25,7 +30,7 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
         <Link to={`/accessories/${accessory.id}`}>
           <div className="aspect-square mb-3 overflow-hidden rounded-lg">
             <img
-              src={accessory.images[0]}
+              src={imageUrl}
               alt={accessory.name}
               className="w-full h-full object-cover hover:scale-105 transition-transform"
             />
@@ -37,6 +42,9 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
               <Badge className="bg-green-500 text-white text-xs">New</Badge>
               {accessory.featured && (
                 <Badge className="bg-amber-500 text-white text-xs">Featured</Badge>
+              )}
+              {accessory.verified_seller && (
+                <Badge className="bg-blue-500 text-white text-xs">Verified</Badge>
               )}
             </div>
 
@@ -50,14 +58,16 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
 
             {/* Price */}
             <p className="font-bold text-primary">
-              {formatPrice(accessory.price)}
+              {formatPrice(accessory.price_min, accessory.price_max)}
             </p>
 
             {/* Compatibility */}
-            <p className="text-xs text-gray-600">
-              Fits: {accessory.compatibility.slice(0, 3).join(', ')}
-              {accessory.compatibility.length > 3 && ` +${accessory.compatibility.length - 3} more`}
-            </p>
+            {accessory.compatibility && accessory.compatibility.length > 0 && (
+              <p className="text-xs text-gray-600">
+                Fits: {accessory.compatibility.slice(0, 3).join(', ')}
+                {accessory.compatibility.length > 3 && ` +${accessory.compatibility.length - 3} more`}
+              </p>
+            )}
 
             {/* Location */}
             <div className="flex items-center justify-between text-xs text-gray-500">
@@ -65,6 +75,12 @@ const AccessoryCard = ({ accessory, viewMode = 'grid' }: AccessoryCardProps) => 
                 <MapPin className="h-3 w-3 mr-1" />
                 {accessory.location}
               </div>
+              {accessory.views && (
+                <div className="flex items-center">
+                  <Eye className="h-3 w-3 mr-1" />
+                  {accessory.views}
+                </div>
+              )}
             </div>
           </div>
         </Link>

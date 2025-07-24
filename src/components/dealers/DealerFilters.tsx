@@ -31,6 +31,7 @@ const DealerFilters = ({
           <option value="Mumbai">Mumbai</option>
           <option value="Delhi">Delhi</option>
           <option value="Bangalore">Bangalore</option>
+          <option value="Chennai">Chennai</option>
         </select>
         <select 
           value={selectedBrand}

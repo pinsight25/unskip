@@ -5,7 +5,7 @@ import { Accessory } from '@/types/accessory';
 
 interface RelatedAccessoriesProps {
   accessories: Accessory[];
-  formatPrice: (price: { min: number; max: number }) => string;
+  formatPrice: (priceMin: number, priceMax?: number | null) => string;
 }
 
 const RelatedAccessories = ({ accessories, formatPrice }: RelatedAccessoriesProps) => {
@@ -20,7 +20,7 @@ const RelatedAccessories = ({ accessories, formatPrice }: RelatedAccessoriesProp
             <Card className="hover:shadow-lg transition-shadow">
               <CardContent className="p-3">
                 <img
-                  src={related.images[0]}
+                  src="https://via.placeholder.com/200x200?text=Accessory"
                   alt={related.name}
                   className="w-full aspect-square object-cover rounded-lg mb-2"
                 />
@@ -28,7 +28,7 @@ const RelatedAccessories = ({ accessories, formatPrice }: RelatedAccessoriesProp
                   {related.name}
                 </h4>
                 <p className="text-primary font-semibold text-sm">
-                  {formatPrice(related.price)}
+                  {formatPrice(related.price_min, related.price_max)}
                 </p>
               </CardContent>
             </Card>
