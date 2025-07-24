@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/CustomInput';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader } from 'lucide-react';
+import { useState } from 'react';
 
 const cities = [
   'Chennai',
@@ -38,6 +39,29 @@ const ProfileCompletionStep = ({
   error,
   isSaving
 }: ProfileCompletionStepProps) => {
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [cityError, setCityError] = useState('');
+
+  const isValidName = (name: string) => name.trim().length >= 2;
+  const isValidEmail = (email: string) => !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidCity = (city: string) => city && city.trim().length > 0;
+
+  const handleNameBlur = () => {
+    if (!isValidName(profileData.name)) setNameError('Name must be at least 2 characters');
+    else setNameError('');
+  };
+  const handleEmailBlur = () => {
+    if (!isValidEmail(profileData.email)) setEmailError('Please enter a valid email address');
+    else setEmailError('');
+  };
+  const handleCityBlur = () => {
+    if (!isValidCity(profileData.city)) setCityError('Please select your city');
+    else setCityError('');
+  };
+
+  const isFormValid = isValidName(profileData.name) && isValidEmail(profileData.email) && isValidCity(profileData.city);
+
   return (
     <>
       <div className="space-y-4">
@@ -48,10 +72,12 @@ const ProfileCompletionStep = ({
             type="text"
             value={profileData.name}
             onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+            onBlur={handleNameBlur}
             placeholder="Enter your full name"
             className="h-12 rounded-2xl border-2 focus:border-primary"
             aria-label="Full Name"
           />
+          {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
         </div>
 
         <div>
@@ -61,15 +87,17 @@ const ProfileCompletionStep = ({
             type="email"
             value={profileData.email}
             onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+            onBlur={handleEmailBlur}
             placeholder="your.email@example.com"
             className="h-12 rounded-2xl border-2 focus:border-primary"
             aria-label="Email"
           />
+          {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
         </div>
 
         <div>
           <label className="text-sm font-semibold text-gray-700 block mb-2">City</label>
-          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })}>
+          <Select value={profileData.city} onValueChange={(value) => setProfileData({ ...profileData, city: value })} onBlur={handleCityBlur}>
             <SelectTrigger className="h-12 rounded-2xl border-2 focus:border-primary">
               <SelectValue placeholder="Select your city" />
             </SelectTrigger>
@@ -84,6 +112,7 @@ const ProfileCompletionStep = ({
               <SelectItem value="Ahmedabad">Ahmedabad</SelectItem>
             </SelectContent>
           </Select>
+          {cityError && <p className="text-red-500 text-sm mt-1">{cityError}</p>}
         </div>
 
         {error && (
@@ -97,7 +126,7 @@ const ProfileCompletionStep = ({
         </Button>
         <Button 
           onClick={onCompleteProfile} 
-          disabled={!profileData.name || !profileData.city || isSaving}
+          disabled={!isFormValid || isSaving}
           className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
         >
           {isSaving ? (

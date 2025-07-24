@@ -8,8 +8,10 @@ interface ProfileData {
   gender: 'Male' | 'Female' | 'Other';
 }
 
+type UserType = 'regular' | 'dealer' | null;
+
 export const useOTPState = () => {
-  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
+  const [step, setStep] = useState<'phone' | 'otp' | 'userType' | 'profile'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('+91 ');
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
@@ -25,6 +27,8 @@ export const useOTPState = () => {
     gender: 'Male'
   });
   const [isSaving, setIsSaving] = useState(false);
+
+  const [userType, setUserType] = useState<UserType>(null);
 
   const resetModal = () => {
     
@@ -52,6 +56,7 @@ export const useOTPState = () => {
     
     // Clear existing user data
     setExistingUser(null);
+    setUserType(null);
     
   };
 
@@ -85,6 +90,8 @@ export const useOTPState = () => {
     setProfileData,
     isSaving,
     setIsSaving,
+    userType,
+    setUserType,
     // Actions
     resetModal,
     editPhoneNumber

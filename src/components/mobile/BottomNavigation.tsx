@@ -11,13 +11,18 @@ const BottomNavigation = () => {
   const { savedCars } = useSavedCars();
   const savedCount = user && savedCars ? savedCars.length : 0;
 
-  const navItems = [
+  let navItems = [
     { icon: Home, label: 'Home', path: '/', active: location.pathname === '/' },
     { icon: Search, label: 'Search', path: '/search', active: location.pathname === '/search' },
-    { icon: Plus, label: 'Sell', path: '/sell-car', active: location.pathname === '/sell-car' || location.pathname === '/sell', isPrimary: true },
     { icon: Heart, label: 'Saved', path: '/saved', active: location.pathname === '/saved', badge: savedCount },
     { icon: User, label: 'Profile', path: '/profile', active: location.pathname === '/profile' }
   ];
+
+  if (user?.userType === 'dealer') {
+    navItems.splice(2, 0, { icon: Plus, label: 'Dealer Dashboard', path: '/dealer/dashboard', active: location.pathname.startsWith('/dealer') });
+  } else {
+    navItems.splice(2, 0, { icon: Plus, label: 'Sell', path: '/sell-car', active: location.pathname === '/sell-car' || location.pathname === '/sell' });
+  }
 
   const handleNavClick = () => {
     window.dispatchEvent(new Event('closeMobileMenu'));

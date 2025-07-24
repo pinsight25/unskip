@@ -114,6 +114,12 @@
     }
   }
 
+  input::placeholder,
+  textarea::placeholder,
+  select::placeholder {
+    color: #9CA3AF !important;
+  }
+
   /* Prevent horizontal scroll */
   .prevent-horizontal-scroll {
     overflow-x: hidden;

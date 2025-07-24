@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/CustomInput';
 import { Loader } from 'lucide-react';
+import { useState } from 'react';
 
 interface PhoneInputStepProps {
   phoneNumber: string;
@@ -20,31 +21,18 @@ const PhoneInputStep = ({
   error,
   isSendingOTP
 }: PhoneInputStepProps) => {
+  const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+
+  const isValidPhone = (value: string) => value.replace(/\D/g, '').length === 10;
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-    
-    // Remove any non-digit characters except +
-    value = value.replace(/[^\d+\s]/g, '');
-    
-    // Ensure it starts with +91
-    if (!value.startsWith('+91')) {
-      if (value.startsWith('91')) {
-        value = '+' + value;
-      } else if (value.startsWith('1') || value.startsWith('9')) {
-        value = '+91 ' + value;
-      } else {
-        value = '+91 ' + value.replace(/^\+?91?\s?/, '');
-      }
-    }
-    
-    // Add space after +91 if not present
-    if (value === '+91') {
-      value = '+91 ';
-    }
-    
-    // Limit to reasonable length
-    if (value.length <= 17) {
-      setPhoneNumber(value);
+    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setPhone(value);
+    if (!isValidPhone(value)) {
+      setPhoneError('Please enter a valid 10-digit phone number');
+    } else {
+      setPhoneError('');
     }
   };
 
@@ -77,6 +65,7 @@ const PhoneInputStep = ({
         {error && (
           <p className="text-sm text-red-500 text-center bg-red-50 py-2 px-4 rounded-xl">{error}</p>
         )}
+        {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
       </div>
 
       <div className="flex space-x-3">
@@ -85,7 +74,7 @@ const PhoneInputStep = ({
         </Button>
         <Button 
           onClick={onSendOTP} 
-          disabled={displayPhone.length < 10 || isSendingOTP}
+          disabled={displayPhone.length < 10 || isSendingOTP || !isValidPhone(phone)}
           className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
         >
           {isSendingOTP ? (

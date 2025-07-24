@@ -17,6 +17,14 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
   const fileInputRef = useRef<HTMLInputElement>(null);
   const panCardInputRef = useRef<HTMLInputElement>(null);
 
+  const [businessDocError, setBusinessDocError] = useState('');
+  const [panCardError, setPanCardError] = useState('');
+  const [shopPhotosError, setShopPhotosError] = useState('');
+
+  const isValidBusinessDoc = (file: File | null) => !!file;
+  const isValidPanCard = (file: File | null) => !!file;
+  const isValidShopPhotos = (arr: File[]) => arr && arr.length > 0;
+
   // Dynamic label for business document
   const businessDocLabel =
     formData.businessDocType === 'gst_certificate' ? 'GST Certificate' :
@@ -77,6 +85,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handleBusinessDocChange}
+              onBlur={() => setBusinessDocError(!isValidBusinessDoc(formData.documents.businessDocument) ? 'Business document is required' : '')}
               className="hidden"
               aria-label={`Upload ${businessDocLabel}`}
               ref={fileInputRef}
@@ -90,6 +99,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
                 }
               </p>
             </label>
+            {businessDocError && <p className="text-red-500 text-sm mt-1">{businessDocError}</p>}
           </div>
           {/* PAN Card Upload */}
           <div>
@@ -99,6 +109,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handlePanCardChange}
+              onBlur={() => setPanCardError(!isValidPanCard(formData.documents.panCard) ? 'PAN card is required' : '')}
               className="hidden"
               aria-label="Upload PAN Card"
               ref={panCardInputRef}
@@ -112,6 +123,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
                 }
               </p>
             </label>
+            {panCardError && <p className="text-red-500 text-sm mt-1">{panCardError}</p>}
           </div>
           {/* Shop Photos Upload (unchanged) */}
           <Label htmlFor="shopPhotos">Shop Photos * (up to 3)</Label>
@@ -122,6 +134,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
             accept="image/*"
             multiple
             onChange={handleShopPhotosChange}
+            onBlur={() => setShopPhotosError(!isValidShopPhotos(formData.documents.shopPhotos) ? 'At least one shop photo is required' : '')}
             className="hidden"
             aria-label="Upload shop photos"
           />
@@ -168,6 +181,7 @@ const DocumentUploadStep = ({ formData, onFileUpload, onTermsChange }: DocumentU
             {photoPreviews.length > 0 && (
               <p className="text-xs text-gray-600 mt-2">{photoPreviews.length}/3 photos selected</p>
             )}
+            {shopPhotosError && <p className="text-red-500 text-sm mt-1">{shopPhotosError}</p>}
           </div>
           {/* Terms & Conditions */}
           <div className="flex items-center space-x-2">

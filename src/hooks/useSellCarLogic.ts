@@ -25,6 +25,7 @@ export const useSellCarLogic = () => {
   const { user } = useUser();
   const [activeCarListings, setActiveCarListings] = useState(0);
   const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Get user type from user context, fallback to 'regular' if not set
   const userType = user?.userType === 'dealer' ? 'dealer' : 'regular';
@@ -326,6 +327,11 @@ export const useSellCarLogic = () => {
   };
 
   const handleSubmit = async () => {
+    console.log('=== UPDATE LISTING DEBUG ===');
+    setIsLoading(true);
+    console.log('1. Update started');
+    console.log('2. Form data:', formData);
+    console.log('3. Editing car ID:', editingListingId);
     
     // Validate required fields
     if (!user) {
@@ -334,6 +340,7 @@ export const useSellCarLogic = () => {
         description: "You need to be signed in to post a car",
         variant: "destructive" 
       });
+      setIsLoading(false);
       return;
     }
     
@@ -343,6 +350,7 @@ export const useSellCarLogic = () => {
         description: "Make, model, and year are required",
         variant: "destructive" 
       });
+      setIsLoading(false);
       return;
     }
     
@@ -352,6 +360,7 @@ export const useSellCarLogic = () => {
         description: "City and phone number are required",
         variant: "destructive" 
       });
+      setIsLoading(false);
       return;
     }
     
@@ -361,6 +370,7 @@ export const useSellCarLogic = () => {
         description: "Car price is required",
         variant: "destructive"
       });
+      setIsLoading(false);
       return;
     }
 
@@ -370,6 +380,7 @@ export const useSellCarLogic = () => {
         description: "Please accept the terms and conditions to continue",
         variant: "destructive"
       });
+      setIsLoading(false);
       return;
     }
     
@@ -385,10 +396,12 @@ export const useSellCarLogic = () => {
         description: message,
         variant: "destructive"
       });
+      setIsLoading(false);
       return;
     }
 
     try {
+      console.log('4. Calling API...');
       // Actual Supabase insert
       const carInsert: TablesInsert<'cars'> = {
         seller_id: user.id,
@@ -453,6 +466,8 @@ export const useSellCarLogic = () => {
         carError = error;
       }
 
+      console.log('5. API response:', { carId, carError });
+
       if (carError) {
         // console.error('Failed to save car:', carError);
         toast({
@@ -460,6 +475,7 @@ export const useSellCarLogic = () => {
           description: "Failed to save car. Please try again.",
           variant: "destructive"
         });
+        setIsLoading(false);
         return;
       }
 
@@ -512,13 +528,21 @@ export const useSellCarLogic = () => {
       // Clear form/sessionStorage and invalidate listings cache, then navigate to profile
       sessionStorage.removeItem('sellCarFormData');
       queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['user-cars'] });
+      setIsLoading(false);
+      toast({ title: 'Car updated successfully!', description: 'Your car listing was updated successfully.' });
       navigate('/profile');
-    } catch (error) {
+    } catch (error: any) {
+      console.error('6. Update failed:', error);
+      console.error('Error details:', error.message);
       toast({
         title: "Submission Failed",
         description: "There was an error posting your car. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -681,6 +705,7 @@ export const useSellCarLogic = () => {
       formData.city &&
       formData.phone &&
       formData.price
-    )
+    ),
+    isLoading,
   };
 };

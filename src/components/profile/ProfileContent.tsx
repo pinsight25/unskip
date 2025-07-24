@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Car, Package } from 'lucide-react';
+import { Car, Package, Store } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -11,6 +11,7 @@ import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
 
 interface ProfileContentProps {
   user?: any;
@@ -40,11 +41,25 @@ const ProfileContent = ({
   onSignOut = () => {},
   onDeleteListing = () => {},
 }: ProfileContentProps) => {
-  // Remove dealerInfo fetching and just set to null
-  const dealerInfo = null;
+  // Fetch dealer info if user is a dealer
+  const { data: dealerInfo } = useQuery({
+    queryKey: ['dealer-info', user?.id],
+    queryFn: async () => {
+      if (!user?.id || user?.userType !== 'dealer') return null;
+      const { data, error } = await supabase
+        .from('dealers')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+      return data;
+    },
+    enabled: !!user?.id && user?.userType === 'dealer',
+    staleTime: Infinity,
+  });
 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
+  const [isEditDealerModalOpen, setIsEditDealerModalOpen] = useState(false);
 
   // Fetch received offers for the current user (as seller)
   const { data: receivedOffers = [], refetch } = useQuery({
@@ -111,6 +126,10 @@ const ProfileContent = ({
     }
   }, [activeTab, refetch]);
 
+  // Debug logging to check user data
+  console.log('ProfileContent - User data:', user);
+  console.log('ProfileContent - User type:', user?.userType);
+
   // Calculate total active listings
   const activeListings = listings.filter(l => l.status === 'active');
   const activeAccessories = accessories.filter(a => a.status === 'active');
@@ -139,6 +158,7 @@ const ProfileContent = ({
             dealerInfo={dealerInfo}
             onEditProfile={onEditProfile}
             onSignOut={onSignOut}
+            onEditDealerProfile={() => setIsEditDealerModalOpen(true)}
           />
 
           {/* Stats Section */}
@@ -148,18 +168,37 @@ const ProfileContent = ({
           <Card className="p-6 section-gap">
             <h3 className="text-lg font-semibold mb-4 text-center">Quick Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link to="/sell-car">
-                <Button className="w-full h-14 text-base font-semibold" size="lg">
-                  <Car className="h-5 w-5 mr-3" />
-                  Post Your Car
-                </Button>
-              </Link>
-              <Link to="/post-accessory">
-                <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
-                  <Package className="h-5 w-5 mr-3" />
-                  Post Accessory
-                </Button>
-              </Link>
+              {user?.userType === 'dealer' ? (
+                <>
+                  <Link to="/dealer/dashboard">
+                    <Button className="w-full h-14 text-base font-semibold" size="lg">
+                      <Store className="h-5 w-5 mr-3" />
+                      Dealer Dashboard
+                    </Button>
+                  </Link>
+                  <Link to="/sell-car">
+                    <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
+                      <Car className="h-5 w-5 mr-3" />
+                      Add Car to Inventory
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/sell-car">
+                    <Button className="w-full h-14 text-base font-semibold" size="lg">
+                      <Car className="h-5 w-5 mr-3" />
+                      Post Your Car
+                    </Button>
+                  </Link>
+                  <Link to="/post-accessory">
+                    <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
+                      <Package className="h-5 w-5 mr-3" />
+                      Post Accessory
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </Card>
 
@@ -186,6 +225,20 @@ const ProfileContent = ({
           </Tabs>
         </div>
       </div>
+
+      {/* Edit Dealer Profile Modal */}
+      {user?.userType === 'dealer' && dealerInfo && (
+        <EditDealerProfileModal
+          isOpen={isEditDealerModalOpen}
+          onClose={() => setIsEditDealerModalOpen(false)}
+          dealer={dealerInfo}
+          onSave={() => {
+            setIsEditDealerModalOpen(false);
+            // Refetch dealer info
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 };

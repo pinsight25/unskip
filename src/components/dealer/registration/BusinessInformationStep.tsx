@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
+import { useState } from 'react';
 
 interface BusinessInformationStepProps {
   formData: DealerFormData;
@@ -18,6 +19,21 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
     'Ford', 'Renault', 'Nissan', 'MG', 'Jeep', 'Citroen'
   ];
 
+  const [businessNameError, setBusinessNameError] = useState('');
+  const [contactPersonError, setContactPersonError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [aboutError, setAboutError] = useState('');
+
+  const isValidBusinessName = (v: string) => v.trim().length >= 3;
+  const isValidContactPerson = (v: string) => v.trim().length >= 2;
+  const isValidPhone = (v: string) => v.replace(/\D/g, '').length === 10;
+  const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const isValidAbout = (v: string) => v.length <= 150;
+
+  // Add onBlur handlers for each field to set errors
+  // ...
+
   return (
     <div className="space-y-6">
       <div>
@@ -29,12 +45,11 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
               id="businessName"
               value={formData.businessName}
               onChange={(e) => onInputChange('businessName', e.target.value)}
+              onBlur={() => setBusinessNameError(!isValidBusinessName(formData.businessName) ? 'Business name must be at least 3 characters' : '')}
               placeholder="Your dealership name"
               className={`w-full max-w-md ${fieldErrors.businessName ? 'border-red-500' : ''}`}
             />
-            {fieldErrors.businessName && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.businessName}</p>
-            )}
+            {businessNameError && <p className="text-red-500 text-sm mt-1">{businessNameError}</p>}
           </div>
           <div>
             <Label htmlFor="contactPerson">Contact Person *</Label>
@@ -42,12 +57,11 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
               id="contactPerson"
               value={formData.contactPerson}
               onChange={(e) => onInputChange('contactPerson', e.target.value)}
+              onBlur={() => setContactPersonError(!isValidContactPerson(formData.contactPerson) ? 'Contact person must be at least 2 characters' : '')}
               placeholder="Owner/Manager name"
               className={`w-full max-w-md ${fieldErrors.contactPerson ? 'border-red-500' : ''}`}
             />
-            {fieldErrors.contactPerson && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.contactPerson}</p>
-            )}
+            {contactPersonError && <p className="text-red-500 text-sm mt-1">{contactPersonError}</p>}
           </div>
           <div>
             <Label htmlFor="phone">Phone Number *</Label>
@@ -55,13 +69,12 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
               id="phone"
               value={formData.phone}
               onChange={(e) => onInputChange('phone', e.target.value.replace(/\D/g, ''))}
+              onBlur={() => setPhoneError(!isValidPhone(formData.phone) ? 'Please enter a valid 10-digit phone number' : '')}
               placeholder="+91 98765 43210"
               maxLength={15}
               className={`w-full max-w-md ${fieldErrors.phone ? 'border-red-500' : ''}`}
             />
-            {fieldErrors.phone && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.phone}</p>
-            )}
+            {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
           </div>
           <div>
             <Label htmlFor="email">Email Address *</Label>
@@ -70,12 +83,11 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
               type="email"
               value={formData.email}
               onChange={(e) => onInputChange('email', e.target.value)}
+              onBlur={() => setEmailError(!isValidEmail(formData.email) ? 'Please enter a valid email address' : '')}
               placeholder="contact@yourbusiness.com"
               className={`w-full max-w-md ${fieldErrors.email ? 'border-red-500' : ''}`}
             />
-            {fieldErrors.email && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.email}</p>
-            )}
+            {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
           <div className="md:col-span-2">
             <Label htmlFor="businessCategory">Business Category *</Label>
@@ -135,18 +147,15 @@ const BusinessInformationStep = ({ formData, onInputChange, fieldErrors = {} }: 
           id="about"
           value={formData.about}
           onChange={e => onInputChange('about', e.target.value.slice(0, 150))}
+          onBlur={() => setAboutError(!isValidAbout(formData.about) ? 'About must be 150 characters or less' : '')}
           placeholder="Describe your dealership in 150 characters or less"
           maxLength={150}
           rows={3}
           className={`w-full max-w-md border rounded p-2 text-sm mb-2 ${fieldErrors.about ? 'border-red-500' : ''}`}
           required
         />
-        <div className="flex items-center justify-between text-xs text-gray-500 mt-1 mb-1" style={{ maxWidth: '28rem' }}>
-          <span>{formData.about?.length || 0}/150 characters</span>
-        </div>
-        {fieldErrors.about && (
-          <p className="text-sm text-red-500 mt-1">{fieldErrors.about}</p>
-        )}
+        <div className="text-xs text-gray-500 mt-1">{formData.about.length}/150 characters</div>
+        {aboutError && <p className="text-red-500 text-sm mt-1">{aboutError}</p>}
       </div>
     </div>
   );

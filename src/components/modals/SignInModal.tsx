@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { formatPhoneForAuth, formatPhoneForDB } from '@/utils/phoneUtils';
 import ProfileCompletionStep from './signin/ProfileCompletionStep';
+import UserTypeSelectionStep from './signin/UserTypeSelectionStep';
 
 interface SignInModalProps {
   isOpen: boolean;
@@ -18,7 +19,7 @@ interface SignInModalProps {
 }
 
 export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
-  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
+  const [step, setStep] = useState<'phone' | 'otp' | 'userType' | 'profile'>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,10 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
   // Profile form state
   const [profileData, setProfileData] = useState({ name: '', email: '', city: '' });
   const [isSaving, setIsSaving] = useState(false);
-  
+
+  // User type selection state
+  const [userType, setUserType] = useState<'regular' | 'dealer' | null>(null);
+
   const navigate = useNavigate();
 
   // Reset everything when modal closes
@@ -40,6 +44,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     setError('');
     setUserId('');
     setProfileData({ name: '', email: '', city: '' });
+    setUserType(null);
     onClose();
   };
 
@@ -99,7 +104,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         .eq('id', data.user.id)
         .single();
       if (!userData?.name || userData.name === 'User' || !userData?.email) {
-        setStep('profile');
+        setStep('userType');
       } else {
         handleSuccess();
       }
@@ -116,6 +121,13 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     }
   };
 
+  // Handle user type selection continue
+  const handleUserTypeContinue = () => {
+    if (userType) {
+      setStep('profile');
+    }
+  };
+
   // Save Profile
   const handleCompleteProfile = async () => {
     setIsSaving(true);
@@ -123,10 +135,15 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     try {
       const { error } = await supabase
         .from('users')
-        .update({ name: profileData.name, email: profileData.email, city: profileData.city })
+        .update({ name: profileData.name, email: profileData.email, city: profileData.city, user_type: userType })
         .eq('id', userId);
       if (error) throw error;
-      handleSuccess();
+      if (userType === 'dealer') {
+        handleClose();
+        navigate('/dealer/register');
+      } else {
+        handleSuccess();
+      }
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -149,6 +166,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
           <DialogTitle>
             {step === 'phone' && 'Sign In'}
             {step === 'otp' && 'Verify Phone'}
+            {step === 'userType' && "Let's get started!"}
             {step === 'profile' && 'Complete Your Profile'}
           </DialogTitle>
         </DialogHeader>
@@ -267,6 +285,14 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
             </p>
           </form>
         )}
+        {/* User Type Selection Step */}
+        {step === 'userType' && (
+          <UserTypeSelectionStep
+            userType={userType}
+            setUserType={setUserType}
+            onContinue={handleUserTypeContinue}
+          />
+        )}
         {/* Profile Step */}
         {step === 'profile' && (
           <ProfileCompletionStep
@@ -274,9 +300,8 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
             setProfileData={setProfileData}
             onCompleteProfile={handleCompleteProfile}
             onCancel={() => {
-              setStep('phone');
-              setPhone('');
-              setOtp('');
+              // Go back to userType selection
+              setStep('userType');
             }}
             error={error}
             isSaving={isSaving}

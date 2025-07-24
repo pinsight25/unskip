@@ -114,6 +114,27 @@ const CityAutocomplete = ({ value, onChange, cities, isLoading }: { value: strin
 
 const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVerification }: LocationContactStepProps) => {
   const { cities, isLoading: citiesLoading } = useCities();
+  const [phoneError, setPhoneError] = useState('');
+
+  // Helper to clean phone for validation/storage
+  const cleanPhone = (phone: string) => phone.replace(/^\+91\s?/, '').replace(/\D/g, '');
+  const isValidPhone = (phone: string) => cleanPhone(phone).length === 10;
+
+  // On change, always store only 10 digits (no +91)
+  const handlePhoneChange = (value: string) => {
+    const digits = cleanPhone(value).slice(0, 10);
+    console.log('[SellCar] Raw input:', value);
+    console.log('[SellCar] Cleaned phone:', digits);
+    const valid = isValidPhone(digits);
+    console.log('[SellCar] Is valid phone:', valid);
+    setFormData(prev => updateFormField(prev, 'phone', digits));
+    if (!valid) {
+      setPhoneError('Please enter a valid 10-digit phone number');
+    } else {
+      setPhoneError('');
+    }
+    console.log('[SellCar] Stored phone in formData:', digits);
+  };
 
   return (
     <div className="space-y-6">
@@ -200,11 +221,12 @@ const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVer
               <div className="flex-1">
                 <PhoneInput
                   id="phone"
-                  value={formData.phone}
-                  onChange={(value) => setFormData(prev => updateFormField(prev, 'phone', value))}
+                  value={formData.phone ? `+91 ${formData.phone}` : ''}
+                  onChange={handlePhoneChange}
                   placeholder="Enter your phone number"
-                  disabled={false} // Allow editing for now
+                  disabled={false}
                 />
+                {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
               </div>
             </div>
             {formData.phoneVerified && (

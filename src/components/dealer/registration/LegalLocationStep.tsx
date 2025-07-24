@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { DealerFormData } from '@/hooks/useDealerRegistrationForm';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useState } from 'react';
 
 interface LegalLocationStepProps {
   formData: DealerFormData;
@@ -13,6 +14,20 @@ interface LegalLocationStepProps {
 }
 
 const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocationStepProps) => {
+  const [panError, setPanError] = useState('');
+  const [aadhaarError, setAadhaarError] = useState('');
+  const [docNumberError, setDocNumberError] = useState('');
+  const [addressError, setAddressError] = useState('');
+  const [pincodeError, setPincodeError] = useState('');
+  const [yearError, setYearError] = useState('');
+
+  const isValidPAN = (v: string) => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v);
+  const isValidAadhaar = (v: string) => v.replace(/\D/g, '').length === 12;
+  const isValidDocNumber = (v: string) => v.trim().length > 0;
+  const isValidAddress = (v: string) => v.trim().length > 0;
+  const isValidPincode = (v: string) => /^\d{6}$/.test(v);
+  const isValidYear = (v: string) => /^\d{4}$/.test(v) && +v >= 1900 && +v <= 2025;
+
   // PAN and Aadhaar handlers
   const handlePANChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onInputChange('panNumber', e.target.value.toUpperCase());
@@ -53,11 +68,13 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               id="panNumber"
               value={formData.panNumber}
               onChange={handlePANChange}
+              onBlur={() => setPanError(!isValidPAN(formData.panNumber) ? 'PAN must be in format ABCDE1234F' : '')}
               placeholder="ABCDE1234F"
               maxLength={10}
               pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
               required
             />
+            {panError && <p className="text-red-500 text-sm mt-1">{panError}</p>}
           </div>
           {/* Aadhaar Number */}
           <div>
@@ -67,6 +84,7 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               type="text"
               value={formData.aadhaarNumber}
               onChange={handleAadhaarChange}
+              onBlur={() => setAadhaarError(!isValidAadhaar(formData.aadhaarNumber) ? 'Aadhaar must be 12 digits' : '')}
               placeholder="XXXX XXXX 1234"
               maxLength={12}
               required
@@ -76,6 +94,7 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
                 Will be stored as: XXXX XXXX {(formData.aadhaarNumber || '').slice(-4)}
               </p>
             )}
+            {aadhaarError && <p className="text-red-500 text-sm mt-1">{aadhaarError}</p>}
           </div>
           {/* Business Document Type */}
           <div>
@@ -103,9 +122,11 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               id="businessDocNumber"
               value={formData.businessDocNumber}
               onChange={handleBusinessDocNumberChange}
+              onBlur={() => setDocNumberError(!isValidDocNumber(formData.businessDocNumber) ? 'Business document number is required' : '')}
               placeholder={docNumberPlaceholder}
               required
             />
+            {docNumberError && <p className="text-red-500 text-sm mt-1">{docNumberError}</p>}
           </div>
         </div>
       </div>
@@ -121,8 +142,10 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               placeholder="Full shop address with landmarks"
               value={formData.shopAddress}
               onChange={(e) => onInputChange('shopAddress', e.target.value)}
+              onBlur={() => setAddressError(!isValidAddress(formData.shopAddress) ? 'Address is required' : '')}
               rows={3}
             />
+            {addressError && <p className="text-red-500 text-sm mt-1">{addressError}</p>}
           </div>
           <div>
             <Label htmlFor="pincode">Pincode *</Label>
@@ -131,8 +154,10 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               placeholder="400001"
               value={formData.pincode}
               onChange={(e) => onInputChange('pincode', e.target.value.replace(/\D/g, ''))}
+              onBlur={() => setPincodeError(!isValidPincode(formData.pincode) ? 'Pincode must be 6 digits' : '')}
               maxLength={6}
             />
+            {pincodeError && <p className="text-red-500 text-sm mt-1">{pincodeError}</p>}
           </div>
           <div>
             <Label htmlFor="establishmentYear">Establishment Year *</Label>
@@ -144,7 +169,9 @@ const LegalLocationStep = ({ formData, onInputChange, validateGST }: LegalLocati
               max={new Date().getFullYear()}
               value={formData.establishmentYear}
               onChange={(e) => onInputChange('establishmentYear', e.target.value)}
+              onBlur={() => setYearError(!isValidYear(formData.establishmentYear) ? 'Year must be between 1900 and 2025' : '')}
             />
+            {yearError && <p className="text-red-500 text-sm mt-1">{yearError}</p>}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import BusinessInformationStep from '@/components/dealer/registration/BusinessIn
 import LegalLocationStep from '@/components/dealer/registration/LegalLocationStep';
 import DocumentUploadStep from '@/components/dealer/registration/DocumentUploadStep';
 import RegistrationNavigation from '@/components/dealer/registration/RegistrationNavigation';
+import { useToast } from '@/components/ui/use-toast';
 
 const DealerRegister = () => {
   const navigate = useNavigate();
@@ -28,13 +29,28 @@ const DealerRegister = () => {
     handleSubmit,
     setFormData,
     fieldErrors,
+    setIsSubmitting,
   } = useDealerRegistrationForm();
+
+  const { toast } = useToast();
 
   const handleTermsChange = (checked: boolean | 'indeterminate') => {
     setFormData(prev => ({
       ...prev,
       agreeToTerms: checked === true
     }));
+  };
+
+  // Fix submit handler to always reset loading state
+  const fixedHandleSubmit = async () => {
+    try {
+      await handleSubmit();
+      // Redirect or show success toast here if needed
+      // Example: navigate('/dealer/dashboard');
+    } catch (error) {
+      toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
+      console.error(error);
+    }
   };
 
   // Add clearDealerForm function
@@ -97,11 +113,8 @@ const DealerRegister = () => {
     }
   };
 
-  // Step-specific canProceed logic to avoid infinite re-renders
+  // Step-specific canProceed logic
   let canProceed = false;
-  // Debug logs for canProceed and required fields
-  console.log('Current Step:', currentStep);
-  console.log('formData:', formData);
   if (currentStep === 1) {
     canProceed = Boolean(
       formData.businessName &&
@@ -113,7 +126,6 @@ const DealerRegister = () => {
       formData.brandsDealWith && formData.brandsDealWith.length > 0 &&
       formData.about && formData.about.trim().length > 0
     );
-    console.log('canProceed step 1:', canProceed);
   } else if (currentStep === 2) {
     canProceed = Boolean(
       formData.shopAddress &&
@@ -121,7 +133,6 @@ const DealerRegister = () => {
       formData.establishmentYear &&
       formData.about
     );
-    console.log('canProceed step 2:', canProceed);
   } else if (currentStep === 3) {
     canProceed = Boolean(
       formData.documents.businessDocument &&
@@ -129,11 +140,6 @@ const DealerRegister = () => {
       formData.documents.shopPhotos && formData.documents.shopPhotos.length >= 1 &&
       formData.agreeToTerms
     );
-    console.log('canProceed step 3:', canProceed);
-    console.log('businessDocument:', formData.documents.businessDocument);
-    console.log('panCard:', formData.documents.panCard);
-    console.log('shopPhotos:', formData.documents.shopPhotos);
-    console.log('agreeToTerms:', formData.agreeToTerms);
   }
 
   return (
@@ -186,7 +192,7 @@ const DealerRegister = () => {
             totalSteps={totalSteps}
             onPrevStep={prevStep}
             onNextStep={nextStep}
-            onSubmit={handleSubmit}
+            onSubmit={fixedHandleSubmit}
             canProceed={canProceed}
             isSubmitting={isSubmitting}
           />

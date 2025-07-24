@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Phone, Edit, Loader, RefreshCw, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 interface OTPVerificationStepProps {
   phoneNumber: string;
@@ -39,6 +40,21 @@ const OTPVerificationStep = ({
 
   const isTimeoutError = error.includes('timeout') || error.includes('taking too long');
 
+  const [otp, setOtp] = useState('');
+  const [otpError, setOtpError] = useState('');
+
+  const isValidOTP = (value: string) => /^\d{6}$/.test(value);
+
+  const handleOTPChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setOtp(value);
+    if (!isValidOTP(value)) {
+      setOtpError('Please enter the 6-digit code sent to your phone');
+    } else {
+      setOtpError('');
+    }
+  };
+
   return (
     <>
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 flex items-center space-x-3">
@@ -58,7 +74,7 @@ const OTPVerificationStep = ({
           <InputOTP
             maxLength={6}
             value={otp}
-            onChange={setOtp}
+            onChange={handleOTPChange}
             className="justify-center"
           >
             <InputOTPGroup className="gap-2">
@@ -70,6 +86,7 @@ const OTPVerificationStep = ({
               <InputOTPSlot index={5} className="w-12 h-12 text-lg font-bold border-2 rounded-xl" />
             </InputOTPGroup>
           </InputOTP>
+          {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
         </div>
 
         <div className="flex items-start space-x-3 py-2">
@@ -134,7 +151,7 @@ const OTPVerificationStep = ({
         </Button>
         <Button 
           onClick={onVerifyOTP} 
-          disabled={otp.length !== 6 || isVerifying || !termsAccepted}
+          disabled={!isValidOTP(otp) || isVerifying || !termsAccepted}
           className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 font-semibold shadow-lg"
         >
           {isVerifying ? (

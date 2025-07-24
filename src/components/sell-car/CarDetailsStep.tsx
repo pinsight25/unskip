@@ -6,6 +6,7 @@ import RegistrationDetailsSelector from '@/components/sell-car/car-details/Regis
 import VehicleConditionSelector from '@/components/sell-car/car-details/VehicleConditionSelector';
 import { SellCarFormData } from '@/hooks/useSellCarForm';
 import { updateFormField } from '@/utils/formHelpers';
+import { useState } from 'react';
 
 interface CarDetailsStepProps {
   formData: SellCarFormData;
@@ -22,6 +23,18 @@ const CarDetailsStep = ({ formData, setFormData, updateFormData, validateKilomet
   const handleModelChange = (value: string) => {
     updateFormData({ model: value });
   };
+
+  const [kmError, setKmError] = useState('');
+  const [fuelError, setFuelError] = useState('');
+  const [transError, setTransError] = useState('');
+  const [ownersError, setOwnersError] = useState('');
+  const [cityError, setCityError] = useState('');
+
+  const isValidKm = (v: string) => /^\d+$/.test(v) && +v > 0 && +v <= 500000;
+  const isValidFuel = (v: string) => v.trim().length > 0;
+  const isValidTrans = (v: string) => v.trim().length > 0;
+  const isValidOwners = (v: string) => /^\d+$/.test(v) && +v >= 1 && +v <= 10;
+  const isValidCity = (v: string) => v.trim().length > 0;
 
   return (
     <div className="space-y-6">
