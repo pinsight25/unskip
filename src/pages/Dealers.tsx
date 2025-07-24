@@ -32,10 +32,21 @@ const Dealers = () => {
   useRealtimeRefetch('dealers', ['dealers']);
 
   // Compute car count for each dealer
-  const dealersWithCarCount = (filteredDealers || []).map(dealer => ({
-    ...dealer,
-    carsInStock: allCars.filter(car => car.seller_id === dealer.id && car.status === 'active').length
-  }));
+  const dealersWithCarCount = (filteredDealers || []).map(dealer => {
+    const carsForDealer = allCars.filter(car => String(car.seller_id) === String(dealer.id) && car.status === 'active');
+    // Debug log
+    if (carsForDealer.length === 0) {
+      // eslint-disable-next-line no-console
+      console.debug(`No cars found for dealer ${dealer.name} (dealer.id=${dealer.id})`);
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug(`Dealer ${dealer.name} (dealer.id=${dealer.id}) has ${carsForDealer.length} cars.`);
+    }
+    return {
+      ...dealer,
+      carsInStock: carsForDealer.length
+    };
+  });
 
   const handleApplyFilters = () => {};
   const handleClearFilters = () => {
