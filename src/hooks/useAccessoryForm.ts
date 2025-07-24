@@ -1,9 +1,11 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCreateAccessory, useUpdateAccessory, useDeleteAccessory } from '@/hooks/queries/useAccessories';
 import { useToast } from '@/hooks/use-toast';
 import { Accessory, AccessoryCategory } from '@/types/accessory';
 import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface AccessoryFormData {
   name: string;
@@ -32,6 +34,8 @@ export const useAccessoryForm = (initialData?: Partial<AccessoryFormData>) => {
   const createAccessory = useCreateAccessory();
   const updateAccessory = useUpdateAccessory();
   const deleteAccessory = useDeleteAccessory();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<AccessoryFormData>({
     name: '',
@@ -56,6 +60,16 @@ export const useAccessoryForm = (initialData?: Partial<AccessoryFormData>) => {
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof AccessoryFormData, string>>>({});
+
+  // Update form data when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({
+        ...prev,
+        ...initialData,
+      }));
+    }
+  }, [initialData]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof AccessoryFormData, string>> = {};
@@ -163,6 +177,14 @@ export const useAccessoryForm = (initialData?: Partial<AccessoryFormData>) => {
         });
       }
 
+      // Invalidate queries to trigger refetch
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['accessories'] }),
+        queryClient.invalidateQueries({ queryKey: ['userAccessories', user.id] }),
+        queryClient.invalidateQueries({ queryKey: ['dealer-accessories', user.id] }),
+        queryClient.invalidateQueries({ queryKey: ['profile-stats', user.id] })
+      ]);
+
       return true;
     } catch (error) {
       console.error('❌ Accessory submission error:', error);
@@ -205,6 +227,7 @@ export const useAccessoryForm = (initialData?: Partial<AccessoryFormData>) => {
     formData,
     errors,
     updateField,
+    setFormData,
     handleSubmit,
     handleDelete,
     isLoading: createAccessory.isPending || updateAccessory.isPending || deleteAccessory.isPending,

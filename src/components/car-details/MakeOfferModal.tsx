@@ -7,6 +7,7 @@ import { useUser } from '@/contexts/UserContext';
 import { offerService } from '@/services/offerService';
 import { formatIndianPrice } from '@/utils/priceFormatter';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface MakeOfferModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ interface MakeOfferModalProps {
 const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car }) => {
   const { openSignInModal } = useAuthModal();
   const { user } = useUser();
+  const queryClient = useQueryClient();
   const [form, setForm] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -65,6 +67,15 @@ const MakeOfferModal: React.FC<MakeOfferModalProps> = ({ isOpen, onClose, car })
         amount: Number(form.amount),
         message: form.message,
       });
+      
+      // Invalidate relevant queries to trigger refetch
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['received-offers', car.seller_id] }),
+        queryClient.invalidateQueries({ queryKey: ['profile-stats', car.seller_id] }),
+        queryClient.invalidateQueries({ queryKey: ['offer', car.id, user.id] }),
+        queryClient.invalidateQueries({ queryKey: ['offers', user.id] })
+      ]);
+      
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);

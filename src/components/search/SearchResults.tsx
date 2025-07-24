@@ -99,7 +99,7 @@ const SearchResults = ({ cars, sortBy, onSortChange }: SearchResultsProps) => {
       {cars.length > 0 ? (
         <div className="w-full">
           {isMobile ? (
-            <div className="space-y-4">
+            <div className="md:hidden px-4 mb-8 space-y-4">
               {cars.map((car) => (
                 <MobileCarCard 
                   key={car.id} 

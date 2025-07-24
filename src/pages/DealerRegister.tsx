@@ -45,7 +45,7 @@ const DealerRegister = () => {
     try {
       await handleSubmit();
       // Redirect or show success toast here if needed
-      // Example: navigate('/dealer/dashboard');
+      // Example: navigate('/profile');
     } catch (error) {
       toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
       console.error(error);

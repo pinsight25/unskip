@@ -35,13 +35,12 @@ const ResultsGrid = ({
             <MobileCarCard 
               key={car.id} 
               car={car} 
-              onSave={onSaveCar}
+              onSave={() => onSaveCar(car.id)}
               isSaved={savedCars.includes(car.id)}
               isSaving={isSaving === car.id}
               onMakeOffer={() => onMakeOffer(car)}
               onChat={() => onChat(car)}
               onTestDrive={() => onTestDrive(car)}
-              offerStatus={getOfferStatus(car.id)}
             />
           ) : (
             <CarCard 

@@ -26,21 +26,10 @@ const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
 
-  console.log('🔍 Dealers page: Component rendering...');
-
   // Use the new useDealers hook
   const { filteredDealers, error, data: allDealers, isLoading } = useDealers(selectedLocation, selectedBrand);
   const { data: allCars = [] } = useCars();
   useRealtimeRefetch('dealers', ['dealers']);
-
-  console.log('🔍 Dealers page: Hook results:', {
-    filteredDealers: filteredDealers?.length,
-    allDealers: allDealers?.length,
-    error,
-    isLoading,
-    selectedLocation,
-    selectedBrand
-  });
 
   // Compute car count for each dealer
   const dealersWithCarCount = (filteredDealers || []).map(dealer => {
@@ -51,19 +40,8 @@ const Dealers = () => {
     };
   });
 
-  console.log('🔍 Dealers page: Dealers with car count:', dealersWithCarCount.length);
-
-  // Always refetch dealers on mount to avoid stale data
-  const { refetch } = useDealers(selectedLocation, selectedBrand);
-  useEffect(() => {
-    console.log('🔍 Dealers page: Refetching dealers on mount...');
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Reset filters to show all dealers by default on mount
   useEffect(() => {
-    console.log('🔍 Dealers page: Resetting filters...');
     setSelectedLocation('');
     setSelectedBrand('');
   }, []);

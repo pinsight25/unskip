@@ -6,8 +6,9 @@ import { Accessory } from '@/types/accessory';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Edit } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/contexts/UserContext';
 import AccessoryImageGallery from '@/components/accessory/detail/AccessoryImageGallery';
 import AccessoryInfo from '@/components/accessory/detail/AccessoryInfo';
 import AccessorySellerCard from '@/components/accessory/detail/AccessorySellerCard';
@@ -18,9 +19,13 @@ const AccessoryDetail = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
+  const { user } = useUser();
 
   const { data: accessory, isLoading, error } = useAccessory(id!);
   const { data: allAccessories = [] } = useAccessories();
+
+  // Check if current user is the owner
+  const isOwner = accessory?.seller_id === user?.id;
 
   if (isLoading) {
     return (
@@ -127,21 +132,35 @@ const AccessoryDetail = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:pb-6">
       {/* Back Button and Breadcrumb */}
-      <div className="flex items-center space-x-4 mb-6">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-        <nav className="flex items-center space-x-2 text-sm text-gray-600">
-          <Link to="/accessories" className="hover:text-primary">Accessories</Link>
-          <span>/</span>
-          <span className="text-gray-900">{accessory.name}</span>
-        </nav>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <nav className="flex items-center space-x-2 text-sm text-gray-600">
+            <Link to="/accessories" className="hover:text-primary">Accessories</Link>
+            <span>/</span>
+            <span className="text-gray-900">{accessory.name}</span>
+          </nav>
+        </div>
+        
+        {/* Edit Button for Owner */}
+        {isOwner && (
+          <Button
+            onClick={() => navigate(`/accessories/${id}/edit`)}
+            className="flex items-center gap-2"
+            variant="outline"
+          >
+            <Edit className="h-4 w-4" />
+            Edit
+          </Button>
+        )}
       </div>
 
       {/* Main Content - Improved Desktop Layout */}

@@ -6,6 +6,7 @@ import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
 import AccessoryHeader from '@/components/accessories/AccessoryHeader';
 import AccessoryFiltersComponent from '@/components/accessories/AccessoryFilters';
 import AccessoryResults from '@/components/accessories/AccessoryResults';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 
 const Accessories = () => {
   const navigate = useNavigate();
@@ -37,6 +38,9 @@ const Accessories = () => {
   };
 
   const { data: accessories = [], isLoading, error } = useAccessories(dbFilters);
+  
+  // Add real-time refetch for accessories
+  useRealtimeRefetch('accessories', ['accessories']);
 
   const handleCategoryFilter = (category: AccessoryCategory | 'all') => {
     setFilters(prev => ({ ...prev, category }));

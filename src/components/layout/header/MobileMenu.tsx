@@ -74,7 +74,6 @@ const MobileMenu = ({
                 {item.label}
               </Link>
             ))}
-            
             {/* Saved with Heart Icon */}
             <Link
               to="/saved"
@@ -86,17 +85,17 @@ const MobileMenu = ({
               <Heart className={`h-5 w-5 mr-3 ${isActive('/saved') ? 'fill-orange-600' : ''}`} />
               Saved
             </Link>
+            {/* Post Your Car button moved up here */}
+            <div className="mt-6">
+              <Link to="/sell" onClick={onMenuClose}>
+                <Button size="sm" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+                  Post Your Car
+                </Button>
+              </Link>
+            </div>
           </div>
         </nav>
-        
-        {/* Only show Post Your Car button at the bottom */}
-        <div className="px-4 py-4 border-t border-border space-y-3">
-          <Link to="/sell" onClick={onMenuClose}>
-            <Button size="sm" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
-              Post Your Car
-            </Button>
-          </Link>
-        </div>
+        {/* Removed the old bottom button section */}
       </div>
     </div>
   );

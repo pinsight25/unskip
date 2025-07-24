@@ -94,7 +94,9 @@ const ListingCard = ({
           <p className="text-primary font-bold text-xl mb-1">
             {formatPrice(listing.price)}
           </p>
-          <p className="text-gray-600 text-sm mb-2">{listing.location}</p>
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+            <span>{listing.location || 'Location not specified'}</span>
+          </div>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
@@ -102,7 +104,7 @@ const ListingCard = ({
             </span>
             <span className="flex items-center gap-1">
               <Eye className="h-4 w-4" />
-              {listing.views} views
+              {listing.views || 0} views
             </span>
           </div>
         </div>

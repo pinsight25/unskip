@@ -9,7 +9,7 @@ import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
 
@@ -60,6 +60,7 @@ const ProfileContent = ({
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
   const [isEditDealerModalOpen, setIsEditDealerModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch received offers for the current user (as seller)
   const { data: receivedOffers = [], refetch } = useQuery({
@@ -68,16 +69,43 @@ const ProfileContent = ({
       if (!user?.id) return [];
       const { data, error } = await supabase
         .from('offers')
-        .select('*, car:cars(*)')
+        .select('*, car:cars(*), buyer:users!buyer_id(*)')
         .eq('seller_id', user.id)
         .order('created_at', { ascending: false });
       return data || [];
     },
     enabled: !!user?.id,
-    staleTime: Infinity,
+    staleTime: 30000, // 30 seconds instead of Infinity
     refetchOnMount: true,
     refetchOnWindowFocus: true,
+    refetchInterval: 60000, // Refetch every minute as fallback
   });
+
+  // Real-time subscription for offers
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    const channel = supabase.channel('realtime-profile-offers')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'offers',
+          filter: `seller_id=eq.${user.id}`
+        },
+        () => {
+          // Invalidate and refetch offers when changes occur
+          queryClient.invalidateQueries({ queryKey: ['received-offers', user.id] });
+          queryClient.invalidateQueries({ queryKey: ['profile-stats', user.id] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, queryClient]);
 
   // Fetch real stats for the dashboard
   const { data: stats = { totalViews: 0, activeCarListings: 0, activeAccessoryListings: 0, offersReceived: 0 } } = useQuery({
@@ -114,7 +142,9 @@ const ProfileContent = ({
       };
     },
     enabled: !!user?.id,
-    staleTime: Infinity,
+    staleTime: 30000, // 30 seconds instead of Infinity
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
@@ -178,7 +208,7 @@ const ProfileContent = ({
                 </Button>
               </Link>
               <Link to="/post-accessory">
-                <Button variant="outline" className="w-full h-14 text-base font-semibold" size="lg">
+                <Button className="w-full h-14 text-base font-semibold" size="lg">
                   <Package className="h-5 w-5 mr-3" />
                   Post Accessory
                 </Button>

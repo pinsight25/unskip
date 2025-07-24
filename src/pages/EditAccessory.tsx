@@ -1,21 +1,26 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAccessoryForm } from '@/hooks/useAccessoryForm';
 import { useUser } from '@/contexts/UserContext';
-import { getAccessoryLimit } from '@/constants/limits';
 import { useToast } from '@/hooks/use-toast';
-import { useUserAccessories } from '@/hooks/queries/useAccessories';
+import { useAccessory } from '@/hooks/queries/useAccessories';
 import { cloudinaryConfig } from '@/config/cloudinary';
-import { Camera, Upload } from 'lucide-react';
+import { Camera, Upload, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AccessoryCategory } from '@/types/accessory';
 
-const PostAccessory = () => {
+const EditAccessory = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const { user } = useUser();
   const { toast } = useToast();
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
+  
+  // Fetch existing accessory data
+  const { data: accessory, isLoading: isLoadingAccessory, error: accessoryError } = useAccessory(id!);
   
   const {
     formData,
@@ -23,12 +28,37 @@ const PostAccessory = () => {
     updateField,
     handleSubmit,
     isLoading,
+    setFormData,
   } = useAccessoryForm();
 
-  const { data: userAccessories = [] } = useUserAccessories(user?.id || '');
-  const activeAccessoryListings = userAccessories.length;
-  const userType = user?.userType === 'premium' ? 'regular' : (user?.userType || 'regular');
-  const accessoryLimit = getAccessoryLimit(userType);
+  // Pre-populate form when accessory data is loaded
+  useEffect(() => {
+    if (accessory && user) {
+      setFormData({
+        name: accessory.name || '',
+        brand: accessory.brand || '',
+        category: accessory.category || 'alloy-wheels' as AccessoryCategory, // Provide a valid default category
+        price_min: accessory.price_min || 0,
+        price_max: accessory.price_max || undefined,
+        description: accessory.description || '',
+        condition: accessory.condition || '',
+        location: accessory.location || '',
+        phone: accessory.phone || user.phone || '',
+        availability: accessory.availability || 'in-stock',
+        compatibility: accessory.compatibility || [],
+        warranty: accessory.warranty || '',
+        installation_available: accessory.installation_available || false,
+        email: accessory.email || user.email || '',
+        whatsapp_contact: accessory.whatsapp_contact || false,
+        additional_info: accessory.additional_info || '',
+        images: (accessory as any).images || [], // Cast to any to access images property
+        sellerName: accessory.seller_name || user.name || '',
+      });
+    }
+  }, [accessory, user, setFormData]);
+
+  // Check if user owns this accessory
+  const isOwner = accessory?.seller_id === user?.id;
 
   // Cloudinary upload function
   const uploadToCloudinary = async (file: File): Promise<string> => {
@@ -109,37 +139,72 @@ const PostAccessory = () => {
   };
 
   const handleFormSubmit = async () => {
-    // Check accessory listing limit before submission
-    if (activeAccessoryListings >= accessoryLimit) {
-      toast({
-        title: "Listing Limit Reached",
-        description: `You've reached your free limit of ${accessoryLimit} accessory listings. Remove an old listing to post a new one.`,
-        variant: "destructive"
-      });
-      return;
-    }
-
     // Debug: Log form data to see what's missing
     console.log('🔍 Form data before submission:', formData);
     console.log('🔍 Form errors:', errors);
 
-    const success = await handleSubmit();
+    const success = await handleSubmit(true, id);
     if (success) {
-      navigate('/accessories');
+      navigate(`/accessories/${id}`);
     }
   };
 
-  if (!user) {
+  // Loading state
+  if (isLoadingAccessory) {
+    return (
+      <div className="bg-white min-h-screen">
+        <div className="max-w-2xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+          <div className="mb-6">
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              <div className="space-y-6">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-6 w-28" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (accessoryError) {
     return (
       <div className="bg-white min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-          <p className="text-gray-600 mb-6">Please sign in to post an accessory</p>
+          <h2 className="text-2xl font-bold mb-4">Error Loading Accessory</h2>
+          <p className="text-gray-600 mb-6">Unable to load the accessory details</p>
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/accessories')}
             className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90"
           >
-            Go to Home
+            Back to Accessories
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found or not owner
+  if (!accessory || !isOwner) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Accessory Not Found</h2>
+          <p className="text-gray-600 mb-6">This accessory doesn't exist or you don't have permission to edit it</p>
+          <button 
+            onClick={() => navigate('/accessories')}
+            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90"
+          >
+            Back to Accessories
           </button>
         </div>
       </div>
@@ -151,9 +216,17 @@ const PostAccessory = () => {
       <div className="max-w-2xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Post Accessory</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <button
+              onClick={() => navigate(`/accessories/${id}`)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Edit Accessory</h1>
+          </div>
           <p className="text-sm lg:text-base text-gray-600">
-            List your car accessory for sale. You have {activeAccessoryListings}/{accessoryLimit} active listings.
+            Update your accessory details and images
           </p>
         </div>
 
@@ -166,7 +239,7 @@ const PostAccessory = () => {
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
                   <p className="text-gray-600 text-sm mb-6">
-                    Tell us about your accessory's basic details
+                    Update your accessory's basic details
                   </p>
                 </div>
 
@@ -333,7 +406,7 @@ const PostAccessory = () => {
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Pricing</h2>
                   <p className="text-gray-600 text-sm mb-6">
-                    Set your asking price for the accessory
+                    Update your asking price for the accessory
                   </p>
                 </div>
 
@@ -377,7 +450,7 @@ const PostAccessory = () => {
                     Product Photos
                   </h2>
                   <p className="text-gray-600 text-sm mb-6">
-                    Add photos to showcase your accessory (optional)
+                    Update photos to showcase your accessory (optional)
                   </p>
                 </div>
                 
@@ -391,7 +464,7 @@ const PostAccessory = () => {
                   onClick={() => document.getElementById('image-upload')?.click()}
                 >
                   <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-lg font-medium mb-2">Add Product Photos</p>
+                  <p className="text-lg font-medium mb-2">Add More Photos</p>
                   <p className="text-sm text-gray-600 mb-4">
                     {uploading ? 'Uploading...' : 'Drag and drop or click to upload (Max 8 photos)'}
                   </p>
@@ -447,7 +520,7 @@ const PostAccessory = () => {
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
                   <p className="text-gray-600 text-sm mb-6">
-                    How buyers can reach you
+                    Update how buyers can reach you
                   </p>
                 </div>
 
@@ -501,7 +574,7 @@ const PostAccessory = () => {
                   className="w-full bg-primary text-white py-3 text-base font-medium hover:bg-primary/90 transition-colors"
                   disabled={isLoading || uploading}
                 >
-                  {isLoading ? 'Posting...' : 'Post Accessory'}
+                  {isLoading ? 'Updating...' : 'Update Accessory'}
                 </Button>
               </div>
             </form>
@@ -512,4 +585,4 @@ const PostAccessory = () => {
   );
 };
 
-export default PostAccessory;
+export default EditAccessory; 

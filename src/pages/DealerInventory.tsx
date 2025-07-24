@@ -20,122 +20,120 @@ import { ArrowLeft, Car, Package } from 'lucide-react';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 import { useUser } from '@/contexts/UserContext';
 import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
-import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import { useQuery } from '@tanstack/react-query';
+import { useCars } from '@/hooks/queries/useCarQueries';
+import { useAccessories } from '@/hooks/queries/useAccessories';
 
 const DealerInventory = () => {
   const { dealerSlug } = useParams();
   const [sortBy, setSortBy] = useState('');
-  const [cars, setCars] = useState<any[]>([]);
-  const [accessories, setAccessories] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'cars' | 'accessories'>('cars');
-
-  // Find dealer by slug (from DB, not mock)
-  const [dealer, setDealer] = useState<any>(null);
   const { user } = useUser();
   const [editOpen, setEditOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchDealerAndInventory = async () => {
-      setError(null);
-      // Fetch dealer by slug only
-      let dealerData = null;
-      if (dealerSlug) {
-        const { data, error } = await supabase
-          .from('dealers')
-          .select('*')
-          .eq('slug', dealerSlug)
-          .single();
-        if (error || !data) {
-          setDealer(null);
-          setCars([]);
-          setAccessories([]);
-          setError('Dealer not found');
-          return;
-        }
-        dealerData = data;
-        setDealer(dealerData);
-      }
-      
-      // Fetch cars for this dealer (by user_id)
-      if (dealerData) {
-        const { data: carsData, error: carsError } = await supabase
-          .from('cars')
-          .select('*, car_images(image_url)')
-          .eq('seller_id', dealerData.user_id)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
-        if (carsError) {
-          setError('Failed to load cars');
-          setCars([]);
-        } else {
-          setCars((carsData || []).map((car: any) => ({
-            id: car.id,
-            title: `${car.year} ${car.make} ${car.model}`,
-            brand: car.make,
-            model: car.model,
-            variant: car.variant,
-            year: car.year,
-            price: car.price,
-            images: Array.isArray(car.car_images) ? car.car_images.map((img: any) => img.image_url) : [],
-            mileage: car.kilometers_driven || 0,
-            kilometersDriven: car.kilometers_driven || 0,
-            fuelType: car.fuel_type,
-            transmission: car.transmission,
-            ownership: car.number_of_owners || 1,
-            ownershipNumber: car.number_of_owners || 1,
-            location: [car.area, car.city].filter(Boolean).join(', '),
-            description: car.description || '',
-            seller: {
-              id: car.seller_id || '',
-              name: dealerData.business_name,
-              type: 'dealer',
-              phone: formatPhoneForAuth(dealerData.phone),
-              email: dealerData.email || '',
-              verified: dealerData.verification_status === 'verified',
-            },
-            registrationYear: car.registration_year,
-            registrationState: car.registration_state,
-            noAccidentHistory: car.no_accident_history,
-            acceptOffers: car.accept_offers,
-            offerPercentage: car.offer_percentage,
-            insuranceValid: car.insurance_valid,
-            insuranceValidTill: car.insurance_valid_till,
-            insuranceType: car.insurance_type,
-            lastServiceDate: car.last_service_date,
-            serviceAtAuthorized: car.authorized_service_center,
-            rtoTransferSupport: car.rto_transfer_support,
-            isRentAvailable: car.is_rent_available,
-            rentPrice: car.rentPrice,
-            rentPolicies: car.rentPolicies,
-            rentType: car.rentType,
-            verified: car.verified,
-            featured: car.featured,
-            seatingCapacity: car.seating_capacity,
-          })));
-        }
+  // Fetch dealer by slug using React Query
+  const { data: dealer, isLoading: dealerLoading, error: dealerError } = useQuery({
+    queryKey: ['dealer', dealerSlug],
+    queryFn: async () => {
+      if (!dealerSlug) throw new Error('No dealer slug provided');
+      const { data, error } = await supabase
+        .from('dealers')
+        .select('*')
+        .eq('slug', dealerSlug)
+        .single();
+      if (error || !data) throw new Error('Dealer not found');
+      return data;
+    },
+    enabled: !!dealerSlug,
+    staleTime: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
 
-        // Fetch accessories for this dealer (by user_id)
-        const { data: accessoriesData, error: accessoriesError } = await supabase
-          .from('accessories')
-          .select('*')
-          .eq('seller_id', dealerData.user_id)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
-        if (accessoriesError) {
-          console.error('Failed to load accessories:', accessoriesError);
-          setAccessories([]);
-        } else {
-          setAccessories(accessoriesData || []);
-        }
-      }
-    };
-    fetchDealerAndInventory();
-  }, [dealerSlug]);
+  // Fetch cars for this dealer using React Query
+  const { data: cars = [], isLoading: carsLoading } = useQuery({
+    queryKey: ['dealer-cars', dealer?.user_id],
+    queryFn: async () => {
+      if (!dealer?.user_id) return [];
+      const { data, error } = await supabase
+        .from('cars')
+        .select('*, car_images(image_url)')
+        .eq('seller_id', dealer.user_id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map((car: any) => ({
+        id: car.id,
+        title: `${car.year} ${car.make} ${car.model}`,
+        brand: car.make,
+        model: car.model,
+        variant: car.variant,
+        year: car.year,
+        price: car.price,
+        images: Array.isArray(car.car_images) ? car.car_images.map((img: any) => img.image_url) : [],
+        mileage: car.kilometers_driven || 0,
+        kilometersDriven: car.kilometers_driven || 0,
+        fuelType: car.fuel_type,
+        transmission: car.transmission,
+        ownership: car.number_of_owners || 1,
+        ownershipNumber: car.number_of_owners || 1,
+        location: [car.area, car.city].filter(Boolean).join(', '),
+        description: car.description || '',
+        seller: {
+          id: car.seller_id || '',
+          name: dealer.business_name,
+          type: 'dealer',
+          phone: formatPhoneForAuth(dealer.phone),
+          email: dealer.email || '',
+          verified: dealer.verification_status === 'verified',
+        },
+        registrationYear: car.registration_year,
+        registrationState: car.registration_state,
+        fitnessCertificateValidTill: car.fitness_certificate_valid_till,
+        numberOfOwners: car.number_of_owners || 1,
+        seatingCapacity: car.seating_capacity || 5,
+        color: car.color,
+        acceptOffers: car.accept_offers,
+        offerPercentage: car.offer_percentage,
+        insuranceValidTill: car.insurance_valid_till,
+        insuranceType: car.insurance_type,
+        lastServiceDate: car.last_service_date,
+        serviceAtAuthorized: car.authorized_service_center,
+        rtoTransferSupport: car.rto_transfer_support,
+        isRentAvailable: car.is_rent_available,
+        rentPrice: car.rentPrice,
+        rentPolicies: car.rentPolicies,
+        rentType: car.rentType,
+        verified: car.verified,
+        featured: car.featured,
+        seatingCapacity: car.seating_capacity,
+      }));
+    },
+    enabled: !!dealer?.user_id,
+    staleTime: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
 
-  useRealtimeRefetch('cars', ['cars']);
-  useRealtimeRefetch('accessories', ['accessories']);
-  useRealtimeRefetch('dealers', ['dealers']);
+  // Fetch accessories for this dealer using React Query
+  const { data: accessories = [], isLoading: accessoriesLoading } = useQuery({
+    queryKey: ['dealer-accessories', dealer?.user_id],
+    queryFn: async () => {
+      if (!dealer?.user_id) return [];
+      const { data, error } = await supabase
+        .from('accessories')
+        .select('*')
+        .eq('seller_id', dealer.user_id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!dealer?.user_id,
+    staleTime: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
 
   // Sorting for cars
   const sortedCars = [...cars].sort((a, b) => {
@@ -165,7 +163,21 @@ const DealerInventory = () => {
     }
   });
 
-  if (error || !dealer) {
+  // Loading state
+  if (dealerLoading || carsLoading || accessoriesLoading) {
+    return (
+      <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+            <p className="text-gray-600">Please wait while we load the dealer inventory.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (dealerError || !dealer) {
     return (
       <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">

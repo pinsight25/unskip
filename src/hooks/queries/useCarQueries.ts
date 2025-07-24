@@ -83,30 +83,27 @@ export const useCars = () => {
   const query = useQuery<any[]>({
     queryKey: ['cars'],
     queryFn: async () => {
-      console.log('🔍 useCars: Starting cars query...');
-      
       // First, get all cars
       const { data: carsData, error: carsError } = await supabase
         .from('cars')
         .select(`
           id, title, price, make, model, year, seller_id, status, created_at,
           fuel_type, transmission, kilometers_driven, number_of_owners,
-          area, city, color, variant, description, featured, verified,
+          area, city, color, variant, description, featured, verified, views,
           car_images(image_url, is_cover, sort_order)
         `)
         .eq('status', 'active')
         .order('created_at', { ascending: false });
-        
-      console.log('🔍 useCars: Cars query result:', { carsData: carsData?.length, carsError });
-        
+
       if (carsError) {
-        console.error('❌ useCars: Cars query error:', carsError);
         throw carsError;
+      }
+      if (!carsData) {
+        return [];
       }
 
       // Get unique seller IDs
       const sellerIds = [...new Set(carsData?.map(car => car.seller_id).filter(Boolean) || [])];
-      console.log('🔍 useCars: Seller IDs:', sellerIds);
 
       // Fetch user data for all sellers
       let usersData: any[] = [];
@@ -115,8 +112,6 @@ export const useCars = () => {
           .from('users')
           .select('id, name, phone, email, user_type, is_verified')
           .in('id', sellerIds);
-        
-        console.log('🔍 useCars: Users query result:', { users: users?.length, usersError });
         
         if (usersError) {
           console.error('❌ useCars: Users query error:', usersError);
@@ -133,8 +128,6 @@ export const useCars = () => {
           .from('dealers')
           .select('user_id, business_name, verification_status')
           .in('user_id', dealerUserIds);
-        
-        console.log('🔍 useCars: Dealers query result:', { dealers: dealers?.length, dealersError });
         
         if (dealersError) {
           console.error('❌ useCars: Dealers query error:', dealersError);
@@ -160,143 +153,50 @@ export const useCars = () => {
         const dealerData = dealersMap.get(car.seller_id);
         const mappedCar = mapDbCarToCar(car, dealerData, userData);
         
-        console.log('🔍 useCars: Mapped car:', {
-          id: mappedCar.id,
-          title: mappedCar.title,
-          seller: {
-            name: mappedCar.seller.name,
-            type: mappedCar.seller.type,
-            dealerVerified: mappedCar.seller.dealerVerified,
-            businessName: mappedCar.seller.businessName
-          },
-          seller_type: mappedCar.seller_type,
-          userData: userData ? { id: userData.id, name: userData.name, user_type: userData.user_type } : null,
-          dealerData: dealerData ? { user_id: dealerData.user_id, business_name: dealerData.business_name, verification_status: dealerData.verification_status } : null
-        });
-        
         return mappedCar;
       });
       
-      console.log(`✅ useCars: Mapped ${carsMapped.length} cars`);
       return carsMapped as any[];
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
     placeholderData: [],
-    staleTime: 0, // Force refetch for debugging
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 30000, // 30 seconds
+    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
     // Use React Query default retry logic
   });
-
-  // Debounced real-time subscription
-  useEffect(() => {
-    const channel = supabase.channel('realtime-cars-and-images')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'cars',
-        },
-        () => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['cars'] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'car_images',
-        },
-        () => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['cars'] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .subscribe();
-    // Fallback polling
-    const pollInterval = setInterval(() => {
-      queryClient.invalidateQueries({ queryKey: ['cars'] });
-    }, POLL_INTERVAL * 2); // Fallback every 60s
-    return () => {
-      supabase.removeChannel(channel);
-      clearInterval(pollInterval);
-    };
-  }, [queryClient]);
 
   return query;
 };
 
 // Fetch user's listings for profile
 export const useUserListings = (userId: string | undefined) => {
-  const queryClient = useQueryClient();
-  const lastRealtimeRefetch = useRef(0);
-  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
-  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
-
   const query = useQuery<any[]>({
     queryKey: ['userListings', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID required');
       const { data, error } = await (supabase as any)
         .from('cars')
-        .select('id, title, price, make, model, year, seller_id, status, created_at, car_images(image_url, is_cover, sort_order)')
+        .select('id, title, price, make, model, year, seller_id, status, created_at, views, area, city, car_images(image_url, is_cover, sort_order)')
         .eq('seller_id', userId)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data as any[];
     },
     enabled: !!userId,
-    refetchInterval: POLL_INTERVAL,
-    refetchIntervalInBackground: true,
-    staleTime: Infinity,
+    staleTime: 30000, // 30 seconds
+    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
-
-  // Debounced real-time subscription for user's listings
-  useEffect(() => {
-    if (!userId) return;
-    const channel = supabase.channel(`realtime-user-listings-${userId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'cars',
-          filter: `seller_id=eq.${userId}`
-        },
-        (payload) => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['userListings', userId] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId, queryClient]);
 
   return query;
 };
 
 // Fetch all dealers for dealers page
 export const useDealers = () => {
-  const queryClient = useQueryClient();
-  const lastRealtimeRefetch = useRef(0);
-  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
-  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
-
   const query = useQuery<any[]>({
     queryKey: ['dealers'],
     queryFn: async () => {
@@ -307,34 +207,11 @@ export const useDealers = () => {
       if (error) throw error;
       return data as any[];
     },
-    refetchInterval: POLL_INTERVAL,
-    refetchIntervalInBackground: true,
-    staleTime: Infinity,
+    staleTime: 30000, // 30 seconds
+    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
-
-  // Debounced real-time subscription for dealers
-  useEffect(() => {
-    const channel = supabase.channel('realtime-dealers')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'dealers',
-        },
-        (payload) => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['dealers'] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
 
   return query;
 };
@@ -368,7 +245,9 @@ export const useOffers = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
-    staleTime: Infinity,
+    staleTime: 30000, // 30 seconds instead of Infinity
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   // Debounced real-time subscription for offers

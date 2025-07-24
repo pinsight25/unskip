@@ -4,59 +4,19 @@ import { Card } from '@/components/ui/card';
 import { CheckCircle, XCircle, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useChatManager } from '@/hooks/useChatManager';
-import { useUserOffers } from '@/hooks/useUserOffers';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
-export const useReceivedOffers = () => {
-  const { user } = useUser();
-  return useQuery({
-    queryKey: ['receivedOffers', user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('offers')
-        .select(`*, car:cars(*), buyer:users!buyer_id(*)`)
-        .eq('seller_id', user.id)
-        .order('created_at', { ascending: false });
-      return data || [];
-    },
-    enabled: !!user?.id
-  });
-};
-
 const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[]; onOffersCountChange?: (count: number) => void }) => {
   const { toast } = useToast();
   const { user } = useUser();
   const navigate = useNavigate();
-  const { offers: userOffers, isLoading, error, updateOfferStatus } = useUserOffers();
   const { navigateToChat } = useChatManager();
   const queryClient = useQueryClient();
-
-  // Supabase real-time subscription for offers
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('realtime-offers')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'offers',
-          filter: `seller_id=eq.${user.id}`
-        },
-        () => {
-          // No need to refetch here as receivedOffers is a prop
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id]);
 
   useEffect(() => {
     if (typeof onOffersCountChange === 'function') {
@@ -75,6 +35,27 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
   const calculatePercentageDiff = (offerAmount: number, askingPrice: number) => {
     const diff = ((offerAmount - askingPrice) / askingPrice) * 100;
     return Math.round(diff);
+  };
+
+  const updateOfferStatus = async (offerId: string, newStatus: 'accepted' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .update({ status: newStatus })
+        .eq('id', offerId);
+
+      if (error) {
+        return false;
+      }
+
+      // Invalidate queries to trigger refetch
+      queryClient.invalidateQueries({ queryKey: ['received-offers', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-stats', user?.id] });
+
+      return true;
+    } catch (err) {
+      return false;
+    }
   };
 
   const handleAcceptOffer = async (offer: any) => {
@@ -154,8 +135,8 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
     return <span className="text-gray-600 font-medium">0%</span>;
   };
 
-  // Loading state
-  if (isLoading) {
+  // Loading state - show skeleton when offers is undefined (still loading)
+  if (offers === undefined) {
     return (
       <Card className="p-4 md:p-6">
         <div className="space-y-4">
@@ -166,18 +147,6 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-32 w-full" />
-        </div>
-      </Card>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <Card className="p-4 md:p-6">
-        <div className="text-center py-12">
-          <p className="text-red-600 mb-4">{error}</p>
-          <p className="text-gray-600">Please try refreshing the page</p>
         </div>
       </Card>
     );

@@ -1,14 +1,19 @@
 
 import { useState, useMemo } from 'react';
 import { useCars } from '@/hooks/queries/useCarQueries';
-import HomeHeader from '@/components/home/HomeHeader';
 import { useDealers } from '@/hooks/queries/useDealers';
-import HomeResults from '@/components/home/HomeResults';
+import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import HomeHeader from '@/components/home/HomeHeader';
+import HeroBanner from '@/components/home/HeroBanner';
+import SearchBar from '@/components/home/SearchBar';
+import SearchFilters from '@/components/home/SearchFilters';
 import SearchResultsView from '@/components/home/SearchResultsView';
+import HomeResults from '@/components/home/HomeResults';
+import HomeModals from '@/components/home/HomeModals';
 import HomeModalsContainer from '@/components/home/containers/HomeModalsContainer';
 import { useHomeOfferHandlers } from '@/components/home/handlers/HomeOfferHandlers';
-import { useHomeChatHandlers } from '@/components/home/handlers/HomeChatHandlers';
 import { useHomeTestDriveHandlers } from '@/components/home/handlers/HomeTestDriveHandlers';
+import { useHomeChatHandlers } from '@/components/home/handlers/HomeChatHandlers';
 import { useAuthModal } from '@/contexts/AuthModalContext';
 import { Skeleton } from '@/components/ui/skeleton';
 // Remove ErrorState and ConnectionStatusIndicator imports
@@ -21,6 +26,10 @@ const Home = () => {
   // Count cars where seller.type === 'dealer'
   const dealerCarsCount = cars.filter(car => car.seller.type === 'dealer').length;
   const ownerCarsCount = cars.filter(car => car.seller.type === 'individual').length;
+
+  // Add real-time refetch for cars and dealers
+  useRealtimeRefetch('cars', ['cars']);
+  useRealtimeRefetch('dealers', ['dealers']);
 
   // UI state for filters
   const [searchQuery, setSearchQuery] = useState('');

@@ -14,11 +14,12 @@ import LoadingScreen from '@/components/common/LoadingScreen';
 import Home from '@/pages/Home';
 import CarDetail from '@/pages/CarDetail';
 import Dealers from '@/pages/Dealers';
-import DealerRegister from '@/pages/DealerRegister';
 import DealerInventory from '@/pages/DealerInventory';
+import DealerRegister from '@/pages/DealerRegister';
 import DealerProfile from '@/pages/DealerProfile';
 import SellCar from '@/pages/SellCar';
 import PostAccessory from '@/pages/PostAccessory';
+import EditAccessory from '@/pages/EditAccessory';
 import Accessories from '@/pages/Accessories';
 import AccessoryDetail from '@/pages/AccessoryDetail';
 import Search from '@/pages/Search';
@@ -58,11 +59,12 @@ function App() {
                         <Route path="/car/:id" element={<CarDetail />} />
                         <Route path="/dealers" element={<Dealers />} />
                         <Route path="/dealers/:dealerSlug" element={<DealerProfile />} />
-                        <Route path="/dealer/dashboard" element={<DealerInventory />} />
+                        <Route path="/dealer/inventory" element={<DealerInventory />} />
                         <Route path="/dealer/register" element={<DealerRegister />} />
                         <Route path="/sell-car" element={<SellCar />} />
                         <Route path="/sell" element={<SellCar />} />
                         <Route path="/post-accessory" element={<PostAccessory />} />
+                        <Route path="/accessories/:id/edit" element={<EditAccessory />} />
                         <Route path="/accessories" element={<Accessories />} />
                         <Route path="/accessories/:id" element={<AccessoryDetail />} />
                         <Route path="/search" element={<Search />} />

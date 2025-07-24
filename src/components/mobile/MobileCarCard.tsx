@@ -84,12 +84,9 @@ const MobileCarCard = ({
           mileage={car.mileage}
           location={car.location}
           seller={car.seller}
+          viewCount={viewCount}
+          ownership={car.ownership || car.ownershipNumber || 1}
         />
-
-        <div className="flex items-center text-sm text-gray-500">
-          <Eye className="w-4 h-4 mr-1" />
-          <span>{viewCount}</span>
-        </div>
 
         <MobileCarActions
           carId={car.id}

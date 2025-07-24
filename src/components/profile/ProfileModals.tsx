@@ -51,6 +51,8 @@ const ProfileModals = ({
         onConfirm={onSignOut}
         title="Sign Out"
         description="Are you sure you want to sign out of your account?"
+        itemName="your account"
+        itemType="account"
       />
 
       <DeleteConfirmModal
@@ -59,6 +61,8 @@ const ProfileModals = ({
         onConfirm={onConfirmDeleteListing}
         title="Delete Listing"
         description={`Are you sure you want to delete "${deleteModal.title}"? This action cannot be undone.`}
+        itemName={deleteModal.title}
+        itemType="listing"
       />
     </>
   );

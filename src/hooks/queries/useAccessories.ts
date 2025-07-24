@@ -1,8 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
-import { Tables } from '@/integrations/supabase/types'
-
-export type Accessory = Tables<'accessories'>
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { Accessory } from '@/types/accessory';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useAccessories = (filters?: {
   category?: string
@@ -11,7 +11,9 @@ export const useAccessories = (filters?: {
   location?: string
   search?: string
 }) => {
-  return useQuery({
+  const queryClient = useQueryClient();
+  
+  const query = useQuery({
     queryKey: ['accessories', filters],
     queryFn: async () => {
       let query = supabase
@@ -54,12 +56,14 @@ export const useAccessories = (filters?: {
       
       return accessoriesWithImages as Accessory[]
     },
-    staleTime: 0, // Changed from Infinity to 0 to force refetch
+    staleTime: 30000, // 30 seconds instead of 0
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  })
-}
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
+
+  return query;
+};
 
 export const useAccessory = (id: string) => {
   return useQuery({
