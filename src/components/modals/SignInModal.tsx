@@ -9,6 +9,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { formatPhoneForAuth, formatPhoneForDB } from '@/utils/phoneUtils';
+import { useToast } from '@/hooks/use-toast';
 import ProfileCompletionStep from './signin/ProfileCompletionStep';
 import UserTypeSelectionStep from './signin/UserTypeSelectionStep';
 
@@ -35,6 +36,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
   const [userType, setUserType] = useState<'regular' | 'dealer' | null>(null);
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Reset everything when modal closes
   const handleClose = () => {
@@ -89,24 +91,37 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         formattedPhone = '+91' + formattedPhone;
       }
       const phoneToVerify = formattedPhoneNumber || formattedPhone;
+      
+      // Normal OTP verification
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneToVerify,
         token: otp,
         type: 'sms'
       });
+      
       if (error) throw error;
       if (!data.user) throw new Error('No user returned');
       setUserId(data.user.id);
-      // Check if user needs profile
-      const { data: userData } = await supabase
+      
+      // Check if user has completed their profile setup
+      const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('*')
+        .select('id, name, email, user_type, dealer_registration_completed')
         .eq('id', data.user.id)
-        .single();
-      if (!userData?.name || userData.name === 'User' || !userData?.email) {
+        .maybeSingle();
+      
+      // If user doesn't exist in users table yet (new user) or has no user_type, show user type selection
+      if (!userData || !userData.user_type) {
         setStep('userType');
       } else {
-        handleSuccess();
+        // User already has a type, check if dealer needs to complete registration
+        if (userData.user_type === 'dealer' && !userData.dealer_registration_completed) {
+          handleClose();
+          navigate('/dealer/register');
+        } else {
+          // User has completed profile, proceed normally
+          handleSuccess();
+        }
       }
     } catch (err: any) {
       if (err.message?.includes('expired')) {
@@ -135,18 +150,28 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     try {
       const { error } = await supabase
         .from('users')
-        .update({ name: profileData.name, email: profileData.email, city: profileData.city, user_type: userType })
+        .update({ 
+          name: profileData.name, 
+          email: profileData.email, 
+          city: profileData.city, 
+          user_type: userType,
+          // For dealers, set dealer_registration_completed to false initially
+          dealer_registration_completed: userType === 'dealer' ? false : undefined
+        })
         .eq('id', userId);
       if (error) throw error;
+      
       if (userType === 'dealer') {
+        // For dealers, redirect to registration and show a message
+        toast({
+          title: "Profile Created!",
+          description: "Now let's set up your dealer account to unlock business features.",
+        });
         handleClose();
         navigate('/dealer/register');
       } else {
         handleSuccess();
       }
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
     } catch (err: any) {
       setError(err.message || 'Failed to save profile');
     } finally {

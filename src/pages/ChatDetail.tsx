@@ -69,14 +69,14 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
   // Optimistic message sending
   const [pendingMessages, setPendingMessages] = useState<ChatMessage[]>([]);
 
-  useRealtimeRefetch('chat_messages', ['chatMessages']);
-  useRealtimeRefetch('chats', ['chats']);
+  // Remove conflicting real-time refetch hooks - useMessages handles its own subscription
 
-  const { messages, isLoading } = useMessages(chatId!, user?.id);
+  const { messages, isLoading: messagesLoading } = useMessages(chatId!, user?.id);
 
   useEffect(() => {
     if (!chatId || !user) return;
 
+    setLoading(true); // Set loading at start
     const fetchChatData = async () => {
       // Step 1: Fetch chat, car, and users
       const { data: chatData } = await supabase
@@ -152,6 +152,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
       }
       setCarImages(carImages);
       setCarImagesLoading(false);
+      setLoading(false); // Mark loading as complete
 
       // Get existing messages
       // fetchMessages(chatId); // This is now handled by useMessages
@@ -159,97 +160,23 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
     fetchChatData();
   }, [chatId, user]);
 
-  // Real-time subscription for all chat message events
+  // Real-time subscription for chat updates (messages handled by useMessages)
   useEffect(() => {
     if (!chatId) return;
     const channel = supabase
-      .channel(`chat-${chatId}`)
+      .channel(`chat-updates-${chatId}`)
       .on(
         'postgres_changes',
         {
-          event: '*',
-          schema: 'public',
-          table: 'chat_messages',
-          filter: `chat_id=eq.${chatId}`
-        },
-        () => {
-          // This will trigger a re-fetch of messages via useMessages
-        }
-      )
-      // Also listen to changes in the parent chat row
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'chats',
           filter: `id=eq.${chatId}`
         },
-        () => {
-          // Refetch chat, car, and users
-          if (user) {
-            (async () => {
-              const { data: chatData } = await supabase
-                .from('chats')
-                .select(`
-                  *,
-                  car:cars!car_id(*),
-                  buyer:users!buyer_id(id, name, avatar),
-                  seller:users!seller_id(id, name, avatar)
-                `)
-                .eq('id', chatId)
-                .single();
-              if (!chatData) return;
-              setChat(chatData);
-              setOtherUser(user.id === chatData.buyer_id ? toSeller(chatData.seller) : toSeller(chatData.buyer));
-              const carData = chatData.car;
-              setCar({
-                id: carData.id,
-                title: `${carData.year} ${carData.make} ${carData.model}`,
-                brand: carData.make,
-                model: carData.model,
-                variant: carData.variant,
-                year: carData.year,
-                price: carData.price,
-                images: [],
-                mileage: carData.kilometers_driven || 0,
-                kilometersDriven: carData.kilometers_driven || 0,
-                fuelType: carData.fuel_type,
-                transmission: carData.transmission,
-                ownership: carData.number_of_owners || 1,
-                ownershipNumber: carData.number_of_owners || 1,
-                location: [carData.area, carData.city].filter(Boolean).join(', '),
-                description: carData.description || '',
-                seller: toSeller(chatData.seller),
-                seller_type: toSeller(chatData.seller).type,
-                color: carData.color,
-                landmark: carData.landmark,
-                seatingCapacity: carData.seating_capacity,
-                isRentAvailable: carData.is_rent_available,
-                rentPrice: undefined,
-                rentPolicies: undefined,
-                rentType: undefined,
-                verified: carData.verified,
-                featured: carData.featured,
-                views: carData.views || 0,
-                createdAt: carData.created_at,
-                registrationYear: carData.registration_year,
-                registrationState: carData.registration_state,
-                fitnessCertificateValidTill: carData.fitness_certificate_valid_till,
-                noAccidentHistory: carData.no_accident_history,
-                acceptOffers: carData.accept_offers,
-                offerPercentage: carData.offer_percentage,
-                insuranceValid: carData.insurance_valid,
-                insuranceValidTill: carData.insurance_valid_till,
-                insuranceType: carData.insurance_type,
-                lastServiceDate: carData.last_service_date,
-                serviceCenterType: carData.service_center_type,
-                serviceAtAuthorized: carData.authorized_service_center,
-                rtoTransferSupport: carData.rto_transfer_support,
-                insurance: undefined,
-                serviceHistory: undefined,
-              });
-            })();
+        (payload) => {
+          // Update chat status if needed
+          if (payload.new.status !== payload.old.status) {
+            setChat(prev => prev ? { ...prev, status: payload.new.status } : prev);
           }
         }
       )
@@ -257,7 +184,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [chatId, user]);
+  }, [chatId]);
 
   // Mark all messages as seen when chat is opened or messages are updated
   useEffect(() => {
@@ -338,19 +265,43 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
     // Optimistically add to cache
     queryClient.setQueryData(['messages', chatId], (old = []) => ([...(old as any[]), tempMessage]));
     setNewMessage('');
-    // Send to server
-    const { data, error } = await supabase.from('chat_messages').insert({
-      chat_id: chatId,
-      sender_id: user.id,
-      receiver_id: otherUser.id,
-      content: tempMessage.content,
-    }).select().single();
-    if (data) {
-      queryClient.setQueryData(['messages', chatId], (old = []) =>
-        (old as any[]).map(msg => msg.id === tempId ? data : msg)
-      );
-      playSound('sent');
-    } else if (error) {
+    
+    try {
+      // Send to server
+      const { data, error } = await supabase.from('chat_messages').insert({
+        chat_id: chatId,
+        sender_id: user.id,
+        receiver_id: otherUser.id,
+        content: tempMessage.content,
+      }).select().single();
+      
+      if (data) {
+        // Update with real data from server
+        queryClient.setQueryData(['messages', chatId], (old = []) =>
+          (old as any[]).map(msg => msg.id === tempId ? data : msg)
+        );
+        playSound('sent');
+        
+        // Update chat's updated_at timestamp
+        await supabase
+          .from('chats')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', chatId);
+          
+        // Invalidate chats list to update last message
+        queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
+      } else if (error) {
+        // Mark as failed
+        queryClient.setQueryData(['messages', chatId], (old = []) =>
+          (old as any[]).map(msg =>
+            msg.id === tempId
+              ? { ...msg, pending: false, failed: true }
+              : msg
+          )
+        );
+      }
+    } catch (err) {
+      // Mark as failed
       queryClient.setQueryData(['messages', chatId], (old = []) =>
         (old as any[]).map(msg =>
           msg.id === tempId
@@ -378,6 +329,16 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
   const HEADER_HEIGHT = 64; // px
   const INPUT_HEIGHT = 80; // px
 
+  // Show loading state
+  if (loading || messagesLoading) {
+    return (
+      <div className="flex-1 flex flex-col h-full items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+        <p className="mt-2 text-gray-500">Loading chat...</p>
+      </div>
+    );
+  }
+
   // WhatsApp-like layout with sticky header/input and scrollable messages
   if (messages && messages.length > 0) {
     return (
@@ -393,6 +354,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
           onBlockUser={() => toast({ title: 'Block user', description: 'Feature coming soon!' })}
           onDeleteConversation={() => toast({ title: 'Delete conversation', description: 'Feature coming soon!' })}
           onBack={onBack || (() => navigate('/chats'))}
+          isRealTimeConnected={true}
         />
         {/* Messages */}
         <ChatMessages messages={messages} isTyping={isTyping} user={user} otherUser={otherUser} car={car} />

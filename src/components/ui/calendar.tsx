@@ -7,16 +7,59 @@ import { buttonVariants } from "@/components/ui/button";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+// Generate years from 1990 to 2050
+const YEARS = Array.from({ length: 2050 - 1990 + 1 }, (_, i) => 1990 + i);
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  month,
+  onMonthChange,
   ...props
 }: CalendarProps) {
+  const [currentMonth, setCurrentMonth] = React.useState<Date>(month || new Date());
+
+  React.useEffect(() => {
+    if (month) setCurrentMonth(month);
+  }, [month]);
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = parseInt(e.target.value, 10);
+    const newDate = new Date(newYear, currentMonth.getMonth(), 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = parseInt(e.target.value, 10);
+    const newDate = new Date(currentMonth.getFullYear(), newMonth, 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
+  const handlePrevMonth = () => {
+    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
+  const handleNextMonth = () => {
+    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
+      month={currentMonth}
+      onMonthChange={setCurrentMonth}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -54,6 +97,52 @@ function Calendar({
       components={{
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+        Caption: ({ displayMonth }) => (
+          <div className="flex items-center justify-between w-full px-2">
+            <button
+              type="button"
+              onClick={handlePrevMonth}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+              )}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            
+            <div className="flex items-center gap-2">
+              <select
+                value={displayMonth.getMonth()}
+                onChange={handleMonthChange}
+                className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                {MONTHS.map((month, index) => (
+                  <option key={month} value={index}>{month}</option>
+                ))}
+              </select>
+              <select
+                value={displayMonth.getFullYear()}
+                onChange={handleYearChange}
+                className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                {YEARS.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            
+            <button
+              type="button"
+              onClick={handleNextMonth}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+              )}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        ),
       }}
       {...props}
     />

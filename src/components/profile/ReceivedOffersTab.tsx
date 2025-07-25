@@ -9,7 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[]; onOffersCountChange?: (count: number) => void }) => {
   const { toast } = useToast();
@@ -17,6 +17,7 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
   const navigate = useNavigate();
   const { navigateToChat } = useChatManager();
   const queryClient = useQueryClient();
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (typeof onOffersCountChange === 'function') {
@@ -59,42 +60,52 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
   };
 
   const handleAcceptOffer = async (offer: any) => {
-    const success = await updateOfferStatus(offer.id, 'accepted');
-    if (success) {
-      // Create chat after accepting offer
-      try {
-        await navigateToChat(offer.car_id, offer.buyer_id || offer.buyer?.id, user.id, toast);
-        await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
-      } catch (err) {
-        toast({ title: 'Failed to create chat', description: err.message, variant: 'destructive' });
+    setLoadingStates(prev => ({ ...prev, [offer.id]: true }));
+    try {
+      const success = await updateOfferStatus(offer.id, 'accepted');
+      if (success) {
+        // Create chat after accepting offer
+        try {
+          await navigateToChat(offer.car_id, offer.buyer_id || offer.buyer?.id, user.id, toast);
+          await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
+        } catch (err) {
+          toast({ title: 'Failed to create chat', description: err.message, variant: 'destructive' });
+        }
+        toast({
+          title: "Offer Accepted",
+          description: "The buyer has been notified. You can now chat with them.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to accept offer. Please try again.",
+          variant: "destructive"
+        });
       }
-      toast({
-        title: "Offer Accepted",
-        description: "The buyer has been notified. You can now chat with them.",
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to accept offer. Please try again.",
-        variant: "destructive"
-      });
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [offer.id]: false }));
     }
   };
 
   const handleRejectOffer = async (offerId: string) => {
-    const success = await updateOfferStatus(offerId, 'rejected');
-    
-    if (success) {
-      toast({
-        title: "Offer Rejected",
-        description: "The buyer has been notified of your decision.",
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to reject offer. Please try again.",
-        variant: "destructive"
-      });
+    setLoadingStates(prev => ({ ...prev, [offerId]: true }));
+    try {
+      const success = await updateOfferStatus(offerId, 'rejected');
+      
+      if (success) {
+        toast({
+          title: "Offer Rejected",
+          description: "The buyer has been notified of your decision.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to reject offer. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [offerId]: false }));
     }
   };
 
@@ -173,8 +184,21 @@ const ReceivedOffersTab = ({ offers = [], onOffersCountChange }: { offers?: any[
                   <div className="flex flex-col md:flex-row gap-2 mt-2">
                     {offer.status === 'pending' && (
                       <>
-                        <Button onClick={() => handleAcceptOffer(offer)} className="flex-1 bg-green-600 hover:bg-green-700">Accept Offer</Button>
-                        <Button onClick={() => handleRejectOffer(offer.id)} variant="outline" className="flex-1 text-red-600 border-red-200 hover:bg-red-50">Reject</Button>
+                        <Button 
+                          onClick={() => handleAcceptOffer(offer)} 
+                          disabled={loadingStates[offer.id]}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          {loadingStates[offer.id] ? 'Accepting...' : 'Accept Offer'}
+                        </Button>
+                        <Button 
+                          onClick={() => handleRejectOffer(offer.id)} 
+                          disabled={loadingStates[offer.id]}
+                          variant="outline" 
+                          className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                        >
+                          {loadingStates[offer.id] ? 'Rejecting...' : 'Reject'}
+                        </Button>
                       </>
                     )}
                     {offer.status === 'accepted' && (

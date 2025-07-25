@@ -84,10 +84,10 @@ const ListingCard = ({
             onError={e => { (e.target as HTMLImageElement).src = fallbackImage; }}
           />
         </Link>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-2">
-            <h4 className="font-semibold text-lg">{listing.title}</h4>
-            <Badge className={getStatusVariant(listing.status)}>
+            <h4 className="font-semibold text-lg truncate">{listing.title}</h4>
+            <Badge className={`${getStatusVariant(listing.status)} flex-shrink-0 ml-2`}>
               {getStatusText(listing.status)}
             </Badge>
           </div>
@@ -95,27 +95,29 @@ const ListingCard = ({
             {formatPrice(listing.price)}
           </p>
           <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-            <span>{listing.location || 'Location not specified'}</span>
+            <span className="truncate">{listing.location || 'Location not specified'}</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
             <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4 flex-shrink-0" />
               {listing.postedDate}
             </span>
             <span className="flex items-center gap-1">
-              <Eye className="h-4 w-4" />
+              <Eye className="h-4 w-4 flex-shrink-0" />
               {listing.views || 0} views
             </span>
           </div>
-        </div>
-        <div className="flex flex-col gap-2 items-center">
-          <ListingActions
-            onEdit={() => onEdit(listing)}
-            onDuplicate={() => onDuplicate(listing)}
-            onDelete={() => onDelete(listing.id, listing.title)}
-            disabled={isSold}
-          />
-          <Link to={`/car/${listing.id}`} className="mt-2 text-xs text-blue-600 underline">View</Link>
+          
+          {/* Action buttons - now inside the main content area */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <ListingActions
+              onEdit={() => onEdit(listing)}
+              onDuplicate={() => onDuplicate(listing)}
+              onDelete={() => onDelete(listing.id, listing.title)}
+              disabled={isSold}
+            />
+            <Link to={`/car/${listing.id}`} className="text-xs text-blue-600 underline text-center sm:text-left">View</Link>
+          </div>
         </div>
       </div>
     </div>

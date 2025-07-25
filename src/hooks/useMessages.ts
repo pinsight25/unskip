@@ -19,10 +19,11 @@ export const useMessages = (chatId: string, userId?: string) => {
       if (error) throw error;
       return data || [];
     },
-    staleTime: Infinity,
+    staleTime: 60000, // 1 minute - more stable
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     initialData: cachedMessages,
+    retry: 1, // Only retry once on failure
   });
 
   // Real-time subscription for new messages
@@ -39,6 +40,7 @@ export const useMessages = (chatId: string, userId?: string) => {
           filter: `chat_id=eq.${chatId}`
         },
         (payload) => {
+          // Update the messages cache immediately
           queryClient.setQueryData(['messages', chatId], (old: any[] = []) => {
             const updated = [...old, payload.new];
             // Play notification sound if not sent by current user
@@ -46,6 +48,26 @@ export const useMessages = (chatId: string, userId?: string) => {
               playSound('received');
             }
             return updated;
+          });
+          
+          // Also invalidate the query to ensure fresh data
+          queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `chat_id=eq.${chatId}`
+        },
+        (payload) => {
+          // Update message seen/read status
+          queryClient.setQueryData(['messages', chatId], (old: any[] = []) => {
+            return old.map(msg => 
+              msg.id === payload.new.id ? { ...msg, ...payload.new } : msg
+            );
           });
         }
       )

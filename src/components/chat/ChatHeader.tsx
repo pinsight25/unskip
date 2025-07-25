@@ -1,6 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MoreVertical, Flag, Ban, Trash2 } from 'lucide-react';
+import RealTimeIndicator from './RealTimeIndicator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +22,10 @@ interface ChatHeaderProps {
   onDeleteConversation: () => void;
   carImages?: any[];
   onBack: () => void;
+  isRealTimeConnected?: boolean;
 }
 
-const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUser, onDeleteConversation, carImages = [], onBack }: ChatHeaderProps) => {
+const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUser, onDeleteConversation, carImages = [], onBack, isRealTimeConnected = true }: ChatHeaderProps) => {
   // Get cover image from carImages or fallback
   let carImageUrl = '/placeholder-car.jpg';
   if (Array.isArray(carImages) && carImages.length > 0) {
@@ -59,7 +61,10 @@ const ChatHeader = ({ car, otherUser, currentUser, chat, onReportChat, onBlockUs
           <h3 className="font-semibold text-sm truncate">{carTitle}</h3>
           <p className="text-xs text-gray-900 truncate font-semibold">{headerTitle}</p>
           <p className="text-xs text-gray-600 truncate">{headerSubtitle}</p>
-          <p className="text-xs text-gray-600 truncate">₹{car?.price?.toLocaleString() || 'Price not available'}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-gray-600 truncate">₹{car?.price?.toLocaleString() || 'Price not available'}</p>
+            <RealTimeIndicator isConnected={isRealTimeConnected} />
+          </div>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

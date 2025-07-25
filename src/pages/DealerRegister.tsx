@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useDealerRegistrationForm } from '@/hooks/useDealerRegistrationForm';
+import DealerWelcomeStep from '@/components/dealer/registration/DealerWelcomeStep';
 import BusinessInformationStep from '@/components/dealer/registration/BusinessInformationStep';
 import LegalLocationStep from '@/components/dealer/registration/LegalLocationStep';
 import DocumentUploadStep from '@/components/dealer/registration/DocumentUploadStep';
@@ -16,6 +17,7 @@ const DealerRegister = () => {
   const navigate = useNavigate();
   const {
     currentStep,
+    setCurrentStep,
     totalSteps,
     progress,
     formData,
@@ -83,6 +85,12 @@ const DealerRegister = () => {
 
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case 0:
+        return (
+          <DealerWelcomeStep
+            onContinue={() => setCurrentStep(1)}
+          />
+        );
       case 1:
         return (
           <BusinessInformationStep
@@ -143,41 +151,49 @@ const DealerRegister = () => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 lg:px-6 pb-8 lg:pb-32 responsive-header-spacing">
-      {/* Back Button and Clear Form */}
-      <div className="mb-6 flex items-center justify-between">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/dealers')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dealers
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={clearDealerForm}
-          className="flex items-center gap-2 text-destructive hover:text-destructive"
-        >
-          <Trash2 className="h-4 w-4" />
-          Clear Form
-        </Button>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold">Become a Dealer</h1>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline">Step {currentStep} of {totalSteps}</Badge>
-            <Badge variant="default" className="text-xs">
-              {Math.round(progress)}% Complete
-            </Badge>
-          </div>
+      {/* Back Button and Clear Form - Only show when registration form is started */}
+      {currentStep > 0 && (
+        <div className="mb-6 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/dealers')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dealers
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearDealerForm}
+            className="flex items-center gap-2 text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+            Clear Form
+          </Button>
         </div>
-        <Progress value={progress} className="h-2" />
-      </div>
+      )}
+
+      {/* Progress Bar - Only show after welcome step */}
+      {currentStep > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Become a Dealer
+            </h1>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">
+                Step {currentStep} of {totalSteps - 1}
+              </Badge>
+              <Badge variant="default" className="text-xs">
+                {Math.round(progress)}% Complete
+              </Badge>
+            </div>
+          </div>
+          <Progress value={progress} className="h-2" />
+        </div>
+      )}
 
       {/* Form Content */}
       <Card className="shadow-lg">
@@ -185,16 +201,18 @@ const DealerRegister = () => {
           {/* Step Content */}
           {renderCurrentStep()}
 
-          {/* Navigation Buttons */}
-          <RegistrationNavigation
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            onPrevStep={prevStep}
-            onNextStep={nextStep}
-            onSubmit={fixedHandleSubmit}
-            canProceed={canProceed}
-            isSubmitting={isSubmitting}
-          />
+          {/* Navigation Buttons - Only show when registration form is started */}
+          {currentStep > 0 && (
+            <RegistrationNavigation
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              onPrevStep={prevStep}
+              onNextStep={nextStep}
+              onSubmit={fixedHandleSubmit}
+              canProceed={canProceed}
+              isSubmitting={isSubmitting}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

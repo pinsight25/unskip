@@ -3,6 +3,7 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/integrations/supabase/types';
 import { formatPhoneForDB } from '@/utils/phoneUtils';
+import { useQueryClient } from '@tanstack/react-query';
 
 // User type based on the database schema
 export interface User {
@@ -16,6 +17,7 @@ export interface User {
   isVerified?: boolean;
   userType?: 'regular' | 'premium' | 'dealer';
   phone_verified?: boolean;
+  dealer_registration_completed?: boolean;
 }
 
 interface UserContextType {
@@ -71,9 +73,10 @@ const syncUserFromDatabase = async (
         name: userData?.name || authUser.user_metadata?.name || 'User',
         email: userData?.email || authUser.email || authUser.user_metadata?.email || null,
         city: userData?.city || null,
-        user_type: userData?.user_type || 'regular',
+        user_type: null, // Don't set user_type for new users - let them choose
         // Always include is_verified to prevent overwriting the correct value
         is_verified: userData?.is_verified !== undefined ? userData.is_verified : true,
+        dealer_registration_completed: userData?.dealer_registration_completed ?? false, // <-- Add this line
         created_at: userData?.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -107,7 +110,9 @@ const syncUserFromDatabase = async (
           gender: createdUser.gender || undefined,
           avatar: createdUser.avatar || undefined,
           isVerified: createdUser.is_verified || undefined,
-          userType: createdUser.user_type || undefined
+          userType: createdUser.user_type || undefined,
+          phone_verified: 'phone_verified' in createdUser ? Boolean((createdUser as any).phone_verified) : false,
+          dealer_registration_completed: createdUser.dealer_registration_completed ?? false, // <-- Add this line
         });
       }
     } else if (userData && mounted.current) {
@@ -123,6 +128,7 @@ const syncUserFromDatabase = async (
         isVerified: userData.is_verified || undefined,
         userType: userData.user_type || undefined,
         phone_verified: 'phone_verified' in userData ? Boolean((userData as any).phone_verified) : false,
+        dealer_registration_completed: userData.dealer_registration_completed ?? false, // <-- Add this line
       };
       // console.log('[UserContext] Setting user:', userObj);
       // console.log('[UserContext] User ID:', userObj.id);
@@ -143,6 +149,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mounted = React.useRef(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     mounted.current = true;
@@ -244,11 +251,36 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setIsLoading(false);
-    // Force reload to clear any cached state
-    window.location.href = '/';
+    try {
+      // Clear Supabase session
+      await supabase.auth.signOut();
+      
+      // Clear local state
+      setUser(null);
+      setIsLoading(false);
+      
+      // Clear React Query cache completely
+      queryClient.clear();
+      
+      // Clear any cached data from localStorage
+      localStorage.removeItem('sb-qrzueqtkvjamvuljgaix-auth-token');
+      localStorage.removeItem('carDeleted');
+      localStorage.removeItem('carsListUpdated');
+      localStorage.removeItem('carPosted');
+      
+      // Clear sessionStorage
+      sessionStorage.clear();
+      
+      // Force a complete page reload to clear all state
+      window.location.reload();
+    } catch (error) {
+      // Even if there's an error, try to clear local state and reload
+      setUser(null);
+      setIsLoading(false);
+      queryClient.clear();
+      localStorage.removeItem('sb-qrzueqtkvjamvuljgaix-auth-token');
+      window.location.reload();
+    }
   };
 
   const updateUser = async (updates: Partial<User>) => {

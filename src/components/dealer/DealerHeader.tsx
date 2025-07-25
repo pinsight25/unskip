@@ -123,8 +123,8 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         </div>
       </div>
 
-      {/* Information Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mx-4 md:mx-0">
+      {/* Information Cards Grid - Desktop Only */}
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mx-4 md:mx-0">
         {/* About Card */}
         <Card className="shadow-md border-0 hover:shadow-lg transition-all duration-300">
           <CardContent className="p-4">
@@ -242,30 +242,32 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         </Card>
       </div>
 
-      {/* Brands Section */}
-      <Card className="shadow-md border-0 mx-4 md:mx-0">
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-base mb-3 flex items-center">
-            <Award className="h-4 w-4 text-primary mr-2" />
-            Brands Available
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {brands.length > 0 ? (
-              brands.map((brand) => (
-                <Badge 
-                  key={brand} 
-                  variant="outline" 
-                  className="px-2 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
-                >
-                  {brand}
-                </Badge>
-              ))
-            ) : (
-              <span className="text-sm text-gray-400">No brands set</span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Brands Section - Desktop Only */}
+      <div className="hidden md:block">
+        <Card className="shadow-md border-0 mx-4 md:mx-0">
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-base mb-3 flex items-center">
+              <Award className="h-4 w-4 text-primary mr-2" />
+              Brands Available
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {brands.length > 0 ? (
+                brands.map((brand) => (
+                  <Badge 
+                    key={brand} 
+                    variant="outline" 
+                    className="px-2 py-1 text-sm font-medium hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                  >
+                    {brand}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-gray-400">No brands set</span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

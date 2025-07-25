@@ -32,7 +32,7 @@ const RegistrationNavigation = ({
         <ArrowLeft className="h-4 w-4 mr-2" />
         Previous
       </Button>
-      {currentStep < totalSteps ? (
+      {currentStep < totalSteps - 1 ? (
         <Button 
           onClick={onNextStep} 
           disabled={!canProceed}

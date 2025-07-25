@@ -183,6 +183,14 @@ export const useOTPHandlers = ({
           if (userRecord?.isExisting) {
             setExistingUser(userRecord.userData);
             
+            // Check if user needs to complete dealer registration
+            if (userRecord.userData.user_type === 'dealer' && !userRecord.userData.dealer_registration_completed) {
+              // Redirect to dealer registration
+              navigate('/dealer/register');
+              if (onClose) onClose();
+              return { isExistingUser: true, needsDealerRegistration: true };
+            }
+            
             // Sign in the user
             const userData = userRecord.userData;
             await signIn(formatPhoneForDB(phoneNumber));

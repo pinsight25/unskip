@@ -50,6 +50,19 @@ const SellCar = () => {
       setPendingPost(true);
       return;
     }
+    
+    // Check if dealer needs to complete registration
+    if (user.userType === 'dealer' && !user.dealer_registration_completed) {
+      // Show benefits instead of forcing redirect
+      toast({
+        title: 'Unlock Dealer Benefits',
+        description: 'Complete your dealer registration to unlock unlimited listings and business tools.',
+        variant: 'default',
+      });
+      // Allow posting but with limited access
+      // The limits logic will handle the restriction
+    }
+    
     if (user.isVerified) {
       // User is signed in and verified, skip phone verification
       setIsLoading(true);
@@ -82,6 +95,7 @@ const SellCar = () => {
         activeCarListings={activeCarListings}
         carLimit={carLimit}
         userType={userType as 'dealer' | 'regular'}
+        dealerRegistrationCompleted={user?.dealer_registration_completed ?? false}
         onBackClick={handleBackToHome}
         onClearForm={clearFormData}
       />

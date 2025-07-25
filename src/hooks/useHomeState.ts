@@ -61,17 +61,26 @@ export const useHomeState = () => {
         .map((car: any) => car.seller_id);
       let dealersMap: Record<string, { verified: boolean; verification_status: string }> = {};
       if (dealerSellerIds.length > 0) {
-        const { data: dealersData, error: dealersError } = await supabase
-          .from('dealers')
-          .select('user_id, verified, verification_status')
-          .in('user_id', dealerSellerIds);
-        if (!dealersError && Array.isArray(dealersData)) {
-          dealersData.forEach((dealer: any) => {
-            dealersMap[dealer.user_id] = {
-              verified: dealer.verified,
-              verification_status: dealer.verification_status
-            };
-          });
+        try {
+          const { data: dealersData, error: dealersError } = await supabase
+            .from('dealers')
+            .select('user_id, verified, verification_status')
+            .in('user_id', dealerSellerIds);
+          
+          if (dealersError) {
+            console.error('Dealer query error in useHomeState:', dealersError);
+            // Continue without dealer data rather than failing
+          } else if (Array.isArray(dealersData)) {
+            dealersData.forEach((dealer: any) => {
+              dealersMap[dealer.user_id] = {
+                verified: dealer.verified,
+                verification_status: dealer.verification_status
+              };
+            });
+          }
+        } catch (err) {
+          console.error('Dealer query exception in useHomeState:', err);
+          // Continue without dealer data rather than failing
         }
       }
       const carsMapped: Car[] = (carsData || []).map((car: any) => {
@@ -141,9 +150,9 @@ export const useHomeState = () => {
       });
       return carsMapped;
     },
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    staleTime: 0,
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    refetchOnMount: false, // Use cached data when possible
+    staleTime: 60000, // 1 minute - more stable
   });
 
   useEffect(() => {

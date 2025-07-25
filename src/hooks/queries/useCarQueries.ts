@@ -161,10 +161,10 @@ export const useCars = () => {
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
     placeholderData: [],
-    staleTime: 30000, // 30 seconds
+    staleTime: 60000, // 1 minute - more stable
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    refetchOnMount: false, // Use cached data when possible
     // Use React Query default retry logic
   });
 
@@ -245,9 +245,9 @@ export const useOffers = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
-    staleTime: 30000, // 30 seconds instead of Infinity
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 60000, // 1 minute - more stable
+    refetchOnMount: false, // Use cached data when possible
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
   });
 
   // Debounced real-time subscription for offers
@@ -298,7 +298,9 @@ export const useChats = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
-    staleTime: Infinity,
+    staleTime: 60000, // 1 minute - more stable
+    refetchOnMount: false, // Use cached data when possible
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
   });
 
   // Debounced real-time subscription for chats
@@ -311,21 +313,6 @@ export const useChats = (userId?: string) => {
           event: '*',
           schema: 'public',
           table: 'chats',
-        },
-        (payload) => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['chats', userId] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chat_messages',
         },
         (payload) => {
           const now = Date.now();

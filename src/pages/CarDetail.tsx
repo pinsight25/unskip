@@ -21,6 +21,7 @@ const CarDetail = () => {
       if (!id) return;
       try {
         setLoading(true);
+        setError(false); // Reset error state on new fetch
         // Simple query - just get the car
         const { data: carData, error: carError } = await supabase
           .from('cars')
@@ -156,7 +157,23 @@ const CarDetail = () => {
 
   useRealtimeRefetch('cars', ['car', id]);
 
-  if (error || !car) {
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 responsive-header-spacing">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <h2 className="text-xl font-semibold mb-2">Loading car details...</h2>
+            <p className="text-gray-600">Please wait while we fetch the car information.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state only after loading is complete and there's an actual error
+  if (error || (!loading && !car)) {
     return (
       <div className="min-h-screen bg-gray-50 responsive-header-spacing">
         <div className="max-w-4xl mx-auto px-4 py-8">

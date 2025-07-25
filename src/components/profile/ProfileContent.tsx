@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Car, Package, Store } from 'lucide-react';
+import { Car, Package, Store, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ReceivedOffersTab from '@/components/profile/ReceivedOffersTab';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import MyListingsTab from '@/components/profile/MyListingsTab';
+import DealerRegistrationPrompt from '@/components/profile/DealerRegistrationPrompt';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
@@ -45,16 +46,56 @@ const ProfileContent = ({
   const { data: dealerInfo } = useQuery({
     queryKey: ['dealer-info', user?.id],
     queryFn: async () => {
-      if (!user?.id || user?.userType !== 'dealer') return null;
-      const { data, error } = await supabase
-        .from('dealers')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-      return data;
+      // Additional safety checks
+      if (!user?.id || user?.userType !== 'dealer' || !user?.dealer_registration_completed) {
+        console.log('Dealer query skipped:', { 
+          userId: user?.id, 
+          userType: user?.userType, 
+          dealerRegistrationCompleted: user?.dealer_registration_completed 
+        });
+        return null;
+      }
+      
+      // Validate UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(user.id)) {
+        console.error('Invalid UUID format for user ID:', user.id);
+        return null;
+      }
+      
+      // Check authentication state
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        console.error('No valid session found:', sessionError);
+        return null;
+      }
+      
+      if (session.user.id !== user.id) {
+        console.error('Session user ID mismatch:', session.user.id, 'vs', user.id);
+        return null;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('dealers')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Dealer info query error:', error);
+          return null;
+        }
+        
+        return data;
+      } catch (err) {
+        console.error('Dealer info query exception:', err);
+        return null;
+      }
     },
-    enabled: !!user?.id && user?.userType === 'dealer',
+    enabled: !!user?.id && user?.userType === 'dealer' && user?.dealer_registration_completed,
     staleTime: Infinity,
+    retry: false, // Don't retry on error
   });
 
   const location = useLocation();
@@ -67,104 +108,50 @@ const ProfileContent = ({
     queryKey: ['received-offers', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data, error } = await supabase
-        .from('offers')
-        .select('*, car:cars(*), buyer:users!buyer_id(*)')
-        .eq('seller_id', user.id)
-        .order('created_at', { ascending: false });
-      return data || [];
-    },
-    enabled: !!user?.id,
-    staleTime: 30000, // 30 seconds instead of Infinity
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    refetchInterval: 60000, // Refetch every minute as fallback
-  });
-
-  // Real-time subscription for offers
-  useEffect(() => {
-    if (!user?.id) return;
-    
-    const channel = supabase.channel('realtime-profile-offers')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'offers',
-          filter: `seller_id=eq.${user.id}`
-        },
-        () => {
-          // Invalidate and refetch offers when changes occur
-          queryClient.invalidateQueries({ queryKey: ['received-offers', user.id] });
-          queryClient.invalidateQueries({ queryKey: ['profile-stats', user.id] });
+      
+      try {
+        const { data, error } = await supabase
+          .from('offers')
+          .select('*, car:cars(*), buyer:users!buyer_id(*)')
+          .eq('seller_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Received offers query error:', error);
+          return [];
         }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id, queryClient]);
-
-  // Fetch real stats for the dashboard
-  const { data: stats = { totalViews: 0, activeCarListings: 0, activeAccessoryListings: 0, offersReceived: 0 } } = useQuery({
-    queryKey: ['profile-stats', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return { totalViews: 0, activeCarListings: 0, activeAccessoryListings: 0, offersReceived: 0 };
-      // Get total views
-      const { count: viewsCount } = await supabase
-        .from('car_views')
-        .select('*', { count: 'exact', head: true })
-        .eq('seller_id', user.id);
-      // Get active car listings count
-      const { count: carListingsCount } = await supabase
-        .from('cars')
-        .select('*', { count: 'exact', head: true })
-        .eq('seller_id', user.id)
-        .eq('status', 'active');
-      // Get active accessory listings count
-      const { count: accessoryListingsCount } = await supabase
-        .from('accessories')
-        .select('*', { count: 'exact', head: true })
-        .eq('seller_id', user.id)
-        .eq('status', 'active');
-      // Get offers received count
-      const { count: offersCount } = await supabase
-        .from('offers')
-        .select('*', { count: 'exact', head: true })
-        .eq('seller_id', user.id);
-      return {
-        totalViews: viewsCount || 0,
-        activeCarListings: carListingsCount || 0,
-        activeAccessoryListings: accessoryListingsCount || 0,
-        offersReceived: offersCount || 0
-      };
+        
+        return data || [];
+      } catch (err) {
+        console.error('Received offers query exception:', err);
+        return [];
+      }
     },
     enabled: !!user?.id,
-    staleTime: 30000, // 30 seconds instead of Infinity
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 60000, // 1 minute - more stable
+    refetchOnMount: false, // Use cached data when possible
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    refetchInterval: 120000, // Refetch every 2 minutes as fallback
   });
 
+  // Set active tab based on URL params
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get('tab');
-    if (tab === 'received-offers' || tab === 'offers') {
+    if (tab === 'received-offers') {
       setActiveTab('offers');
-    } else {
-      setActiveTab('listings');
     }
   }, [location.search]);
 
-  useEffect(() => {
-    if (activeTab === 'offers') {
-      refetch();
-    }
-  }, [activeTab, refetch]);
+  // Calculate stats
+  const stats = {
+    totalViews: 0, // TODO: Implement view tracking
+    activeCarListings: listings.filter(car => car.status === 'active').length,
+    activeAccessoryListings: accessories.filter(acc => acc.status === 'active').length,
+    offersReceived: receivedOffers.length,
+  };
 
-  // Calculate total active listings
-  const activeListings = listings.filter(l => l.status === 'active');
+  const activeListings = listings.filter(car => car.status === 'active');
   const activeAccessories = accessories.filter(a => a.status === 'active');
   const totalActive = activeListings.length + activeAccessories.length;
 
@@ -172,10 +159,10 @@ const ProfileContent = ({
     <div className="bg-white min-h-screen">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-primary/5 to-orange-100/30 border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
+        <div className="max-w-4xl mx-auto px-4 lg:px-6 xl:px-8 py-6 md:py-8">
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">My Profile</h1>
-            <p className="text-base md:text-lg text-gray-600">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">My Profile</h1>
+            <p className="text-sm md:text-base lg:text-lg text-gray-600">
               Manage your account and track your activity
             </p>
           </div>
@@ -183,8 +170,8 @@ const ProfileContent = ({
       </div>
 
       {/* Content Section */}
-      <div className="max-w-2xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8 pb-24 lg:pb-8">
-        <div>
+      <div className="max-w-4xl mx-auto px-4 lg:px-6 xl:px-8 py-6 md:py-8 pb-20 md:pb-24">
+        <div className="space-y-6 md:space-y-8">
           {/* Profile Header */}
           <ProfileHeader
             profile={user}
@@ -197,46 +184,66 @@ const ProfileContent = ({
           {/* Stats Section */}
           <ProfileStats stats={stats} />
 
+          {/* Dealer Registration Prompt */}
+          <DealerRegistrationPrompt 
+            userType={user?.userType} 
+            dealerRegistrationCompleted={user?.dealer_registration_completed} 
+          />
+
           {/* Quick Actions Card */}
-          <Card className="p-6 section-gap">
-            <h3 className="text-lg font-semibold mb-4 text-center">Quick Actions</h3>
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-6 text-center text-gray-900">Quick Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link to="/sell-car">
-                <Button className="w-full h-14 text-base font-semibold" size="lg">
+                <Button className="w-full h-14 text-base font-semibold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700" size="lg">
                   <Car className="h-5 w-5 mr-3" />
                   Post Your Car
                 </Button>
               </Link>
               <Link to="/post-accessory">
-                <Button className="w-full h-14 text-base font-semibold" size="lg">
+                <Button className="w-full h-14 text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700" size="lg">
                   <Package className="h-5 w-5 mr-3" />
                   Post Accessory
                 </Button>
               </Link>
             </div>
+            
+            {/* Business Dashboard Link - Only for completed dealers */}
+            {user?.userType === 'dealer' && user?.dealer_registration_completed && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <Link to="/dealer/dashboard">
+                  <Button className="w-full h-12 text-base font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700" size="lg">
+                    <BarChart3 className="h-5 w-5 mr-3" />
+                    Business Dashboard
+                  </Button>
+                </Link>
+              </div>
+            )}
           </Card>
 
           {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as 'listings' | 'offers')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 section-gap">
-              <TabsTrigger value="listings">
-                My Listings ({totalActive})
-              </TabsTrigger>
-              <TabsTrigger value="offers">
-                Received Offers ({receivedOffers.length})
-              </TabsTrigger>
-            </TabsList>
+          <Card className="p-6">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'listings' | 'offers')}>
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="listings" className="text-sm md:text-base font-medium">
+                  My Listings ({totalActive})
+                </TabsTrigger>
+                <TabsTrigger value="offers" className="text-sm md:text-base font-medium">
+                  Received Offers ({receivedOffers.length})
+                </TabsTrigger>
+              </TabsList>
 
-            {/* My Listings Tab */}
-            <TabsContent value="listings">
-              <MyListingsTab />
-            </TabsContent>
+              {/* My Listings Tab */}
+              <TabsContent value="listings">
+                <MyListingsTab />
+              </TabsContent>
 
-            {/* Received Offers Tab */}
-            <TabsContent value="offers">
-              <ReceivedOffersTab offers={receivedOffers} />
-            </TabsContent>
-          </Tabs>
+              {/* Received Offers Tab */}
+              <TabsContent value="offers">
+                <ReceivedOffersTab offers={receivedOffers} />
+              </TabsContent>
+            </Tabs>
+          </Card>
         </div>
       </div>
 

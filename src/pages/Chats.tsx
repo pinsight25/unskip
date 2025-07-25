@@ -92,7 +92,10 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
       return chatsWithLastMessage;
     },
     enabled: !!user?.id,
-    // refetchInterval: 5000, // Remove polling, rely on real-time
+    staleTime: 60000, // 1 minute - more stable
+    refetchOnMount: false, // Use cached data when possible
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    retry: 1, // Only retry once on failure
   });
 
   const { data: allMessages = [] } = useQuery({
@@ -110,8 +113,7 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
     staleTime: 10000,
   });
 
-  useRealtimeRefetch('chat_messages', ['chats', user?.id]);
-  useRealtimeRefetch('chats', ['chats', user?.id]);
+  // Remove conflicting real-time refetch hooks - handle subscriptions manually
 
   // Supabase real-time subscription for chats and chat_messages
   useEffect(() => {
@@ -126,7 +128,10 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
           table: 'chats',
           filter: `buyer_id=eq.${user.id}`
         },
-        () => { refetch(); }
+        () => { 
+          // Debounced refetch to prevent excessive calls
+          setTimeout(() => refetch(), 100);
+        }
       )
       .on(
         'postgres_changes',
@@ -136,28 +141,37 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
           table: 'chats',
           filter: `seller_id=eq.${user.id}`
         },
-        () => { refetch(); }
+        () => { 
+          // Debounced refetch to prevent excessive calls
+          setTimeout(() => refetch(), 100);
+        }
       )
       // Listen to changes in chat_messages table (receiver or sender)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'chat_messages',
           filter: `receiver_id=eq.${user.id}`
         },
-        () => { refetch(); }
+        () => { 
+          // Debounced refetch to prevent excessive calls
+          setTimeout(() => refetch(), 100);
+        }
       )
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'chat_messages',
-          filter: `sender_id=eq.${user.id}`
+          filter: `receiver_id=eq.${user.id}`
         },
-        () => { refetch(); }
+        () => { 
+          // Debounced refetch to prevent excessive calls
+          setTimeout(() => refetch(), 100);
+        }
       )
       .subscribe();
     return () => {

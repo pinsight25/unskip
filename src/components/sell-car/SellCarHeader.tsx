@@ -13,11 +13,12 @@ interface SellCarHeaderProps {
   onBackClick: () => void;
   onClearForm: () => void;
   userType?: 'regular' | 'dealer';
+  dealerRegistrationCompleted?: boolean;
 }
 
-const SellCarHeader = ({ currentStep, activeCarListings, carLimit, onBackClick, onClearForm, userType = 'regular' }: SellCarHeaderProps) => {
-  const showUpgradePrompt = shouldShowUpgradePrompt(activeCarListings, userType);
-  const upgradeMessage = getUpgradeMessage(activeCarListings, userType);
+const SellCarHeader = ({ currentStep, activeCarListings, carLimit, onBackClick, onClearForm, userType = 'regular', dealerRegistrationCompleted = false }: SellCarHeaderProps) => {
+  const showUpgradePrompt = shouldShowUpgradePrompt(activeCarListings, userType, dealerRegistrationCompleted);
+  const upgradeMessage = getUpgradeMessage(activeCarListings, userType, dealerRegistrationCompleted);
 
   return (
     <>

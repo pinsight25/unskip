@@ -46,15 +46,6 @@ const MyListingsTab = () => {
     const { data: viewCount = 0 } = useCarViewCount(car.id);
     const coverImageUrl = getCoverImageUrl(car) || '/placeholder.svg';
     
-    // Debug: Log the car data to see what fields are available
-    console.log('🔍 Car data for location:', {
-      id: car.id,
-      title: car.title,
-      area: car.area,
-      city: car.city,
-      location: car.location
-    });
-    
     const carWithViews = {
       ...car,
       coverImageUrl,
@@ -77,21 +68,19 @@ const MyListingsTab = () => {
     );
   };
 
-  // Add ListingAccessoryCard for profile listings
+  // Wrapper component for accessory with view count
   const ListingAccessoryCard = ({ accessory, onEdit, onDuplicate, onDelete }: any) => {
-    const imageUrl = accessory.images && accessory.images.length > 0 
-      ? accessory.images[0] 
-      : '/placeholder.svg';
     const isSold = accessory.status === 'sold';
-    const location = accessory.location || 'Location not specified';
+    const imageUrl = accessory.images && accessory.images.length > 0 ? accessory.images[0] : '/placeholder.svg';
+    const price = formatPrice(accessory.price);
+    const location = [accessory.area, accessory.city].filter(Boolean).join(', ') || 'Location not specified';
     const views = accessory.views || 0;
     const postedDate = accessory.created_at ? new Date(accessory.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
-    const price = accessory.price_min ? `₹${accessory.price_min.toLocaleString('en-IN')}${accessory.price_max && accessory.price_max !== accessory.price_min ? ` - ₹${accessory.price_max.toLocaleString('en-IN')}` : ''}` : 'Price not specified';
     
     return (
-      <div id={`accessory-${accessory.id}`} className={`border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow ${isSold ? 'opacity-60 grayscale pointer-events-none' : ''}`}>
-        <div className="flex flex-col md:flex-row gap-4">
-          <Link to={`/accessories/${accessory.id}`} className="w-full md:w-32 h-24 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden block group">
+      <div id={`accessory-${accessory.id}`} className={`border border-gray-200 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow ${isSold ? 'opacity-60 grayscale pointer-events-none' : ''}`}>
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+          <Link to={`/accessories/${accessory.id}`} className="w-full md:w-32 h-20 md:h-24 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden block group">
             <img
               src={imageUrl}
               alt={accessory.name || 'Accessory'}
@@ -101,36 +90,36 @@ const MyListingsTab = () => {
           </Link>
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
-              <h4 className="font-semibold text-lg">{accessory.name}</h4>
+              <h4 className="font-semibold text-base md:text-lg">{accessory.name}</h4>
               <Badge className={accessory.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
                 {accessory.status === 'active' ? 'Active' : accessory.status}
               </Badge>
             </div>
-            <p className="text-primary font-bold text-xl mb-1">
+            <p className="text-primary font-bold text-lg md:text-xl mb-1">
               {price}
             </p>
-            <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+            <div className="flex items-center justify-between text-xs md:text-sm text-gray-500 mb-2">
               <span>{location}</span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm text-gray-500">
               <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
+                <Clock className="h-3 w-3 md:h-4 md:w-4" />
                 {postedDate}
               </span>
               <span className="flex items-center gap-1">
-                <Eye className="h-4 w-4" />
+                <Eye className="h-3 w-3 md:h-4 md:w-4" />
                 {views} views
               </span>
             </div>
           </div>
-          <div className="flex flex-col gap-2 items-center">
+          <div className="flex flex-col gap-2">
             <ListingActions
               onEdit={() => onEdit(accessory.id)}
               onDuplicate={() => onDuplicate(accessory)}
               onDelete={() => onDelete(accessory.id, accessory.name, 'accessory')}
               disabled={isSold}
             />
-            <Link to={`/accessories/${accessory.id}`} className="mt-2 text-xs text-blue-600 underline">View</Link>
+            <Link to={`/accessories/${accessory.id}`} className="text-xs text-blue-600 underline">View</Link>
           </div>
         </div>
       </div>
@@ -210,7 +199,7 @@ const MyListingsTab = () => {
   if (hasError) {
     return (
       <Card className="p-4 md:p-6">
-        <div className="text-center py-12">
+        <div className="text-center py-8 md:py-12">
           <p className="text-red-600 mb-4">Error loading listings</p>
           <p className="text-gray-600 mb-4">Please try refreshing the page</p>
         </div>
@@ -219,58 +208,66 @@ const MyListingsTab = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Cars Section */}
       <div>
-        <h2 className="font-bold text-xl mb-4">Cars</h2>
+        <h2 className="font-bold text-lg md:text-xl mb-4">Cars</h2>
         
         <div className="mb-6">
-          <h3 className="font-semibold text-lg mb-2">Active Car Listings ({activeCarListings.length})</h3>
-          {activeCarListings.length === 0 && <div className="text-gray-500 mb-4">No active car listings</div>}
-          {activeCarListings.map((car: any) => (
-            <CarWithViewCount key={car.id} car={car} />
-          ))}
+          <h3 className="font-semibold text-base md:text-lg mb-2">Active Car Listings ({activeCarListings.length})</h3>
+          {activeCarListings.length === 0 && <div className="text-gray-500 mb-4 text-sm md:text-base">No active car listings</div>}
+          <div className="space-y-3 md:space-y-4">
+            {activeCarListings.map((car: any) => (
+              <CarWithViewCount key={car.id} car={car} />
+            ))}
+          </div>
         </div>
 
         <div>
-          <h3 className="font-semibold text-lg mb-2">Sold Car Listings ({soldCarListings.length})</h3>
-          {soldCarListings.length === 0 && <div className="text-gray-500 mb-4">No sold car listings</div>}
-          {soldCarListings.map((car: any) => (
-            <CarWithViewCount key={car.id} car={car} />
-          ))}
+          <h3 className="font-semibold text-base md:text-lg mb-2">Sold Car Listings ({soldCarListings.length})</h3>
+          {soldCarListings.length === 0 && <div className="text-gray-500 mb-4 text-sm md:text-base">No sold car listings</div>}
+          <div className="space-y-3 md:space-y-4">
+            {soldCarListings.map((car: any) => (
+              <CarWithViewCount key={car.id} car={car} />
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Accessories Section */}
       <div>
-        <h2 className="font-bold text-xl mb-4">Accessories</h2>
+        <h2 className="font-bold text-lg md:text-xl mb-4">Accessories</h2>
         
         <div className="mb-6">
-          <h3 className="font-semibold text-lg mb-2">Active Accessory Listings ({activeAccessoryListings.length})</h3>
-          {activeAccessoryListings.length === 0 && <div className="text-gray-500 mb-4">No active accessory listings</div>}
-          {activeAccessoryListings.map((accessory: any) => (
-            <ListingAccessoryCard
-              key={accessory.id}
-              accessory={accessory}
-              onEdit={handleEditAccessory}
-              onDuplicate={handleDuplicateListing}
-              onDelete={openDeleteModal}
-            />
-          ))}
+          <h3 className="font-semibold text-base md:text-lg mb-2">Active Accessory Listings ({activeAccessoryListings.length})</h3>
+          {activeAccessoryListings.length === 0 && <div className="text-gray-500 mb-4 text-sm md:text-base">No active accessory listings</div>}
+          <div className="space-y-3 md:space-y-4">
+            {activeAccessoryListings.map((accessory: any) => (
+              <ListingAccessoryCard
+                key={accessory.id}
+                accessory={accessory}
+                onEdit={handleEditAccessory}
+                onDuplicate={handleDuplicateListing}
+                onDelete={openDeleteModal}
+              />
+            ))}
+          </div>
         </div>
 
         <div>
-          <h3 className="font-semibold text-lg mb-2">Sold Accessory Listings ({soldAccessoryListings.length})</h3>
-          {soldAccessoryListings.length === 0 && <div className="text-gray-500 mb-4">No sold accessory listings</div>}
-          {soldAccessoryListings.map((accessory: any) => (
-            <ListingAccessoryCard
-              key={accessory.id}
-              accessory={accessory}
-              onEdit={handleEditAccessory}
-              onDuplicate={handleDuplicateListing}
-              onDelete={openDeleteModal}
-            />
-          ))}
+          <h3 className="font-semibold text-base md:text-lg mb-2">Sold Accessory Listings ({soldAccessoryListings.length})</h3>
+          {soldAccessoryListings.length === 0 && <div className="text-gray-500 mb-4 text-sm md:text-base">No sold accessory listings</div>}
+          <div className="space-y-3 md:space-y-4">
+            {soldAccessoryListings.map((accessory: any) => (
+              <ListingAccessoryCard
+                key={accessory.id}
+                accessory={accessory}
+                onEdit={handleEditAccessory}
+                onDuplicate={handleDuplicateListing}
+                onDelete={openDeleteModal}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <DeleteConfirmModal

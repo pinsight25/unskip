@@ -5,6 +5,7 @@ import { updateFormField } from '@/utils/formHelpers';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
 import { uploadToCloudinary, uploadMultipleToCloudinary } from '@/utils/uploadHelpers';
+import { useQueryClient } from '@tanstack/react-query';
 
 const STORAGE_KEY = 'dealerRegistrationFormData';
 
@@ -34,8 +35,10 @@ export interface DealerFormData {
 }
 
 export const useDealerRegistrationForm = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Start with welcome step
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, refreshUser } = useUser();
+  const queryClient = useQueryClient();
   const [formData, setFormDataState] = useState<DealerFormData>(() => {
     // Load from localStorage on mount
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -122,9 +125,8 @@ export const useDealerRegistrationForm = () => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useUser();
-  const totalSteps = 3;
-  const progress = (currentStep / totalSteps) * 100;
+  const totalSteps = 4; // Including welcome step
+  const progress = currentStep === 0 ? 0 : currentStep === totalSteps - 1 ? 100 : ((currentStep - 1) / (totalSteps - 2)) * 100; // Skip welcome step in progress, show 100% on final step
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const businessNameRef = useRef<HTMLInputElement>(null);
@@ -249,9 +251,18 @@ export const useDealerRegistrationForm = () => {
   };
 
   const nextStep = () => {
+    if (currentStep === 0) {
+      // Welcome step - just continue
+      setCurrentStep(1);
+      return;
+    }
+    
     if (validateCurrentStep()) {
-      if (currentStep < totalSteps) {
+      if (currentStep < totalSteps - 1) {
         setCurrentStep(currentStep + 1);
+      } else {
+        // This is the final step, trigger submit
+        handleSubmit();
       }
     } else {
       // Get specific missing fields for better error message
@@ -292,6 +303,8 @@ export const useDealerRegistrationForm = () => {
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    } else if (currentStep === 1) {
+      setCurrentStep(0); // Go back to welcome step
     }
   };
 
@@ -372,12 +385,27 @@ export const useDealerRegistrationForm = () => {
       }
       if (error) throw error;
 
-      // Update user as dealer
+      // Update user as dealer and mark registration as completed
       await supabase
         .from('users')
-        .update({ user_type: 'dealer' })
+        .update({ 
+          user_type: 'dealer',
+          dealer_registration_completed: true 
+        })
         .eq('id', user.id);
 
+      // Refresh user data to get updated dealer_registration_completed status
+      await refreshUser();
+      
+      // Clear React Query cache to force fresh data
+      queryClient.clear();
+      
+      // Invalidate specific queries that might be cached
+      queryClient.invalidateQueries({ queryKey: ['dealer-info'] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ['user-listings'] });
+      
       toast({
         title: "Registration successful!",
         description: "Your dealer profile has been created and is pending verification. You can start posting cars immediately.",
@@ -386,9 +414,10 @@ export const useDealerRegistrationForm = () => {
       // Clear saved form data
       localStorage.removeItem(STORAGE_KEY);
 
+      // Wait a bit longer to ensure cache clearing and user refresh complete
       setTimeout(() => {
         navigate('/profile');
-      }, 2000);
+      }, 3000);
     } catch (error: any) {
       if (error?.code === '23505' || (error?.message && error.message.includes('unique_user_dealer'))) {
         toast({
@@ -410,6 +439,7 @@ export const useDealerRegistrationForm = () => {
 
   return {
     currentStep,
+    setCurrentStep,
     totalSteps,
     progress,
     formData,

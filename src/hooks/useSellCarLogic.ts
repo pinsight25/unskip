@@ -29,7 +29,8 @@ export const useSellCarLogic = () => {
 
   // Get user type from user context, fallback to 'regular' if not set
   const userType = user?.userType === 'dealer' ? 'dealer' : 'regular';
-  const carLimit = getCarLimit(userType);
+  const dealerRegistrationCompleted = user?.dealer_registration_completed ?? false;
+  const carLimit = getCarLimit(userType, dealerRegistrationCompleted);
 
   // Proper form data update function that saves to sessionStorage immediately
   const updateFormData = (updates: Partial<typeof formData>) => {
@@ -327,11 +328,7 @@ export const useSellCarLogic = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('=== UPDATE LISTING DEBUG ===');
     setIsLoading(true);
-    console.log('1. Update started');
-    console.log('2. Form data:', formData);
-    console.log('3. Editing car ID:', editingListingId);
     
     // Validate required fields
     if (!user) {
@@ -385,8 +382,8 @@ export const useSellCarLogic = () => {
     }
     
     // Check car listing limit before submission (only for new listings)
-    if (!isEditMode && !canPostMoreCars(activeCarListings, userType)) {
-      const upgradeMessage = getUpgradeMessage(activeCarListings, userType);
+    if (!isEditMode && !canPostMoreCars(activeCarListings, userType, dealerRegistrationCompleted)) {
+      const upgradeMessage = getUpgradeMessage(activeCarListings, userType, dealerRegistrationCompleted);
       const message = upgradeMessage 
         ? `${upgradeMessage.message} ${upgradeMessage.suggestion}`
         : `You've reached your limit of ${carLimit} car listings. Remove an old listing to post a new one.`;
@@ -400,9 +397,8 @@ export const useSellCarLogic = () => {
       return;
     }
 
-    try {
-      console.log('4. Calling API...');
-      // Actual Supabase insert
+          try {
+        // Actual Supabase insert
       const carInsert: TablesInsert<'cars'> = {
         seller_id: user.id,
         title: `${formData.year} ${formData.make} ${formData.model}`,
@@ -445,28 +441,30 @@ export const useSellCarLogic = () => {
       };
       let carId = null;
       let carError = null;
-      if (editingListingId) {
+      
+      // Get edit ID from state or URL parameter as fallback
+      const editId = editingListingId || searchParams.get('edit');
+      
+      if (editId) {
         // UPDATE existing car
         const { error } = await supabase
           .from('cars')
           .update(carInsert)
-          .eq('id', editingListingId);
-        carId = editingListingId;
+          .eq('id', editId);
+        carId = editId;
         carError = error;
         // Delete old images for this car
-        await supabase.from('car_images').delete().eq('car_id', editingListingId);
+        await supabase.from('car_images').delete().eq('car_id', editId);
       } else {
         // INSERT new car
-      const { data, error } = await supabase
-        .from('cars')
-        .insert(carInsert)
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('cars')
+          .insert(carInsert)
+          .select()
+          .single();
         carId = data?.id;
         carError = error;
       }
-
-      console.log('5. API response:', { carId, carError });
 
       if (carError) {
         // console.error('Failed to save car:', carError);
@@ -505,7 +503,7 @@ export const useSellCarLogic = () => {
       }
 
       // Store carPosted info in localStorage with timestamp and carId (only for new cars)
-      if (!editingListingId && carId) {
+      if (!editId && carId) {
         const postData = {
           timestamp: Date.now(),
           carId: carId
@@ -531,11 +529,15 @@ export const useSellCarLogic = () => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
       queryClient.invalidateQueries({ queryKey: ['user-cars'] });
       setIsLoading(false);
-      toast({ title: 'Car updated successfully!', description: 'Your car listing was updated successfully.' });
+      
+      const isUpdate = !!editId;
+      toast({ 
+        title: isUpdate ? 'Car updated successfully!' : 'Car posted successfully!', 
+        description: isUpdate ? 'Your car listing was updated successfully.' : 'Your car listing was posted successfully.'
+      });
       navigate('/profile');
-    } catch (error: any) {
-      console.error('6. Update failed:', error);
-      console.error('Error details:', error.message);
+          } catch (error: any) {
+        console.error('Car submission failed:', error);
       toast({
         title: "Submission Failed",
         description: "There was an error posting your car. Please try again.",

@@ -8,7 +8,7 @@ export const useUserRecord = () => {
       // First try to get existing user
       const { data: existingUserData, error: fetchError } = await supabase
         .from('users')
-        .select('*')
+        .select('id, name, phone, email, city, gender, avatar, user_type, is_verified, dealer_registration_completed')
         .eq('id', authUser.id)
         .maybeSingle();
 
@@ -28,6 +28,7 @@ export const useUserRecord = () => {
         email: authUser.email || null,
         city: null,
         gender: null,
+        user_type: null, // Explicitly set to null for new users
         is_verified: true, // Set is_verified true on creation
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
