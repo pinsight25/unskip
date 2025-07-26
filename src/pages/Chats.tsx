@@ -92,9 +92,9 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
       return chatsWithLastMessage;
     },
     enabled: !!user?.id,
-    staleTime: 60000, // 1 minute - more stable
-    refetchOnMount: false, // Use cached data when possible
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    refetchOnMount: false, // Use global config
+    refetchOnWindowFocus: false, // Use global config
     retry: 1, // Only retry once on failure
   });
 
@@ -110,7 +110,7 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
       return data || [];
     },
     enabled: !!user?.id,
-    staleTime: 10000,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
   });
 
   // Remove conflicting real-time refetch hooks - handle subscriptions manually

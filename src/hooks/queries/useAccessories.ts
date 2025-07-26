@@ -56,10 +56,10 @@ export const useAccessories = (filters?: {
       
       return accessoriesWithImages as Accessory[]
     },
-    staleTime: 30000, // 30 seconds instead of 0
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
   });
 
   return query;
@@ -91,10 +91,10 @@ export const useAccessory = (id: string) => {
       
       return accessoryWithImages as Accessory
     },
-    staleTime: Infinity,
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
   })
 }
 
@@ -129,10 +129,10 @@ export const useUserAccessories = (userId: string) => {
       
       return accessoriesWithImages as Accessory[]
     },
-    staleTime: Infinity,
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
     enabled: !!userId && userId.trim() !== '', // Only run query if userId is valid
   })
 }

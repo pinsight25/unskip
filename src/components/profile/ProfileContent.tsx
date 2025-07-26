@@ -128,9 +128,9 @@ const ProfileContent = ({
       }
     },
     enabled: !!user?.id,
-    staleTime: 60000, // 1 minute - more stable
-    refetchOnMount: false, // Use cached data when possible
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    refetchOnMount: false, // Use global config
+    refetchOnWindowFocus: false, // Use global config
     refetchInterval: 120000, // Refetch every 2 minutes as fallback
   });
 

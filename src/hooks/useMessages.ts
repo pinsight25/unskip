@@ -19,9 +19,9 @@ export const useMessages = (chatId: string, userId?: string) => {
       if (error) throw error;
       return data || [];
     },
-    staleTime: 60000, // 1 minute - more stable
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    refetchOnMount: false, // Use global config
+    refetchOnWindowFocus: false, // Use global config
     initialData: cachedMessages,
     retry: 1, // Only retry once on failure
   });

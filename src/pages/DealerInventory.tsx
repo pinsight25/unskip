@@ -57,6 +57,9 @@ const DealerInventory = () => {
   
   // Mobile info tab toggle
   const [activeInfoTab, setActiveInfoTab] = useState<'about' | 'contact' | 'location' | 'brands'>('about');
+  
+  // Business dashboard tab state
+  const [activeBusinessTab, setActiveBusinessTab] = useState<'overview' | 'inventory' | 'analytics' | 'messages'>('overview');
 
   // Fetch dealer data using React Query
   const { data: dealer, isLoading: dealerLoading, error: dealerError } = useQuery({
@@ -352,14 +355,22 @@ const DealerInventory = () => {
               <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-gray-100 p-1 rounded-lg">
                 <TabsTrigger 
                   value="inventory" 
-                  className="flex items-center gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-2 ${
+                    mainView === 'inventory' 
+                      ? 'bg-orange-500 text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-orange-600'
+                  }`}
                 >
                   <Car className="h-4 w-4" />
                   Inventory
                 </TabsTrigger>
                 <TabsTrigger 
                   value="dashboard" 
-                  className="flex items-center gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-2 ${
+                    mainView === 'dashboard' 
+                      ? 'bg-orange-500 text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-orange-600'
+                  }`}
                 >
                   <BarChart3 className="h-4 w-4" />
                   Business Dashboard
@@ -566,32 +577,48 @@ const DealerInventory = () => {
             {/* Business Analytics Tabs */}
             <Card className="mb-8">
               <CardContent className="p-6">
-                <Tabs defaultValue="overview" className="w-full">
+                <Tabs value={activeBusinessTab} onValueChange={(value) => setActiveBusinessTab(value as 'overview' | 'inventory' | 'analytics' | 'messages')} className="w-full">
                   <TabsList className="flex w-full gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
                     <TabsTrigger 
                       value="overview" 
-                      className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                      className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                        activeBusinessTab === 'overview' 
+                          ? 'bg-orange-500 text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-orange-600'
+                      }`}
                     >
                       <BarChart3 className="h-4 w-4" />
                       <span className="text-sm">Overview</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="inventory" 
-                      className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                      className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                        activeBusinessTab === 'inventory' 
+                          ? 'bg-orange-500 text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-orange-600'
+                      }`}
                     >
                       <Car className="h-4 w-4" />
                       <span className="text-sm">Inventory</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="analytics" 
-                      className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                      className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                        activeBusinessTab === 'analytics' 
+                          ? 'bg-orange-500 text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-orange-600'
+                      }`}
                     >
                       <TrendingUp className="h-4 w-4" />
                       <span className="text-sm">Analytics</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="messages" 
-                      className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                      className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                        activeBusinessTab === 'messages' 
+                          ? 'bg-orange-500 text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-orange-600'
+                      }`}
                     >
                       <MessageCircle className="h-4 w-4" />
                       <span className="text-sm">Messages</span>
@@ -729,14 +756,22 @@ const DealerInventory = () => {
             <TabsList className="flex w-full gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
               <TabsTrigger 
                 value="cars" 
-                className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                  activeTab === 'cars' 
+                    ? 'bg-orange-500 text-white shadow-sm' 
+                    : 'text-gray-600 hover:text-orange-600'
+                }`}
               >
                 <Car className="h-4 w-4" />
                 <span className="text-sm">Cars ({sortedCars.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="accessories" 
-                className="flex items-center gap-2 flex-1 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:text-orange-600 transition-all duration-200 rounded-md px-4 py-2"
+                className={`flex items-center gap-2 flex-1 transition-all duration-200 rounded-md px-4 py-2 ${
+                  activeTab === 'accessories' 
+                    ? 'bg-orange-500 text-white shadow-sm' 
+                    : 'text-gray-600 hover:text-orange-600'
+                }`}
               >
                 <Package className="h-4 w-4" />
                 <span className="text-sm">Accessories ({sortedAccessories.length})</span>

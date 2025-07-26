@@ -161,10 +161,10 @@ export const useCars = () => {
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
     placeholderData: [],
-    staleTime: 60000, // 1 minute - more stable
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
-    refetchOnMount: false, // Use cached data when possible
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
     // Use React Query default retry logic
   });
 
@@ -186,10 +186,10 @@ export const useUserListings = (userId: string | undefined) => {
       return data as any[];
     },
     enabled: !!userId,
-    staleTime: 30000, // 30 seconds
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
   });
 
   return query;
@@ -207,10 +207,10 @@ export const useDealers = () => {
       if (error) throw error;
       return data as any[];
     },
-    staleTime: 30000, // 30 seconds
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
   });
 
   return query;
@@ -245,9 +245,9 @@ export const useOffers = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
-    staleTime: 60000, // 1 minute - more stable
-    refetchOnMount: false, // Use cached data when possible
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    refetchOnMount: false, // Use global config
+    refetchOnWindowFocus: false, // Use global config
   });
 
   // Debounced real-time subscription for offers
@@ -298,9 +298,9 @@ export const useChats = (userId?: string) => {
     },
     refetchInterval: POLL_INTERVAL,
     refetchIntervalInBackground: true,
-    staleTime: 60000, // 1 minute - more stable
-    refetchOnMount: false, // Use cached data when possible
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
+    refetchOnMount: false, // Use global config
+    refetchOnWindowFocus: false, // Use global config
   });
 
   // Debounced real-time subscription for chats

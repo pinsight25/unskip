@@ -150,9 +150,9 @@ export const useHomeState = () => {
       });
       return carsMapped;
     },
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
-    refetchOnMount: false, // Use cached data when possible
-    staleTime: 60000, // 1 minute - more stable
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
   });
 
   useEffect(() => {

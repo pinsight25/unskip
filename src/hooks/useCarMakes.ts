@@ -25,9 +25,9 @@ export const useCarMakes = () => {
       if (error) throw error;
       return data || [];
     },
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    staleTime: 0,
+    refetchOnWindowFocus: false, // Use global config
+    refetchOnMount: false, // Use global config
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
   });
   return { makes, isLoading, error };
 };

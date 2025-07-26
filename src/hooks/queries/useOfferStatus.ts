@@ -16,7 +16,7 @@ export const useOfferStatus = (carId?: string, userId?: string) => {
       return data;
     },
     enabled: !!carId && !!userId,
-    staleTime: 30000, // Cache for 30 seconds
+    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
     retry: false, // Add this line to stop retrying 406 errors
     refetchInterval: 5000, // Poll every 5 seconds for real-time updates
   });
