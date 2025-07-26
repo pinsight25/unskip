@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 import { useCars } from '@/hooks/queries/useCarQueries';
 import { useDealers } from '@/hooks/queries/useDealers';
-import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+
 import HomeHeader from '@/components/home/HomeHeader';
 import HeroBanner from '@/components/home/HeroBanner';
 import SearchBar from '@/components/home/SearchBar';
@@ -16,20 +16,16 @@ import { useHomeTestDriveHandlers } from '@/components/home/handlers/HomeTestDri
 import { useHomeChatHandlers } from '@/components/home/handlers/HomeChatHandlers';
 import { useAuthModal } from '@/contexts/AuthModalContext';
 import { Skeleton } from '@/components/ui/skeleton';
-// Remove ErrorState and ConnectionStatusIndicator imports
+import { RefreshControl } from '@/components/home/RefreshControl';
 
 const Home = () => {
   // Use only useCars for car data
-  const { data: cars = [] } = useCars();
-  const { data: dealers = [] } = useDealers();
+  const { data: cars = [], refetch: refetchCars } = useCars();
+  const { data: dealers = [], refetch: refetchDealers } = useDealers();
   const allCarsCount = cars.length;
-  // Count cars where seller.type === 'dealer'
-  const dealerCarsCount = cars.filter(car => car.seller.type === 'dealer').length;
-  const ownerCarsCount = cars.filter(car => car.seller.type === 'individual').length;
-
-  // Add real-time refetch for cars and dealers
-  useRealtimeRefetch('cars', ['cars']);
-  useRealtimeRefetch('dealers', ['dealers']);
+  // Count cars where seller_type === 'dealer'
+  const dealerCarsCount = cars.filter(car => car.seller_type === 'dealer').length;
+  const ownerCarsCount = cars.filter(car => car.seller_type === 'individual').length;
 
   // UI state for filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +38,7 @@ const Home = () => {
   const filteredCars = useMemo(() => {
     let filtered = cars;
     if (selectedType !== 'all') {
-      filtered = filtered.filter(car => car.seller.type === selectedType);
+      filtered = filtered.filter(car => car.seller_type === selectedType);
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -62,7 +58,11 @@ const Home = () => {
   const handleTypeFilter = (type: 'all' | 'dealer' | 'individual') => setSelectedType(type);
   // Handler for search
   const handleSearch = (query: string) => setSearchQuery(query);
-  // ... add other filter handlers as needed
+  
+  // Manual refresh handler
+  const handleRefresh = async () => {
+    await Promise.all([refetchCars(), refetchDealers()]);
+  };
 
   // Handlers for offers, chat, test drive, etc. (unchanged)
   const { handleOfferSubmit } = useHomeOfferHandlers({ selectedCar: null, originalHandleOfferSubmit: () => {} });
@@ -75,9 +75,6 @@ const Home = () => {
 
   return (
     <div className="bg-gray-50 relative">
-      {/* Show cached data banner if not loading and data is from cache */}
-      {/* Placeholder: You can add logic to detect cached data if needed */}
-      {/* <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-medium">Showing cached results</div> */}
       <HomeHeader
         currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}
         onFilterChange={() => {}}
@@ -92,6 +89,13 @@ const Home = () => {
         ownerCarsCount={ownerCarsCount}
       />
       <div className="max-w-7xl mx-auto px-4 relative">
+        {/* Manual refresh control */}
+        <div className="flex justify-end py-2">
+          <RefreshControl 
+            queryKeys={['cars', 'dealers']} 
+            onRefresh={handleRefresh}
+          />
+        </div>
         <HomeResults
           filteredCars={filteredCars}
           currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}

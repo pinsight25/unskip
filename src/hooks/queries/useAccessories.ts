@@ -56,10 +56,7 @@ export const useAccessories = (filters?: {
       
       return accessoriesWithImages as Accessory[]
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
-    refetchOnWindowFocus: false, // Use global config
-    refetchOnMount: false, // Use global config
+    // Use global config - no local overrides
   });
 
   return query;
@@ -91,10 +88,7 @@ export const useAccessory = (id: string) => {
       
       return accessoryWithImages as Accessory
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
-    refetchOnWindowFocus: false, // Use global config
-    refetchOnMount: false, // Use global config
+    // Use global config - no local overrides
   })
 }
 

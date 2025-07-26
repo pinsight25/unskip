@@ -7,6 +7,7 @@ import { useChatManager } from '@/hooks/useChatManager';
 import { useOfferContext } from '@/contexts/OfferContext';
 import { useSupabase } from '@/contexts/SupabaseContext';
 import { useUser } from '@/contexts/UserContext';
+import { useAuthModal } from '@/contexts/AuthModalContext';
 import CarDetailContent from './CarDetailContent';
 import CarDetailModals from './CarDetailModals';
 import { Phone, MessageCircle } from 'lucide-react';
@@ -34,7 +35,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   const { data: offer, isLoading: offerLoading } = useOfferStatus(car?.id, user?.id);
   const offerStatus = offer?.status || 'none';
   const offerAmount = offer?.amount || null;
-  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const { openSignInModal } = useAuthModal();
   const { toast } = useToast();
   const [offerAmountState, setOfferAmountState] = useState<number | null>(null);
 
@@ -93,7 +94,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleOpenSignInModal = () => {
-    setIsSignInModalOpen(true);
+    openSignInModal();
   };
 
   // Handle View Offers button click

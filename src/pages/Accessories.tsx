@@ -6,7 +6,7 @@ import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
 import AccessoryHeader from '@/components/accessories/AccessoryHeader';
 import AccessoryFiltersComponent from '@/components/accessories/AccessoryFilters';
 import AccessoryResults from '@/components/accessories/AccessoryResults';
-import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import { RefreshControl } from '@/components/home/RefreshControl';
 
 const Accessories = () => {
   const navigate = useNavigate();
@@ -37,10 +37,7 @@ const Accessories = () => {
     location: filters.location || undefined,
   };
 
-  const { data: accessories = [], isLoading, error } = useAccessories(dbFilters);
-  
-  // Add real-time refetch for accessories
-  useRealtimeRefetch('accessories', ['accessories']);
+  const { data: accessories = [], isLoading, error, refetch } = useAccessories(dbFilters);
 
   const handleCategoryFilter = (category: AccessoryCategory | 'all') => {
     setFilters(prev => ({ ...prev, category }));
@@ -67,6 +64,10 @@ const Accessories = () => {
     });
   };
 
+  const handleRefresh = async () => {
+    await refetch();
+  };
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header Section */}
@@ -81,13 +82,19 @@ const Accessories = () => {
       {/* Results Section */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8 py-6 lg:py-8">
         {/* Controls Bar */}
-        <AccessoryFiltersComponent
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          filters={filters}
-          onSortChange={handleSortChange}
-          filteredCount={accessories.length}
-        />
+        <div className="flex justify-between items-center mb-4">
+          <AccessoryFiltersComponent
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            filters={filters}
+            onSortChange={handleSortChange}
+            filteredCount={accessories.length}
+          />
+          <RefreshControl 
+            queryKeys={['accessories']} 
+            onRefresh={handleRefresh}
+          />
+        </div>
 
         {/* Results Grid */}
         <AccessoryResults

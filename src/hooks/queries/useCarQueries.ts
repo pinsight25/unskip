@@ -76,9 +76,6 @@ function mapDbCarToCar(car: any, dealerData: any = {}, userData: any = {}) : Car
 export const useCars = () => {
   const { toast } = useToast ? useToast() : { toast: undefined };
   const queryClient = useQueryClient();
-  const lastRealtimeRefetch = useRef(0);
-  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
-  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
 
   const query = useQuery<any[]>({
     queryKey: ['cars'],
@@ -158,14 +155,8 @@ export const useCars = () => {
       
       return carsMapped as any[];
     },
-    refetchInterval: POLL_INTERVAL,
-    refetchIntervalInBackground: true,
     placeholderData: [],
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
-    refetchOnWindowFocus: false, // Use global config
-    refetchOnMount: false, // Use global config
-    // Use React Query default retry logic
+    // Use global config - no local overrides
   });
 
   return query;
@@ -219,9 +210,6 @@ export const useDealers = () => {
 // Fetch all offers for offers page or user
 export const useOffers = (userId?: string) => {
   const queryClient = useQueryClient();
-  const lastRealtimeRefetch = useRef(0);
-  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
-  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
 
   const query = useQuery<any[]>({
     queryKey: userId ? ['offers', userId] : ['offers'],
@@ -243,36 +231,8 @@ export const useOffers = (userId?: string) => {
         return data as any[];
       }
     },
-    refetchInterval: POLL_INTERVAL,
-    refetchIntervalInBackground: true,
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    refetchOnMount: false, // Use global config
-    refetchOnWindowFocus: false, // Use global config
+    // Use global config - no local overrides
   });
-
-  // Debounced real-time subscription for offers
-  useEffect(() => {
-    const channel = supabase.channel('realtime-offers')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'offers',
-        },
-        (payload) => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: userId ? ['offers', userId] : ['offers'] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient, userId]);
 
   return query;
 };
@@ -280,9 +240,6 @@ export const useOffers = (userId?: string) => {
 // Fetch all chats for a user
 export const useChats = (userId?: string) => {
   const queryClient = useQueryClient();
-  const lastRealtimeRefetch = useRef(0);
-  const POLL_INTERVAL = 30000; // 30 seconds fallback polling
-  const DEBOUNCE_MS = 1000; // 1 second debounce for real-time
 
   const query = useQuery<any[]>({
     queryKey: userId ? ['chats', userId] : ['chats'],
@@ -296,37 +253,8 @@ export const useChats = (userId?: string) => {
       if (error) throw error;
       return data as any[];
     },
-    refetchInterval: POLL_INTERVAL,
-    refetchIntervalInBackground: true,
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    refetchOnMount: false, // Use global config
-    refetchOnWindowFocus: false, // Use global config
+    // Use global config - no local overrides
   });
-
-  // Debounced real-time subscription for chats
-  useEffect(() => {
-    if (!userId) return;
-    const channel = supabase.channel('realtime-chats')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chats',
-        },
-        (payload) => {
-          const now = Date.now();
-          if (now - lastRealtimeRefetch.current > DEBOUNCE_MS) {
-            queryClient.invalidateQueries({ queryKey: ['chats', userId] });
-            lastRealtimeRefetch.current = now;
-          }
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient, userId]);
 
   return query;
 };
@@ -336,9 +264,19 @@ export const useInvalidateCarQueries = () => {
   const queryClient = useQueryClient();
   
   return {
+    invalidateCars: () => queryClient.invalidateQueries({ queryKey: ['cars'] }),
+    invalidateUserListings: () => queryClient.invalidateQueries({ queryKey: ['userListings'] }),
+    invalidateDealers: () => queryClient.invalidateQueries({ queryKey: ['dealers'] }),
+    invalidateOffers: () => queryClient.invalidateQueries({ queryKey: ['offers'] }),
+    invalidateChats: () => queryClient.invalidateQueries({ queryKey: ['chats'] }),
     invalidateAll: async () => {
       await queryClient.invalidateQueries({ queryKey: ['cars'] });
       await queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      await queryClient.invalidateQueries({ queryKey: ['dealers'] });
+      await queryClient.invalidateQueries({ queryKey: ['offers'] });
+      await queryClient.invalidateQueries({ queryKey: ['chats'] });
     },
+    clearCarsCache: () => queryClient.removeQueries({ queryKey: ['cars'] }),
+    clearAllCache: () => queryClient.clear()
   };
 }; 

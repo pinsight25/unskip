@@ -101,21 +101,37 @@ const CarDetail = () => {
         if (carData.seller_id) {
           const { data: seller } = await supabase
             .from('users')
-            .select('id, name, created_at, is_verified, phone, email')
+            .select('id, name, created_at, is_verified, phone, email, user_type')
             .eq('id', carData.seller_id)
             .single();
+          
           if (seller) {
             setSellerInfo(seller);
+            
+            // Check if seller is a dealer
+            let dealerInfo = null;
+            if (seller.user_type === 'dealer') {
+              const { data: dealer } = await supabase
+                .from('dealers')
+                .select('business_name, verification_status')
+                .eq('user_id', carData.seller_id)
+                .single();
+              dealerInfo = dealer;
+            }
+            
             setCar(prev => prev ? {
               ...prev,
               seller: {
                 ...prev.seller,
-                name: seller.name || '',
+                name: seller.user_type === 'dealer' ? (dealerInfo?.business_name || seller.name || 'Dealer') : (seller.name || 'Individual Seller'),
+                type: seller.user_type || 'individual',
                 verified: seller.is_verified || false,
+                dealerVerified: seller.user_type === 'dealer' ? (dealerInfo?.verification_status === 'verified') : undefined,
                 memberSince: seller.created_at ? new Date(seller.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '',
                 phone: seller.phone || '',
                 email: seller.email || '',
-              }
+              },
+              seller_type: seller.user_type || 'individual',
             } : prev);
           }
         }

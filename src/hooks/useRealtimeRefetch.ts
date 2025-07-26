@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -9,13 +9,20 @@ import { useQueryClient } from '@tanstack/react-query';
  */
 export function useRealtimeRefetch(table: string, queryKey: string | string[]) {
   const queryClient = useQueryClient();
+  const lastInvalidation = useRef(0);
+  const DEBOUNCE_MS = 5000; // 5 second debounce to prevent excessive invalidations
 
   useEffect(() => {
     const channel = supabase.channel(`realtime-${table}`)
       .on('postgres_changes', { event: '*', schema: 'public', table }, (payload) => {
-        // Always pass the object form for invalidateQueries
-        const key = Array.isArray(queryKey) ? queryKey : [queryKey];
-        queryClient.invalidateQueries({ queryKey: key });
+        const now = Date.now();
+        
+        // Debounce invalidations to prevent excessive cache clearing
+        if (now - lastInvalidation.current > DEBOUNCE_MS) {
+          const key = Array.isArray(queryKey) ? queryKey : [queryKey];
+          queryClient.invalidateQueries({ queryKey: key });
+          lastInvalidation.current = now;
+        }
       })
       .subscribe();
     return () => {

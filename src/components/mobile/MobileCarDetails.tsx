@@ -14,6 +14,7 @@ interface MobileCarDetailsProps {
     verified: boolean;
     activeTime?: string;
   };
+  seller_type?: 'individual' | 'dealer';
   viewCount?: number;
   ownership?: number;
 }
@@ -32,6 +33,7 @@ const MobileCarDetails = ({
   mileage, 
   location, 
   seller,
+  seller_type,
   viewCount,
   ownership = 1
 }: MobileCarDetailsProps) => {
@@ -84,7 +86,7 @@ const MobileCarDetails = ({
       {/* Seller Info - Plain Text Below Location, Same Line */}
       <div className="flex items-center gap-2 mt-1 ml-1">
         <span className="text-base font-semibold text-gray-900">{seller.name}</span>
-        {seller.type === 'dealer' && (
+        {seller_type === 'dealer' && (
           <span className="text-base font-semibold text-green-700 ml-1">Dealer</span>
         )}
       </div>

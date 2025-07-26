@@ -108,7 +108,7 @@ export const useHomeState = () => {
           description: car.description || '',
           seller: {
             id: car.seller_id || '',
-            name: car.users?.name || 'Individual Seller',
+            name: isDealer ? (dealerInfo?.business_name || car.users?.name || 'Dealer') : (car.users?.name || 'Individual Seller'),
             type: isDealer ? 'dealer' : 'individual',
             phone: formatPhoneForAuth(car.phone_number || ''),
             email: car.email || '',

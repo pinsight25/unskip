@@ -32,7 +32,7 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
     const openSignInModal = typeof setSignInModalOpen === 'function' ? setSignInModalOpen : () => { /* TODO: integrate with modal system */ };
     return (
       <Button className="w-full bg-primary text-white font-medium" onClick={openSignInModal}>
-        Sign In to Make Offer
+        Sign In to Contact Seller
       </Button>
     );
   }

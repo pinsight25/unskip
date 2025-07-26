@@ -109,7 +109,7 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
             </div>
 
             <div className="element-spacing">
-              <CarCardSeller seller={car.seller} />
+              <CarCardSeller seller={car.seller} seller_type={car.seller_type} />
             </div>
 
             <div className="mt-auto">

@@ -84,6 +84,7 @@ const MobileCarCard = ({
           mileage={car.mileage}
           location={car.location}
           seller={car.seller}
+          seller_type={car.seller_type}
           viewCount={viewCount}
           ownership={car.ownership || car.ownershipNumber || 1}
         />

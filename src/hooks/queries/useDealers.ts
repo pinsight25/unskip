@@ -4,58 +4,41 @@ import { supabase } from '@/lib/supabase';
 import { Dealer } from '@/types/dealer';
 
 export const useDealers = (locationFilter?: string, brandFilter?: string) => {
-  const query = useQuery<Dealer[]>({
+  const query = useQuery({
     queryKey: ['dealers'],
     queryFn: async () => {
-      // First, get all dealers
-      const { data: dealers, error: dealersError } = await supabase
+      const { data: dealers, error } = await supabase
         .from('dealers')
-        .select('*')
-        .order('verification_status', { ascending: true })
-        .order('created_at', { ascending: false });
-      
-      if (dealersError) {
-        throw dealersError;
-      }
-      if (!dealers) {
-        return [];
-      }
+        .select(`
+          id, user_id, business_name, contact_person, phone, email, 
+          business_category, specialization, brands_deal_with, shop_address, 
+          pincode, establishment_year, about, verification_status, verified, slug
+        `)
+        .order('business_name');
+
+      if (error) throw error;
 
       // Get car counts for each dealer
-      const { data: carCounts, error: carCountsError } = await supabase
-        .from('cars')
-        .select('seller_id')
-        .eq('status', 'active');
-      
-      if (carCountsError) {
-        console.error('Car counts error:', carCountsError);
-      }
-
-      // Get accessory counts for each dealer
-      const { data: accessoryCounts, error: accessoryCountsError } = await supabase
-        .from('accessories')
-        .select('seller_id')
-        .eq('status', 'active');
-      
-      if (accessoryCountsError) {
-        console.error('Accessory counts error:', accessoryCountsError);
-      }
-
-      // Create maps for quick lookup
       const carCountMap = new Map();
-      if (carCounts) {
-        carCounts.forEach((item: any) => {
-          const currentCount = carCountMap.get(item.seller_id) || 0;
-          carCountMap.set(item.seller_id, currentCount + 1);
-        });
-      }
-
       const accessoryCountMap = new Map();
-      if (accessoryCounts) {
-        accessoryCounts.forEach((item: any) => {
-          const currentCount = accessoryCountMap.get(item.seller_id) || 0;
-          accessoryCountMap.set(item.seller_id, currentCount + 1);
-        });
+
+      for (const dealer of dealers || []) {
+        // Get car count
+        const { count: carCount } = await supabase
+          .from('cars')
+          .select('*', { count: 'exact', head: true })
+          .eq('seller_id', dealer.user_id)
+          .eq('status', 'active');
+
+        // Get accessory count
+        const { count: accessoryCount } = await supabase
+          .from('accessories')
+          .select('*', { count: 'exact', head: true })
+          .eq('seller_id', dealer.user_id)
+          .eq('status', 'active');
+
+        carCountMap.set(dealer.user_id, carCount || 0);
+        accessoryCountMap.set(dealer.user_id, accessoryCount || 0);
       }
 
       const result = dealers.map((dealer: any) => ({
@@ -80,10 +63,7 @@ export const useDealers = (locationFilter?: string, brandFilter?: string) => {
 
       return result;
     },
-    staleTime: 30000, // 30 seconds
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    // Use global config - no local overrides
   });
 
   // Filtering

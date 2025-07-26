@@ -7,6 +7,8 @@ import { AuthModalProvider } from '@/contexts/AuthModalContext';
 import { OfferProvider } from '@/contexts/OfferContext';
 import { CityProvider } from '@/contexts/CityContext';
 import { Toaster } from '@/components/ui/toaster';
+import { setQueryClient } from '@/utils/cacheUtils';
+
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import ScrollToTop from '@/components/common/ScrollToTop';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
@@ -67,15 +69,19 @@ function DealerRegistrationGuard({ children }: { children: React.ReactNode }) {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 2 * 60 * 1000, // Data fresh for 2 minutes
-      gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
-      refetchOnWindowFocus: false, // Don't refetch when user returns to tab (reduces loading)
-      refetchOnMount: false, // Don't refetch on mount if data is fresh
+      staleTime: Infinity, // Data never goes stale - only invalidate manually
+      gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
+      refetchOnWindowFocus: false, // Don't refetch when user returns to tab
+      refetchOnMount: false, // Don't refetch on mount if data exists
+      refetchOnReconnect: false, // Don't refetch on reconnect
       retry: 1, // Retry failed requests once
       retryDelay: 1000, // Wait 1 second before retrying
     },
   },
 });
+
+// Set query client for global cache utilities
+setQueryClient(queryClient);
 
 function App() {
   return (
