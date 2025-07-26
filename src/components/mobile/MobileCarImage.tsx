@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Car as CarIcon } from 'lucide-react';
 import MobileCarBadges from './MobileCarBadges';
 
 interface MobileCarImageProps {
@@ -36,11 +36,16 @@ const MobileCarImage = ({
     }
   };
 
+  // Check if we have valid images
+  const hasImages = images && images.length > 0;
+  const currentImage = hasImages ? images[currentImageIndex] : null;
+
   return (
     <div className="relative">
       <div 
         className="relative h-48 bg-gray-100 overflow-hidden rounded-lg"
         onTouchStart={(e) => {
+          if (!hasImages) return; // Don't handle swipe if no images
           e.stopPropagation();
           const touchStart = e.touches[0].clientX;
           const handleTouchEnd = (endEvent: TouchEvent) => {
@@ -54,11 +59,30 @@ const MobileCarImage = ({
           document.addEventListener('touchend', handleTouchEnd);
         }}
       >
-        <img 
-          src={images[currentImageIndex]} 
-          alt={title}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        {hasImages && currentImage ? (
+          <img 
+            src={currentImage} 
+            alt={title}
+            className="w-full h-full object-cover rounded-lg"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
+              if (placeholder) {
+                placeholder.style.display = 'flex';
+              }
+            }}
+          />
+        ) : null}
+        
+        {/* Placeholder when no images */}
+        <div className={`w-full h-full flex items-center justify-center rounded-lg ${hasImages ? 'placeholder hidden' : ''}`}>
+          <div className="text-center">
+            <CarIcon className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+            <p className="text-gray-500 text-sm">No Image</p>
+          </div>
+        </div>
         
         <MobileCarBadges 
           featured={featured} 
@@ -82,8 +106,8 @@ const MobileCarImage = ({
           )}
         </button>
 
-        {/* Image Dots */}
-        {images.length > 1 && (
+        {/* Image Dots - only show if we have multiple images */}
+        {hasImages && images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
             {images.map((_, index) => (
               <div

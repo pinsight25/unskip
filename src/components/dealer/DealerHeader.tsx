@@ -13,7 +13,8 @@ import {
   User, 
   Mail,
   Award,
-  Package
+  Package,
+  Building2
 } from 'lucide-react';
 
 interface DealerHeaderProps {
@@ -67,7 +68,8 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
 
   // Shop photos logic
   const shopPhotos = dealer.shop_photos_urls || [];
-  const coverPhoto = shopPhotos[0] || 'https://images.unsplash.com/photo-1562016600-ece13e8ba570?w=800&h=300&fit=crop';
+  const hasShopPhotos = shopPhotos.length > 0;
+  const coverPhoto = hasShopPhotos ? shopPhotos[0] : null;
   const galleryPhotos = shopPhotos.slice(1, 3);
 
   // Brands logic
@@ -78,12 +80,33 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
   return (
     <div className="space-y-4">
       {/* Hero Banner with Shop Photo */}
-      <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg">
-        <img
-          src={coverPhoto}
-          alt={`${dealer.name} shop`}
-          className="w-full h-full object-cover"
-        />
+      <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg bg-gray-100">
+        {hasShopPhotos && coverPhoto ? (
+          <img
+            src={coverPhoto}
+            alt={`${dealer.name} shop`}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
+              if (placeholder) {
+                placeholder.style.display = 'flex';
+              }
+            }}
+          />
+        ) : null}
+        
+        {/* Placeholder when no shop photos */}
+        <div className={`w-full h-full flex items-center justify-center ${hasShopPhotos ? 'placeholder hidden' : ''}`}>
+          <div className="text-center text-gray-500">
+            <Building2 className="h-16 w-16 mx-auto mb-3 text-gray-400" />
+            <p className="text-lg font-medium">Shop Photos</p>
+            <p className="text-sm">No photos available</p>
+          </div>
+        </div>
+        
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
         {/* Gallery Thumbnails */}
         {galleryPhotos.length > 0 && (

@@ -2,7 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Car, Calendar, Users, Shield, Package } from 'lucide-react';
+import { MapPin, Car, Calendar, Users, Shield, Package, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 // Remove: import { createSlug } from '@/data/dealers';
 
@@ -29,6 +29,7 @@ interface DealerCardProps {
     verification_status?: string;
     brands: string[];
     shopPhoto?: string;
+    shop_photos_urls?: string[];
     slug: string;
   };
 }
@@ -47,17 +48,40 @@ const DealerCard = ({ dealer }: DealerCardProps) => {
     }
   };
 
+  // Get the first shop photo or use shopPhoto as fallback
+  const shopPhotos = dealer.shop_photos_urls || [];
+  const hasShopPhotos = shopPhotos.length > 0;
+  const shopPhoto = hasShopPhotos ? shopPhotos[0] : dealer.shopPhoto;
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
       {/* Shop Photo Header */}
-      <div className="relative h-24 bg-gradient-to-r from-gray-200 to-gray-300">
-        {dealer.shopPhoto && (
+      <div className="relative h-24 bg-gray-100">
+        {shopPhoto ? (
           <img
-            src={dealer.shopPhoto}
+            src={shopPhoto}
             alt={`${dealer.name} shop`}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
+              if (placeholder) {
+                placeholder.style.display = 'flex';
+              }
+            }}
           />
-        )}
+        ) : null}
+        
+        {/* Placeholder when no shop photo */}
+        <div className={`w-full h-full flex items-center justify-center ${shopPhoto ? 'placeholder hidden' : ''}`}>
+          <div className="text-center">
+            <Building2 className="h-8 w-8 text-gray-400 mx-auto mb-1" />
+            <p className="text-gray-500 text-xs">Shop Photo</p>
+          </div>
+        </div>
+        
         <div className="absolute inset-0 bg-black/20"></div>
         {/* Verification Status Badge */}
         {dealer.verification_status === 'verified' ? (

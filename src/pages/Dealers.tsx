@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import DealerHeader from '@/components/dealers/DealerHeader';
 import DealerFilters from '@/components/dealers/DealerFilters';
 import DealerGrid from '@/components/dealers/DealerGrid';
@@ -10,9 +10,9 @@ import EmptyDealerState from '@/components/dealers/EmptyDealerState';
 import { supabase } from '@/lib/supabase';
 import { useDealers } from '@/hooks/queries/useDealers';
 import { Dealer } from '@/types/dealer';
-import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCars } from '@/hooks/queries/useCarQueries';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DealerSkeletonGrid = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -25,20 +25,10 @@ const DealerSkeletonGrid = () => (
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
+  const queryClient = useQueryClient();
 
   // Use the new useDealers hook
-  const { filteredDealers, error, data: allDealers, isLoading } = useDealers(selectedLocation, selectedBrand);
-  const { data: allCars = [] } = useCars();
-  useRealtimeRefetch('dealers', ['dealers']);
-
-  // Compute car count for each dealer
-  const dealersWithCarCount = (filteredDealers || []).map(dealer => {
-    const carsForDealer = allCars.filter(car => String(car.seller_id) === String(dealer.id) && car.status === 'active');
-    return {
-      ...dealer,
-      carsInStock: carsForDealer.length
-    };
-  });
+  const { filteredDealers, error, data: allDealers, isLoading, refetch } = useDealers(selectedLocation, selectedBrand);
 
   // Reset filters to show all dealers by default on mount
   useEffect(() => {
@@ -50,6 +40,12 @@ const Dealers = () => {
   const handleClearFilters = () => {
     setSelectedLocation('');
     setSelectedBrand('');
+  };
+
+  const handleRefresh = async () => {
+    console.log('🔄 Manually refreshing dealers data...');
+    await queryClient.invalidateQueries({ queryKey: ['dealers'] });
+    await refetch();
   };
 
   return (
@@ -68,20 +64,32 @@ const Dealers = () => {
             onClearFilters={handleClearFilters}
           />
         </div>
-        {/* Results count */}
-        <div className="mb-4">
+        
+        {/* Results count and refresh button */}
+        <div className="mb-4 flex justify-between items-center">
           <p className="text-gray-600 text-sm">
             Showing {filteredDealers ? filteredDealers.length : 0} of {(allDealers || []).length} dealers
           </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
         </div>
+        
         {/* Dealers Grid */}
         {error ? (
           <div className="text-center py-12 text-red-500">Something went wrong. Try again.</div>
-        ) : dealersWithCarCount && dealersWithCarCount.length > 0 ? (
-          <DealerGrid dealers={dealersWithCarCount} />
+        ) : filteredDealers && filteredDealers.length > 0 ? (
+          <DealerGrid dealers={filteredDealers} />
         ) : (
           <EmptyDealerState onClearFilters={handleClearFilters} />
         )}
+        
         {/* Bottom CTA for Mobile */}
         <div className="mt-8 text-center md:hidden">
           <Link to="/dealer/register">

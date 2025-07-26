@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Eye, Shield, Award, Building2 } from 'lucide-react';
+import { Heart, Eye, Shield, Award, Building2, Car as CarIcon } from 'lucide-react';
 import { Car } from '@/types/car';
 
 interface CarCardImageProps {
@@ -14,15 +14,34 @@ interface CarCardImageProps {
 }
 
 const CarCardImage = ({ car, isSaved, isSaving = false, onSave, onUnsave }: CarCardImageProps) => {
-  // Debug logging for badge display
+  // Get the first image or use placeholder
+  const imageUrl = car.images && car.images.length > 0 
+    ? car.images[0] 
+    : '/placeholder.svg'; // Fallback to placeholder
+
   return (
     <div className="relative w-full h-[200px] overflow-hidden rounded-lg">
       <Link to={`/car/${car.id}`}>
-        <img
-          src={car.images[0]}
-          alt={car.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer rounded-lg"
-        />
+        {car.images && car.images.length > 0 ? (
+          <img
+            src={imageUrl}
+            alt={car.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer rounded-lg"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.src = '/placeholder.svg';
+            }}
+          />
+        ) : (
+          // Placeholder when no images
+          <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-lg">
+            <div className="text-center">
+              <CarIcon className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No Image</p>
+            </div>
+          </div>
+        )}
       </Link>
       
       {/* Badges */}
