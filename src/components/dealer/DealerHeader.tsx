@@ -80,7 +80,7 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
   return (
     <div className="space-y-4">
       {/* Hero Banner with Shop Photo */}
-      <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg bg-gray-100">
+      <div className="relative h-48 md:h-56 rounded-xl overflow-hidden mx-4 md:mx-0 shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
         {hasShopPhotos && coverPhoto ? (
           <img
             src={coverPhoto}
@@ -100,10 +100,13 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         
         {/* Placeholder when no shop photos */}
         <div className={`w-full h-full flex items-center justify-center ${hasShopPhotos ? 'placeholder hidden' : ''}`}>
-          <div className="text-center text-gray-500">
-            <Building2 className="h-16 w-16 mx-auto mb-3 text-gray-400" />
-            <p className="text-lg font-medium">Shop Photos</p>
-            <p className="text-sm">No photos available</p>
+          <div className="text-center">
+            <div className="bg-white/80 backdrop-blur-sm rounded-full p-6 mb-4 inline-block">
+              <Building2 className="h-16 w-16 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-800 mb-1">{dealer.name}</p>
+            <p className="text-sm text-gray-600">Shop Photos</p>
+            <p className="text-xs text-gray-500 mt-1">No photos available</p>
           </div>
         </div>
         
@@ -125,15 +128,17 @@ const DealerHeader = ({ dealer }: DealerHeaderProps) => {
         <div className="absolute bottom-4 left-4 right-4 text-white">
           <div className="flex flex-col md:flex-row md:items-end justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-xl md:text-2xl font-bold">{dealer.name}</h1>
-                {dealer.verified && (
-                  <Badge className="bg-green-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Verified
-                  </Badge>
-                )}
-              </div>
+              {hasShopPhotos && (
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-xl md:text-2xl font-bold">{dealer.name}</h1>
+                  {dealer.verified && (
+                    <Badge className="bg-green-500/90 text-white backdrop-blur-sm border-0 text-xs px-2 py-1">
+                      <Shield className="h-3 w-3 mr-1" />
+                      Verified
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
             
             <ShareButton 

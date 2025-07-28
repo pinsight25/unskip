@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -6,6 +6,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { uploadToCloudinary, uploadMultipleToCloudinary } from '@/utils/uploadHelpers';
 import { supabase } from '@/lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
 
 const availableBrands = [
   'Maruti Suzuki', 'Hyundai', 'Honda', 'Toyota', 'Tata', 'Mahindra',
@@ -14,6 +15,7 @@ const availableBrands = [
 ];
 
 const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     businessName: dealer.business_name || '',
     contactPerson: dealer.contact_person || '',
@@ -39,6 +41,32 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setFormData({
+      businessName: dealer.business_name || '',
+      contactPerson: dealer.contact_person || '',
+      phone: dealer.phone || '',
+      email: dealer.email || '',
+      businessCategory: dealer.business_category || '',
+      brandsDealWith: dealer.brands_deal_with || [],
+      specialization: dealer.specialization || '',
+      panNumber: dealer.pan_number || '',
+      aadhaarNumber: dealer.aadhaar_last_four ? 'XXXXXXXX' + dealer.aadhaar_last_four : '',
+      businessDocType: dealer.business_doc_type || 'gst_certificate',
+      businessDocNumber: dealer.business_doc_number || '',
+      businessDocUrl: dealer.business_doc_url || '',
+      panCardUrl: dealer.pan_card_url || '',
+      shopAddress: dealer.shop_address || '',
+      pincode: dealer.pincode || '',
+      establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
+      about: dealer.about || '',
+      shopPhotos: [], // new uploads
+      shopPhotosUrls: dealer.shop_photos_urls || [], // existing
+      businessDocument: null,
+      panCard: null,
+    });
+  }, [dealer]);
 
   const handleFileUpload = (files) => {
     if (!files) return;
@@ -98,6 +126,13 @@ const EditDealerProfileModal = ({ isOpen, onClose, dealer, onSave }) => {
         })
         .eq('id', dealer.id);
       if (updateError) throw updateError;
+      
+      // Invalidate relevant cache queries to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['dealer', dealer.slug] });
+      queryClient.invalidateQueries({ queryKey: ['dealers'] });
+      queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      
       onSave && onSave();
       onClose();
     } catch (err) {

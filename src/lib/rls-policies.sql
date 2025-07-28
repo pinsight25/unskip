@@ -39,10 +39,10 @@ CREATE POLICY "users_check_phone" ON users
   USING (true);
 
 -- 2. DEALERS TABLE POLICIES
--- Anyone can view verified dealers
+-- Anyone can view verified and pending dealers
 CREATE POLICY "dealers_select_verified" ON dealers
   FOR SELECT 
-  USING (verification_status = 'verified');
+  USING (verification_status IN ('verified', 'pending'));
 
 -- Dealer owners can view their own profile (including pending)
 CREATE POLICY "dealers_select_own" ON dealers

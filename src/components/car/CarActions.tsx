@@ -45,7 +45,7 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
       sessionStorage.setItem('editListingData', JSON.stringify({
         listingId: carId
       }));
-      navigate(`/sell?edit=${carId}`);
+      navigate(`/sell-car?edit=${carId}`);
     };
     return (
       <div className="space-y-3">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/integrations/supabase/types';
@@ -148,8 +148,60 @@ const syncUserFromDatabase = async (
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const mounted = React.useRef(true);
+  const mounted = useRef(true);
+  const initialized = useRef(false);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    mounted.current = true;
+    
+    const initializeAuth = async () => {
+      // Prevent multiple initializations
+      if (initialized.current) return;
+      initialized.current = true;
+      
+      try {
+        // Get current session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          setIsLoading(false);
+          return;
+        }
+
+        if (session?.user) {
+          await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
+        } else {
+          if (mounted.current) {
+            setUser(null);
+            setIsLoading(false);
+          }
+        }
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+                           async (event, session) => {
+            if (event === 'SIGNED_IN' && session?.user) {
+              await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
+            } else if (event === 'SIGNED_OUT') {
+                                 if (mounted.current) {
+                     setUser(null);
+                     setIsLoading(false);
+                   }
+            }
+          }
+        );
+
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        if (mounted.current) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
@@ -186,55 +238,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     };
   }, [user?.id]);
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        
-        // Get current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          // console.error('🔵 Session error:', sessionError);
-          setIsLoading(false);
-          return;
-        }
-
-        if (session?.user) {
-          await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
-        } else {
-          if (mounted.current) {
-            setUser(null);
-            setIsLoading(false);
-          }
-        }
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            
-            if (event === 'SIGNED_IN' && session?.user) {
-              await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
-            } else if (event === 'SIGNED_OUT') {
-              if (mounted.current) {
-                setUser(null);
-                setIsLoading(false);
-              }
-            }
-          }
-        );
-
-        return () => subscription.unsubscribe();
-      } catch (error) {
-        // console.error('🔵 Auth initialization error:', error);
-        if (mounted.current) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    initializeAuth();
-  }, []);
-
   const signIn = async (phone: string) => {
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -250,10 +253,40 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   };
 
-  const signOut = async () => {
+           const signOut = async () => {
+    
+               // Add a flag to prevent multiple simultaneous sign-outs
+           if ((window as any).__signingOut) {
+             return;
+           }
+    
+    (window as any).__signingOut = true;
+    
     try {
-      // Clear Supabase session
-      await supabase.auth.signOut();
+                   // Check current session before sign out
+             const { data: { session } } = await supabase.auth.getSession();
+      
+                   if (!session) {
+               // Clear local state even if no session
+               setUser(null);
+               setIsLoading(false);
+               queryClient.clear();
+               localStorage.removeItem('sb-qrzueqtkvjamvuljgaix-auth-token');
+               sessionStorage.clear();
+               return;
+             }
+      
+                   // Clear Supabase session with timeout
+             const signOutPromise = supabase.auth.signOut();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Sign out timeout')), 5000)
+      );
+      
+      const { error } = await Promise.race([signOutPromise, timeoutPromise]) as any;
+      
+                   if (error) {
+               throw error;
+             }
       
       // Clear local state
       setUser(null);
@@ -271,16 +304,19 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       // Clear sessionStorage
       sessionStorage.clear();
       
-      // Force a complete page reload to clear all state
-      window.location.reload();
-    } catch (error) {
-      // Even if there's an error, try to clear local state and reload
-      setUser(null);
-      setIsLoading(false);
-      queryClient.clear();
-      localStorage.removeItem('sb-qrzueqtkvjamvuljgaix-auth-token');
-      window.location.reload();
-    }
+                   // Don't force reload - let React handle the state changes
+               } catch (error) {
+             // Even if there's an error, try to clear local state
+             setUser(null);
+             setIsLoading(false);
+             queryClient.clear();
+             localStorage.removeItem('sb-qrzueqtkvjamvuljgaix-auth-token');
+             sessionStorage.clear();
+             throw error; // Re-throw the error so calling code can handle it
+           } finally {
+             // Always clear the flag
+             (window as any).__signingOut = false;
+           }
   };
 
   const updateUser = async (updates: Partial<User>) => {

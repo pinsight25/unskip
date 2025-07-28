@@ -2,32 +2,55 @@ import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUser } from '@/contexts/UserContext';
 
-/**
- * Automatically invalidate cache when user data changes
- * This follows industry best practices for automatic data synchronization
- */
 export const useAutoInvalidateCache = () => {
   const queryClient = useQueryClient();
   const { user } = useUser();
   const lastUserId = useRef<string | undefined>(undefined);
   const lastUserType = useRef<string | undefined>(undefined);
+  const invalidationTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    // Only invalidate if user ID actually changed (login/logout)
+    // Clear any pending invalidation
+    if (invalidationTimeoutRef.current) {
+      clearTimeout(invalidationTimeoutRef.current);
+    }
+
+    // Only invalidate cache when user ID actually changes (login/logout)
     if (user?.id !== lastUserId.current) {
       lastUserId.current = user?.id;
       
       if (user) {
-        // Small delay to ensure user data is fully loaded
-        const timer = setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ['cars'] });
-          queryClient.invalidateQueries({ queryKey: ['userListings'] });
-          queryClient.invalidateQueries({ queryKey: ['dealers'] });
-        }, 100);
+        // Use a longer delay to ensure user data is fully loaded and prevent race conditions
+        invalidationTimeoutRef.current = setTimeout(() => {
+          // Selective invalidation instead of clearing all cache
+          const queriesToInvalidate = [
+            ['userListings'],
+            ['offers'],
+            ['chats'],
+            ['accessories'],
+            ['dealer-info']
+          ];
 
-        return () => clearTimeout(timer);
+          // Invalidate queries one by one to prevent overwhelming the system
+          queriesToInvalidate.forEach((queryKey, index) => {
+            setTimeout(() => {
+              queryClient.invalidateQueries({ queryKey });
+            }, index * 100); // Stagger invalidations by 100ms
+          });
+        }, 500); // Increased delay to 500ms
+      } else {
+        // User logged out - clear cache more aggressively but with a delay
+        invalidationTimeoutRef.current = setTimeout(() => {
+          queryClient.clear();
+        }, 200);
       }
     }
+
+    return () => {
+      if (invalidationTimeoutRef.current) {
+        clearTimeout(invalidationTimeoutRef.current);
+      }
+    };
   }, [user?.id, queryClient]);
 
   // Invalidate cache when user type changes (individual -> dealer)
@@ -36,7 +59,13 @@ export const useAutoInvalidateCache = () => {
       lastUserType.current = user?.userType;
       
       if (user?.userType) {
-        queryClient.invalidateQueries({ queryKey: ['cars'] });
+        // Use optimistic updates instead of invalidation
+        queryClient.setQueryData(['userListings'], (old: any) => {
+          return old || [];
+        });
+        
+        // Only invalidate dealer-specific queries
+        queryClient.invalidateQueries({ queryKey: ['dealer-info'] });
       }
     }
   }, [user?.userType, queryClient]);

@@ -1,127 +1,90 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Dealer } from '@/types/dealer';
 
-export const useDealers = (locationFilter?: string, brandFilter?: string) => {
-  const query = useQuery({
+export const useDealers = () => {
+  const queryClient = useQueryClient();
+  
+  return useQuery({
     queryKey: ['dealers'],
     queryFn: async () => {
-      console.log('🔍 Starting dealer query...');
-      
       const { data: dealers, error } = await supabase
         .from('dealers')
         .select(`
-          id, user_id, business_name, contact_person, phone, email, 
-          business_category, specialization, brands_deal_with, shop_address, 
-          pincode, establishment_year, about, verification_status, verified, slug,
+          id, user_id, slug, business_name, contact_person, business_category,
+          brands_deal_with, specialization, shop_address, pincode, establishment_year,
+          verification_status, total_sales, member_since, created_at, updated_at,
           shop_photos_urls
         `)
-        .order('business_name');
+        .in('verification_status', ['pending', 'verified']) // Show pending and verified dealers
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      console.log('📋 Found dealers:', dealers?.length || 0);
+      if (error) {
+        console.error('❌ useDealers: Query error:', error);
+        throw error;
+      }
+      
+      if (!dealers || dealers.length === 0) {
+        console.log('⚠️ useDealers: No dealers found in database');
+        return [];
+      }
 
-      // Get all dealer user IDs
-      const dealerUserIds = dealers?.map(dealer => dealer.user_id) || [];
-      console.log('🆔 Dealer user IDs:', dealerUserIds);
+      console.log('✅ useDealers: Found dealers:', dealers.length);
+      dealers.forEach(dealer => {
+        console.log(`  - ${dealer.business_name} (${dealer.slug}): ${dealer.verification_status}`);
+      });
 
-      // Get car counts for all dealers in one query
+      const dealerUserIds = dealers.map(dealer => dealer.user_id);
+
       const { data: carCounts, error: carError } = await supabase
         .from('cars')
         .select('seller_id')
-        .eq('status', 'active')
-        .in('seller_id', dealerUserIds);
+        .in('seller_id', dealerUserIds)
+        .eq('status', 'active');
 
       if (carError) {
-        console.error('❌ Car count error:', carError);
-      } else {
-        console.log('🚗 Car counts data:', carCounts);
+        console.error('❌ useDealers: Car counts error:', carError);
       }
 
-      // Get accessory counts for all dealers in one query
       const { data: accessoryCounts, error: accessoryError } = await supabase
         .from('accessories')
         .select('seller_id')
-        .eq('status', 'active')
-        .in('seller_id', dealerUserIds);
+        .in('seller_id', dealerUserIds)
+        .eq('status', 'active');
 
       if (accessoryError) {
-        console.error('❌ Accessory count error:', accessoryError);
-      } else {
-        console.log('📦 Accessory counts data:', accessoryCounts);
+        console.error('❌ useDealers: Accessory counts error:', accessoryError);
       }
 
-      // Create count maps
-      const carCountMap = new Map();
-      const accessoryCountMap = new Map();
+      const carCountMap: Record<string, number> = {};
+      const accessoryCountMap: Record<string, number> = {};
 
-      // Count cars per seller
       carCounts?.forEach(car => {
-        const currentCount = carCountMap.get(car.seller_id) || 0;
-        carCountMap.set(car.seller_id, currentCount + 1);
+        carCountMap[car.seller_id] = (carCountMap[car.seller_id] || 0) + 1;
       });
 
-      // Count accessories per seller
       accessoryCounts?.forEach(accessory => {
-        const currentCount = accessoryCountMap.get(accessory.seller_id) || 0;
-        accessoryCountMap.set(accessory.seller_id, currentCount + 1);
+        accessoryCountMap[accessory.seller_id] = (accessoryCountMap[accessory.seller_id] || 0) + 1;
       });
 
-      console.log('🗺️ Car count map:', Object.fromEntries(carCountMap));
-      console.log('🗺️ Accessory count map:', Object.fromEntries(accessoryCountMap));
-
-      const result = dealers.map((dealer: any) => {
-        const carCount = carCountMap.get(dealer.user_id) || 0;
-        const accessoryCount = accessoryCountMap.get(dealer.user_id) || 0;
-        
-        // Debug logging
-        console.log(`🏢 Dealer ${dealer.business_name} (${dealer.user_id}): ${carCount} cars, ${accessoryCount} accessories`);
+      const result = dealers.map(dealer => {
+        const carsInStock = carCountMap[dealer.user_id] || 0;
+        const accessoriesInStock = accessoryCountMap[dealer.user_id] || 0;
         
         return {
-          id: dealer.id,
-          name: dealer.business_name || dealer.name,
-          contactPerson: dealer.contact_person || '',
-          phone: dealer.phone || '',
-          email: dealer.email || '',
-          businessCategory: dealer.business_category || '',
-          specialization: dealer.specialization || 'All Brands',
-          location: dealer.shop_address || dealer.location || '',
-          city: dealer.city || '',
-          establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
-          carsInStock: carCount,
-          accessoriesInStock: accessoryCount,
-          verified: dealer.verification_status === 'verified' || dealer.verified === true,
-          brands: dealer.brands_deal_with || dealer.brands || [],
-          shopPhoto: dealer.shop_photo || '',
-          shop_photos_urls: dealer.shop_photos_urls || [],
-          verification_status: dealer.verification_status,
-          slug: dealer.slug || '',
+          ...dealer,
+          carsInStock,
+          accessoriesInStock,
         };
       });
-
-      console.log('✅ Final result:', result);
+      
       return result;
     },
-    // Force fresh data to avoid cache issues
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache for 10 minutes
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: true, // Refetch on reconnect
   });
-
-  // Filtering
-  const filteredDealers = useMemo(() => {
-    if (!query.data) return [];
-    
-    const filtered = query.data.filter(dealer => {
-      const locationMatch = !locationFilter || locationFilter === 'All Locations' ||
-        dealer.location.toLowerCase() === locationFilter.toLowerCase();
-      const brandMatch = !brandFilter || brandFilter === 'All Brands' ||
-        dealer.brands.some((brand: string) => brand.toLowerCase() === brandFilter.toLowerCase());
-      return locationMatch && brandMatch;
-    });
-    
-    return filtered;
-  }, [query.data, locationFilter, brandFilter]);
-
-  return { ...query, filteredDealers };
 }; 

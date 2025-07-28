@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,35 +18,65 @@ import { useUser } from '@/contexts/UserContext';
 import EditDealerProfileModal from '@/components/modals/EditDealerProfileModal';
 
 const DealerProfile = () => {
-  const { dealerSlug } = useParams();
+  const { slug } = useParams();
+
+
 
   // All hooks must be at the top, before any early returns
   const [sortBy, setSortBy] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
 
-  // Fetch dealer by slug
+  // Fetch dealer by slug with specific fields
   const { data: dealer, isLoading: dealerLoading, error: dealerError, refetch } = useQuery({
-    queryKey: ['dealer', dealerSlug],
+    queryKey: ['dealer', slug],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log('🔍 Fetching dealer with slug:', slug);
+      
+      // Get the dealer data including shop photos
+      const { data: dealerData, error: dealerError } = await supabase
         .from('dealers')
-        .select('*')
-        .eq('slug', dealerSlug)
+        .select(`
+          id, user_id, slug, business_name, contact_person, business_category,
+          brands_deal_with, specialization, shop_address, pincode, establishment_year,
+          verification_status, total_sales, member_since, created_at, updated_at,
+          shop_photos_urls, phone, email, pan_number, aadhaar_last_four, 
+          business_doc_type, business_doc_number, business_doc_url, pan_card_url, about
+        `)
+        .eq('slug', slug)
         .single();
-      if (error) throw error;
-      return data;
+
+      if (dealerError) {
+        console.error('❌ Dealer query error:', dealerError);
+        throw dealerError;
+      }
+
+      console.log('✅ Dealer found:', dealerData);
+      console.log('📸 Shop photos found:', dealerData.shop_photos_urls || []);
+      
+      return dealerData;
     },
-    enabled: !!dealerSlug,
+    enabled: !!slug,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  // Always refetch dealer data on mount or when dealerSlug changes
+  // Debug logging for state
+  console.log('🔍 DealerProfile state:', {
+    slug,
+    dealerLoading,
+    dealerError: dealerError?.message,
+    dealer: dealer ? 'Found' : 'Not found',
+    timedOut
+  });
+
+  // Always refetch dealer data on mount or when slug changes
   useEffect(() => {
-    if (dealerSlug && refetch) {
+    if (slug && refetch) {
       refetch();
     }
     // eslint-disable-next-line
-  }, [dealerSlug]);
+  }, [slug]);
 
   const { data: allCars = [] } = useCars();
   const { user } = useUser();
@@ -66,13 +95,32 @@ const DealerProfile = () => {
   if (dealerLoading && !timedOut) {
     return <div className="text-center py-12">Loading dealer profile...</div>;
   }
+  
   if (dealerError || !dealer || timedOut) {
-    return <div className="text-center py-12 text-red-500">Dealer not found.</div>;
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-500 mb-4">Dealer not found.</div>
+        <div className="text-sm text-gray-600 mb-4">
+          Slug: {slug || 'undefined'}
+        </div>
+        {dealerError && (
+          <div className="text-xs text-gray-500">
+            Error: {dealerError.message}
+          </div>
+        )}
+        <div className="text-xs text-gray-500 mt-2">
+          Loading: {dealerLoading ? 'Yes' : 'No'}, TimedOut: {timedOut ? 'Yes' : 'No'}
+        </div>
+        <Link to="/dealers">
+          <Button variant="outline">Back to Dealers</Button>
+        </Link>
+      </div>
+    );
   }
 
   const dealerCars = dealer ? allCars.filter(car => String(car.seller.id) === String(dealer.user_id) && car.status === 'active') : [];
-  const brands = dealer.brands_deal_with || dealer.brands || [];
-  const location = dealer.shop_address || dealer.city || '';
+  const brands = dealer?.brands_deal_with || [];
+  const location = dealer?.shop_address || '';
   const sortedCars = [...dealerCars].sort((a, b) => {
     switch (sortBy) {
       case 'price_asc':
@@ -88,8 +136,8 @@ const DealerProfile = () => {
     }
   });
 
-  const isPending = dealer?.status === 'pending';
-  const isVerified = dealer?.status === 'verified';
+  const isPending = dealer?.verification_status === 'pending';
+  const isVerified = dealer?.verification_status === 'verified';
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
@@ -115,7 +163,24 @@ const DealerProfile = () => {
             <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="ml-0 md:ml-4 mt-2 md:mt-0">Edit Profile</Button>
           )}
         </div>
-        <DealerHeader dealer={{ ...dealer, carsInStock: dealerCars.length }} />
+        <DealerHeader dealer={{ 
+          id: dealer.id,
+          name: dealer.business_name || 'Unknown Dealer',
+          contactPerson: dealer.contact_person || '',
+          phone: dealer.phone || '',
+          email: dealer.email || '',
+          businessCategory: dealer.business_category || '',
+          specialization: dealer.specialization || 'All Brands',
+          location: dealer.shop_address || '',
+          establishmentYear: dealer.establishment_year ? dealer.establishment_year.toString() : '',
+          carsInStock: dealerCars.length,
+          accessoriesInStock: 0,
+          verified: dealer.verification_status === 'verified',
+          brands: dealer.brands_deal_with || [],
+          shopPhoto: '',
+          shop_photos_urls: dealer.shop_photos_urls || [],
+          slug: dealer.slug || '',
+        }} />
         <div className="mt-6">
           <DealerInventoryHeader 
             carsCount={sortedCars.length}
@@ -128,6 +193,7 @@ const DealerProfile = () => {
         </div>
         {/* Edit Dealer Profile Modal */}
         <EditDealerProfileModal
+          key={dealer.id} // Force re-render when dealer changes
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           dealer={dealer}
@@ -141,4 +207,4 @@ const DealerProfile = () => {
   );
 };
 
-export default DealerProfile;
+export default DealerProfile; 

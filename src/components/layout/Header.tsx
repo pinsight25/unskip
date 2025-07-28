@@ -9,6 +9,7 @@ import DesktopNavigation from './header/DesktopNavigation';
 import HeaderActions from './header/HeaderActions';
 import HeaderCitySelector from './header/HeaderCitySelector';
 import MobileMenu from './header/MobileMenu';
+import NotificationBell from '@/components/ui/NotificationBell';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 
@@ -109,6 +110,12 @@ const Header = () => {
               <HeaderCitySelector />
             </div>
             <HeaderActions carsSoldToday={carsSoldToday} unreadChats={unreadChats} />
+            {/* Mobile Notification Bell */}
+            {user && (
+              <div className="lg:hidden">
+                <NotificationBell />
+              </div>
+            )}
             {/* Mobile Chat Icon with standardized badge positioning */}
             <Link
               to="/chats"

@@ -94,9 +94,19 @@ const ProfileContent = ({
       }
     },
     enabled: !!user?.id && user?.userType === 'dealer' && user?.dealer_registration_completed,
-    staleTime: Infinity,
-    retry: false, // Don't retry on error
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache for long
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
+
+  // Debug logging for dealer info
+  useEffect(() => {
+    if (dealerInfo?.slug) {
+      console.log('🔍 ProfileContent: dealerInfo.slug found:', dealerInfo.slug);
+    }
+  }, [dealerInfo?.slug]);
 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'listings' | 'offers'>('listings');
@@ -209,9 +219,9 @@ const ProfileContent = ({
             </div>
             
             {/* Business Dashboard Link - Only for completed dealers */}
-            {user?.userType === 'dealer' && user?.dealer_registration_completed && (
+            {user?.userType === 'dealer' && user?.dealer_registration_completed && dealerInfo?.slug && (
               <div className="mt-4 pt-4 border-t border-gray-200">
-                <Link to="/dealer/dashboard">
+                <Link to={`/dealer/${dealerInfo.slug}`} onClick={() => console.log('🔍 ProfileContent: Business Dashboard clicked, going to:', `/dealer/${dealerInfo.slug}`)}>
                   <Button className="w-full h-12 text-base font-semibold bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700" size="lg">
                     <BarChart3 className="h-5 w-5 mr-3" />
                     Business Dashboard

@@ -177,31 +177,7 @@ export const useUserListings = (userId: string | undefined) => {
       return data as any[];
     },
     enabled: !!userId,
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
-    refetchOnWindowFocus: false, // Use global config
-    refetchOnMount: false, // Use global config
-  });
-
-  return query;
-};
-
-// Fetch all dealers for dealers page
-export const useDealers = () => {
-  const query = useQuery<any[]>({
-    queryKey: ['dealers'],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('dealers')
-        .select('id, user_id, business_name, shop_address, phone, email, brands_deal_with, shop_photos_urls, about, created_at, updated_at, verified, verification_status')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as any[];
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes - match global config
-    gcTime: 10 * 60 * 1000, // 10 minutes - match global config
-    refetchOnWindowFocus: false, // Use global config
-    refetchOnMount: false, // Use global config
+    // Use global config - no local overrides
   });
 
   return query;

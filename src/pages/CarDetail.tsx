@@ -7,6 +7,7 @@ import CarDetailContainer from '@/components/car/CarDetailContainer';
 import { supabase } from '@/lib/supabase';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
 import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,22 +15,52 @@ const CarDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [sellerInfo, setSellerInfo] = useState<any>(null);
+  const queryClient = useQueryClient();
+
+
 
   useEffect(() => {
     let mounted = true;
+    
+    // Clear any cached data for this car to ensure fresh fetch
+    if (id) {
+      queryClient.removeQueries({ queryKey: ['car', id] });
+    }
+    
+    // Reset state when component mounts or ID changes
+    setCar(null);
+    setSellerInfo(null);
+    setError(false);
+    setLoading(true);
+    
     const fetchCar = async () => {
       if (!id) return;
       try {
-        setLoading(true);
-        setError(false); // Reset error state on new fetch
+        if (!mounted) return; // Check if still mounted before proceeding
+        
+        // Add timeout to prevent hanging requests
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout')), 10000)
+        );
+        
         // Simple query - just get the car
-        const { data: carData, error: carError } = await supabase
+        const carQueryPromise = supabase
           .from('cars')
           .select('*')
           .eq('id', id)
           .single();
-        if (carError) throw carError;
-        if (!carData) throw new Error('Car not found');
+        
+        const { data: carData, error: carError } = await Promise.race([
+          carQueryPromise,
+          timeoutPromise
+        ]) as any;
+        if (carError) {
+          console.error('🔍 CarDetail: Car query error:', carError);
+          throw carError;
+        }
+        if (!carData) {
+          throw new Error('Car not found');
+        }
         // Map carData and images to Car type
         const carObj: Car = {
           id: carData.id,
@@ -89,14 +120,18 @@ const CarDetail = () => {
           serviceHistory: undefined,
           seller_type: 'individual',
         };
+        if (!mounted) return;
         setCar(carObj); // Set car immediately
+        
         // Fetch images separately
         const { data: images } = await supabase
           .from('car_images')
           .select('*')
           .eq('car_id', id);
         const imageUrls = images?.map((img: any) => img.image_url) || [];
-        setCar(prev => prev ? { ...prev, images: imageUrls } : prev);
+        if (mounted) {
+          setCar(prev => prev ? { ...prev, images: imageUrls } : prev);
+        }
         // Fetch seller info
         if (carData.seller_id) {
           const { data: seller } = await supabase
@@ -105,7 +140,7 @@ const CarDetail = () => {
             .eq('id', carData.seller_id)
             .single();
           
-          if (seller) {
+          if (seller && mounted) {
             setSellerInfo(seller);
             
             // Check if seller is a dealer
@@ -119,26 +154,33 @@ const CarDetail = () => {
               dealerInfo = dealer;
             }
             
-            setCar(prev => prev ? {
-              ...prev,
-              seller: {
-                ...prev.seller,
-                name: seller.user_type === 'dealer' ? (dealerInfo?.business_name || seller.name || 'Dealer') : (seller.name || 'Individual Seller'),
-                type: seller.user_type || 'individual',
-                verified: seller.is_verified || false,
-                dealerVerified: seller.user_type === 'dealer' ? (dealerInfo?.verification_status === 'verified') : undefined,
-                memberSince: seller.created_at ? new Date(seller.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '',
-                phone: seller.phone || '',
-                email: seller.email || '',
-              },
-              seller_type: seller.user_type || 'individual',
-            } : prev);
+            if (mounted) {
+              setCar(prev => prev ? {
+                ...prev,
+                seller: {
+                  ...prev.seller,
+                  name: seller.user_type === 'dealer' ? (dealerInfo?.business_name || seller.name || 'Dealer') : (seller.name || 'Individual Seller'),
+                  type: seller.user_type || 'individual',
+                  verified: seller.is_verified || false,
+                  dealerVerified: seller.user_type === 'dealer' ? (dealerInfo?.verification_status === 'verified') : undefined,
+                  memberSince: seller.created_at ? new Date(seller.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '',
+                  phone: seller.phone || '',
+                  email: seller.email || '',
+                },
+                seller_type: seller.user_type || 'individual',
+              } : prev);
+            }
           }
         }
       } catch (error) {
-        setError(true);
+        console.error('Error fetching car:', error);
+        if (mounted) {
+          setError(true);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
     fetchCar();
@@ -182,6 +224,14 @@ const CarDetail = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <h2 className="text-xl font-semibold mb-2">Loading car details...</h2>
             <p className="text-gray-600">Please wait while we fetch the car information.</p>
+            <div className="mt-4">
+              <button 
+                onClick={() => window.location.reload()} 
+                className="text-sm text-primary hover:underline"
+              >
+                Click here if loading takes too long
+              </button>
+            </div>
           </div>
         </div>
       </div>

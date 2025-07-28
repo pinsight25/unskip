@@ -6,7 +6,6 @@ import { AccessoryFilters, AccessoryCategory } from '@/types/accessory';
 import AccessoryHeader from '@/components/accessories/AccessoryHeader';
 import AccessoryFiltersComponent from '@/components/accessories/AccessoryFilters';
 import AccessoryResults from '@/components/accessories/AccessoryResults';
-import { RefreshControl } from '@/components/home/RefreshControl';
 
 const Accessories = () => {
   const navigate = useNavigate();
@@ -37,7 +36,7 @@ const Accessories = () => {
     location: filters.location || undefined,
   };
 
-  const { data: accessories = [], isLoading, error, refetch } = useAccessories(dbFilters);
+  const { data: accessories = [], isLoading, error } = useAccessories(dbFilters);
 
   const handleCategoryFilter = (category: AccessoryCategory | 'all') => {
     setFilters(prev => ({ ...prev, category }));
@@ -64,10 +63,6 @@ const Accessories = () => {
     });
   };
 
-  const handleRefresh = async () => {
-    await refetch();
-  };
-
   return (
     <div className="bg-white min-h-screen">
       {/* Header Section */}
@@ -89,10 +84,6 @@ const Accessories = () => {
             filters={filters}
             onSortChange={handleSortChange}
             filteredCount={accessories.length}
-          />
-          <RefreshControl 
-            queryKeys={['accessories']} 
-            onRefresh={handleRefresh}
           />
         </div>
 

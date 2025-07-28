@@ -1,15 +1,16 @@
 
-import { Car } from '@/types/car';
+import { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Heart, MessageCircle, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useChatManager } from '@/hooks/useChatManager';
-import { useState } from 'react';
-import ResultsHeader from './results/ResultsHeader';
-import RefreshControl from './results/RefreshControl';
-import EmptyResults from './results/EmptyResults';
-import ResultsGrid from './results/ResultsGrid';
 import { useSavedCars } from '@/hooks/useSavedCars';
+import { useUser } from '@/contexts/UserContext';
+import { useAuthModal } from '@/contexts/AuthModalContext';
+import { Car } from '@/types/car';
+import ResultsHeader from './results/ResultsHeader';
+import ResultsGrid from './results/ResultsGrid';
+import EmptyResults from './results/EmptyResults';
 
 interface SearchFiltersType {
   query: string;
@@ -45,21 +46,27 @@ const HomeResults = ({
   onFilterChange,
   getOfferStatus
 }: Omit<HomeResultsProps, 'savedCars' | 'onSaveCar'>) => {
-  const { savedCars, saveCar, unsaveCar, isSaving } = useSavedCars();
-  const { navigateToChat } = useChatManager();
+  const location = useLocation();
+  const { user } = useUser();
+  const { openSignInModal } = useAuthModal();
   const { toast } = useToast();
-  // Remove the Verified Only filter UI and logic
-  // - Delete the <div> with the checkbox
-  // - Remove the verifiedOnly state and all references
-  // - Always show filteredCars as carsToShow
-  const carsToShow = Array.isArray(filteredCars) ? filteredCars : [];
+  const { savedCars, saveCar, unsaveCar, isSaving } = useSavedCars();
 
-  // Defensive: savedCars is always string[] (car IDs)
-  const savedCarIds = Array.isArray(savedCars) ? savedCars : [];
+  // Convert savedCars array to Set for O(1) lookup
+  const savedCarIds = useMemo(() => new Set(savedCars), [savedCars]);
 
-  // Handler to toggle save/unsave
+  // Limit cars to show based on mobile/desktop
+  const carsToShow = useMemo(() => {
+    return isMobile ? filteredCars.slice(0, 10) : filteredCars;
+  }, [filteredCars, isMobile]);
+
   const handleSaveCar = (carId: string) => {
-    if (savedCarIds?.includes(carId)) {
+    if (!user) {
+      openSignInModal();
+      return;
+    }
+
+    if (savedCarIds.has(carId)) {
       unsaveCar(carId);
     } else {
       saveCar(carId);
@@ -67,38 +74,57 @@ const HomeResults = ({
   };
 
   const handleChatClick = (car: Car) => {
+    if (!user) {
+      openSignInModal();
+      return;
+    }
+
     const status = getOfferStatus(car.id);
     
     if (status === 'none') {
       toast({
         title: "Make an offer first",
-        description: "You need to make an offer before you can chat with the seller.",
-        variant: "destructive",
+        description: "Please make an offer before starting a chat with the seller.",
       });
       return;
     }
     
     if (status === 'pending') {
       toast({
-        title: "Waiting for seller response",
-        description: "Please wait for the seller to respond to your offer before chatting.",
+        title: "Wait for seller response",
+        description: "Please wait for the seller to respond to your offer before starting a chat.",
       });
       return;
     }
     
     if (status === 'accepted') {
-      navigateToChat(car.id);
+      toast({
+        title: "Chat Started!",
+        description: `Chat started with ${car.seller.name}!`,
+      });
+    }
+    
+    if (status === 'rejected') {
+      toast({
+        title: "Offer was rejected",
+        description: "Please make a new offer before starting a chat.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleTestDriveClick = (car: Car) => {
+    if (!user) {
+      openSignInModal();
+      return;
+    }
+
     const status = getOfferStatus(car.id);
     
     if (status === 'none') {
       toast({
         title: "Make an offer first",
-        description: "You need to make an offer first to schedule a test drive.",
-        variant: "destructive",
+        description: "Please make an offer before scheduling a test drive.",
       });
       return;
     }
@@ -135,14 +161,6 @@ const HomeResults = ({
     <section className="pt-6 pb-8 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-6">
         
-        {/* Mobile Pull to Refresh */}
-        {isMobile && (
-          <RefreshControl 
-            isRefreshing={isRefreshing}
-            onRefresh={onPullToRefresh}
-          />
-        )}
-
         {/* Desktop Results Header */}
         <ResultsHeader
           filteredCarsCount={carsToShow?.length ?? 0}

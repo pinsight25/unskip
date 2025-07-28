@@ -45,12 +45,14 @@ import { useCars } from '@/hooks/queries/useCarQueries';
 import { useAccessories } from '@/hooks/queries/useAccessories';
 
 const DealerInventory = () => {
-  const { dealerSlug } = useParams();
+  const { slug } = useParams();
   const [sortBy, setSortBy] = useState('');
   const [activeTab, setActiveTab] = useState<'cars' | 'accessories'>('cars');
   const { user } = useUser();
   const [editOpen, setEditOpen] = useState(false);
   const location = useLocation();
+
+
   
   // Main view toggle for dealer's own page
   const [mainView, setMainView] = useState<'inventory' | 'dashboard'>('inventory');
@@ -63,25 +65,42 @@ const DealerInventory = () => {
 
   // Fetch dealer data using React Query
   const { data: dealer, isLoading: dealerLoading, error: dealerError } = useQuery({
-    queryKey: ['dealer', dealerSlug, user?.id],
+    queryKey: ['dealer', slug, user?.id],
     queryFn: async () => {
       // Check if this is dealer's own page by slug
-      if (dealerSlug && user?.id) {
+      if (slug && user?.id) {
         // First try to fetch by slug to check if it's the user's own dealer page
         const { data: slugData, error: slugError } = await supabase
           .from('dealers')
           .select('*')
-          .eq('slug', dealerSlug)
+          .eq('slug', slug)
           .single();
         
-        if (!slugError && slugData && slugData.user_id === user.id) {
-          // This is the dealer's own page accessed via slug
-          return slugData;
+        if (!slugError && slugData) {
+          // Allow access if it's the dealer's own page OR if it's a public dealer page
+          if (slugData.user_id === user.id) {
+            // This is the dealer's own page accessed via slug
+            return slugData;
+          } else {
+            // This is a public dealer page - also allow access
+            return slugData;
+          }
+        } else if (slugError && user?.id) {
+          // If slug lookup failed but user is logged in, try to fetch by user_id
+          const { data: userData, error: userError } = await supabase
+            .from('dealers')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+          
+          if (!userError && userData) {
+            return userData;
+          }
         }
       }
       
       // Check if this is the dashboard route
-      if (!dealerSlug && location.pathname === '/dealer/dashboard') {
+      if (!slug && location.pathname === '/dealer/dashboard') {
         if (!user?.id) throw new Error('User not authenticated');
         const { data, error } = await supabase
           .from('dealers')
@@ -93,19 +112,23 @@ const DealerInventory = () => {
       }
       
       // For public dealer inventory, fetch by slug
-      if (!dealerSlug) throw new Error('No dealer slug provided');
+      if (!slug) throw new Error('No dealer slug provided');
       const { data, error } = await supabase
         .from('dealers')
         .select('*')
-        .eq('slug', dealerSlug)
+        .eq('slug', slug)
         .single();
       if (error || !data) throw new Error('Dealer not found');
       return data;
     },
-    enabled: !!dealerSlug || (location.pathname === '/dealer/dashboard' && !!user?.id),
-    staleTime: 30000,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    enabled: !!slug || (location.pathname === '/dealer/dashboard' && !!user?.id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: true, // Only refetch on reconnect
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Fetch cars for this dealer using React Query
@@ -164,12 +187,19 @@ const DealerInventory = () => {
         rentType: car.rentType,
         verified: car.verified,
         featured: car.featured,
+        seller_type: 'dealer',
+        views: 0,
+        createdAt: car.created_at,
       }));
     },
     enabled: !!dealer?.user_id,
-    staleTime: 30000,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: true, // Only refetch on reconnect
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Fetch accessories for this dealer using React Query
@@ -187,9 +217,13 @@ const DealerInventory = () => {
       return data || [];
     },
     enabled: !!dealer?.user_id,
-    staleTime: 30000,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: true, // Only refetch on reconnect
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Sorting for cars
@@ -240,22 +274,22 @@ const DealerInventory = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">
-              {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-                (dealerSlug && user && dealer?.user_id === user.id)) ? 'Business Dashboard Not Available' : 'Dealer Not Found'}
+              {((!slug && location.pathname === '/dealer/dashboard') || 
+                (slug && user && dealer?.user_id === user.id)) ? 'Business Dashboard Not Available' : 'Dealer Not Found'}
             </h1>
             <p className="text-gray-600 mb-6">
-              {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-                (dealerSlug && user && dealer?.user_id === user.id))
+              {((!slug && location.pathname === '/dealer/dashboard') || 
+                (slug && user && dealer?.user_id === user.id))
                 ? 'Please complete your dealer registration to access the business dashboard.'
                 : 'The dealer you\'re looking for doesn\'t exist.'
               }
             </p>
-            <Link to={((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-                      (dealerSlug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'}>
+            <Link to={((!slug && location.pathname === '/dealer/dashboard') || 
+                      (slug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'}>
               <Button>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-                  (dealerSlug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
+                {((!slug && location.pathname === '/dealer/dashboard') || 
+                  (slug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
               </Button>
             </Link>
           </div>
@@ -319,8 +353,8 @@ const DealerInventory = () => {
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* Breadcrumb - Desktop Only */}
-        {!((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-           (dealerSlug && user && dealer?.user_id === user.id)) && (
+        {!((!slug && location.pathname === '/dealer/dashboard') || 
+           (slug && user && dealer?.user_id === user.id)) && (
           <Breadcrumb className="py-3 hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -338,24 +372,24 @@ const DealerInventory = () => {
         {/* Back Button for Mobile */}
         <div className="md:hidden py-2">
           <Link 
-            to={((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-                (dealerSlug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'} 
+            to={((!slug && location.pathname === '/dealer/dashboard') || 
+                (slug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'} 
             className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-              (dealerSlug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
+            {((!slug && location.pathname === '/dealer/dashboard') || 
+              (slug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
           </Link>
         </div>
         {/* Main View Toggle - Only for dealer's own page */}
-        {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-          (dealerSlug && user && dealer?.user_id === user.id)) && (
-          <div className="mb-6">
+        {((!slug && location.pathname === '/dealer/dashboard') || 
+          (slug && user && dealer?.user_id === user.id)) && (
+          <div className="mt-8 mb-8">
             <Tabs value={mainView} onValueChange={(value) => setMainView(value as 'inventory' | 'dashboard')} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-gray-100 p-1 rounded-lg">
+              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-gray-100 p-1 rounded-lg shadow-sm">
                 <TabsTrigger 
                   value="inventory" 
-                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-2 ${
+                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-3 ${
                     mainView === 'inventory' 
                       ? 'bg-orange-500 text-white shadow-sm' 
                       : 'text-gray-600 hover:text-orange-600'
@@ -366,7 +400,7 @@ const DealerInventory = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="dashboard" 
-                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-2 ${
+                  className={`flex items-center gap-2 transition-all duration-200 rounded-md px-4 py-3 ${
                     mainView === 'dashboard' 
                       ? 'bg-orange-500 text-white shadow-sm' 
                       : 'text-gray-600 hover:text-orange-600'
@@ -381,8 +415,8 @@ const DealerInventory = () => {
         )}
         
         {/* Enhanced Dealer Header - Only show for inventory view or public dealers */}
-        {(!((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-           (dealerSlug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
+        {(!((!slug && location.pathname === '/dealer/dashboard') || 
+           (slug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
           <>
             <DealerHeader dealer={dealer} />
             
@@ -549,8 +583,8 @@ const DealerInventory = () => {
         )}
         
         {/* Business Dashboard Section - Only for dealer's own dashboard when dashboard tab is selected */}
-        {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-          (dealerSlug && user && dealer?.user_id === user.id)) && mainView === 'dashboard' && (
+        {((!slug && location.pathname === '/dealer/dashboard') || 
+          (slug && user && dealer?.user_id === user.id)) && mainView === 'dashboard' && (
           <div className="mt-6">
             <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -749,8 +783,8 @@ const DealerInventory = () => {
         )}
         
         {/* Inventory Section with Tabs - Show for public dealers or when inventory tab is selected */}
-        {(!((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-           (dealerSlug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
+        {(!((!slug && location.pathname === '/dealer/dashboard') || 
+           (slug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
           <div className="mt-6">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'cars' | 'accessories')} className="w-full">
             <TabsList className="flex w-full gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
@@ -858,8 +892,8 @@ const DealerInventory = () => {
         )}
 
         {/* Edit Dealer Profile Modal */}
-        {((!dealerSlug && location.pathname === '/dealer/dashboard') || 
-          (dealerSlug && user && dealer?.user_id === user.id)) && (
+        {((!slug && location.pathname === '/dealer/dashboard') || 
+          (slug && user && dealer?.user_id === user.id)) && (
           <EditDealerProfileModal
             isOpen={editOpen}
             onClose={() => setEditOpen(false)}

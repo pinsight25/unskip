@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 import { carService } from '@/services/carService';
 import { supabase } from '@/lib/supabase';
+import { debugAuthState } from '@/utils/debugAuth';
 
 export const useProfileHandlers = () => {
   const navigate = useNavigate();
@@ -50,13 +51,65 @@ export const useProfileHandlers = () => {
     }
   };
 
-  const handleSignOut = () => {
-    signOut();
-    toast({
-      title: "Signed Out",
-      description: "You have been signed out successfully",
-    });
-    navigate('/');
+           const handleSignOut = async () => {
+           // Prevent multiple simultaneous calls
+           if ((window as any).__handleSignOutInProgress) {
+             return;
+           }
+    
+    (window as any).__handleSignOutInProgress = true;
+    
+    try {
+                   // Check if user is actually signed in before attempting sign out
+             if (!user) {
+               return;
+             }
+
+                   // Debug auth state before sign out
+             const authState = debugAuthState();
+             if (!authState.isActuallySignedIn) {
+               return;
+             }
+
+                   // Call signOut with timeout
+      const signOutPromise = signOut();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Sign out timeout')), 10000)
+      );
+      
+      await Promise.race([signOutPromise, timeoutPromise]);
+      
+      // Add a small delay to ensure state has updated
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+                   // Verify user is actually signed out before showing toast
+             const postSignOutState = debugAuthState();
+             if (postSignOutState.isActuallySignedIn) {
+               toast({
+                 title: "Sign Out Failed",
+                 description: "There was a problem signing you out. Please try again.",
+                 variant: "destructive"
+               });
+               return;
+             }
+      
+      // Only show toast after successful sign out
+      toast({
+        title: "Signed Out",
+        description: "You have been signed out successfully",
+      });
+      navigate('/');
+               } catch (error) {
+             // If sign out fails, don't show success toast
+      toast({
+        title: "Sign Out Failed",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      // Always clear the flag
+      (window as any).__handleSignOutInProgress = false;
+    }
   };
 
   const handleDeleteListing = (

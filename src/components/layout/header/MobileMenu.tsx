@@ -33,10 +33,14 @@ const MobileMenu = ({
   const { user, isLoading, signOut } = useUser();
   const { openSignInModal } = useAuthModal();
 
-  const handleSignOut = () => {
-    signOut();
-    onMenuClose();
-  };
+           const handleSignOut = async () => {
+           try {
+             await signOut();
+             onMenuClose();
+           } catch (error) {
+             // Handle error silently
+           }
+         };
 
   if (!isOpen) return null;
 

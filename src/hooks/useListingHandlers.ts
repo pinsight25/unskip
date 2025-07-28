@@ -109,7 +109,7 @@ export const useListingHandlers = () => {
       listingId: listing.id
     }));
     
-    navigate(`/sell?edit=${listing.id}`);
+    navigate(`/sell-car?edit=${listing.id}`);
     // Set carUpdated and carsListUpdated flags
     localStorage.setItem('carUpdated', JSON.stringify({
       timestamp: Date.now(),
@@ -168,7 +168,7 @@ export const useListingHandlers = () => {
     };
 
     sessionStorage.setItem('duplicateListingData', JSON.stringify(duplicateData));
-    navigate('/sell?duplicate=true');
+    navigate('/sell-car?duplicate=true');
   };
 
   const handleEditAccessory = (accessory: Accessory) => {

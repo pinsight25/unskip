@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { mockCars } from '@/data/mockData';
 import { Car } from '@/types/car';
 import { useToast } from '@/hooks/use-toast';
@@ -6,6 +6,10 @@ import { useCity } from '@/contexts/CityContext';
 import { supabase } from '@/lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { formatPhoneForDB, formatPhoneForAuth } from '@/utils/phoneUtils';
+import { useCars } from '@/hooks/queries/useCarQueries';
+import { useUser } from '@/contexts/UserContext';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { NotificationService } from '@/services/notificationService';
 
 interface SearchFiltersType {
   query: string;
@@ -33,6 +37,8 @@ export const useHomeState = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
   const { selectedCity } = useCity();
+  const { user } = useUser();
+  const { addNotification } = useNotifications();
 
   // React Query: fetch cars
   const {
@@ -108,7 +114,7 @@ export const useHomeState = () => {
           description: car.description || '',
           seller: {
             id: car.seller_id || '',
-            name: isDealer ? (dealerInfo?.business_name || car.users?.name || 'Dealer') : (car.users?.name || 'Individual Seller'),
+            name: isDealer ? (car.users?.name || 'Dealer') : (car.users?.name || 'Individual Seller'),
             type: isDealer ? 'dealer' : 'individual',
             phone: formatPhoneForAuth(car.phone_number || ''),
             email: car.email || '',
@@ -265,27 +271,64 @@ export const useHomeState = () => {
     setShowOfferModal(true);
   };
 
-  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+  const handleOfferSubmit = async (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
+    if (!selectedCar || !user) return;
     
-    if (selectedCar) {
+    try {
       // Set offer status to pending
       setOfferStatuses(prev => ({ ...prev, [selectedCar.id]: 'pending' }));
       
-      // Simulate offer acceptance after 3 seconds
-      setTimeout(() => {
+      // Create notification for seller about new offer
+      if (selectedCar.seller.id && selectedCar.seller.id !== user.id) {
+        await NotificationService.notifyNewOffer(
+          selectedCar.seller.id,
+          selectedCar.id,
+          selectedCar.title,
+          offer.amount
+        );
+      }
+      
+      // Create notification for buyer about offer submission
+      await NotificationService.createNotification({
+        userId: user.id,
+        type: 'offer',
+        title: 'Offer Submitted! 📤',
+        message: `Your offer of ₹${offer.amount.toLocaleString()} for ${selectedCar.title} has been sent to the seller.`,
+        relatedId: selectedCar.id,
+        actionUrl: `/car/${selectedCar.id}`,
+        priority: 'medium'
+      });
+      
+      // Simulate offer acceptance after 3 seconds (for demo purposes)
+      setTimeout(async () => {
         setOfferStatuses(prev => ({ ...prev, [selectedCar.id]: 'accepted' }));
+        
+        // Create notification for buyer about offer acceptance
+        await NotificationService.notifyOfferAccepted(
+          user.id,
+          selectedCar.id,
+          selectedCar.title
+        );
+        
         toast({
           title: "Offer Accepted! 🎉",
           description: "Great news! The seller has accepted your offer. You can now chat with them.",
         });
       }, 3000);
+      
+      toast({
+        title: "Offer submitted successfully! 🎉",
+        description: "Your offer has been sent to the seller. They will contact you if interested.",
+      });
+      setShowOfferModal(false);
+    } catch (error) {
+      console.error('Error submitting offer:', error);
+      toast({
+        title: "Offer submission failed",
+        description: "There was an error submitting your offer. Please try again.",
+        variant: "destructive"
+      });
     }
-    
-    toast({
-      title: "Offer submitted successfully! 🎉",
-      description: "Your offer has been sent to the seller. They will contact you if interested.",
-    });
-    setShowOfferModal(false);
   };
 
   // For pull-to-refresh, use refetch from React Query

@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MessageCircle, User, LogOut } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useAuthModal } from '@/contexts/AuthModalContext';
+import NotificationBell from '@/components/ui/NotificationBell';
 
 interface HeaderActionsProps {
   carsSoldToday: number;
@@ -17,13 +18,13 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
   const { user, isLoading, signOut } = useUser();
   const { openSignInModal } = useAuthModal();
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      // console.error('🔴 HeaderActions: Sign out failed:', error);
-    }
-  };
+           const handleSignOut = async () => {
+           try {
+             await signOut();
+           } catch (error) {
+             // Handle error silently
+           }
+         };
 
   return (
     <div className="hidden lg:flex items-center space-x-6">
@@ -38,6 +39,10 @@ const HeaderActions = ({ carsSoldToday, unreadChats }: HeaderActionsProps) => {
           )}
         </div>
       </Link>
+
+      {/* Notification Bell - Only show when user is logged in */}
+      {user && <NotificationBell />}
+
       {/* Profile/Sign In Section - FIXED LOGIC */}
       {isLoading ? (
         // Show loading state only when actually loading

@@ -1,8 +1,8 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Plus, RefreshCw } from 'lucide-react';
 import DealerHeader from '@/components/dealers/DealerHeader';
 import DealerFilters from '@/components/dealers/DealerFilters';
 import DealerGrid from '@/components/dealers/DealerGrid';
@@ -12,7 +12,6 @@ import { useDealers } from '@/hooks/queries/useDealers';
 import { Dealer } from '@/types/dealer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCars } from '@/hooks/queries/useCarQueries';
-import { useQueryClient } from '@tanstack/react-query';
 
 const DealerSkeletonGrid = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -25,10 +24,36 @@ const DealerSkeletonGrid = () => (
 const Dealers = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
-  const queryClient = useQueryClient();
 
-  // Use the new useDealers hook
-  const { filteredDealers, error, data: allDealers, isLoading, refetch } = useDealers(selectedLocation, selectedBrand);
+  // Use the updated useDealers hook (no parameters)
+  const { data: allDealers, error, isLoading } = useDealers();
+
+  // Filter dealers based on selected filters
+  const filteredDealers = allDealers?.filter(dealer => {
+    const locationMatch = !selectedLocation || 
+      dealer.shop_address?.toLowerCase().includes(selectedLocation.toLowerCase());
+    
+    const brandMatch = !selectedBrand || 
+      dealer.brands_deal_with?.some(brand => 
+        brand.toLowerCase().includes(selectedBrand.toLowerCase())
+      );
+    
+    return locationMatch && brandMatch;
+  }).map(dealer => ({
+    id: dealer.id,
+    name: dealer.business_name || 'Unknown Dealer',
+    contactPerson: dealer.contact_person || '',
+    businessCategory: dealer.business_category || '',
+    specialization: dealer.specialization || '',
+    location: dealer.shop_address || '',
+    establishmentYear: dealer.establishment_year?.toString() || '',
+    carsInStock: dealer.carsInStock || 0,
+    verified: dealer.verification_status === 'verified',
+    brands: dealer.brands_deal_with || [],
+    shopPhoto: dealer.shop_photos_urls?.[0] || '',
+    verification_status: dealer.verification_status,
+    slug: dealer.slug || '',
+  })) || [];
 
   // Reset filters to show all dealers by default on mount
   useEffect(() => {
@@ -40,12 +65,6 @@ const Dealers = () => {
   const handleClearFilters = () => {
     setSelectedLocation('');
     setSelectedBrand('');
-  };
-
-  const handleRefresh = async () => {
-    console.log('🔄 Manually refreshing dealers data...');
-    await queryClient.invalidateQueries({ queryKey: ['dealers'] });
-    await refetch();
   };
 
   return (
@@ -65,20 +84,11 @@ const Dealers = () => {
           />
         </div>
         
-        {/* Results count and refresh button */}
-        <div className="mb-4 flex justify-between items-center">
+        {/* Results count */}
+        <div className="mb-4">
           <p className="text-gray-600 text-sm">
             Showing {filteredDealers ? filteredDealers.length : 0} of {(allDealers || []).length} dealers
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            className="gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
         </div>
         
         {/* Dealers Grid */}

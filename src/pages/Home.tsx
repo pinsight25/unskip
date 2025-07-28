@@ -16,7 +16,6 @@ import { useHomeTestDriveHandlers } from '@/components/home/handlers/HomeTestDri
 import { useHomeChatHandlers } from '@/components/home/handlers/HomeChatHandlers';
 import { useAuthModal } from '@/contexts/AuthModalContext';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RefreshControl } from '@/components/home/RefreshControl';
 
 const Home = () => {
   // Use only useCars for car data
@@ -58,11 +57,6 @@ const Home = () => {
   const handleTypeFilter = (type: 'all' | 'dealer' | 'individual') => setSelectedType(type);
   // Handler for search
   const handleSearch = (query: string) => setSearchQuery(query);
-  
-  // Manual refresh handler
-  const handleRefresh = async () => {
-    await Promise.all([refetchCars(), refetchDealers()]);
-  };
 
   // Handlers for offers, chat, test drive, etc. (unchanged)
   const { handleOfferSubmit } = useHomeOfferHandlers({ selectedCar: null, originalHandleOfferSubmit: () => {} });
@@ -89,13 +83,7 @@ const Home = () => {
         ownerCarsCount={ownerCarsCount}
       />
       <div className="max-w-7xl mx-auto px-4 relative">
-        {/* Manual refresh control */}
-        <div className="flex justify-end py-2">
-          <RefreshControl 
-            queryKeys={['cars', 'dealers']} 
-            onRefresh={handleRefresh}
-          />
-        </div>
+        {/* Results */}
         <HomeResults
           filteredCars={filteredCars}
           currentFilters={{ type: selectedType, query: searchQuery, priceRange, location }}
