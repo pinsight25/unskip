@@ -22,14 +22,8 @@ export const useDealers = () => {
       }
       
       if (!dealers || dealers.length === 0) {
-
         return [];
       }
-
-      
-              dealers.forEach(dealer => {
-          // Dealer data processed silently
-        });
 
       const dealerUserIds = dealers.map(dealer => dealer.user_id);
 

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/contexts/UserContext';
-import { ChatMessage } from '@/types/chat';
 import { Car } from '@/types/car';
 import ChatMessages from '@/components/chat/ChatMessages';
 import ChatInput from '@/components/chat/ChatInput';
@@ -32,19 +31,7 @@ function toSeller(user: any): Seller {
   };
 }
 
-// Map database snake_case to UI camelCase
-function mapDbMessageToUi(msg: any): ChatMessage {
-  return {
-    id: msg.id,
-    chatId: msg.chat_id,
-    senderId: msg.sender_id,
-    receiverId: msg.receiver_id,
-    content: msg.content,
-    timestamp: msg.created_at,
-    seen: msg.seen ?? false,
-    type: msg.message_type || 'text',
-  };
-}
+
 
 const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
   const { id: chatId } = useParams();
@@ -52,19 +39,14 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
   const navigate = useNavigate();
   
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [chat, setChat] = useState<any>(null);
   const [otherUser, setOtherUser] = useState<any>(null);
   const [car, setCar] = useState<Car | null>(null);
   const [carImages, setCarImages] = useState<any[]>([]);
-  const [carImagesLoading, setCarImagesLoading] = useState(false);
   const [loading, setLoading] = useState(true); // <-- Add loading state
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  // Optimistic message sending
-  const [pendingMessages, setPendingMessages] = useState<ChatMessage[]>([]);
 
   // Remove conflicting real-time refetch hooks - useMessages handles its own subscription
 
@@ -133,7 +115,6 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         rtoTransferSupport: carData.rto_transfer_support,
       });
       // Step 2: Fetch car_images for this car
-      setCarImagesLoading(true);
       let carImages: any[] = [];
       if (carData?.id) {
         const { data: images } = await supabase
@@ -143,7 +124,6 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         carImages = images || [];
       }
       setCarImages(carImages);
-      setCarImagesLoading(false);
       setLoading(false); // Mark loading as complete
 
       // Get existing messages
@@ -185,12 +165,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
       try {
         // Log user.id and all receiverIds for debug
         const userIdStr = String(user.id).trim();
-        const allReceiverIds = messages.map(m => String(m.receiverId).trim());
-        if (!allReceiverIds.includes(userIdStr)) {
-        }
-        // Use normalized string comparison for unseenMessages
-        const unseenMessages = messages.filter(m => String(m.receiverId).trim() === userIdStr && !m.seen);
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('chat_messages')
           .update({ seen: true })
           .eq('chat_id', chatId)
@@ -345,11 +320,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
     setNewMessage(message);
   };
 
-  // Merge messages and pendingMessages for display
-  const allMessages = [...messages, ...pendingMessages];
 
-  const HEADER_HEIGHT = 64; // px
-  const INPUT_HEIGHT = 80; // px
 
   // Show error state if no chatId
   if (!chatId) {
@@ -397,7 +368,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         isRealTimeConnected={true}
       />
       {/* Messages */}
-      <ChatMessages messages={messages} isTyping={isTyping} user={user} otherUser={otherUser} car={car} />
+      <ChatMessages messages={messages} isTyping={false} user={user} otherUser={otherUser} car={car} />
       {/* Input */}
       <ChatInput
         newMessage={newMessage}
