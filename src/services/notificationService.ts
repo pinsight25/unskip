@@ -33,6 +33,10 @@ export class NotificationService {
 
       if (error) {
         console.error('Error creating notification:', error);
+        // If table doesn't exist, this will help identify the issue
+        if (error.code === '42P01') {
+          console.error('NOTIFICATIONS TABLE DOES NOT EXIST! Run the SQL script in Supabase.');
+        }
         return { success: false, error };
       }
 
