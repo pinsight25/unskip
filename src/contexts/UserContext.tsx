@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import type { Tables } from '@/integrations/supabase/types';
 import { formatPhoneForDB } from '@/utils/phoneUtils';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -69,7 +68,7 @@ const syncUserFromDatabase = async (
       
       const newUserData = {
         id: userId,
-        phone: formatPhoneForDB(authUser.phone),
+        phone: formatPhoneForDB(authUser.phone || ''),
         name: userData?.name || authUser.user_metadata?.name || 'User',
         email: userData?.email || authUser.email || authUser.user_metadata?.email || null,
         city: userData?.city || null,
@@ -96,8 +95,6 @@ const syncUserFromDatabase = async (
             name: newUserData.name,
             phone: newUserData.phone,
             email: newUserData.email || '',
-            city: undefined,
-            gender: undefined
           });
           setIsLoading(false); // CRITICAL: Set loading to false even if user creation fails
         }
@@ -201,6 +198,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (mounted.current) {
           setIsLoading(false);
         }
+        return undefined;
       }
     };
 
@@ -358,12 +356,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       // console.error('Refresh user error:', error);
     }
   };
-
-  // Always expose isVerified as a boolean reflecting phone_verified or is_verified
-  const userWithVerified = user ? {
-    ...user,
-    isVerified: user.phone_verified || user.isVerified || false,
-  } : null;
 
   return (
     <UserContext.Provider value={{ user, isLoading, signIn, signOut, updateUser, refreshUser, setUser }}>

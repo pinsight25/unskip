@@ -9,10 +9,7 @@ import ChatInput from '@/components/chat/ChatInput';
 import ChatHeader from '@/components/chat/ChatHeader';
 import type { Seller } from '@/types/car';
 import { useToast } from '@/components/ui/use-toast';
-import { useRealtimeRefetch } from '@/hooks/useRealtimeRefetch';
-import { Check, Clock, AlertCircle } from 'lucide-react';
-import { MessageCircle } from 'lucide-react';
-import Chats from './Chats';
+import { AlertCircle } from 'lucide-react';
 import { useMessages } from '@/hooks/useMessages';
 import { useQueryClient } from '@tanstack/react-query';
 import { playSound } from '@/utils/sounds';
@@ -117,9 +114,6 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         landmark: carData.landmark,
         seatingCapacity: carData.seating_capacity,
         isRentAvailable: carData.is_rent_available,
-        rentPrice: undefined,
-        rentPolicies: undefined,
-        rentType: undefined,
         verified: carData.verified,
         featured: carData.featured,
         views: carData.views || 0,
@@ -137,8 +131,6 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         serviceCenterType: carData.service_center_type,
         serviceAtAuthorized: carData.authorized_service_center,
         rtoTransferSupport: carData.rto_transfer_support,
-        insurance: undefined,
-        serviceHistory: undefined,
       });
       // Step 2: Fetch car_images for this car
       setCarImagesLoading(true);
@@ -176,7 +168,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
         (payload) => {
           // Update chat status if needed
           if (payload.new.status !== payload.old.status) {
-            setChat(prev => prev ? { ...prev, status: payload.new.status } : prev);
+            setChat((prev: any) => prev ? { ...prev, status: payload.new.status } : prev);
           }
         }
       )

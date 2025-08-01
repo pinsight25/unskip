@@ -1,11 +1,7 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Dealer } from '@/types/dealer';
 
 export const useDealers = () => {
-  const queryClient = useQueryClient();
-  
   return useQuery({
     queryKey: ['dealers'],
     queryFn: async () => {
