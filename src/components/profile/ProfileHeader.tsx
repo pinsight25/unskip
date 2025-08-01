@@ -3,9 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Settings, LogOut, Shield, Clock, Store, Bell } from 'lucide-react';
-import { NotificationService } from '@/services/notificationService';
-import { useToast } from '@/hooks/use-toast';
+import { Settings, LogOut, Shield, Clock, Store } from 'lucide-react';
 
 interface ProfileHeaderProps {
   profile?: {
@@ -22,38 +20,11 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut, onEditDealerProfile }: ProfileHeaderProps) => {
-  const { toast } = useToast();
-  
   if (!profile) {
     return null;
   }
 
   const isDealer = profile?.userType === 'dealer';
-
-  const handleTestNotification = async () => {
-    try {
-      const result = await NotificationService.testNotificationSystem(profile.id);
-      
-      if (result.success) {
-        toast({
-          title: "✅ Notification System Working!",
-          description: "The notification system is properly configured and working.",
-        });
-      } else {
-        toast({
-          title: "❌ Notification System Issue",
-          description: result.message,
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "❌ Test Failed",
-        description: "Error testing notification system",
-        variant: "destructive"
-      });
-    }
-  };
 
   return (
     <Card className="p-6">
@@ -126,16 +97,6 @@ const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut, onEditDe
                 Edit Dealer Profile
               </Button>
             )}
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTestNotification}
-              className="flex items-center justify-center gap-2"
-            >
-              <Bell className="h-4 w-4" />
-              Test Notifications
-            </Button>
             
             <Button
               variant="outline"

@@ -43,8 +43,8 @@ const ProfileContent = ({
   onDeleteListing = () => {},
 }: ProfileContentProps) => {
   // Fetch dealer info if user is a dealer
-  const { data: dealerInfo } = useQuery({
-    queryKey: ['dealer-info', user?.id],
+  const { data: dealerInfo, refetch: refetchDealerInfo } = useQuery({
+    queryKey: ['dealer-info', user?.id, user?.userType, user?.dealer_registration_completed],
     queryFn: async () => {
       // Additional safety checks
       if (!user?.id || user?.userType !== 'dealer' || !user?.dealer_registration_completed) {
@@ -100,6 +100,13 @@ const ProfileContent = ({
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
+
+  // Force refetch dealer info when user context changes
+  useEffect(() => {
+    if (user?.id && user?.userType === 'dealer' && user?.dealer_registration_completed) {
+      refetchDealerInfo();
+    }
+  }, [user?.id, user?.userType, user?.dealer_registration_completed, refetchDealerInfo]);
 
   // Debug logging for dealer info
   useEffect(() => {
