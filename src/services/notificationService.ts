@@ -12,10 +12,44 @@ export interface CreateNotificationParams {
 
 export class NotificationService {
   /**
+   * Check if notifications table exists
+   */
+  static async checkTableExists() {
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id')
+        .limit(1);
+
+      if (error) {
+        if (error.code === '42P01') {
+          console.log('NOTIFICATIONS TABLE DOES NOT EXIST');
+          return false;
+        }
+        console.error('Error checking notifications table:', error);
+        return false;
+      }
+
+      console.log('NOTIFICATIONS TABLE EXISTS');
+      return true;
+    } catch (error) {
+      console.error('Error checking notifications table:', error);
+      return false;
+    }
+  }
+
+  /**
    * Create a new notification
    */
   static async createNotification(params: CreateNotificationParams) {
     try {
+      // First check if table exists
+      const tableExists = await this.checkTableExists();
+      if (!tableExists) {
+        console.error('NOTIFICATIONS TABLE DOES NOT EXIST! Run the SQL script in Supabase.');
+        return { success: false, error: { message: 'Notifications table does not exist' } };
+      }
+
       const { data, error } = await supabase
         .from('notifications')
         .insert({
@@ -33,10 +67,6 @@ export class NotificationService {
 
       if (error) {
         console.error('Error creating notification:', error);
-        // If table doesn't exist, this will help identify the issue
-        if (error.code === '42P01') {
-          console.error('NOTIFICATIONS TABLE DOES NOT EXIST! Run the SQL script in Supabase.');
-        }
         return { success: false, error };
       }
 
@@ -270,5 +300,37 @@ export class NotificationService {
       actionUrl: `/profile`,
       priority: 'low'
     });
+  }
+
+  /**
+   * Test notification system and check database status
+   */
+  static async testNotificationSystem(userId: string) {
+    console.log('🔍 Testing notification system...');
+    
+    // Check if table exists
+    const tableExists = await this.checkTableExists();
+    
+    if (!tableExists) {
+      console.log('❌ Notifications table does not exist');
+      return { success: false, message: 'Notifications table does not exist' };
+    }
+
+    // Try to create a test notification
+    const testResult = await this.createNotification({
+      userId,
+      type: 'system',
+      title: 'Test Notification',
+      message: 'This is a test notification to verify the system is working.',
+      priority: 'low'
+    });
+
+    if (testResult.success) {
+      console.log('✅ Notification system is working!');
+      return { success: true, message: 'Notification system is working' };
+    } else {
+      console.log('❌ Notification system failed:', testResult.error);
+      return { success: false, message: 'Notification system failed', error: testResult.error };
+    }
   }
 } 
