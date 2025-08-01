@@ -63,6 +63,13 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
   }
 
   const handleChatClick = () => {
+    // Allow chat if offer is accepted or pending
+    if (offerStatus === 'accepted' || offerStatus === 'pending') {
+      onChatClick();
+      return;
+    }
+    
+    // If no offer status, check if user has offered in current session
     if (!hasOffered(carId)) {
       toast({
         title: "Make an offer first",
@@ -71,6 +78,7 @@ const CarActions = ({ carId, sellerId, offerStatus, onMakeOffer, onChatClick, on
       });
       return;
     }
+    
     onChatClick();
   };
 

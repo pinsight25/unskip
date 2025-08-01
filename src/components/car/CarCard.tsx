@@ -51,19 +51,21 @@ const CarCard = ({ car, onSave, isSaved = false, isSaving = false }: CarCardProp
   };
 
   const handleChat = async () => {
-    if (offerStatus !== 'accepted') {
-      toast({
-        title: "Make an Offer First",
-        description: "Please make an offer before starting a chat with the seller.",
-        variant: "destructive"
-      });
+    // Allow chat if offer is accepted or pending
+    if (offerStatus === 'accepted' || offerStatus === 'pending') {
+      try {
+        await navigateToChat(car.id, user.id, car.seller.id, toast);
+      } catch (err) {
+        toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
+      }
       return;
     }
-    try {
-      await navigateToChat(car.id, user.id, car.seller.id, toast);
-    } catch (err) {
-      toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
-    }
+    
+    toast({
+      title: "Make an Offer First",
+      description: "Please make an offer before starting a chat with the seller.",
+      variant: "destructive"
+    });
   };
 
   const handleSave = () => {

@@ -81,7 +81,8 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
       return;
     }
 
-    if (offerStatus === 'accepted') {
+    // Allow chat if offer is accepted or pending
+    if (offerStatus === 'accepted' || offerStatus === 'pending') {
       try {
         // Validate required data
         if (!car.id || !user.id || !car.seller.id) {
@@ -105,7 +106,7 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
     } else {
       toast({
         title: "Offer Required",
-        description: "Your offer must be accepted before you can chat with the seller",
+        description: "Please make an offer before you can chat with the seller",
         variant: "destructive"
       });
     }

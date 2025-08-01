@@ -40,44 +40,56 @@ const MobileCarActions = ({
 
   const handleChatClick = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (offerStatus !== 'accepted') {
+    
+    if (!user) {
       toast({
-        title: "Make an offer first",
-        description: "You need to make an offer before you can chat with the seller.",
-        variant: "destructive",
+        title: "Authentication Required",
+        description: "Please sign in to chat with the seller",
+        variant: "destructive"
       });
       return;
     }
-    try {
-      // Check for existing chat
-      const { data: chat } = await supabase
-        .from('chats')
-        .select('id')
-        .eq('car_id', carId)
-        .eq('buyer_id', user.id)
-        .eq('seller_id', sellerId)
-        .single();
-      if (chat) {
-        navigate(`/chats/${chat.id}`);
-      } else {
-        // Create new chat
-        const { data: newChat } = await supabase
+    
+    // Allow chat if offer is accepted or pending
+    if (offerStatus === 'accepted' || offerStatus === 'pending') {
+      try {
+        // Check for existing chat
+        const { data: chat } = await supabase
           .from('chats')
-          .insert({
-            car_id: carId,
-            buyer_id: user.id,
-            seller_id: sellerId,
-            status: 'active'
-          })
           .select('id')
+          .eq('car_id', carId)
+          .eq('buyer_id', user.id)
+          .eq('seller_id', sellerId)
           .single();
-        if (newChat) {
-          navigate(`/chats/${newChat.id}`);
+        if (chat) {
+          navigate(`/chats/${chat.id}`);
+        } else {
+          // Create new chat
+          const { data: newChat } = await supabase
+            .from('chats')
+            .insert({
+              car_id: carId,
+              buyer_id: user.id,
+              seller_id: sellerId,
+              status: 'active'
+            })
+            .select('id')
+            .single();
+          if (newChat) {
+            navigate(`/chats/${newChat.id}`);
+          }
         }
+      } catch (error) {
+        toast({ title: 'Failed to open chat', variant: 'destructive' });
       }
-    } catch (error) {
-      toast({ title: 'Failed to open chat', variant: 'destructive' });
+      return;
     }
+    
+    toast({
+      title: "Make an offer first",
+      description: "You need to make an offer before you can chat with the seller.",
+      variant: "destructive",
+    });
   };
 
   const handleTestDriveClick = (e?: React.MouseEvent) => {
