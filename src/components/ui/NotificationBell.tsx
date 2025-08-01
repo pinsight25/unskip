@@ -40,7 +40,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
       case 'listing': return '🚗';
       case 'test_drive': return '🚙';
       case 'system': return '⚙️';
-      default: return '��';
+      default: return '🔔';
     }
   };
 
@@ -49,7 +49,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
     if (unreadCount === 0) return null;
     
     return (
-      <div className="absolute top-0 right-0 w-2 h-2 bg-orange-500 rounded-full border border-white"></div>
+      <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border-2 border-white z-10"></div>
     );
   };
 
@@ -274,4 +274,4 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
   );
 };
 
-export default NotificationBell; 
+export default NotificationBell;
