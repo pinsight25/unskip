@@ -40,7 +40,7 @@ const Terms = lazy(() => import('@/pages/Terms'));
 const Privacy = lazy(() => import('@/pages/Privacy'));
 
 import { useUser } from '@/contexts/UserContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // Loading component for Suspense fallback
@@ -56,8 +56,19 @@ const PageLoading = () => (
 function AppLoadingGuard({ children }: { children: React.ReactNode }) {
   const { isLoading } = useUser();
 
-  // Show loading screen while user context is initializing
-  if (isLoading) {
+  // Only show loading for a maximum of 3 seconds to prevent infinite loading
+  const [showLoading, setShowLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoading(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading screen only briefly while user context is initializing
+  if (isLoading && showLoading) {
     return <PageLoading />;
   }
 

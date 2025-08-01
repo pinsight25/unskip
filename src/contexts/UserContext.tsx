@@ -181,11 +181,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           }
         }
 
-        // Always set loading to false after initialization
-        if (mounted.current) {
-          setIsLoading(false);
-        }
-
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
@@ -202,6 +197,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         return () => subscription.unsubscribe();
       } catch (error) {
+        // CRITICAL: Set loading to false even on error
         if (mounted.current) {
           setIsLoading(false);
         }
