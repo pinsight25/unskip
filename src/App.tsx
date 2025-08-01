@@ -53,6 +53,17 @@ const PageLoading = () => (
   </div>
 );
 
+function AppLoadingGuard({ children }: { children: React.ReactNode }) {
+  const { isLoading } = useUser();
+
+  // Show loading screen while user context is initializing
+  if (isLoading) {
+    return <PageLoading />;
+  }
+
+  return <>{children}</>;
+}
+
 function DealerRegistrationGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useUser();
   const location = useLocation();
@@ -110,37 +121,39 @@ function App() {
                   <CityProvider>
                     <NotificationProvider>
                       <ScrollToTop />
-                      <ResponsiveLayout>
-                        <DealerRegistrationGuard>
-                          <Suspense fallback={<PageLoading />}>
-                            <Routes>
-                              <Route path="/" element={<Home />} />
-                              <Route path="/car/:id" element={<CarDetail />} />
-                              <Route path="/dealers" element={<Dealers />} />
-                              <Route path="/dealers/:slug" element={<DealerProfile />} />
-                              <Route path="/dealer/inventory" element={<DealerInventory />} />
-                              <Route path="/dealer/register" element={<DealerRegister />} />
-                              <Route path="/dealer/test" element={<div>Test Dealer Route Working!</div>} />
-                              <Route path="/dealer/:slug" element={<DealerInventory />} />
-                              <Route path="/sell-car" element={<SellCar />} />
-                              <Route path="/accessories" element={<Accessories />} />
-                              <Route path="/accessory/:id" element={<AccessoryDetail />} />
-                              <Route path="/post-accessory" element={<PostAccessory />} />
-                              <Route path="/edit-accessory/:id" element={<EditAccessory />} />
-                              <Route path="/search" element={<Search />} />
-                              <Route path="/saved" element={<Saved />} />
-                              <Route path="/profile" element={<Profile />} />
-                              <Route path="/notifications" element={<Notifications />} />
-                              
-                              <Route path="/chats" element={<Chats />} />
-                              <Route path="/chat/:id" element={<ChatDetail />} />
-                              <Route path="/terms" element={<Terms />} />
-                              <Route path="/privacy" element={<Privacy />} />
-                              <Route path="*" element={<Home />} />
-                            </Routes>
-                          </Suspense>
-                        </DealerRegistrationGuard>
-                      </ResponsiveLayout>
+                      <AppLoadingGuard>
+                        <ResponsiveLayout>
+                          <DealerRegistrationGuard>
+                            <Suspense fallback={<PageLoading />}>
+                              <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/car/:id" element={<CarDetail />} />
+                                <Route path="/dealers" element={<Dealers />} />
+                                <Route path="/dealers/:slug" element={<DealerProfile />} />
+                                <Route path="/dealer/inventory" element={<DealerInventory />} />
+                                <Route path="/dealer/register" element={<DealerRegister />} />
+                                <Route path="/dealer/test" element={<div>Test Dealer Route Working!</div>} />
+                                <Route path="/dealer/:slug" element={<DealerInventory />} />
+                                <Route path="/sell-car" element={<SellCar />} />
+                                <Route path="/accessories" element={<Accessories />} />
+                                <Route path="/accessory/:id" element={<AccessoryDetail />} />
+                                <Route path="/post-accessory" element={<PostAccessory />} />
+                                <Route path="/edit-accessory/:id" element={<EditAccessory />} />
+                                <Route path="/search" element={<Search />} />
+                                <Route path="/saved" element={<Saved />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/notifications" element={<Notifications />} />
+                                
+                                <Route path="/chats" element={<Chats />} />
+                                <Route path="/chat/:id" element={<ChatDetail />} />
+                                <Route path="/terms" element={<Terms />} />
+                                <Route path="/privacy" element={<Privacy />} />
+                                <Route path="*" element={<Home />} />
+                              </Routes>
+                            </Suspense>
+                          </DealerRegistrationGuard>
+                        </ResponsiveLayout>
+                      </AppLoadingGuard>
                       <Toaster />
                     </NotificationProvider>
                   </CityProvider>

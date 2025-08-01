@@ -99,6 +99,7 @@ const syncUserFromDatabase = async (
             city: undefined,
             gender: undefined
           });
+          setIsLoading(false); // CRITICAL: Set loading to false even if user creation fails
         }
       } else if (createdUser && mounted.current) {
         setUser({
@@ -114,6 +115,7 @@ const syncUserFromDatabase = async (
           phone_verified: 'phone_verified' in createdUser ? Boolean((createdUser as any).phone_verified) : false,
           dealer_registration_completed: createdUser.dealer_registration_completed ?? false, // <-- Add this line
         });
+        setIsLoading(false); // CRITICAL: Set loading to false after user is created
       }
     } else if (userData && mounted.current) {
       // After fetching userData from the users table, set the user object and log it
@@ -134,6 +136,7 @@ const syncUserFromDatabase = async (
       // console.log('[UserContext] User ID:', userObj.id);
       // console.log('[UserContext] User phone:', userObj.phone);
       setUser(userObj);
+      setIsLoading(false); // CRITICAL: Set loading to false after user is loaded
     } else if (mounted.current) {
       setUser(null);
     }
@@ -178,16 +181,21 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           }
         }
 
+        // Always set loading to false after initialization
+        if (mounted.current) {
+          setIsLoading(false);
+        }
+
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-                           async (event, session) => {
+          async (event, session) => {
             if (event === 'SIGNED_IN' && session?.user) {
               await syncUserFromDatabase(session.user.id, setUser, setIsLoading, mounted, session.user);
             } else if (event === 'SIGNED_OUT') {
-                                 if (mounted.current) {
-                     setUser(null);
-                     setIsLoading(false);
-                   }
+              if (mounted.current) {
+                setUser(null);
+                setIsLoading(false);
+              }
             }
           }
         );
