@@ -11,7 +11,7 @@ export const useMessages = (chatId: string, userId?: string) => {
   const query = useQuery<any[]>({
     queryKey: ['messages', chatId],
     queryFn: async () => {
-      if (!chatId) return [];
+      if (!chatId || chatId === '') return [];
       const { data, error } = await supabase
         .from('chat_messages')
         .select('*')
@@ -25,12 +25,12 @@ export const useMessages = (chatId: string, userId?: string) => {
     refetchOnWindowFocus: false, // Use global config
     initialData: cachedMessages,
     retry: 1, // Only retry once on failure
-    enabled: !!chatId, // Only run query if chatId exists
+    enabled: !!chatId && chatId !== '', // Only run query if chatId exists and is not empty
   });
 
   // Real-time subscription for new messages
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || chatId === '') return;
     const channel = supabase
       .channel(`room:${chatId}`)
       .on(

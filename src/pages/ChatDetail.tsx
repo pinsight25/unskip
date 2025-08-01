@@ -389,37 +389,34 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
   }
 
   // WhatsApp-like layout with sticky header/input and scrollable messages
-  if (messages && messages.length > 0) {
-    return (
-      <div className="flex-1 flex flex-col h-full">
-        {/* Chat Header (no back arrow, 3-dot menu on right) */}
-        <ChatHeader
-          car={car}
-          otherUser={otherUser}
-          currentUser={user}
-          chat={chat}
-          carImages={carImages}
-          onReportChat={() => toast({ title: 'Report chat', description: 'Feature coming soon!' })}
-          onBlockUser={() => toast({ title: 'Block user', description: 'Feature coming soon!' })}
-          onDeleteConversation={() => toast({ title: 'Delete conversation', description: 'Feature coming soon!' })}
-          onBack={onBack || (() => navigate('/chats'))}
-          isRealTimeConnected={true}
-        />
-        {/* Messages */}
-        <ChatMessages messages={messages} isTyping={isTyping} user={user} otherUser={otherUser} car={car} />
-        {/* Input */}
-        <ChatInput
-          newMessage={newMessage}
-          onMessageChange={setNewMessage}
-          onSendMessage={handleSendMessage}
-          onQuickReply={handleQuickReply}
-          onTestDrive={handleTestDrive}
-          isBuyer={user?.id === chat?.buyer_id}
-        />
-      </div>
-    );
-  }
-  return <div className="flex-1 flex flex-col h-full items-center justify-center text-gray-500">No messages yet.</div>;
+  return (
+    <div className="flex-1 flex flex-col h-full">
+      {/* Chat Header (no back arrow, 3-dot menu on right) */}
+      <ChatHeader
+        car={car}
+        otherUser={otherUser}
+        currentUser={user}
+        chat={chat}
+        carImages={carImages}
+        onReportChat={() => toast({ title: 'Report chat', description: 'Feature coming soon!' })}
+        onBlockUser={() => toast({ title: 'Block user', description: 'Feature coming soon!' })}
+        onDeleteConversation={() => toast({ title: 'Delete conversation', description: 'Feature coming soon!' })}
+        onBack={onBack || (() => navigate('/chats'))}
+        isRealTimeConnected={true}
+      />
+      {/* Messages */}
+      <ChatMessages messages={messages} isTyping={isTyping} user={user} otherUser={otherUser} car={car} />
+      {/* Input */}
+      <ChatInput
+        newMessage={newMessage}
+        onMessageChange={setNewMessage}
+        onSendMessage={handleSendMessage}
+        onQuickReply={handleQuickReply}
+        onTestDrive={handleTestDrive}
+        isBuyer={user?.id === chat?.buyer_id}
+      />
+    </div>
+  );
 };
 
 export default ChatDetail;
