@@ -35,7 +35,6 @@ const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const EmptyChatState = lazy(() => import('@/pages/EmptyChatState'));
 const Chats = lazy(() => import('@/pages/Chats'));
 const ChatDetail = lazy(() => import('@/pages/ChatDetail'));
-const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
 const Terms = lazy(() => import('@/pages/Terms'));
 const Privacy = lazy(() => import('@/pages/Privacy'));
