@@ -260,8 +260,9 @@ const ProfileContent = ({
           dealer={dealerInfo}
           onSave={() => {
             setIsEditDealerModalOpen(false);
-            // Refetch dealer info
-            window.location.reload();
+            // Invalidate and refetch dealer info instead of hard reload
+            queryClient.invalidateQueries({ queryKey: ['dealer-info', user?.id, user?.userType, user?.dealer_registration_completed] });
+            refetchDealerInfo();
           }}
         />
       )}
