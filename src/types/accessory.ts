@@ -8,6 +8,7 @@ export type Accessory = Tables<'accessories'> & {
     dealerVerified: boolean
     seller_type: string
   }
+  images?: string[]
 }
 
 export interface AccessorySeller {

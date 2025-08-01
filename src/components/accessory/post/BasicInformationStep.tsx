@@ -30,10 +30,10 @@ const BasicInformationStep = ({ formData, onUpdate }: BasicInformationStepProps)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="category">Category *</Label>
-                          <Select value={formData.category} onValueChange={(value) => onUpdate('category', value)}>
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
+              <Select value={formData.category} onValueChange={(value) => onUpdate('category', value)}>
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
                 <SelectContent>
                   {accessoryCategories.filter(cat => cat.id !== 'all').map((category) => (
                     <SelectItem key={category.id} value={category.id}>
@@ -62,23 +62,23 @@ const BasicInformationStep = ({ formData, onUpdate }: BasicInformationStepProps)
             <Label className="text-base font-medium">Price Range *</Label>
             <div className="grid grid-cols-2 gap-4 mt-2">
               <div>
-                <Label htmlFor="priceMin" className="text-sm">Minimum Price (₹)</Label>
+                <Label htmlFor="price_min" className="text-sm">Minimum Price (₹)</Label>
                 <Input
-                  id="priceMin"
+                  id="price_min"
                   type="number"
                   placeholder="1000"
-                  value={formData.priceMin}
-                  onChange={(e) => onUpdate('priceMin', e.target.value)}
+                  value={formData.price_min}
+                  onChange={(e) => onUpdate('price_min', e.target.value)}
                 />
               </div>
               <div>
-                <Label htmlFor="priceMax" className="text-sm">Maximum Price (₹)</Label>
+                <Label htmlFor="price_max" className="text-sm">Maximum Price (₹)</Label>
                 <Input
-                  id="priceMax"
+                  id="price_max"
                   type="number"
                   placeholder="5000"
-                  value={formData.priceMax}
-                  onChange={(e) => onUpdate('priceMax', e.target.value)}
+                  value={formData.price_max}
+                  onChange={(e) => onUpdate('price_max', e.target.value)}
                 />
               </div>
             </div>

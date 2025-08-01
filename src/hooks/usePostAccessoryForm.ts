@@ -9,7 +9,7 @@ export const usePostAccessoryForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const { formData, updateFormData, validateStep } = useAccessoryForm();
+  const { formData, updateField, handleSubmit, isLoading } = useAccessoryForm();
   
   const totalSteps = 3;
 
@@ -36,7 +36,7 @@ export const usePostAccessoryForm = () => {
     });
     // Simulate verification
     setTimeout(() => {
-      updateFormData('phoneVerified', true);
+      updateField('phone', formData.phone);
       toast({
         title: "Phone Verified",
         description: "Your phone number has been verified successfully",
@@ -44,19 +44,20 @@ export const usePostAccessoryForm = () => {
     }, 2000);
   };
 
-  const handleSubmit = () => {
-    toast({
-      title: "Accessory Posted Successfully!",
-      description: "Your accessory listing is now live and buyers can contact you.",
-    });
-    navigate('/accessories');
+  const handleFormSubmit = async () => {
+    const success = await handleSubmit();
+    if (success) {
+      toast({
+        title: "Accessory Posted Successfully!",
+        description: "Your accessory listing is now live and buyers can contact you.",
+      });
+      navigate('/accessories');
+    }
   };
 
   // Create a wrapper function that matches the expected signature
-  const handleUpdate = (updates: Partial<typeof formData>) => {
-    Object.entries(updates).forEach(([key, value]) => {
-      updateFormData(key as keyof typeof formData, value);
-    });
+  const handleUpdate = (field: keyof typeof formData, value: any) => {
+    updateField(field, value);
   };
 
   return {
@@ -64,11 +65,11 @@ export const usePostAccessoryForm = () => {
     totalSteps,
     formData,
     updateFormData: handleUpdate,
-    validateStep,
     handleNext,
     handlePrevious,
     handleBack,
     handlePhoneVerification,
-    handleSubmit,
+    handleSubmit: handleFormSubmit,
+    isLoading,
   };
 };

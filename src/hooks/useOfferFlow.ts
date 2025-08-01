@@ -1,28 +1,42 @@
 
 import { useState } from 'react';
-import { useUser } from '@/contexts/UserContext';
 import { Car } from '@/types/car';
+import { useUser } from '@/contexts/UserContext';
+import { useToast } from '@/hooks/use-toast';
 
 export const useOfferFlow = () => {
-  const { isSignedIn } = useUser();
-  const [showOfferModal, setShowOfferModal] = useState(false);
+  const { user } = useUser();
+  const { toast } = useToast();
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [showOfferModal, setShowOfferModal] = useState(false);
 
   const handleMakeOffer = (car: Car) => {
-    setSelectedCar(car);
-    if (isSignedIn) {
-      // Skip OTP for signed-in users
-      setShowOfferModal(true);
-    } else {
-      // Show OTP modal first for non-signed-in users
-      // This logic is removed as per the edit hint.
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to make an offer",
+        variant: "destructive",
+      });
+      return;
     }
+    
+    setSelectedCar(car);
+    setShowOfferModal(true);
   };
 
-  const handleOfferSubmit = (offer: { amount: number; message: string; buyerName: string; buyerPhone: string }) => {
-    // Handle offer submission logic here
-    setShowOfferModal(false);
-    setSelectedCar(null);
+  const handleOfferSubmit = (offer: {
+    amount: number;
+    message: string;
+    buyerName: string;
+    buyerPhone: string;
+  }) => {
+    // Handle offer submission logic
+    console.log('Offer submitted:', offer);
+    toast({
+      title: "Offer submitted",
+      description: "Your offer has been sent to the seller",
+    });
+    closeModals();
   };
 
   const closeModals = () => {

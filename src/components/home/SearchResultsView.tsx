@@ -5,7 +5,6 @@ import MobileCarCard from '@/components/mobile/MobileCarCard';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { useOfferFlow } from '@/hooks/useOfferFlow';
-import HomeModals from '@/components/home/HomeModals';
 import { useToast } from '@/hooks/use-toast';
 
 interface SearchResultsViewProps {
@@ -39,11 +38,10 @@ const SearchResultsView = ({
   const {
     selectedCar,
     showOfferModal,
-    showOTPModal,
     handleMakeOffer: handleOfferFlowMakeOffer,
-    handleOTPSuccess,
     handleOfferSubmit,
-    closeModals
+    closeModals,
+    setShowOfferModal
   } = useOfferFlow();
 
   useEffect(() => {
@@ -159,35 +157,26 @@ const SearchResultsView = ({
                 onMakeOffer={() => handleMakeOfferClick(car)}
                 onChat={() => onChat(car)}
                 onTestDrive={() => handleTestDriveClick(car)}
-                offerStatus={getOfferStatus(car.id)}
               />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-gap-compact">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-6">
             {sortedResults.map((car) => (
-              <CarCard 
-                key={car.id} 
-                car={car} 
+              <CarCard
+                key={car.id}
+                car={car}
                 onSave={onSaveCar}
                 isSaved={savedCars.includes(car.id)}
+                onMakeOffer={() => handleMakeOfferClick(car)}
+                onChat={() => onChat(car)}
+                onTestDrive={() => handleTestDriveClick(car)}
+                offerStatus={getOfferStatus(car.id)}
               />
             ))}
           </div>
         )}
       </div>
-
-      {/* Modals */}
-      <HomeModals
-        selectedCar={selectedCar}
-        showOfferModal={showOfferModal}
-        showOTPModal={showOTPModal}
-        isMobile={isMobile}
-        onCloseOfferModal={closeModals}
-        onCloseOTPModal={closeModals}
-        onOTPSuccess={handleOTPSuccess}
-        onOfferSubmit={handleOfferSubmit}
-      />
     </div>
   );
 };
