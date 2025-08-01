@@ -5,7 +5,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const ChatPage = () => {
   const isMobile = useIsMobile();
-  const { chatId } = useParams();
+  const { id: chatId } = useParams();
   const navigate = useNavigate();
 
   if (isMobile) {

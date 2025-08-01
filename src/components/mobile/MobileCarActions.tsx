@@ -58,7 +58,7 @@ const MobileCarActions = ({
         .eq('seller_id', sellerId)
         .single();
       if (chat) {
-        navigate(`/chat/${chat.id}`);
+        navigate(`/chats/${chat.id}`);
       } else {
         // Create new chat
         const { data: newChat } = await supabase
@@ -72,7 +72,7 @@ const MobileCarActions = ({
           .select('id')
           .single();
         if (newChat) {
-          navigate(`/chat/${newChat.id}`);
+          navigate(`/chats/${newChat.id}`);
         }
       }
     } catch (error) {

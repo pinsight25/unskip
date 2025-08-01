@@ -71,7 +71,7 @@ export const useChatManager = () => {
   ) => {
     try {
       const chatId = await createOrGetChat(carId, buyerId, sellerId, toast);
-      navigate(`/chat/${chatId}`);
+      navigate(`/chats/${chatId}`);
     } catch (err: any) {
       if (toast) toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
     }

@@ -91,7 +91,7 @@ export const useOfferManagement = () => {
 
       // Navigate to chat after short delay
       setTimeout(() => {
-        navigate(`/chat/${chatId}`); // Use the UUID from database
+        navigate(`/chats/${chatId}`); // Use the UUID from database
       }, 1500);
 
     } catch (error) {
