@@ -17,6 +17,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LoadingScreen from '@/components/common/LoadingScreen';
 
 // Lazy load all page components for better performance
+// Force rebuild: Fix chat component loading issues
 const Home = lazy(() => import('@/pages/Home'));
 const CarDetail = lazy(() => import('@/pages/CarDetail'));
 const Dealers = lazy(() => import('@/pages/Dealers'));
