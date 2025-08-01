@@ -33,6 +33,7 @@ const Saved = lazy(() => import('@/pages/Saved'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const EmptyChatState = lazy(() => import('@/pages/EmptyChatState'));
+const Chats = lazy(() => import('@/pages/Chats'));
 const ChatDetail = lazy(() => import('@/pages/ChatDetail'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
 const Terms = lazy(() => import('@/pages/Terms'));
@@ -131,6 +132,7 @@ function App() {
                               <Route path="/profile" element={<Profile />} />
                               <Route path="/notifications" element={<Notifications />} />
                               
+                              <Route path="/chats" element={<Chats />} />
                               <Route path="/chat/:id" element={<ChatDetail />} />
                               <Route path="/terms" element={<Terms />} />
                               <Route path="/privacy" element={<Privacy />} />

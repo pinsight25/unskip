@@ -26,14 +26,14 @@ export const useDealers = () => {
       }
       
       if (!dealers || dealers.length === 0) {
-        console.log('⚠️ useDealers: No dealers found in database');
+
         return [];
       }
 
-      console.log('✅ useDealers: Found dealers:', dealers.length);
-      dealers.forEach(dealer => {
-        console.log(`  - ${dealer.business_name} (${dealer.slug}): ${dealer.verification_status}`);
-      });
+      
+              dealers.forEach(dealer => {
+          // Dealer data processed silently
+        });
 
       const dealerUserIds = dealers.map(dealer => dealer.user_id);
 

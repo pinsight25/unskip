@@ -50,7 +50,7 @@ function mapDbMessageToUi(msg: any): ChatMessage {
 }
 
 const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
-  const { chatId } = useParams();
+  const { id: chatId } = useParams();
   const { user } = useUser();
   const navigate = useNavigate();
   
@@ -71,7 +71,7 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
 
   // Remove conflicting real-time refetch hooks - useMessages handles its own subscription
 
-  const { messages, isLoading: messagesLoading } = useMessages(chatId!, user?.id);
+  const { messages, isLoading: messagesLoading } = useMessages(chatId || '', user?.id);
 
   useEffect(() => {
     if (!chatId || !user) return;
@@ -358,6 +358,25 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
 
   const HEADER_HEIGHT = 64; // px
   const INPUT_HEIGHT = 80; // px
+
+  // Show error state if no chatId
+  if (!chatId) {
+    return (
+      <div className="flex-1 flex flex-col h-full items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Chat Not Found</h3>
+          <p className="text-gray-500">The chat you're looking for doesn't exist.</p>
+          <button
+            onClick={() => navigate('/chats')}
+            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            Back to Chats
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state
   if (loading || messagesLoading) {

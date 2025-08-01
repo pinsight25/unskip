@@ -285,7 +285,7 @@ const Chats = ({ onBack }: { onBack?: () => void }) => {
                 key={chat.id}
                 className="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition group relative min-h-[64px]"
                 style={{minHeight:64, minWidth:0, touchAction:'manipulation'}}
-                onClick={() => navigate(`/chats/${chat.id}`)}
+                onClick={() => navigate(`/chat/${chat.id}`)}
               >
                 {/* Car Image */}
                 <img
