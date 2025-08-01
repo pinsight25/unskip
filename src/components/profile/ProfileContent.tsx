@@ -48,30 +48,22 @@ const ProfileContent = ({
     queryFn: async () => {
       // Additional safety checks
       if (!user?.id || user?.userType !== 'dealer' || !user?.dealer_registration_completed) {
-        console.log('Dealer query skipped:', { 
-          userId: user?.id, 
-          userType: user?.userType, 
-          dealerRegistrationCompleted: user?.dealer_registration_completed 
-        });
         return null;
       }
       
       // Validate UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(user.id)) {
-        console.error('Invalid UUID format for user ID:', user.id);
         return null;
       }
       
       // Check authentication state
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
-        console.error('No valid session found:', sessionError);
         return null;
       }
       
       if (session.user.id !== user.id) {
-        console.error('Session user ID mismatch:', session.user.id, 'vs', user.id);
         return null;
       }
       
@@ -83,13 +75,11 @@ const ProfileContent = ({
           .maybeSingle();
         
         if (error) {
-          console.error('Dealer info query error:', error);
           return null;
         }
         
         return data;
       } catch (err) {
-        console.error('Dealer info query exception:', err);
         return null;
       }
     },
@@ -134,13 +124,11 @@ const ProfileContent = ({
           .order('created_at', { ascending: false });
         
         if (error) {
-          console.error('Received offers query error:', error);
           return [];
         }
         
         return data || [];
       } catch (err) {
-        console.error('Received offers query exception:', err);
         return [];
       }
     },

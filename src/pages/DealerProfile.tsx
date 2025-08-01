@@ -31,8 +31,6 @@ const DealerProfile = () => {
   const { data: dealer, isLoading: dealerLoading, error: dealerError, refetch } = useQuery({
     queryKey: ['dealer', slug],
     queryFn: async () => {
-      console.log('🔍 Fetching dealer with slug:', slug);
-      
       // Get the dealer data including shop photos
       const { data: dealerData, error: dealerError } = await supabase
         .from('dealers')
@@ -47,12 +45,8 @@ const DealerProfile = () => {
         .single();
 
       if (dealerError) {
-        console.error('❌ Dealer query error:', dealerError);
         throw dealerError;
       }
-
-      console.log('✅ Dealer found:', dealerData);
-      console.log('📸 Shop photos found:', dealerData.shop_photos_urls || []);
       
       return dealerData;
     },
@@ -61,14 +55,7 @@ const DealerProfile = () => {
     retryDelay: 1000,
   });
 
-  // Debug logging for state
-  console.log('🔍 DealerProfile state:', {
-    slug,
-    dealerLoading,
-    dealerError: dealerError?.message,
-    dealer: dealer ? 'Found' : 'Not found',
-    timedOut
-  });
+
 
   // Always refetch dealer data on mount or when slug changes
   useEffect(() => {
@@ -88,9 +75,7 @@ const DealerProfile = () => {
     }
   }, [dealerLoading, timedOut]);
 
-  if (dealerError) {
-    console.error('DealerProfile: dealerError', dealerError);
-  }
+
 
   if (dealerLoading && !timedOut) {
     return <div className="text-center py-12">Loading dealer profile...</div>;

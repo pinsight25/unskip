@@ -63,7 +63,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .limit(50);
 
       if (error) {
-        console.error('Error loading notifications:', error);
         return;
       }
 
@@ -82,7 +81,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
       setNotifications(formattedNotifications);
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 
@@ -143,7 +142,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error marking notification as read:', error);
         return;
       }
 
@@ -151,7 +149,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         prev.map(n => n.id === notificationId ? { ...n, isRead: true } : n)
       );
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 
@@ -167,13 +165,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .eq('is_read', false);
 
       if (error) {
-        console.error('Error marking all notifications as read:', error);
         return;
       }
 
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 
@@ -198,7 +195,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .single();
 
       if (error) {
-        console.error('Error adding notification:', error);
         return;
       }
 
@@ -217,7 +213,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
       setNotifications(prev => [newNotification, ...prev]);
     } catch (error) {
-      console.error('Error adding notification:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 
@@ -233,13 +229,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error removing notification:', error);
         return;
       }
 
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
     } catch (error) {
-      console.error('Error removing notification:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 
@@ -254,13 +249,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error clearing notifications:', error);
         return;
       }
 
       setNotifications([]);
     } catch (error) {
-      console.error('Error clearing notifications:', error);
+      // Silent error handling
     }
   }, [user?.id]);
 

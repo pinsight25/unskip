@@ -55,7 +55,6 @@ const CarDetail = () => {
           timeoutPromise
         ]) as any;
         if (carError) {
-          console.error('🔍 CarDetail: Car query error:', carError);
           throw carError;
         }
         if (!carData) {
@@ -173,7 +172,6 @@ const CarDetail = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching car:', error);
         if (mounted) {
           setError(true);
         }

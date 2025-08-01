@@ -123,17 +123,13 @@ const LocationContactStep = ({ formData, setFormData, updateFormData, onPhoneVer
   // On change, always store only 10 digits (no +91)
   const handlePhoneChange = (value: string) => {
     const digits = cleanPhone(value).slice(0, 10);
-    console.log('[SellCar] Raw input:', value);
-    console.log('[SellCar] Cleaned phone:', digits);
     const valid = isValidPhone(digits);
-    console.log('[SellCar] Is valid phone:', valid);
     setFormData(prev => updateFormField(prev, 'phone', digits));
     if (!valid) {
       setPhoneError('Please enter a valid 10-digit phone number');
     } else {
       setPhoneError('');
     }
-    console.log('[SellCar] Stored phone in formData:', digits);
   };
 
   return (

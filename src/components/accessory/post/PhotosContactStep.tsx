@@ -78,7 +78,6 @@ const PhotosContactStep = ({ formData, onUpdate }: PhotosContactStepProps) => {
         images: updatedPhotos.map(p => p.cloudinaryUrl || p.preview)
       });
     } catch (error) {
-      console.error('Upload failed:', error);
     } finally {
       setUploading(false);
     }

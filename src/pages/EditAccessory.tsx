@@ -83,20 +83,14 @@ const EditAccessory = () => {
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || uploading) return;
     
-    console.log('🔍 handleImageUpload called with files:', files.length);
-    
     setUploading(true);
     try {
       const newImages: string[] = [];
       
       for (const file of Array.from(files)) {
-        console.log('🔍 Processing file:', file.name, file.type);
         if (file.type.startsWith('image/')) {
           const cloudinaryUrl = await uploadToCloudinary(file);
           newImages.push(cloudinaryUrl);
-          console.log('✅ Uploaded to Cloudinary:', cloudinaryUrl);
-        } else {
-          console.warn('⚠️ Skipping non-image file:', file.name);
         }
       }
       
@@ -108,7 +102,6 @@ const EditAccessory = () => {
         description: `${newImages.length} image(s) uploaded successfully`,
       });
     } catch (error) {
-      console.error('❌ Upload failed:', error);
       toast({
         title: "Upload Failed",
         description: "Failed to upload images. Please try again.",
@@ -122,12 +115,10 @@ const EditAccessory = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
-    console.log('🔍 handleDrop called');
     handleImageUpload(e.dataTransfer.files);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('🔍 handleFileSelect called');
     handleImageUpload(e.target.files);
     // Reset the input value so the same file can be selected again
     e.target.value = '';
@@ -139,9 +130,6 @@ const EditAccessory = () => {
   };
 
   const handleFormSubmit = async () => {
-    // Debug: Log form data to see what's missing
-    console.log('🔍 Form data before submission:', formData);
-    console.log('🔍 Form errors:', errors);
 
     const success = await handleSubmit(true, id);
     if (success) {

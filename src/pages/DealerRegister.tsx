@@ -50,7 +50,6 @@ const DealerRegister = () => {
       // Example: navigate('/profile');
     } catch (error) {
       toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
-      console.error(error);
     }
   };
 

@@ -10,23 +10,16 @@ const DealerHeader = () => {
   const navigate = useNavigate();
 
   const handleBecomeDealer = async () => {
-    console.log('[BecomeDealer] Button clicked');
-    console.log('[BecomeDealer] User:', user);
     if (!user) {
-      console.log('[BecomeDealer] No user, navigating to /signin');
       navigate('/signin');
       return;
     }
     const { error } = await supabase.from('users').update({ user_type: 'dealer' }).eq('id', user.id);
     if (error) {
-      console.error('[BecomeDealer] Supabase update error:', error);
-    } else {
-      console.log('[BecomeDealer] Updated user_type to dealer');
+      // Handle error silently or show toast
     }
     await refreshUser();
-    console.log('[BecomeDealer] Refreshed user context');
     navigate('/dealer/register');
-    console.log('[BecomeDealer] Navigated to /dealer/register');
   };
 
   return (
