@@ -20,36 +20,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Simplified chunk splitting to avoid React hook issues
+    // Remove manual chunk splitting to fix React hook issues
     rollupOptions: {
       output: {
-        // Basic vendor chunk splitting
-        manualChunks: (id) => {
-          // Vendor chunks - third-party libraries
-          if (id.includes('node_modules')) {
-            if (id.includes('react') && !id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            if (id.includes('react-router')) {
-              return 'vendor-router';
-            }
-            if (id.includes('@tanstack/react-query')) {
-              return 'vendor-query';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
-              return 'vendor-ui';
-            }
-            // Other node_modules go to vendor chunk
-            return 'vendor';
-          }
-          
-          // Default chunk
-          return undefined;
-        },
-        // Optimize chunk naming for better caching
+        // Simple asset organization
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
@@ -72,18 +46,5 @@ export default defineConfig(({ mode }) => ({
     // Optimize minification
     minify: 'esbuild', // Use esbuild instead of terser
   },
-  // Optimize dependencies pre-bundling
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      '@tanstack/react-query',
-      '@supabase/supabase-js',
-      'lucide-react'
-    ],
-    exclude: [
-      // Exclude large dependencies that should be loaded separately
-    ]
-  }
+  // Remove optimizeDeps to avoid React hook conflicts
 }));
