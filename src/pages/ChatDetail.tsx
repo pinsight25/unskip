@@ -249,7 +249,30 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
 
   // Optimistic send
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !user || !otherUser || !chatId) return;
+    if (!newMessage.trim() || !user || !otherUser || !chatId) {
+      // Show error if missing required data
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "Please sign in to send messages",
+          variant: "destructive"
+        });
+      } else if (!otherUser) {
+        toast({
+          title: "Chat Error",
+          description: "Unable to identify the other user",
+          variant: "destructive"
+        });
+      } else if (!chatId) {
+        toast({
+          title: "Chat Error",
+          description: "Chat session not found",
+          variant: "destructive"
+        });
+      }
+      return;
+    }
+
     const tempId = `temp-${Date.now()}`;
     const tempMessage = {
       id: tempId,
@@ -262,18 +285,27 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
       read_at: null,
       pending: true,
     };
+
     // Optimistically add to cache
     queryClient.setQueryData(['messages', chatId], (old = []) => ([...(old as any[]), tempMessage]));
     setNewMessage('');
     
     try {
       // Send to server
-      const { data, error } = await supabase.from('chat_messages').insert({
-        chat_id: chatId,
-        sender_id: user.id,
-        receiver_id: otherUser.id,
-        content: tempMessage.content,
-      }).select().single();
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .insert({
+          chat_id: chatId,
+          sender_id: user.id,
+          receiver_id: otherUser.id,
+          content: tempMessage.content,
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
       
       if (data) {
         // Update with real data from server
@@ -290,17 +322,8 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
           
         // Invalidate chats list to update last message
         queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
-      } else if (error) {
-        // Mark as failed
-        queryClient.setQueryData(['messages', chatId], (old = []) =>
-          (old as any[]).map(msg =>
-            msg.id === tempId
-              ? { ...msg, pending: false, failed: true }
-              : msg
-          )
-        );
       }
-    } catch (err) {
+    } catch (err: any) {
       // Mark as failed
       queryClient.setQueryData(['messages', chatId], (old = []) =>
         (old as any[]).map(msg =>
@@ -309,6 +332,13 @@ const ChatDetail = ({ onBack }: { onBack?: () => void }) => {
             : msg
         )
       );
+      
+      // Show error toast
+      toast({
+        title: "Message Failed",
+        description: err.message || "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 

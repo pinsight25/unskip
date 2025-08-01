@@ -72,13 +72,42 @@ const CarDetailContainer = ({ car }: CarDetailContainerProps) => {
   };
 
   const handleChatClick = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to chat with the seller",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (offerStatus === 'accepted') {
       try {
+        // Validate required data
+        if (!car.id || !user.id || !car.seller.id) {
+          toast({
+            title: "Chat Error",
+            description: "Missing required information to start chat",
+            variant: "destructive"
+          });
+          return;
+        }
+
         await navigateToChat(car.id, user.id, car.seller.id, toast);
         await queryClient.invalidateQueries({ queryKey: ['chats', user?.id] });
-      } catch (err) {
-        toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
+      } catch (err: any) {
+        toast({ 
+          title: 'Failed to open chat', 
+          description: err.message || 'Unable to start chat. Please try again.', 
+          variant: 'destructive' 
+        });
       }
+    } else {
+      toast({
+        title: "Offer Required",
+        description: "Your offer must be accepted before you can chat with the seller",
+        variant: "destructive"
+      });
     }
   };
 

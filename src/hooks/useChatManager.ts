@@ -10,6 +10,14 @@ export const useChatManager = () => {
   // Async version for real chat creation
   const createOrGetChat = async (carId: string, buyerId: string, sellerId: string, toast?: (opts: any) => void) => {
     try {
+      // Validate inputs
+      if (!carId || !buyerId || !sellerId) {
+        const error = `Missing required parameters: carId=${carId}, buyerId=${buyerId}, sellerId=${sellerId}`;
+        if (toast) toast({ title: 'Invalid parameters', description: error, variant: 'destructive' });
+        throw new Error(error);
+      }
+
+      // Check if chat already exists
       const { data: existing, error } = await supabase
         .from('chats')
         .select('id')
@@ -17,13 +25,16 @@ export const useChatManager = () => {
         .eq('buyer_id', buyerId)
         .eq('seller_id', sellerId)
         .maybeSingle();
+      
       if (error) {
         if (toast) toast({ title: 'Error checking chat', description: error.message, variant: 'destructive' });
         throw error;
       }
+      
       if (existing) {
         return existing.id;
       }
+
       // Create new chat
       const { data: newChat, error: createError } = await supabase
         .from('chats')
@@ -38,23 +49,30 @@ export const useChatManager = () => {
         })
         .select('id')
         .single();
+      
       if (createError) {
         if (toast) toast({ title: 'Failed to create chat', description: createError.message, variant: 'destructive' });
         throw createError;
       }
+      
       return newChat.id;
-    } catch (err) {
+    } catch (err: any) {
       if (toast) toast({ title: 'Unexpected error', description: err.message, variant: 'destructive' });
       throw err;
     }
   };
 
   // Async navigation to chat
-  const navigateToChat = async (carId: string, buyerId: string, sellerId: string, toast?: (opts: any) => void) => {
+  const navigateToChat = async (
+    carId: string, 
+    buyerId: string, 
+    sellerId: string, 
+    toast?: (opts: any) => void
+  ) => {
     try {
       const chatId = await createOrGetChat(carId, buyerId, sellerId, toast);
-      navigate(`/chats/${chatId}`);
-    } catch (err) {
+      navigate(`/chat/${chatId}`);
+    } catch (err: any) {
       if (toast) toast({ title: 'Failed to open chat', description: err.message, variant: 'destructive' });
     }
   };
