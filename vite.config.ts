@@ -20,10 +20,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Optimize chunk splitting for better performance
+    // Simplified chunk splitting to avoid React hook issues
     rollupOptions: {
       output: {
-        // Manual chunk splitting for better caching and loading
+        // Basic vendor chunk splitting
         manualChunks: (id) => {
           // Vendor chunks - third-party libraries
           if (id.includes('node_modules')) {
@@ -39,46 +39,18 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
             }
-            if (id.includes('@radix-ui') || id.includes('lucide-react') || 
-                id.includes('class-variance-authority') || id.includes('clsx') || 
-                id.includes('tailwind-merge')) {
+            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
               return 'vendor-ui';
-            }
-            if (id.includes('date-fns') || id.includes('react-hook-form') || 
-                id.includes('@hookform/resolvers') || id.includes('zod')) {
-              return 'vendor-utils';
             }
             // Other node_modules go to vendor chunk
             return 'vendor';
-          }
-          
-          // Feature-based chunks
-          if (id.includes('src/pages/Chat') || id.includes('src/hooks/useMessages') || 
-              id.includes('src/hooks/useChatManager')) {
-            return 'feature-chat';
-          }
-          if (id.includes('src/pages/CarDetail') || id.includes('src/pages/SellCar') || 
-              id.includes('src/hooks/useCarQueries') || id.includes('src/hooks/useSellCarForm')) {
-            return 'feature-car';
-          }
-          if (id.includes('src/pages/Dealer') || id.includes('src/hooks/queries/useDealers')) {
-            return 'feature-dealer';
-          }
-          if (id.includes('src/pages/Accessory') || id.includes('src/hooks/queries/useAccessories')) {
-            return 'feature-accessory';
-          }
-          if (id.includes('src/pages/Profile') || id.includes('src/hooks/useProfile')) {
-            return 'feature-profile';
           }
           
           // Default chunk
           return undefined;
         },
         // Optimize chunk naming for better caching
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `js/[name]-[hash].js`;
-        },
+        chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.');

@@ -10,7 +10,7 @@ import { CityProvider } from '@/contexts/CityContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { Toaster } from '@/components/ui/toaster';
 import { setQueryClient } from '@/utils/cacheUtils';
-import { preloadManager } from '@/utils/preloadUtils';
+// import { preloadManager } from '@/utils/preloadUtils';
 
 import ResponsiveLayout from '@/components/layout/ResponsiveLayout';
 import ScrollToTop from '@/components/common/ScrollToTop';
@@ -159,7 +159,7 @@ function DealerRegistrationGuard({ children }: { children: React.ReactNode }) {
 // Preloading strategies for better UX
 const preloadHeavyComponents = () => {
   // Initialize the preload manager
-  preloadManager.preloadCriticalModules();
+  // preloadManager.preloadCriticalModules();
 };
 
 const queryClient = new QueryClient({
