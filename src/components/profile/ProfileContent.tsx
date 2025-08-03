@@ -89,12 +89,22 @@ const ProfileContent = ({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
+    retry: 3, // Retry up to 3 times
+    retryDelay: 1000, // Wait 1 second between retries
   });
 
   // Force refetch dealer info when user context changes
   useEffect(() => {
     if (user?.id && user?.userType === 'dealer' && user?.dealer_registration_completed) {
+      // Immediate refetch
       refetchDealerInfo();
+      
+      // Also refetch after a short delay to ensure data is loaded
+      const timer = setTimeout(() => {
+        refetchDealerInfo();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
   }, [user?.id, user?.userType, user?.dealer_registration_completed, refetchDealerInfo]);
 

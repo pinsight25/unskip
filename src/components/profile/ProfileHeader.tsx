@@ -86,7 +86,7 @@ const ProfileHeader = ({ profile, dealerInfo, onEditProfile, onSignOut, onEditDe
               Edit Profile
             </Button>
             
-            {isDealer && dealerInfo && onEditDealerProfile && (
+            {isDealer && onEditDealerProfile && (
               <Button
                 variant="outline"
                 size="sm"

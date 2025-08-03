@@ -51,8 +51,13 @@ const DealerProfile = () => {
       return dealerData;
     },
     enabled: !!slug,
-    retry: 2,
-    retryDelay: 1000,
+    retry: 3,
+    retryDelay: 2000,
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache for long
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
 
@@ -70,7 +75,7 @@ const DealerProfile = () => {
 
   useEffect(() => {
     if (dealerLoading && !timedOut) {
-      const timeout = setTimeout(() => setTimedOut(true), 5000);
+      const timeout = setTimeout(() => setTimedOut(true), 10000); // Increased timeout to 10 seconds
       return () => clearTimeout(timeout);
     }
   }, [dealerLoading, timedOut]);
