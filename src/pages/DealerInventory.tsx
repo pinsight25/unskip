@@ -735,34 +735,46 @@ const DealerInventory = () => {
                   <TabsContent value="analytics">
                     <div className="space-y-4">
                       <h3 className="font-semibold mb-3">Business Analytics</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card>
-                          <CardContent className="p-4">
-                            <h4 className="font-medium mb-2">Performance Score</h4>
-                            <div className="text-center">
-                              <p className="text-3xl font-bold text-blue-600">85</p>
-                              <p className="text-sm text-gray-600">Good</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <h4 className="font-medium mb-2">Response Rate</h4>
-                            <div className="text-center">
-                              <p className="text-3xl font-bold text-green-600">92%</p>
-                              <p className="text-sm text-gray-600">Excellent</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <h4 className="font-medium mb-2">Customer Rating</h4>
-                            <div className="text-center">
-                              <p className="text-3xl font-bold text-yellow-600">4.8</p>
-                              <p className="text-sm text-gray-600">Stars</p>
-                            </div>
-                          </CardContent>
-                        </Card>
+                      <div className="text-center py-12">
+                        <div className="max-w-md mx-auto">
+                          <div className="mb-6">
+                            <BarChart3 className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                            <h4 className="text-lg font-medium text-gray-900 mb-2">Analytics Coming Soon</h4>
+                            <p className="text-sm text-gray-600 mb-6">
+                              We're working on comprehensive business analytics to help you track your performance, 
+                              response rates, and customer satisfaction.
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Card>
+                              <CardContent className="p-4">
+                                <h4 className="font-medium mb-2">Performance Score</h4>
+                                <div className="text-center">
+                                  <p className="text-3xl font-bold text-gray-400">--</p>
+                                  <p className="text-sm text-gray-500">Coming Soon</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                            <Card>
+                              <CardContent className="p-4">
+                                <h4 className="font-medium mb-2">Response Rate</h4>
+                                <div className="text-center">
+                                  <p className="text-3xl font-bold text-gray-400">--</p>
+                                  <p className="text-sm text-gray-500">Coming Soon</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                            <Card>
+                              <CardContent className="p-4">
+                                <h4 className="font-medium mb-2">Customer Rating</h4>
+                                <div className="text-center">
+                                  <p className="text-3xl font-bold text-gray-400">--</p>
+                                  <p className="text-sm text-gray-500">Coming Soon</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </TabsContent>
