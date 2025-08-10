@@ -71,9 +71,9 @@ export const useDealers = () => {
       
       return result;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh for 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes - data stays fresh for 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache for 10 minutes
-    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnMount: true, // Always refetch on mount to ensure fresh data
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Refetch on reconnect
   });

@@ -54,8 +54,8 @@ const DealerInventory = () => {
 
 
   
-  // Main view toggle for dealer's own page
-  const [mainView, setMainView] = useState<'inventory' | 'dashboard'>('inventory');
+  // Main view toggle for dealer's own page - default to dashboard for dealer's own page
+  const [mainView, setMainView] = useState<'inventory' | 'dashboard'>('dashboard');
   
   // Mobile info tab toggle
   const [activeInfoTab, setActiveInfoTab] = useState<'about' | 'contact' | 'location' | 'brands'>('about');
@@ -122,9 +122,9 @@ const DealerInventory = () => {
       return data;
     },
     enabled: !!slug || (location.pathname === '/dealer/dashboard' && !!user?.id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnMount: true, // Always refetch on mount to ensure fresh data
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Only refetch on reconnect
     retry: 2,
@@ -193,9 +193,9 @@ const DealerInventory = () => {
       }));
     },
     enabled: !!dealer?.user_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnMount: true, // Always refetch on mount to ensure fresh data
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Only refetch on reconnect
     retry: 2,
@@ -217,9 +217,9 @@ const DealerInventory = () => {
       return data || [];
     },
     enabled: !!dealer?.user_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchOnMount: false, // Don't refetch on mount if data is fresh
+    refetchOnMount: true, // Always refetch on mount to ensure fresh data
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Only refetch on reconnect
     retry: 2,
@@ -274,22 +274,18 @@ const DealerInventory = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">
-              {((!slug && location.pathname === '/dealer/dashboard') || 
-                (slug && user && dealer?.user_id === user.id)) ? 'Business Dashboard Not Available' : 'Dealer Not Found'}
+              {isOwnDealerPage ? 'Business Dashboard Not Available' : 'Dealer Not Found'}
             </h1>
             <p className="text-gray-600 mb-6">
-              {((!slug && location.pathname === '/dealer/dashboard') || 
-                (slug && user && dealer?.user_id === user.id))
+              {isOwnDealerPage
                 ? 'Please complete your dealer registration to access the business dashboard.'
                 : 'The dealer you\'re looking for doesn\'t exist.'
               }
             </p>
-            <Link to={((!slug && location.pathname === '/dealer/dashboard') || 
-                      (slug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'}>
+            <Link to={isOwnDealerPage ? '/profile' : '/dealers'}>
               <Button>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {((!slug && location.pathname === '/dealer/dashboard') || 
-                  (slug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
+                {isOwnDealerPage ? 'Back to Profile' : 'Back to Dealers'}
               </Button>
             </Link>
           </div>
@@ -306,6 +302,9 @@ const DealerInventory = () => {
 
   // Check if current user is the dealer owner
   const isDealerOwner = user && dealer.user_id === user.id;
+  
+  // Determine if this is the dealer's own page (either by slug or dashboard route)
+  const isOwnDealerPage = isDealerOwner || (!slug && location.pathname === '/dealer/dashboard');
 
   // Specialization color function
   const getSpecializationColor = (specialization: string) => {
@@ -353,8 +352,7 @@ const DealerInventory = () => {
     <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* Breadcrumb - Desktop Only */}
-        {!((!slug && location.pathname === '/dealer/dashboard') || 
-           (slug && user && dealer?.user_id === user.id)) && (
+        {!isOwnDealerPage && (
           <Breadcrumb className="py-3 hidden md:block">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -372,18 +370,15 @@ const DealerInventory = () => {
         {/* Back Button for Mobile */}
         <div className="md:hidden py-2">
           <Link 
-            to={((!slug && location.pathname === '/dealer/dashboard') || 
-                (slug && user && dealer?.user_id === user.id)) ? '/profile' : '/dealers'} 
+            to={isOwnDealerPage ? '/profile' : '/dealers'} 
             className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {((!slug && location.pathname === '/dealer/dashboard') || 
-              (slug && user && dealer?.user_id === user.id)) ? 'Back to Profile' : 'Back to Dealers'}
+            {isOwnDealerPage ? 'Back to Profile' : 'Back to Dealers'}
           </Link>
         </div>
         {/* Main View Toggle - Only for dealer's own page */}
-        {((!slug && location.pathname === '/dealer/dashboard') || 
-          (slug && user && dealer?.user_id === user.id)) && (
+        {isOwnDealerPage && (
           <div className="mt-8 mb-8">
             <Tabs value={mainView} onValueChange={(value) => setMainView(value as 'inventory' | 'dashboard')} className="w-full">
               <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-gray-100 p-1 rounded-lg shadow-sm">
