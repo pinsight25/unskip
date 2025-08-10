@@ -4,6 +4,28 @@ import { supabase } from '@/lib/supabase';
 import { formatPhoneForDB } from '@/utils/phoneUtils';
 import { useQueryClient } from '@tanstack/react-query';
 
+// Function to create welcome notification for new users
+const createWelcomeNotification = async (userId: string, userName: string) => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: userId,
+        type: 'system',
+        title: 'Welcome to Unskip! 🎉',
+        message: `Hi ${userName}! Welcome to Unskip, your trusted marketplace for buying and selling cars. Start by exploring cars or list your own vehicle.`,
+        priority: 'medium',
+        is_read: false
+      });
+
+    if (error) {
+      // Silent error handling
+    }
+  } catch (error) {
+    // Silent error handling
+  }
+};
+
 // User type based on the database schema
 export interface User {
   id: string;
@@ -99,6 +121,9 @@ const syncUserFromDatabase = async (
           setIsLoading(false); // CRITICAL: Set loading to false even if user creation fails
         }
       } else if (createdUser && mounted.current) {
+        // Create welcome notification for new users
+        await createWelcomeNotification(userId, newUserData.name);
+        
         setUser({
           id: createdUser.id,
           name: createdUser.name,
@@ -110,9 +135,9 @@ const syncUserFromDatabase = async (
           isVerified: createdUser.is_verified || undefined,
           userType: createdUser.user_type || undefined,
           phone_verified: 'phone_verified' in createdUser ? Boolean((createdUser as any).phone_verified) : false,
-          dealer_registration_completed: createdUser.dealer_registration_completed ?? false, // <-- Add this line
+          dealer_registration_completed: createdUser.dealer_registration_completed ?? false,
         });
-        setIsLoading(false); // CRITICAL: Set loading to false after user is created
+        setIsLoading(false);
       }
     } else if (userData && mounted.current) {
       // After fetching userData from the users table, set the user object and log it

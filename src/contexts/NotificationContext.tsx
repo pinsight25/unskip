@@ -26,7 +26,7 @@ interface NotificationContextType {
   clearAllNotifications: () => void;
   subscribeToNotifications: () => void;
   unsubscribeFromNotifications: () => void;
-  addTestNotification: () => void; // For testing purposes
+
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -259,24 +259,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
   }, [user?.id]);
 
-  // Add test notification for debugging
-  const addTestNotification = useCallback(async () => {
-    if (!user?.id) return;
 
-    try {
-      const testNotification = {
-        type: 'system' as const,
-        title: 'Test Notification',
-        message: 'This is a test notification to verify the system is working!',
-        userId: user.id,
-        priority: 'medium' as const
-      };
-
-      await addNotification(testNotification);
-    } catch (error) {
-      // Silent error handling
-    }
-  }, [user?.id, addNotification]);
 
   // Load notifications and subscribe when user changes
   useEffect(() => {
@@ -302,8 +285,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     removeNotification,
     clearAllNotifications,
     subscribeToNotifications,
-    unsubscribeFromNotifications,
-    addTestNotification
+    unsubscribeFromNotifications
   };
 
   return (

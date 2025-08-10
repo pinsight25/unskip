@@ -5,7 +5,7 @@ import { Bell, Trash2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Notifications = () => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, addTestNotification } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } = useNotifications();
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -68,26 +68,16 @@ const Notifications = () => {
             <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications yet</h3>
             <p className="text-gray-600 mb-4">You'll see notifications here when you receive offers, messages, or other updates.</p>
-                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-               <h4 className="text-sm font-medium text-blue-900 mb-2">What triggers notifications?</h4>
-               <ul className="text-sm text-blue-800 space-y-1 text-left">
-                 <li>• New offers on your cars</li>
-                 <li>• Messages from potential buyers</li>
-                 <li>• Test drive requests</li>
-                 <li>• System updates and announcements</li>
-                 <li>• Successful car listings</li>
-               </ul>
-               <div className="mt-4 pt-4 border-t border-blue-200">
-                 <Button 
-                   onClick={addTestNotification}
-                   variant="outline" 
-                   size="sm"
-                   className="w-full text-xs"
-                 >
-                   Add Test Notification
-                 </Button>
-               </div>
-             </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+              <h4 className="text-sm font-medium text-blue-900 mb-2">What triggers notifications?</h4>
+              <ul className="text-sm text-blue-800 space-y-1 text-left">
+                <li>• New offers on your cars</li>
+                <li>• Messages from potential buyers</li>
+                <li>• Test drive requests</li>
+                <li>• System updates and announcements</li>
+                <li>• Successful car listings</li>
+              </ul>
+            </div>
           </div>
         ) : (
           <div className="space-y-3">
