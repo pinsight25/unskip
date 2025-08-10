@@ -44,12 +44,14 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
     }
   };
 
-  // Simple orange dot for unread notifications
+  // Notification badge with count (matching chat counter pattern)
   const NotificationBadge = () => {
     if (unreadCount === 0) return null;
     
     return (
-      <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border-2 border-white z-10"></div>
+      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center border-2 border-white z-10">
+        {unreadCount}
+      </span>
     );
   };
 
@@ -57,15 +59,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
   if (isMobile) {
     return (
       <div className={`relative ${className || ''}`}>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsOpen(true)}
-          className="relative p-2"
-        >
-          <Bell className="h-5 w-5" />
+        <div className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors relative cursor-pointer" onClick={() => setIsOpen(true)}>
+          <Bell className="h-5 w-5 text-gray-700" />
           <NotificationBadge />
-        </Button>
+        </div>
         {isOpen && (
           <div className="fixed inset-0 z-50 flex flex-col items-center justify-start">
             {/* Backdrop */}
@@ -162,15 +159,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
   // --- DESKTOP DROPDOWN ---
   return (
     <div className={`relative ${className || ''}`}>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2"
-      >
-        <Bell className="h-5 w-5" />
+      <div className="p-2 h-12 w-12 hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors relative cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        <Bell className="h-5 w-5 text-gray-700" />
         <NotificationBadge />
-      </Button>
+      </div>
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
