@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: '/',
   server: {
     host: "::",
     port: 8080,
@@ -20,10 +21,9 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Remove manual chunk splitting to fix React hook issues
     rollupOptions: {
       output: {
-        // Simple asset organization
+        // Simple chunk naming without manual splitting to prevent 404s
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
@@ -45,6 +45,9 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     // Optimize minification
     minify: 'esbuild', // Use esbuild instead of terser
+    // Ensure proper module resolution
+    target: 'esnext',
+    modulePreload: false, // Disable module preload to prevent 404s
   },
   // Remove optimizeDeps to avoid React hook conflicts
 }));
