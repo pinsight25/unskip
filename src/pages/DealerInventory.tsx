@@ -254,13 +254,19 @@ const DealerInventory = () => {
     }
   });
 
+  // Check if current user is the dealer owner (define before error handling)
+  const isDealerOwner = user && dealer?.user_id === user.id;
+  
+  // Determine if this is the dealer's own page (either by slug or dashboard route)
+  const isOwnDealerPage = isDealerOwner || (!slug && location.pathname === '/dealer/dashboard');
+
   // Loading state
   if (dealerLoading || carsLoading || accessoriesLoading) {
     return (
       <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+            <h1 className="text-2xl font-bold mb-4">Loading dealer profile...</h1>
             <p className="text-gray-600">Please wait while we load the dealer inventory.</p>
           </div>
         </div>
@@ -299,12 +305,6 @@ const DealerInventory = () => {
 
   // Brands logic
   const brands = dealer.brands_deal_with || dealer.brands || [];
-
-  // Check if current user is the dealer owner
-  const isDealerOwner = user && dealer.user_id === user.id;
-  
-  // Determine if this is the dealer's own page (either by slug or dashboard route)
-  const isOwnDealerPage = isDealerOwner || (!slug && location.pathname === '/dealer/dashboard');
 
   // Specialization color function
   const getSpecializationColor = (specialization: string) => {
