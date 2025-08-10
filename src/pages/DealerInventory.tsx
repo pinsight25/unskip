@@ -409,9 +409,8 @@ const DealerInventory = () => {
           </div>
         )}
         
-        {/* Enhanced Dealer Header - Only show for inventory view or public dealers */}
-        {(!((!slug && location.pathname === '/dealer/dashboard') || 
-           (slug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
+                 {/* Enhanced Dealer Header - Only show for inventory view or public dealers */}
+         {(!isOwnDealerPage || mainView === 'inventory') && (
           <>
             <DealerHeader dealer={dealer} />
             
@@ -577,9 +576,8 @@ const DealerInventory = () => {
           </>
         )}
         
-        {/* Business Dashboard Section - Only for dealer's own dashboard when dashboard tab is selected */}
-        {((!slug && location.pathname === '/dealer/dashboard') || 
-          (slug && user && dealer?.user_id === user.id)) && mainView === 'dashboard' && (
+                 {/* Business Dashboard Section - Only for dealer's own dashboard when dashboard tab is selected */}
+         {isOwnDealerPage && mainView === 'dashboard' && (
           <div className="mt-6">
             <div className="mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -789,9 +787,8 @@ const DealerInventory = () => {
           </div>
         )}
         
-        {/* Inventory Section with Tabs - Show for public dealers or when inventory tab is selected */}
-        {(!((!slug && location.pathname === '/dealer/dashboard') || 
-           (slug && user && dealer?.user_id === user.id)) || mainView === 'inventory') && (
+                 {/* Inventory Section with Tabs - Show for public dealers or when inventory tab is selected */}
+         {(!isOwnDealerPage || mainView === 'inventory') && (
           <div className="mt-6">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'cars' | 'accessories')} className="w-full">
             <TabsList className="flex w-full gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
@@ -898,9 +895,8 @@ const DealerInventory = () => {
         </div>
         )}
 
-        {/* Edit Dealer Profile Modal */}
-        {((!slug && location.pathname === '/dealer/dashboard') || 
-          (slug && user && dealer?.user_id === user.id)) && (
+                 {/* Edit Dealer Profile Modal */}
+         {isOwnDealerPage && (
           <EditDealerProfileModal
             isOpen={editOpen}
             onClose={() => setEditOpen(false)}
