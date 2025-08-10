@@ -37,11 +37,11 @@ const Profile = lazy(() => import('@/pages/Profile'), {
   preload: () => import('@/pages/Profile')
 });
 
-// Feature-based lazy loading
-const Dealers = lazy(() => import('@/pages/Dealers'));
-const DealerInventory = lazy(() => import('@/pages/DealerInventory'));
-const DealerRegister = lazy(() => import('@/pages/DealerRegister'));
-const DealerProfile = lazy(() => import('@/pages/DealerProfile'));
+// Feature-based lazy loading - temporarily disable for production debugging
+import Dealers from '@/pages/Dealers';
+import DealerInventory from '@/pages/DealerInventory';
+import DealerRegister from '@/pages/DealerRegister';
+import DealerProfile from '@/pages/DealerProfile';
 
 // Accessory feature
 const PostAccessory = lazy(() => import('@/pages/PostAccessory'));
