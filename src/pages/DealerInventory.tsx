@@ -122,12 +122,12 @@ const DealerInventory = () => {
       return data;
     },
     enabled: !!slug || (location.pathname === '/dealer/dashboard' && !!user?.id),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 0, // Always consider data stale to force refetch
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache for 5 minutes
     refetchOnMount: true, // Always refetch on mount to ensure fresh data
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnReconnect: true, // Only refetch on reconnect
-    retry: 2,
+    refetchOnWindowFocus: true, // Refetch on window focus to ensure fresh data
+    refetchOnReconnect: true, // Refetch on reconnect
+    retry: 3,
     retryDelay: 1000,
   });
 
@@ -193,12 +193,12 @@ const DealerInventory = () => {
       }));
     },
     enabled: !!dealer?.user_id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 0, // Always consider data stale to force refetch
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache for 5 minutes
     refetchOnMount: true, // Always refetch on mount to ensure fresh data
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnReconnect: true, // Only refetch on reconnect
-    retry: 2,
+    refetchOnWindowFocus: true, // Refetch on window focus to ensure fresh data
+    refetchOnReconnect: true, // Refetch on reconnect
+    retry: 3,
     retryDelay: 1000,
   });
 
@@ -217,12 +217,12 @@ const DealerInventory = () => {
       return data || [];
     },
     enabled: !!dealer?.user_id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 0, // Always consider data stale to force refetch
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache for 5 minutes
     refetchOnMount: true, // Always refetch on mount to ensure fresh data
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnReconnect: true, // Only refetch on reconnect
-    retry: 2,
+    refetchOnWindowFocus: true, // Refetch on window focus to ensure fresh data
+    refetchOnReconnect: true, // Refetch on reconnect
+    retry: 3,
     retryDelay: 1000,
   });
 
